@@ -16,6 +16,7 @@ Run all commands from this folder. Output goes to `data/<corpus name>/` (not com
 | `explore_page.py` | Inspect one page: `python explore_page.py Ukraine en` |
 | `build_corpus.py` | Collect pages from category trees + seed pages. Resumable. |
 | `update_corpus.py` | Incremental update: re-downloads only pages that changed on Wikipedia. |
+| `summarize_corpus.py` | Writes `summaries/<name>/summary.md` (overview) and `summary.csv` (one row per page). These are committed, so the team can see what's in the corpus without the data. |
 
 ## Building the Russia–Ukraine war corpus
 ```bash

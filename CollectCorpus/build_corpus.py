@@ -33,7 +33,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 # Maintenance categories that say nothing about the topic
 NOISE_CATEGORY_PREFIXES = (
-    "Category:All ", "Category:Articles ", "Category:CS1 ", "Category:Webarchive ",
+    "Category:All ", "Category:Articles ", "Category:CS1", "Category:Webarchive ",
     "Category:Wikipedia ", "Category:Use ", "Category:Short description", "Category:Pages ",
     "Category:Commons ", "Category:Coordinates ", "Category:Official website",
 )
