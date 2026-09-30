@@ -3,7 +3,12 @@
 Example:
     python build_corpus.py --name ukraine_war --depth 2 \
         --category "Category:Russo-Ukrainian war (2022–present)" \
-        --seed "Russo-Ukrainian war" --seed "Ukraine"
+        --category "Category:Military operations of the Russian invasion of Ukraine@3" \
+        --seed "Russo-Ukrainian war" --seed-file seeds/team_DATA_json_titles.txt
+
+A category may end with "@N" to give it its own depth instead of --depth
+(useful to go deeper only in specific branches). --seed-file: one page title per line;
+blank lines and lines starting with # are ignored.
 
 Output (data/<name>/):
     config.json  - the categories/seeds/depth used (update_corpus.py re-uses them)
@@ -87,8 +92,9 @@ def titles_from_config(wiki, config):
     seeds = {t: "seed" for t in config["seeds"]}
     for path in config.get("seed_files", []):
         for t in Path(path).read_text(encoding="utf-8").splitlines():
-            if t.strip():
-                seeds.setdefault(t.strip(), f"seed-file:{Path(path).name}")
+            t = t.strip()
+            if t and not t.startswith("#"):  # blank lines and "# comments" are ignored
+                seeds.setdefault(t, f"seed-file:{Path(path).name}")
     categories = [parse_category(c, config["depth"]) for c in config["categories"]]
     return collect_titles(wiki, categories, seeds)
 

@@ -25,9 +25,12 @@ python build_corpus.py --name ukraine_war --depth 2 \
   --category "Category:Military operations of the Russian invasion of Ukraine@3" \
   --category "Category:Military units and formations of the Russian invasion of Ukraine@3" \
   --category "Category:Military equipment of the Russian invasion of Ukraine@3" \
+  --category "Category:Battles of the war in Donbas@0" \
+  --category "Category:Oblasts of Ukraine@0" \
   --seed "Ukraine" --seed "Russia" --seed "Russo-Ukrainian war" \
   --seed "Annexation of Crimea by the Russian Federation" --seed "War in Donbas" \
-  --seed-file seeds/team_DATA_json_titles.txt
+  --seed-file seeds/team_DATA_json_titles.txt \
+  --seed-file seeds/recommended_forces_battles_places.txt
 ```
 - The whole tree is walked 2 levels deep. The three military branches go one level deeper (`@3`),
   because battles sit at level 3 (e.g. *Military operations → Battles → Battles by year → Battles … in 2022*).
@@ -35,6 +38,9 @@ python build_corpus.py --name ukraine_war --depth 2 \
   (sports leagues, TV episodes, sanctioned politicians).
 - `seeds/team_DATA_json_titles.txt` holds the 897 titles of `examples/DATA.json`, so this corpus
   contains every page the team already works with.
+- `seeds/recommended_forces_battles_places.txt` adds pages the corpus links to often but didn't contain:
+  armed forces and units, War in Donbas battles (2014–2021), key places and historical background.
+  Seed files ignore blank lines and lines starting with `#`.
 - Category names are case-sensitive (`Russo-Ukrainian war`, lowercase "war").
 
 ## Keeping it up to date
