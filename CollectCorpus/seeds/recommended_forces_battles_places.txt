@@ -1,0 +1,118 @@
+# Pages recommended on 2026-09-30 from link frequency: pages the corpus links to
+# often but did not contain. Lines starting with # are comments.
+
+# --- 1. Armed forces, services and units (53) ---
+Armed Forces of Ukraine
+Russian Armed Forces
+Ukrainian Ground Forces
+Aidar Battalion
+State Border Guard Service of Ukraine
+Main Directorate of Intelligence (Ukraine)
+Special Police Forces (Ukraine)
+Ukrainian Air Assault Forces
+Dnipro-1 Regiment
+Ministry of Defence (Russia)
+114th Separate Guards Motor Rifle Brigade
+110th Separate Guards Motor Rifle Brigade
+14th Separate Guards Artillery Brigade
+Raid of the 95th Brigade
+Russian Ground Forces
+Territorial Defence Forces (Ukraine)
+Federal Security Service
+42nd Motorized Infantry Battalion (Ukraine)
+39th Motorized Infantry Battalion (Ukraine)
+40th Motorized Infantry Battalion (Ukraine)
+Sparta Battalion
+60th Separate Guards Motor Rifle Battalion
+Russian Orthodox Army
+Odessa Brigade
+Russian Airborne Forces
+Black Sea Fleet dispute
+Ministry of Defence (Ukraine)
+Ukrainian Army Aviation
+Rocket Forces and Artillery (Ukraine)
+Odesa Military Academy
+Armoured Forces (Ukraine)
+59th Assault Brigade
+1st Assault Regiment (Ukraine)
+Assault Forces (Ukraine)
+Separate Presidential Brigade
+19th Missile Brigade
+100th Mechanized Brigade
+65th Mechanized Brigade
+Hetman Petro Sahaidachnyi National Ground Forces Academy
+Lithuanian–Polish–Ukrainian Brigade
+156th Mechanized Brigade
+225th Separate Assault Regiment
+16th Support Regiment (Ukraine)
+12th Support Regiment (Ukraine)
+62nd Mechanized Brigade
+27th Artillery Brigade (Ukraine)
+128th Heavy Mechanized Brigade
+127th Heavy Mechanized Brigade
+60th Artillery Brigade (Ukraine)
+129th Heavy Mechanized Brigade
+Multinational Engineer Battalion Tisa
+125th Heavy Mechanized Brigade
+68th Artillery Brigade (Ukraine)
+
+# --- 2. Battles and operations, mostly War in Donbas 2014-2021 (23) ---
+Battle of Debaltseve
+Siege of the Luhansk border base
+Battles for Karlivka
+Battle of Mariupol (September 2014)
+Battle of Mariupol (May–June 2014)
+Second Battle of Donetsk Airport
+Battle of Avdiivka (2017)
+Battle of Horlivka
+Shyrokyne standoff
+Battle of Marinka (2015)
+Battles of Sievierodonetsk (2014)
+First Battle of Donetsk Airport
+Battle of Kramatorsk
+Battle of Artemivsk
+Battle in Shakhtarsk Raion
+Battle of Krasnyi Lyman
+2003 Tuzla Island conflict
+Battle of Novoazovsk
+Battle of Svitlodarsk
+Capture of Donetsk (2014)
+Battle of Yasynuvata
+Capture of the Crimean Parliament
+Capture of Southern Naval Base
+
+# --- 3a. Key places (25; the 25 oblasts come from Category:Oblasts of Ukraine) ---
+Crimea
+Donbas
+Donetsk
+Luhansk
+Kharkiv
+Sevastopol
+Zaporizhzhia
+Mykolaiv
+Lysychansk
+Kramatorsk
+Sloviansk
+Kupiansk
+Pokrovsk
+Melitopol
+Enerhodar
+Chernihiv
+Belgorod
+Kursk
+Moscow
+Kerch Strait
+Sea of Azov
+Snake Island (Ukraine)
+Dnieper
+Kakhovka Reservoir
+Chernobyl exclusion zone
+
+# --- 3b. Historical background (7) ---
+Euromaidan
+Revolution of Dignity
+Orange Revolution
+Dissolution of the Soviet Union
+2003 Tuzla Island conflict
+Russia–Ukraine gas disputes
+Institute for the Study of War
