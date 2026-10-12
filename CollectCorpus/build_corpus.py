@@ -13,7 +13,7 @@ blank lines and lines starting with # are ignored.
 Output (data/<name>/):
     config.json  - the categories/seeds/depth used (update_corpus.py re-uses them)
     titles.txt   - every page title that was selected
-    pages.jsonl  - one page per line (title, revid, url, summary, sections, coordinates, ...)
+    pages.jsonl  - one page per line (title, revid, url, summary, sections, coordinates, content, ...)
 
 Re-running is safe: pages already in pages.jsonl are skipped, so an interrupted run resumes.
 To refresh pages that changed on Wikipedia, use update_corpus.py.
@@ -27,7 +27,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 
-from wiki_client import client, flatten_sections, page_meta
+from wiki_client import client, flatten_sections, page_meta, raw_content
 
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -114,6 +114,7 @@ def fetch_page(wiki, meta, source, with_links):
         "summary": page.summary,
         "sections": flatten_sections(page.sections),
         "text": page.text,
+        "content": raw_content(meta["title"], wiki.language),  # exact DATA.json format, see export_corpus.py
         "categories": [c for c in page.categories if not c.startswith(NOISE_CATEGORY_PREFIXES)],
         "links": list(page.links) if with_links else [],
         "fetched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -138,6 +139,48 @@ def fetch_many(wiki, items, with_links, workers, on_record):
     return count
 
 
+def build(name, categories=(), seeds=(), seed_files=(), depth=1, lang="en", limit=0, workers=4,
+          with_links=True):
+    """Collect titles, check their versions, download the pages not saved yet -> data/<name>/."""
+    out_dir = corpus_dir(name)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    pages_path = out_dir / "pages.jsonl"
+    config = {
+        "categories": list(categories), "depth": depth, "seeds": list(seeds),
+        "seed_files": list(seed_files), "lang": lang, "with_links": with_links,
+    }
+    (out_dir / "config.json").write_text(json.dumps(config, ensure_ascii=False, indent=2), encoding="utf-8")
+    wiki = client(lang)
+
+    print("1) collecting titles")
+    titles = titles_from_config(wiki, config)
+    (out_dir / "titles.txt").write_text("\n".join(sorted(titles)), encoding="utf-8")
+
+    done = set(load_pages(pages_path))
+    todo = [t for t in titles if t not in done]
+    if limit:
+        todo = todo[: limit]
+
+    print(f"2) checking versions of {len(todo)} pages")
+    items, seen = [], set(done)
+    for title, meta in page_meta(todo, lang).items():
+        if meta and meta["title"] not in seen:  # skip missing pages and redirects to pages we have
+            seen.add(meta["title"])
+            items.append((meta, titles[title]))
+
+    print(f"3) fetching {len(items)} pages ({len(done)} already saved)")
+    lock = threading.Lock()
+    with pages_path.open("a", encoding="utf-8") as f:
+        def save(rec):
+            with lock:
+                f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+                f.flush()
+        count = fetch_many(wiki, items, with_links, workers, save)
+
+    print(f"done: {count} new pages -> {pages_path} (total {len(done) + count})")
+
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--name", required=True, help="corpus name -> data/<name>/")
@@ -152,42 +195,8 @@ def main():
     ap.add_argument("--no-links", action="store_true", help="skip outgoing links (faster)")
     args = ap.parse_args()
 
-    out_dir = corpus_dir(args.name)
-    out_dir.mkdir(parents=True, exist_ok=True)
-    pages_path = out_dir / "pages.jsonl"
-    config = {
-        "categories": args.category, "depth": args.depth, "seeds": args.seed,
-        "seed_files": args.seed_file, "lang": args.lang, "with_links": not args.no_links,
-    }
-    (out_dir / "config.json").write_text(json.dumps(config, ensure_ascii=False, indent=2), encoding="utf-8")
-    wiki = client(args.lang)
-
-    print("1) collecting titles")
-    titles = titles_from_config(wiki, config)
-    (out_dir / "titles.txt").write_text("\n".join(sorted(titles)), encoding="utf-8")
-
-    done = set(load_pages(pages_path))
-    todo = [t for t in titles if t not in done]
-    if args.limit:
-        todo = todo[: args.limit]
-
-    print(f"2) checking versions of {len(todo)} pages")
-    items, seen = [], set(done)
-    for title, meta in page_meta(todo, args.lang).items():
-        if meta and meta["title"] not in seen:  # skip missing pages and redirects to pages we have
-            seen.add(meta["title"])
-            items.append((meta, titles[title]))
-
-    print(f"3) fetching {len(items)} pages ({len(done)} already saved)")
-    lock = threading.Lock()
-    with pages_path.open("a", encoding="utf-8") as f:
-        def save(rec):
-            with lock:
-                f.write(json.dumps(rec, ensure_ascii=False) + "\n")
-                f.flush()
-        count = fetch_many(wiki, items, not args.no_links, args.workers, save)
-
-    print(f"done: {count} new pages -> {pages_path} (total {len(done) + count})")
+    build(args.name, args.category, args.seed, args.seed_file, args.depth, args.lang,
+          args.limit, args.workers, not args.no_links)
 
 
 if __name__ == "__main__":

@@ -2,8 +2,9 @@
 
 Uses `wikipedia-api` (maintained) instead of `wikipedia` (unmaintained since 2014:
 returns no sections, and its default User-Agent is rate-limited by Wikimedia with HTTP 429).
-For things `wikipedia-api` doesn't cover (revision ids, coordinates) we call the MediaWiki API directly.
+For things `wikipedia-api` doesn't cover (revision ids, coordinates, the raw text) we call the MediaWiki API directly.
 """
+import threading
 import time
 
 import requests
@@ -11,24 +12,45 @@ import wikipediaapi
 
 USER_AGENT = "GeoAI-WikiCorpus/0.1 (student course project)"
 BATCH = 50  # max titles per MediaWiki API request
+MIN_INTERVAL = 0.25  # seconds between our direct API requests, to stay under Wikipedia's rate limit
 
 session = requests.Session()
 session.headers["User-Agent"] = USER_AGENT
+_throttle_lock = threading.Lock()
+_last_request = 0.0
 
 
 def client(lang="en"):
     return wikipediaapi.Wikipedia(user_agent=USER_AGENT, language=lang)
 
 
-def api(lang="en", retries=5, **params):
+def _throttle():
+    """Keep at least MIN_INTERVAL seconds between our API requests, across threads."""
+    global _last_request
+    with _throttle_lock:
+        wait = _last_request + MIN_INTERVAL - time.time()
+        if wait > 0:
+            time.sleep(wait)
+        _last_request = time.time()
+
+
+def api(lang="en", retries=8, **params):
     """Direct call to the MediaWiki API. Waits and retries when rate-limited (HTTP 429)."""
     params = {"action": "query", "format": "json", "formatversion": 2, **params}
     for attempt in range(retries):
-        r = session.get(f"https://{lang}.wikipedia.org/w/api.php", params=params, timeout=30)
+        _throttle()
+        try:
+            r = session.get(f"https://{lang}.wikipedia.org/w/api.php", params=params, timeout=30)
+        except requests.ConnectionError:  # Wikipedia sometimes drops the connection under load
+            if attempt == retries - 1:
+                raise
+            time.sleep(5 * (attempt + 1))
+            continue
         if r.status_code != 429 or attempt == retries - 1:
             r.raise_for_status()
             return r.json()
-        time.sleep(int(r.headers.get("Retry-After", 0)) or 2 ** attempt * 5)
+        # Retry-After is the server's minimum; back off further on repeated refusals
+        time.sleep(max(int(r.headers.get("Retry-After", 0)), 5) * (attempt + 1))
 
 
 def flatten_sections(sections, path=()):
@@ -40,6 +62,15 @@ def flatten_sections(sections, path=()):
             out.append({"path": " > ".join(p), "level": len(p), "text": s.text})
         out += flatten_sections(s.sections, p)
     return out
+
+
+def raw_content(title, lang="en"):
+    """The page text exactly as Wikipedia returns it: headings as "== X ==", empty sections kept.
+    This is the format of the team's examples/DATA.json (the old `wikipedia` library's page.content),
+    which `wikipedia-api` can't reproduce because it splits the text into sections."""
+    data = api(lang, prop="extracts", explaintext=1, titles=title, redirects=1)
+    pages = data["query"]["pages"]
+    return pages[0].get("extract", "") if pages else ""
 
 
 def page_meta(titles, lang="en"):

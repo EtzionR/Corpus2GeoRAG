@@ -1,7 +1,24 @@
 # CollectCorpus
 
 Builds the Wikipedia corpus that the rest of the pipeline (NER → graph & geocoding) runs on,
-and keeps it up to date without re-downloading everything.
+keeps it up to date without re-downloading everything, filters it to military content, and exports
+`DATA.json` in exactly the format of `examples/DATA.json` for the next step.
+
+```
+build ──► update ──► filter ──► export
+pages.jsonl (rich: sections, coordinates, revisions)  ──►  DATA.json ({title: text}, for ApplyNER)
+```
+
+**Walkthrough notebook:** [`CollectCorpus.ipynb`](CollectCorpus.ipynb) contains all the code of this folder,
+file by file and function by function, with an explanation and a small demo after each part, plus the
+corpus summary, a map of the pages with coordinates, and open questions. It runs on its own in Colab.
+The scripts' `main()` only parses arguments and calls the same functions
+(`build()`, `update()`, `summarize()`, `filter_corpus()`, `export_data_json()`).
+[Open in Colab](https://colab.research.google.com/github/arielax-212/Corpus2GeoRAG/blob/main/CollectCorpus/CollectCorpus.ipynb).
+
+**`DATA.json`** in this folder is the output for the next step: the filtered (military) corpus,
+`{title: text}`, in exactly the format of `examples/DATA.json`. The richer `pages.jsonl` files
+(all pages before filtering, with sections, coordinates, links and revisions) stay in `data/` and are not committed.
 
 ## Setup
 ```bash
@@ -16,6 +33,8 @@ Run all commands from this folder. Output goes to `data/<corpus name>/` (not com
 | `explore_page.py` | Inspect one page: `python explore_page.py Ukraine en` |
 | `build_corpus.py` | Collect pages from category trees + seed pages. Resumable. |
 | `update_corpus.py` | Incremental update: re-downloads only pages that changed on Wikipedia. |
+| `filter_corpus.py` | Keeps military content, by the decisions in `filters/category_review.csv`. Writes a new corpus; the original is not touched. |
+| `export_corpus.py` | Writes `DATA.json` (`{title: text}`) in exactly the format of `examples/DATA.json`. |
 | `summarize_corpus.py` | Writes `summaries/<name>/summary.md` (overview) and `summary.csv` (one row per page). These are committed, so the team can see what's in the corpus without the data. |
 
 ## Building the Russia–Ukraine war corpus
@@ -55,6 +74,26 @@ pages (50 per request, a few seconds in total) and re-downloads only the ones th
 Renamed pages are re-fetched under the new title, deleted pages are kept and marked `"status": "missing"`.
 Every change is logged to `data/<name>/changes.jsonl`.
 
+## Filtering to military content
+```bash
+python filter_corpus.py --name ukraine_war --out ukraine_war_military
+python summarize_corpus.py --name ukraine_war_military
+```
+- `filters/category_review.csv` lists every category pages came from, with a Hebrew translation,
+  a recommendation, the reason, and the `decision` (`keep` / `remove`) that the filter uses.
+- A page from a removed category is still kept ("rescued") if it also belongs to a kept category
+  (`source` only records the first category it was found in), or if it is a person with a military role
+  (categories like *Russian admirals*, *Ukrainian military personnel …*).
+- The report is in `summaries/<out>/`: `filter_report.md` (removed / rescued and why) and `removed.csv`.
+
+## Exporting `DATA.json` for the next step
+```bash
+python export_corpus.py --name ukraine_war_military     # -> data/ukraine_war_military/DATA.json
+```
+The text of each page is its `content` field: the raw text exactly as Wikipedia returns it
+(`== Heading ==` lines, empty sections kept), which is what `examples/DATA.json` holds. The file is written
+with `json.dump` defaults like the original, so `ApplyNER` reads it as is.
+
 ## Output format: `data/<name>/pages.jsonl`
 One JSON object per line, one line per page:
 
@@ -68,6 +107,7 @@ One JSON object per line, one line per page:
 | `summary` | Intro text before the first heading |
 | `sections` | `[{"path": "History > World War II", "level": 2, "text": ...}, ...]` |
 | `text` | Full plain text of the page |
+| `content` | The raw text in Wikipedia's own format (`== Heading ==`), used for `DATA.json` |
 | `categories` | Topical categories (maintenance categories removed) |
 | `links` | Titles of Wikipedia pages this page links to |
 
