@@ -9,11 +9,11 @@ build ──► update ──► filter ──► export
 pages.jsonl (rich: sections, coordinates, revisions)  ──►  DATA.json ({title: text}, for ApplyNER)
 ```
 
-**Walkthrough notebook:** [`CollectCorpus.ipynb`](CollectCorpus.ipynb) contains all the code of this folder,
-file by file and function by function, with an explanation and a small demo after each part, plus the
-corpus summary, a map of the pages with coordinates, and open questions. It runs on its own in Colab.
+**Notebook:** [`CollectCorpus.ipynb`](CollectCorpus.ipynb) runs on its own in Colab. Parts 1–5 hold the code
+of the pipeline (Wikipedia access, build, update, filter, export) with a short explanation per function,
+and Part 6 runs it: a quick demo (about 2 minutes) and the full corpus behind a `RUN_FULL` flag.
 The scripts' `main()` only parses arguments and calls the same functions
-(`build()`, `update()`, `summarize()`, `filter_corpus()`, `export_data_json()`).
+(`build()`, `update()`, `filter_corpus()`, `export_data_json()`; `summarize()` is in the scripts only).
 [Open in Colab](https://colab.research.google.com/github/arielax-212/Corpus2GeoRAG/blob/main/CollectCorpus/CollectCorpus.ipynb).
 
 **`DATA.json`** in this folder is the output for the next step: the filtered (military) corpus,
