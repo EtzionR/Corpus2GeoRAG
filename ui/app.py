@@ -517,7 +517,7 @@ with st.sidebar:
                 if st.button("🔍 Recon Scan", use_container_width=True, help="Run reconnaissance scan on bounding box"):
                     recon_response: AgentResponse = query_geo_agent(
                         text_prompt=None,
-                        selected_points=st.session_state.selected_points,
+                        selected_point=None,
                         bounding_box=st.session_state.bounding_box,
                         chat_history=st.session_state.messages
                     )
@@ -586,10 +586,11 @@ with st.sidebar:
                     st.rerun()
             with col_b2:
                 if st.button("🔍 Recon Scan", use_container_width=True, help="Run reconnaissance scan on selected point"):
+                    pt = st.session_state.selected_points[0] if st.session_state.selected_points else None
                     recon_response: AgentResponse = query_geo_agent(
                         text_prompt=None,
-                        clicked_point=st.session_state.selected_points[0],
-                        selected_points=st.session_state.selected_points,
+                        selected_point=pt,
+                        bounding_box=None,
                         chat_history=st.session_state.messages
                     )
                     st.session_state.messages.append({
@@ -716,11 +717,14 @@ with col1:
                 st.rerun()
         with col_c2:
             if st.button("🔍 Run Reconnaissance", key="run_chat_recon", use_container_width=True):
+                is_bbox = is_bbox_mode and (st.session_state.get("bounding_box") is not None)
+                active_pt = None if is_bbox else (st.session_state.selected_points[0] if st.session_state.get("selected_points") else None)
+                active_bbox = st.session_state.get("bounding_box") if is_bbox else None
+
                 recon_resp = query_geo_agent(
                     text_prompt=None,
-                    clicked_point=st.session_state.selected_points[0],
-                    selected_points=st.session_state.selected_points,
-                    bounding_box=st.session_state.get("bounding_box"),
+                    selected_point=active_pt,
+                    bounding_box=active_bbox,
                     chat_history=st.session_state.messages
                 )
                 if is_bbox_mode and st.session_state.get("bounding_box"):
@@ -758,12 +762,15 @@ with col1:
         # 1. Append user's message to chat history
         st.session_state.messages.append({"role": "user", "content": user_prompt})
 
-        # 2. Invoke the mock GeoAI agent router with text, selected points, and bounding box
+        # 2. Invoke the mock GeoAI agent router with text, selected_point, and bounding_box
+        is_bbox = (st.session_state.get("selection_mode") == "Bounding Box") and (st.session_state.get("bounding_box") is not None)
+        active_pt = None if is_bbox else (st.session_state.selected_points[0] if st.session_state.get("selected_points") else None)
+        active_bbox = st.session_state.get("bounding_box") if is_bbox else None
+
         agent_resp: AgentResponse = query_geo_agent(
             text_prompt=user_prompt,
-            clicked_point=st.session_state.active_point,
-            selected_points=st.session_state.selected_points,
-            bounding_box=st.session_state.get("bounding_box"),
+            selected_point=active_pt,
+            bounding_box=active_bbox,
             chat_history=st.session_state.messages
         )
 

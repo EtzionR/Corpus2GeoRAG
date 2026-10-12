@@ -64,10 +64,10 @@ class TestDataContracts:
 class TestGeoAgentScenarios:
     """Validate query_geo_agent routing and multimodal response handling."""
 
-    def test_scenario_a_both_text_and_clicked_point(self):
+    def test_scenario_a_both_text_and_selected_point(self):
         """
-        Scenario A: Both `text_prompt` AND `clicked_point` are provided.
-        Example: User clicks a coordinate and asks "What units are stationed here?".
+        Scenario A: Both `text_prompt` AND `selected_point` are provided.
+        Example: User selects a coordinate and asks "What units are stationed here?".
 
         Assertions:
             - Return type is AgentResponse.
@@ -78,7 +78,7 @@ class TestGeoAgentScenarios:
         prompt = "What units are stationed here?"
         point = (49.4444, 32.0597)
 
-        response = query_geo_agent(text_prompt=prompt, clicked_point=point)
+        response = query_geo_agent(text_prompt=prompt, selected_point=point)
 
         # 1. Type validation
         assert isinstance(response, AgentResponse), "Expected an AgentResponse instance"
@@ -101,10 +101,10 @@ class TestGeoAgentScenarios:
             assert layer.data["lat"] == point[0]
             assert layer.data["lng"] == point[1]
 
-    def test_scenario_b_only_clicked_point(self):
+    def test_scenario_b_only_selected_point(self):
         """
-        Scenario B: Only `clicked_point` is provided.
-        Example: User clicks on the map without typing a message.
+        Scenario B: Only `selected_point` is provided.
+        Example: User runs reconnaissance on a selected coordinate without typing a message.
 
         Assertions:
             - Return type is AgentResponse.
@@ -113,7 +113,7 @@ class TestGeoAgentScenarios:
         """
         point = (48.3794, 31.1656)
 
-        response = query_geo_agent(text_prompt=None, clicked_point=point)
+        response = query_geo_agent(text_prompt=None, selected_point=point)
 
         # 1. Type validation
         assert isinstance(response, AgentResponse), "Expected an AgentResponse instance"
@@ -145,7 +145,7 @@ class TestGeoAgentScenarios:
         """
         prompt = "Show major logistics corridors in central Ukraine"
 
-        response = query_geo_agent(text_prompt=prompt, clicked_point=None)
+        response = query_geo_agent(text_prompt=prompt, selected_point=None)
 
         # 1. Type validation
         assert isinstance(response, AgentResponse), "Expected an AgentResponse instance"
@@ -167,14 +167,14 @@ class TestGeoAgentScenarios:
 
     def test_scenario_fallback_neither_provided(self):
         """
-        Fallback Scenario: Neither text prompt nor clicked point is provided.
+        Fallback Scenario: Neither text prompt nor selected point is provided.
 
         Assertions:
             - Return type is AgentResponse.
             - `answer` provides a friendly prompt to start.
             - `layers` is an empty list.
         """
-        response = query_geo_agent(text_prompt=None, clicked_point=None)
+        response = query_geo_agent(text_prompt=None, selected_point=None)
 
         assert isinstance(response, AgentResponse)
         assert isinstance(response.answer, str)
@@ -190,7 +190,7 @@ class TestGeoAgentScenarios:
         ]
         response = query_geo_agent(
             text_prompt="Summarize situation",
-            clicked_point=(50.4501, 30.5234),
+            selected_point=(50.4501, 30.5234),
             chat_history=history
         )
         assert isinstance(response, AgentResponse)
@@ -346,6 +346,30 @@ class TestBoundingBox:
         assert "35.0462" in response.answer
 
         assert len(response.layers) == 3
+
+    def test_bounding_box_and_selected_point_mutual_exclusivity(self):
+        """
+        Validate that if a bounding box is selected, points shouldn't be in selected_point.
+        Even if a caller passes both, bounding_box takes precedence and points are not duplicated.
+        """
+        bbox = ((48.3794, 31.1656), (50.4501, 35.0462))
+        point = (49.0000, 33.0000)
+
+        # Pass both bounding_box and selected_point
+        response = query_geo_agent(
+            text_prompt="Test mutual exclusivity",
+            selected_point=point,
+            bounding_box=bbox
+        )
+
+        assert isinstance(response, AgentResponse)
+        # Should process as bounding box analysis, NOT point analysis
+        assert "Bounding Box Area Analysis" in response.answer
+        assert "Targeted Point Analysis" not in response.answer
+        # Layers should only be the bounding box layers (2 markers + 1 polygon), not 2 markers + 1 circle for point
+        assert len(response.layers) == 3
+        poly_layers = [l for l in response.layers if l.layer_type == "polygon"]
+        assert len(poly_layers) == 1
 
     def test_bounding_box_selection_lifecycle(self):
         """

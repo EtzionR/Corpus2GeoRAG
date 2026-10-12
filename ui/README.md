@@ -143,10 +143,9 @@ def to_bounding_box(
 
 def query_geo_agent(
     text_prompt: Optional[str] = None,
-    clicked_point: Optional[Tuple[float, float]] = None,
-    chat_history: Optional[List[Dict[str, Any]]] = None,
-    selected_points: Optional[List[Tuple[float, float]]] = None,
-    bounding_box: Optional[Tuple[Tuple[float, float], Tuple[float, float]]] = None
+    selected_point: Optional[Tuple[float, float]] = None,
+    bounding_box: Optional[Tuple[Tuple[float, float], Tuple[float, float]]] = None,
+    chat_history: Optional[List[Dict[str, Any]]] = None
 ) -> AgentResponse:
 ```
 

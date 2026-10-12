@@ -90,21 +90,21 @@ def to_bounding_box(
 
 def query_geo_agent(
     text_prompt: Optional[str] = None,
-    clicked_point: Optional[Tuple[float, float]] = None,
+    selected_point: Optional[Tuple[float, float]] = None,
+    bounding_box: Optional[Tuple[Tuple[float, float], Tuple[float, float]]] = None,
     chat_history: Optional[List[Dict[str, Any]]] = None,
-    selected_points: Optional[List[Tuple[float, float]]] = None,
-    bounding_box: Optional[Tuple[Tuple[float, float], Tuple[float, float]]] = None
+    **kwargs: Any
 ) -> AgentResponse:
     """
     Route and process user multimodal requests combining free-form text queries,
     interactive map click coordinates, bounding box extents, and conversational context.
 
     This mock implementation simulates a spatial RAG agent handling key scenarios:
-      Scenario A: Both `text_prompt` AND target point(s) or bounding box are provided.
+      Scenario A: Both `text_prompt` AND target point or bounding box are provided.
                   Example: User selects bounding box and asks "What units are stationed here?".
                   Response: References query intent and bounding box / target coordinates.
-      Scenario B: Only target point(s) or bounding box are provided.
-                  Example: User clicks "Run Reconnaissance" on selected bounding box / point(s).
+      Scenario B: Only target point or bounding box are provided.
+                  Example: User clicks "Run Reconnaissance" on selected bounding box / point.
                   Response: Generic spatial reconnaissance summary for the coordinates.
       Scenario C: Only `text_prompt` is provided.
                   Example: User asks "Show key logistics nodes in central Ukraine".
@@ -112,19 +112,22 @@ def query_geo_agent(
 
     Args:
         text_prompt (Optional[str]): Natural language prompt input by the user.
-        clicked_point (Optional[Tuple[float, float]]): Coordinate tuple (latitude, longitude)
-            from an interactive map click. Kept for backwards compatibility.
-        chat_history (Optional[List[Dict[str, Any]]]): Prior conversation messages for context.
-        selected_points (Optional[List[Tuple[float, float]]]): List of coordinate tuples
-            representing one or more selected points on the map.
+        selected_point (Optional[Tuple[float, float]]): Coordinate tuple (latitude, longitude)
+            representing a selected point on the map.
         bounding_box (Optional[Tuple[Tuple[float, float], Tuple[float, float]]]): Two-point
-            bounding box tuple ((min_lat, min_lng), (max_lat, max_lng)).
+            bounding box tuple ((min_lat, min_lng), (max_lat, max_lng)). When provided,
+            points are not placed in `selected_point`.
+        chat_history (Optional[List[Dict[str, Any]]]): Prior conversation messages for context.
 
     Returns:
         AgentResponse: Structured object containing synthesis answer text and map layers.
     """
     # Normalize inputs
     has_text = bool(text_prompt and text_prompt.strip())
+
+    # Ensure mutual exclusivity: if a bounding box is selected, points shouldn't be in selected_point
+    if bounding_box and len(bounding_box) == 2:
+        selected_point = None
 
     # --------------------------------------------------------------------------
     # Scenario: Bounding Box Provided
@@ -245,12 +248,20 @@ def query_geo_agent(
             ]
             return AgentResponse(answer=answer_text, layers=layers)
 
-    # Consolidate target coordinates from selected_points and clicked_point
+    # Consolidate target coordinate(s) from selected_point (or backwards-compatible kwargs)
     points: List[Tuple[float, float]] = []
-    if selected_points:
-        points = [p for p in selected_points if len(p) == 2]
-    elif clicked_point and len(clicked_point) == 2:
-        points = [clicked_point]
+    if selected_point:
+        if isinstance(selected_point, (list, tuple)) and len(selected_point) > 0:
+            if isinstance(selected_point[0], (int, float)):
+                # Single (lat, lng) coordinate tuple
+                points = [selected_point]  # type: ignore
+            elif isinstance(selected_point[0], (list, tuple)):
+                # List of coordinate tuples
+                points = [p for p in selected_point if len(p) == 2]
+    elif kwargs.get("selected_points"):
+        points = [p for p in kwargs["selected_points"] if len(p) == 2]
+    elif kwargs.get("clicked_point"):
+        points = [kwargs["clicked_point"]]
 
     has_point = len(points) > 0
 
