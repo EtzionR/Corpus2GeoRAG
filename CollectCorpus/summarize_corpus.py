@@ -27,13 +27,10 @@ def source_group(source):
     return "category tree"
 
 
-def main():
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--name", required=True)
-    args = ap.parse_args()
-
-    pages = [p for p in load_pages(corpus_dir(args.name) / "pages.jsonl").values() if p.get("status") != "missing"]
-    out_dir = Path("summaries") / args.name
+def summarize(name):
+    """Write summaries/<name>/summary.csv and summary.md."""
+    pages = [p for p in load_pages(corpus_dir(name) / "pages.jsonl").values() if p.get("status") != "missing"]
+    out_dir = Path("summaries") / name
     out_dir.mkdir(parents=True, exist_ok=True)
 
     with (out_dir / "summary.csv").open("w", encoding="utf-8-sig", newline="") as f:  # -sig so Excel reads Hebrew/UTF-8
@@ -52,7 +49,7 @@ def main():
                ("20K–50K", 20_000, 50_000), ("> 50K", 50_000, float("inf"))]
 
     md = [
-        f"# Corpus summary: `{args.name}`",
+        f"# Corpus summary: `{name}`",
         f"Generated {datetime.now(timezone.utc):%Y-%m-%d %H:%M} UTC from `pages.jsonl`.",
         "",
         "## Totals",
@@ -88,6 +85,15 @@ def main():
     ]
     (out_dir / "summary.md").write_text("\n".join(md) + "\n", encoding="utf-8")
     print(f"wrote {out_dir / 'summary.csv'} ({len(pages)} rows) and {out_dir / 'summary.md'}")
+
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--name", required=True)
+    args = ap.parse_args()
+
+    summarize(args.name)
 
 
 if __name__ == "__main__":
