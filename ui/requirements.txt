@@ -1,0 +1,12 @@
+# ==============================================================================
+# GeoAI Final Project - Requirements Specification
+# ==============================================================================
+# These packages define the runtime environment required for both the Streamlit
+# frontend, Folium spatial mapping, adjustable layouts, and automated test suite.
+# ==============================================================================
+
+streamlit>=1.30.0
+folium>=0.15.0
+streamlit-folium>=0.18.0
+streamlit-adjustable-columns>=0.2.0
+pytest>=7.0.0
