@@ -95,7 +95,6 @@ your app runs in:
 ```bash
 git clone https://github.com/EtzionR/Corpus2GeoRAG.git
 cd Corpus2GeoRAG
-git checkout feature/agentic-rag     # until this is merged to main
 pip install -r AgentRag/requirements.txt
 ```
 
