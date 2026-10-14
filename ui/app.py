@@ -86,14 +86,24 @@ except ImportError:
         return st.columns(spec)
 
 # Import backend contracts, routing engine, utilities, and errors
+import importlib
+if "geo_agent" in sys.modules:
+    try:
+        importlib.reload(sys.modules["geo_agent"])
+    except Exception:
+        pass
+
+import geo_agent
 from geo_agent import (
     MapLayer,
     AgentResponse,
     query_geo_agent,
     to_bounding_box,
-    get_source_text,
-    AgentError,
 )
+
+# Ensure get_source_text and AgentError are safely resolved even across hot-reloads
+get_source_text = getattr(geo_agent, "get_source_text", lambda pointer: None)
+AgentError = getattr(geo_agent, "AgentError", RuntimeError)
 
 def dispatch_geo_query(
     text_prompt: Optional[str] = None,
@@ -478,11 +488,14 @@ if "keep_points" not in st.session_state:
 if "openrouter_api_key" not in st.session_state:
     # Initial load from st.secrets or environment variable if available
     import os
-    st.session_state.openrouter_api_key = (
-        st.secrets.get("OPENROUTER_API_KEY", "")
-        if hasattr(st, "secrets") and "OPENROUTER_API_KEY" in st.secrets
-        else os.environ.get("OPENROUTER_API_KEY", "")
-    )
+    default_key = os.environ.get("OPENROUTER_API_KEY", "")
+    try:
+        if "OPENROUTER_API_KEY" in st.secrets:
+            default_key = st.secrets["OPENROUTER_API_KEY"]
+    except Exception:
+        # Streamlit raises StreamlitSecretNotFoundError when no secrets.toml exists
+        pass
+    st.session_state.openrouter_api_key = default_key
 
 if "agent_turns" not in st.session_state:
     # List of prior conversational turns formatted for the backend agent

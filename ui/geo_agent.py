@@ -27,6 +27,19 @@ from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
+__all__ = [
+    "MapLayer",
+    "AgentResponse",
+    "to_bounding_box",
+    "get_source_text",
+    "query_geo_agent",
+    "AgentError",
+    "InvalidRequestError",
+    "LLMNotConfiguredError",
+    "LLMRateLimitError",
+    "LLMError",
+]
+
 # ==============================================================================
 # 0. Backend GeoRAG Agent Discovery & Exception Contract
 # ==============================================================================
