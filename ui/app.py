@@ -43,6 +43,12 @@ REQUIRED_DEPENDENCIES = {
     "streamlit_folium": "streamlit-folium>=0.18.0",
     "streamlit_adjustable_columns": "streamlit-adjustable-columns>=0.2.0",
     "pytest": "pytest>=7.0.0",
+    "pydantic": "pydantic>=2.7,<3",
+    "networkx": "networkx>=3.4,<4",
+    "langchain_core": "langchain-core>=1.0,<2",
+    "langchain_openai": "langchain-openai>=1.0,<2",
+    "openai": "openai",
+    "dotenv": "python-dotenv>=1.0,<2",
 }
 
 def verify_and_install_dependencies():
@@ -79,8 +85,50 @@ except ImportError:
     def adjustable_columns(spec, **kwargs):
         return st.columns(spec)
 
-# Import backend contracts, mock routing engine, and bounding box utility
-from geo_agent import MapLayer, AgentResponse, query_geo_agent, to_bounding_box
+# Import backend contracts, routing engine, utilities, and errors
+from geo_agent import (
+    MapLayer,
+    AgentResponse,
+    query_geo_agent,
+    to_bounding_box,
+    get_source_text,
+    AgentError,
+)
+
+def dispatch_geo_query(
+    text_prompt: Optional[str] = None,
+    selected_point: Optional[Tuple[float, float]] = None,
+    bounding_box: Optional[Tuple[Tuple[float, float], Tuple[float, float]]] = None
+) -> Optional[AgentResponse]:
+    """Execute query_geo_agent with error handling, session state persistence, and layer hydration."""
+    api_key = st.session_state.get("openrouter_api_key") or None
+    agent_turns = st.session_state.get("agent_turns", [])
+    try:
+        with st.spinner("🛰️ Querying GeoRAG Agent..."):
+            agent_resp: AgentResponse = query_geo_agent(
+                text_prompt=text_prompt,
+                selected_point=selected_point,
+                bounding_box=bounding_box,
+                chat_history=st.session_state.messages,
+                api_key=api_key,
+                agent_turns=agent_turns
+            )
+            # Retain backend turns for conversation continuity if query was typed
+            if agent_resp and agent_resp.raw_response and text_prompt:
+                st.session_state.agent_turns.append({
+                    "query": text_prompt,
+                    "response": agent_resp.raw_response
+                })
+                if len(st.session_state.agent_turns) > 5:
+                    st.session_state.agent_turns = st.session_state.agent_turns[-5:]
+            return agent_resp
+    except AgentError as err:
+        st.error(f"⚠️ **GeoRAG Agent Error:** {err}")
+        return None
+    except Exception as err:
+        st.error(f"⚠️ **Unexpected Error:** {err}")
+        return None
+
 
 
 # ==============================================================================
@@ -427,6 +475,19 @@ if "keep_points" not in st.session_state:
     # Whether to keep selected points after sending a chat prompt
     st.session_state.keep_points = False
 
+if "openrouter_api_key" not in st.session_state:
+    # Initial load from st.secrets or environment variable if available
+    import os
+    st.session_state.openrouter_api_key = (
+        st.secrets.get("OPENROUTER_API_KEY", "")
+        if hasattr(st, "secrets") and "OPENROUTER_API_KEY" in st.secrets
+        else os.environ.get("OPENROUTER_API_KEY", "")
+    )
+
+if "agent_turns" not in st.session_state:
+    # List of prior conversational turns formatted for the backend agent
+    st.session_state.agent_turns = []
+
 
 # ==============================================================================
 # 3. Sidebar Utility Controls & Intelligence Dashboard
@@ -434,6 +495,26 @@ if "keep_points" not in st.session_state:
 with st.sidebar:
     st.markdown("<div class='sidebar-title'>🌍 GEO-AI COMMAND</div>", unsafe_allow_html=True)
     st.caption("Multimodal Geocoded RAG Intelligence")
+    st.markdown("---")
+
+    # Agent Connection Credentials & Mode HUD Indicator
+    st.subheader("🔑 Agent Connection")
+    api_key_input = st.text_input(
+        "OpenRouter API Key:",
+        type="password",
+        value=st.session_state.get("openrouter_api_key", ""),
+        help="Enter your OpenRouter key (https://openrouter.ai/keys) to connect to the live backend agent. Leave blank for offline mock mode.",
+        key="openrouter_key_input"
+    )
+    if api_key_input != st.session_state.get("openrouter_api_key", ""):
+        st.session_state.openrouter_api_key = api_key_input
+        st.rerun()
+
+    if st.session_state.get("openrouter_api_key"):
+        st.markdown("<div class='geo-badge' style='background:rgba(0,229,255,0.18); color:#00e5ff;'>🟢 LIVE GEORAG AGENT</div>", unsafe_allow_html=True)
+    else:
+        st.markdown("<div class='geo-badge' style='background:rgba(255,193,7,0.15); color:#ffc107;'>🟡 OFFLINE SIMULATION (MOCK)</div>", unsafe_allow_html=True)
+
     st.markdown("---")
 
 
@@ -515,23 +596,28 @@ with st.sidebar:
                     st.rerun()
             with col_b2:
                 if st.button("🔍 Recon Scan", use_container_width=True, help="Run reconnaissance scan on bounding box"):
-                    recon_response: AgentResponse = query_geo_agent(
+                    recon_response = dispatch_geo_query(
                         text_prompt=None,
                         selected_point=None,
-                        bounding_box=st.session_state.bounding_box,
-                        chat_history=st.session_state.messages
+                        bounding_box=st.session_state.bounding_box
                     )
-                    st.session_state.messages.append({
-                        "role": "user",
-                        "content": f"Reconnaissance requested for bounding box: Lower-Left ({ll[0]:.4f}°, {ll[1]:.4f}°), Upper-Right ({ur[0]:.4f}°, {ur[1]:.4f}°)"
-                    })
-                    st.session_state.messages.append({"role": "assistant", "content": recon_response.answer})
-                    st.session_state.map_layers.extend(recon_response.layers)
-                    if not st.session_state.get("keep_points", False):
-                        st.session_state.selected_points = []
-                        st.session_state.bounding_box = None
-                        st.session_state.active_point = None
-                    st.rerun()
+                    if recon_response:
+                        st.session_state.messages.append({
+                            "role": "user",
+                            "content": f"Reconnaissance requested for bounding box: Lower-Left ({ll[0]:.4f}°, {ll[1]:.4f}°), Upper-Right ({ur[0]:.4f}°, {ur[1]:.4f}°)"
+                        })
+                        st.session_state.messages.append({
+                            "role": "assistant",
+                            "content": recon_response.answer,
+                            "sources": recon_response.sources,
+                            "is_live": recon_response.is_live_backend
+                        })
+                        st.session_state.map_layers.extend(recon_response.layers)
+                        if not st.session_state.get("keep_points", False):
+                            st.session_state.selected_points = []
+                            st.session_state.bounding_box = None
+                            st.session_state.active_point = None
+                        st.rerun()
 
             st.checkbox("Keep points selected after sending prompt", key="keep_points")
 
@@ -587,23 +673,28 @@ with st.sidebar:
             with col_b2:
                 if st.button("🔍 Recon Scan", use_container_width=True, help="Run reconnaissance scan on selected point"):
                     pt = st.session_state.selected_points[0] if st.session_state.selected_points else None
-                    recon_response: AgentResponse = query_geo_agent(
+                    recon_response = dispatch_geo_query(
                         text_prompt=None,
                         selected_point=pt,
-                        bounding_box=None,
-                        chat_history=st.session_state.messages
+                        bounding_box=None
                     )
-                    st.session_state.messages.append({
-                        "role": "user",
-                        "content": f"Reconnaissance requested for coordinate: {plat:.4f}°, {plng:.4f}°"
-                    })
-                    st.session_state.messages.append({"role": "assistant", "content": recon_response.answer})
-                    st.session_state.map_layers.extend(recon_response.layers)
-                    if not st.session_state.get("keep_points", False):
-                        st.session_state.selected_points = []
-                        st.session_state.bounding_box = None
-                        st.session_state.active_point = None
-                    st.rerun()
+                    if recon_response:
+                        st.session_state.messages.append({
+                            "role": "user",
+                            "content": f"Reconnaissance requested for coordinate: {plat:.4f}°, {plng:.4f}°"
+                        })
+                        st.session_state.messages.append({
+                            "role": "assistant",
+                            "content": recon_response.answer,
+                            "sources": recon_response.sources,
+                            "is_live": recon_response.is_live_backend
+                        })
+                        st.session_state.map_layers.extend(recon_response.layers)
+                        if not st.session_state.get("keep_points", False):
+                            st.session_state.selected_points = []
+                            st.session_state.bounding_box = None
+                            st.session_state.active_point = None
+                        st.rerun()
 
             st.checkbox("Keep point selected after sending prompt", key="keep_points")
         else:
@@ -721,39 +812,66 @@ with col1:
                 active_pt = None if is_bbox else (st.session_state.selected_points[0] if st.session_state.get("selected_points") else None)
                 active_bbox = st.session_state.get("bounding_box") if is_bbox else None
 
-                recon_resp = query_geo_agent(
+                recon_resp = dispatch_geo_query(
                     text_prompt=None,
                     selected_point=active_pt,
-                    bounding_box=active_bbox,
-                    chat_history=st.session_state.messages
+                    bounding_box=active_bbox
                 )
-                if is_bbox_mode and st.session_state.get("bounding_box"):
-                    b_ll, b_ur = st.session_state.bounding_box
-                    user_msg = f"Reconnaissance requested for bounding box: Lower-Left ({b_ll[0]:.4f}°, {b_ll[1]:.4f}°), Upper-Right ({b_ur[0]:.4f}°, {b_ur[1]:.4f}°)"
-                else:
-                    plat, plng = st.session_state.selected_points[0]
-                    user_msg = f"Reconnaissance requested for coordinate: ({plat:.4f}°, {plng:.4f}°)"
+                if recon_resp:
+                    if is_bbox_mode and st.session_state.get("bounding_box"):
+                        b_ll, b_ur = st.session_state.bounding_box
+                        user_msg = f"Reconnaissance requested for bounding box: Lower-Left ({b_ll[0]:.4f}°, {b_ll[1]:.4f}°), Upper-Right ({b_ur[0]:.4f}°, {b_ur[1]:.4f}°)"
+                    else:
+                        plat, plng = st.session_state.selected_points[0]
+                        user_msg = f"Reconnaissance requested for coordinate: ({plat:.4f}°, {plng:.4f}°)"
 
-                st.session_state.messages.append({"role": "user", "content": user_msg})
-                st.session_state.messages.append({"role": "assistant", "content": recon_resp.answer})
-                st.session_state.map_layers.extend(recon_resp.layers)
-                if not st.session_state.get("keep_points", False):
-                    st.session_state.selected_points = []
-                    st.session_state.bounding_box = None
-                    st.session_state.active_point = None
-                st.rerun()
+                    st.session_state.messages.append({"role": "user", "content": user_msg})
+                    st.session_state.messages.append({
+                        "role": "assistant",
+                        "content": recon_resp.answer,
+                        "sources": recon_resp.sources,
+                        "is_live": recon_resp.is_live_backend
+                    })
+                    st.session_state.map_layers.extend(recon_resp.layers)
+                    if not st.session_state.get("keep_points", False):
+                        st.session_state.selected_points = []
+                        st.session_state.bounding_box = None
+                        st.session_state.active_point = None
+                    st.rerun()
 
     # Render conversational message history inside a dedicated scroll container with its own scrollbar
     chat_container_height = 360 if st.session_state.selected_points else 450
     chat_container = st.container(height=chat_container_height)
     with chat_container:
-        for msg in st.session_state.messages:
+        for m_idx, msg in enumerate(st.session_state.messages):
             role = msg["role"]
             avatar = t_cfg["user_avatar"] if role == "user" else t_cfg["ai_avatar"]
             role_tag = t_cfg["operator_tag"] if role == "user" else t_cfg["ai_tag"]
+            if role == "assistant" and msg.get("is_live"):
+                role_tag += " • [LIVE RAG]"
+
             with st.chat_message(role, avatar=avatar):
                 st.markdown(f"<div class='chat-role-tag'>{role_tag}</div>", unsafe_allow_html=True)
                 st.markdown(msg["content"])
+
+                # Source Evidence Inspection Drawer
+                msg_sources = msg.get("sources", [])
+                if msg_sources:
+                    with st.expander(f"📑 Verified Sources ({len(msg_sources)})", expanded=False):
+                        for s_idx, src_doc in enumerate(msg_sources):
+                            c_doc, c_btn = st.columns([3, 1])
+                            with c_doc:
+                                st.caption(f"📄 **{src_doc}**")
+                            with c_btn:
+                                if st.button("Inspect", key=f"btn_src_{m_idx}_{s_idx}"):
+                                    passage = get_source_text(src_doc)
+                                    if passage and passage.get("text"):
+                                        st.session_state[f"src_content_{m_idx}_{s_idx}"] = passage["text"]
+                                    else:
+                                        st.session_state[f"src_content_{m_idx}_{s_idx}"] = "(No inline corpus text available for this reference)"
+
+                            if f"src_content_{m_idx}_{s_idx}" in st.session_state:
+                                st.info(st.session_state[f"src_content_{m_idx}_{s_idx}"])
 
     # Chat input box for user queries
     user_prompt = st.chat_input("Type a question (e.g. 'What units are stationed here?')...")
@@ -762,30 +880,35 @@ with col1:
         # 1. Append user's message to chat history
         st.session_state.messages.append({"role": "user", "content": user_prompt})
 
-        # 2. Invoke the mock GeoAI agent router with text, selected_point, and bounding_box
+        # 2. Invoke the GeoAI agent router with text, selected_point, and bounding_box
         is_bbox = (st.session_state.get("selection_mode") == "Bounding Box") and (st.session_state.get("bounding_box") is not None)
         active_pt = None if is_bbox else (st.session_state.selected_points[0] if st.session_state.get("selected_points") else None)
         active_bbox = st.session_state.get("bounding_box") if is_bbox else None
 
-        agent_resp: AgentResponse = query_geo_agent(
+        agent_resp = dispatch_geo_query(
             text_prompt=user_prompt,
             selected_point=active_pt,
-            bounding_box=active_bbox,
-            chat_history=st.session_state.messages
+            bounding_box=active_bbox
         )
 
-        # 3. Append assistant response and extend visual map layers
-        st.session_state.messages.append({"role": "assistant", "content": agent_resp.answer})
-        st.session_state.map_layers.extend(agent_resp.layers)
+        if agent_resp:
+            # 3. Append assistant response and extend visual map layers
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": agent_resp.answer,
+                "sources": agent_resp.sources,
+                "is_live": agent_resp.is_live_backend
+            })
+            st.session_state.map_layers.extend(agent_resp.layers)
 
-        # 4. Reset selected points unless user chose to retain them
-        if not st.session_state.get("keep_points", False):
-            st.session_state.selected_points = []
-            st.session_state.bounding_box = None
-            st.session_state.active_point = None
+            # 4. Reset selected points unless user chose to retain them
+            if not st.session_state.get("keep_points", False):
+                st.session_state.selected_points = []
+                st.session_state.bounding_box = None
+                st.session_state.active_point = None
 
-        # 5. Refresh application state to immediately display updates
-        st.rerun()
+            # 5. Refresh application state to immediately display updates
+            st.rerun()
 
 
 # ------------------------------------------------------------------------------

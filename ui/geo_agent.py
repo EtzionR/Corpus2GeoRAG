@@ -18,8 +18,75 @@ Function:
 
 from __future__ import annotations
 
+import os
+import sys
+import logging
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
+
+logger = logging.getLogger(__name__)
+
+# ==============================================================================
+# 0. Backend GeoRAG Agent Discovery & Exception Contract
+# ==============================================================================
+
+_BACKEND_AVAILABLE = False
+_backend_query = None
+_backend_get_source_text = None
+
+# Attempt to locate AgentRag dynamically
+_current_dir = Path(__file__).resolve().parent
+_potential_agent_dirs = [
+    _current_dir.parent / "AgentRag",
+    _current_dir / "AgentRag",
+    Path("C:/Users/Dani/Source/Corpus2GeoRAG/AgentRag"),
+]
+for _p in _potential_agent_dirs:
+    if (_p / "georag_agent.py").is_file():
+        if str(_p) not in sys.path:
+            sys.path.insert(0, str(_p))
+        break
+
+# Discover default knowledge_graph.json if GRAPH_PATH is not explicitly set
+if "GRAPH_PATH" not in os.environ:
+    _potential_graph_paths = [
+        _current_dir.parent / "Graph_n_Geocoding" / "knowledge_graph.json",
+        Path("C:/Users/Dani/Source/Corpus2GeoRAG/Graph_n_Geocoding/knowledge_graph.json"),
+    ]
+    for _gp in _potential_graph_paths:
+        if _gp.is_file():
+            os.environ["GRAPH_PATH"] = str(_gp)
+            break
+
+try:
+    from georag_agent import (
+        query as _backend_query,
+        get_source_text as _backend_get_source_text,
+        AgentError,
+        InvalidRequestError,
+        LLMNotConfiguredError,
+        LLMRateLimitError,
+        LLMError,
+    )
+    _BACKEND_AVAILABLE = True
+except Exception as _import_err:
+    logger.debug("GeoRAG backend not importable directly: %s", _import_err)
+
+    class AgentError(RuntimeError):
+        """Base class for every error the agent raises on purpose."""
+
+    class InvalidRequestError(AgentError):
+        """The question or location passed in doesn't match the contract."""
+
+    class LLMNotConfiguredError(AgentError):
+        """No OpenRouter key was given, or OpenRouter rejected it."""
+
+    class LLMRateLimitError(AgentError):
+        """OpenRouter's rate limit was hit (common on free models) - retry shortly."""
+
+    class LLMError(AgentError):
+        """OpenRouter failed, or the LLM answered in a shape the agent can't use - retry."""
 
 
 # ==============================================================================
@@ -58,13 +125,19 @@ class AgentResponse:
             including analytical assessments, spatial context, or situational reports.
         layers (List[MapLayer]): A collection of map layers synthesized or retrieved
             by the agent to be displayed synchronously on the frontend map.
+        sources (List[str]): Source document titles or pointers backing the answer.
+        raw_response (Optional[Dict[str, Any]]): Original response dictionary from the backend.
+        is_live_backend (bool): Whether the response was produced by the live GeoRAG agent.
     """
     answer: str
     layers: List[MapLayer] = field(default_factory=list)
+    sources: List[str] = field(default_factory=list)
+    raw_response: Optional[Dict[str, Any]] = None
+    is_live_backend: bool = False
 
 
 # ==============================================================================
-# 2. Mock Geo-Agent Routing Function & Bounding Box Utilities
+# 2. Bounding Box & Source Utilities
 # ==============================================================================
 
 def to_bounding_box(
@@ -88,40 +161,183 @@ def to_bounding_box(
     return (lower_left, upper_right)
 
 
+def get_source_text(pointer: str) -> Optional[Dict[str, str]]:
+    """
+    Retrieve verbatim source text passages for a given document pointer from the knowledge graph.
+    Returns {'text': ..., 'document': ...} or None if not found or backend unavailable.
+    """
+    if _backend_get_source_text is not None:
+        try:
+            return _backend_get_source_text(pointer)
+        except Exception as e:
+            logger.warning("Error fetching source text for '%s': %s", pointer, e)
+            return None
+    return None
+
+
+# ==============================================================================
+# 3. GeoAI Routing Entrypoint (Adapter with Mock Fallback)
+# ==============================================================================
+
 def query_geo_agent(
     text_prompt: Optional[str] = None,
     selected_point: Optional[Tuple[float, float]] = None,
     bounding_box: Optional[Tuple[Tuple[float, float], Tuple[float, float]]] = None,
     chat_history: Optional[List[Dict[str, Any]]] = None,
+    api_key: Optional[str] = None,
+    agent_turns: Optional[List[Dict[str, Any]]] = None,
+    force_mock: bool = False,
     **kwargs: Any
 ) -> AgentResponse:
     """
     Route and process user multimodal requests combining free-form text queries,
     interactive map click coordinates, bounding box extents, and conversational context.
 
-    This mock implementation simulates a spatial RAG agent handling key scenarios:
-      Scenario A: Both `text_prompt` AND target point or bounding box are provided.
-                  Example: User selects bounding box and asks "What units are stationed here?".
-                  Response: References query intent and bounding box / target coordinates.
-      Scenario B: Only target point or bounding box are provided.
-                  Example: User clicks "Run Reconnaissance" on selected bounding box / point.
-                  Response: Generic spatial reconnaissance summary for the coordinates.
-      Scenario C: Only `text_prompt` is provided.
-                  Example: User asks "Show key logistics nodes in central Ukraine".
-                  Response: General spatial analysis accompanied by dummy strategic coordinates.
-
-    Args:
-        text_prompt (Optional[str]): Natural language prompt input by the user.
-        selected_point (Optional[Tuple[float, float]]): Coordinate tuple (latitude, longitude)
-            representing a selected point on the map.
-        bounding_box (Optional[Tuple[Tuple[float, float], Tuple[float, float]]]): Two-point
-            bounding box tuple ((min_lat, min_lng), (max_lat, max_lng)). When provided,
-            points are not placed in `selected_point`.
-        chat_history (Optional[List[Dict[str, Any]]]): Prior conversation messages for context.
-
-    Returns:
-        AgentResponse: Structured object containing synthesis answer text and map layers.
+    If an OpenRouter API key is provided (or in OPENROUTER_API_KEY environment variable)
+    and the backend agent is available, this routes to the real LangChain/OpenRouter
+    GeoRAG agent. Otherwise, it seamlessly delegates to the built-in deterministic
+    mock engine.
     """
+    effective_key = api_key or os.environ.get("OPENROUTER_API_KEY")
+
+    # If backend agent is available and API key is present, invoke live agent
+    if _BACKEND_AVAILABLE and effective_key and not force_mock:
+        has_text = bool(text_prompt and text_prompt.strip())
+        if bounding_box and len(bounding_box) == 2:
+            selected_point = None
+
+        # 1. Format geo_location in GeoJSON [lon, lat] order
+        geo_location: Optional[Dict[str, Any]] = None
+        if bounding_box and len(bounding_box) == 2:
+            (min_lat, min_lng), (max_lat, max_lng) = to_bounding_box(bounding_box[0], bounding_box[1])
+            w, s = min_lng, min_lat
+            e, n = max_lng, max_lat
+            geo_location = {
+                "type": "polygon",
+                "coordinates": [[[w, s], [e, s], [e, n], [w, n], [w, s]]]
+            }
+        elif selected_point:
+            lat, lng = selected_point
+            geo_location = {
+                "type": "point",
+                "coordinates": [round(float(lng), 5), round(float(lat), 5)],
+                "radius_m": 1000.0
+            }
+
+        # 2. Ensure non-empty text prompt (required by backend QueryRequest contract)
+        if has_text:
+            query_text = text_prompt.strip()
+        elif bounding_box:
+            (min_lat, min_lng), (max_lat, max_lng) = to_bounding_box(bounding_box[0], bounding_box[1])
+            query_text = (
+                f"Provide a tactical intelligence reconnaissance summary for the bounding box sector "
+                f"between SW ({min_lat:.4f}°, {min_lng:.4f}°) and NE ({max_lat:.4f}°, {max_lng:.4f}°)."
+            )
+        elif selected_point:
+            query_text = (
+                f"Provide a tactical intelligence reconnaissance summary for coordinate "
+                f"({selected_point[0]:.4f}°, {selected_point[1]:.4f}°)."
+            )
+        else:
+            query_text = "Provide an intelligence assessment of key operational corridors and nodes."
+
+        # 3. Prepare chat turns if passed
+        turns = agent_turns if isinstance(agent_turns, list) else []
+
+        # 4. Invoke backend query
+        raw_result = _backend_query(
+            text_prompt=query_text,
+            geo_location=geo_location,
+            chat_history=turns,
+            api_key=effective_key
+        )
+
+        # 5. Hydrate MapLayers from backend geo_locations (converting [lon, lat] -> [lat, lon])
+        layers: List[MapLayer] = []
+        for loc in raw_result.get("geo_locations", []):
+            geom = loc.get("geometry", {})
+            coords = geom.get("coordinates", [])
+            if len(coords) >= 2:
+                lon, lat = coords[0], coords[1]
+                kind = loc.get("kind", "place")
+                label = loc.get("label", loc.get("id", "Unknown Node"))
+                node_id = loc.get("id", "")
+                sources_list = loc.get("sources", [])
+
+                color = "red" if kind == "event" else "blue"
+                src_html = f"<br><b>Sources:</b> {', '.join(sources_list)}" if sources_list else ""
+                popup_content = (
+                    f"<div style='font-family:monospace; padding:6px;'>"
+                    f"<b>★ {label}</b><br>"
+                    f"ID: <code>{node_id}</code><br>"
+                    f"TYPE: <code>{kind.upper()}</code><br>"
+                    f"LAT: <code>{lat:.5f}°</code><br>"
+                    f"LNG: <code>{lon:.5f}°</code>"
+                    f"{src_html}"
+                    f"</div>"
+                )
+                layers.append(MapLayer(
+                    name=f"[{kind.upper()}] {label}",
+                    layer_type="marker",
+                    data={"lat": round(lat, 5), "lng": round(lon, 5), "id": node_id, "kind": kind},
+                    color=color,
+                    tooltip=f"[{kind.upper()}] {label}",
+                    popup=popup_content
+                ))
+
+        # Add visual search boundary layer
+        if bounding_box and len(bounding_box) == 2:
+            (min_lat, min_lng), (max_lat, max_lng) = to_bounding_box(bounding_box[0], bounding_box[1])
+            bbox_poly = [
+                [min_lat, min_lng],
+                [max_lat, min_lng],
+                [max_lat, max_lng],
+                [min_lat, max_lng],
+                [min_lat, min_lng]
+            ]
+            layers.append(MapLayer(
+                name=f"Sector BBox [{min_lat:.3f}, {min_lng:.3f}]-[{max_lat:.3f}, {max_lng:.3f}]",
+                layer_type="polygon",
+                data={"coordinates": bbox_poly},
+                color="cyan",
+                tooltip="Active Query Bounding Box",
+                popup=f"<b>Bounding Box Sector</b><br>SW: ({min_lat:.4f}°, {min_lng:.4f}°)<br>NE: ({max_lat:.4f}°, {max_lng:.4f}°)"
+            ))
+        elif selected_point:
+            layers.append(MapLayer(
+                name=f"Target Buffer ({selected_point[0]:.3f}, {selected_point[1]:.3f})",
+                layer_type="circle",
+                data={"lat": selected_point[0], "lng": selected_point[1], "radius": 5000},
+                color="cyan",
+                tooltip="Target Buffer (5km)",
+                popup=f"<b>Target Coordinate:</b> ({selected_point[0]:.4f}°, {selected_point[1]:.4f}°)"
+            ))
+
+        return AgentResponse(
+            answer=raw_result.get("answer", ""),
+            layers=layers,
+            sources=raw_result.get("sources", []),
+            raw_response=raw_result,
+            is_live_backend=True
+        )
+
+    # Fallback to deterministic mock routing
+    return _query_mock_agent(
+        text_prompt=text_prompt,
+        selected_point=selected_point,
+        bounding_box=bounding_box,
+        chat_history=chat_history,
+        **kwargs
+    )
+
+
+def _query_mock_agent(
+    text_prompt: Optional[str] = None,
+    selected_point: Optional[Tuple[float, float]] = None,
+    bounding_box: Optional[Tuple[Tuple[float, float], Tuple[float, float]]] = None,
+    chat_history: Optional[List[Dict[str, Any]]] = None,
+    **kwargs: Any
+) -> AgentResponse:
     # Normalize inputs
     has_text = bool(text_prompt and text_prompt.strip())
 

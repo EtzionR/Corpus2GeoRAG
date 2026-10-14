@@ -482,3 +482,105 @@ class TestBoundingBox:
         selected_points = []
         assert len(selected_points) == 0
 
+
+class TestBackendAdapter:
+    """Validate backend RAG adapter transformations and interface contracts."""
+
+    def test_adapter_delegation_without_key_uses_mock(self):
+        """When no API key is provided, adapter cleanly falls back to deterministic mock."""
+        resp = query_geo_agent(text_prompt="Test query", api_key=None, force_mock=False)
+        assert isinstance(resp, AgentResponse)
+        assert resp.is_live_backend is False
+        assert "Test query" in resp.answer
+
+    def test_adapter_point_transformation(self, monkeypatch):
+        """Verify (lat, lng) is transformed to GeoJSON [lng, lat] point dict for backend."""
+        import geo_agent
+
+        captured_args = {}
+
+        def fake_backend_query(text_prompt, geo_location=None, chat_history=None, api_key=None):
+            captured_args["text_prompt"] = text_prompt
+            captured_args["geo_location"] = geo_location
+            captured_args["chat_history"] = chat_history
+            captured_args["api_key"] = api_key
+            return {
+                "answer": "According to the graph, target located.",
+                "geo_locations": [
+                    {
+                        "id": "Kyiv",
+                        "label": "Kyiv",
+                        "kind": "place",
+                        "geometry": {"type": "point", "coordinates": [30.5234, 50.4501]},
+                        "sources": ["Doc-1"]
+                    }
+                ],
+                "sources": ["Doc-1"]
+            }
+
+        monkeypatch.setattr(geo_agent, "_BACKEND_AVAILABLE", True)
+        monkeypatch.setattr(geo_agent, "_backend_query", fake_backend_query)
+
+        # Call with lat=50.4501, lng=30.5234
+        resp = query_geo_agent(
+            text_prompt="Where is Kyiv?",
+            selected_point=(50.4501, 30.5234),
+            api_key="test-key-123"
+        )
+
+        assert resp.is_live_backend is True
+        assert captured_args["api_key"] == "test-key-123"
+        assert captured_args["geo_location"] is not None
+        assert captured_args["geo_location"]["type"] == "point"
+        # Coordinates must be [lon, lat]
+        assert captured_args["geo_location"]["coordinates"] == [30.5234, 50.4501]
+
+        # Verify output layers have inverted back to Folium [lat, lng]
+        assert len(resp.layers) >= 1
+        marker_layer = [l for l in resp.layers if l.name == "[PLACE] Kyiv"][0]
+        assert marker_layer.data["lat"] == 50.4501
+        assert marker_layer.data["lng"] == 30.5234
+        assert resp.sources == ["Doc-1"]
+
+    def test_adapter_bounding_box_transformation(self, monkeypatch):
+        """Verify ((min_lat, min_lng), (max_lat, max_lng)) becomes closed 5-point GeoJSON ring."""
+        import geo_agent
+
+        captured_args = {}
+
+        def fake_backend_query(text_prompt, geo_location=None, chat_history=None, api_key=None):
+            captured_args["geo_location"] = geo_location
+            return {
+                "answer": "Analyzed bounding box sector.",
+                "geo_locations": [],
+                "sources": []
+            }
+
+        monkeypatch.setattr(geo_agent, "_BACKEND_AVAILABLE", True)
+        monkeypatch.setattr(geo_agent, "_backend_query", fake_backend_query)
+
+        # Latitudes: 48.0 to 50.0, Longitudes: 31.0 to 35.0
+        bbox = ((48.0, 31.0), (50.0, 35.0))
+        resp = query_geo_agent(
+            text_prompt=None,  # Recon scan
+            bounding_box=bbox,
+            api_key="test-key-123"
+        )
+
+        assert resp.is_live_backend is True
+        geo_loc = captured_args["geo_location"]
+        assert geo_loc["type"] == "polygon"
+        ring = geo_loc["coordinates"][0]
+        assert len(ring) == 5
+        # Ring must be closed: ring[0] == ring[-1]
+        assert ring[0] == ring[-1]
+        # Ring order: [w, s], [e, s], [e, n], [w, n], [w, s]
+        assert ring == [[31.0, 48.0], [35.0, 48.0], [35.0, 50.0], [31.0, 50.0], [31.0, 48.0]]
+
+    def test_get_source_text_fallback_when_unavailable(self, monkeypatch):
+        """get_source_text returns None when backend function is unavailable."""
+        import geo_agent
+        monkeypatch.setattr(geo_agent, "_backend_get_source_text", None)
+        assert geo_agent.get_source_text("nonexistent_doc") is None
+
+
