@@ -5,7 +5,7 @@ keeps it up to date without re-downloading everything, filters it to military co
 `DATA.json` in exactly the format of `examples/DATA.json` for the next step.
 
 ```
-build ──► update ──► filter ──► export
+build ──► update ──► filter (categories) ──► selector (content) ──► export
 pages.jsonl (rich: sections, coordinates, revisions)  ──►  DATA.json ({title: text}, for ApplyNER)
 ```
 
@@ -16,8 +16,9 @@ The scripts' `main()` only parses arguments and calls the same functions
 (`build()`, `update()`, `filter_corpus()`, `export_data_json()`; `summarize()` is in the scripts only).
 [Open in Colab](https://colab.research.google.com/github/arielax-212/Corpus2GeoRAG/blob/main/CollectCorpus/CollectCorpus.ipynb).
 
-**`DATA.json`** in this folder is the output for the next step: the filtered (military) corpus,
-`{title: text}`, in exactly the format of `examples/DATA.json`. The richer `pages.jsonl` files
+**`DATA.json`** in this folder is the output for the next step: the filtered (military) corpus, 1,602 pages,
+`{title: text}`, in exactly the format of `examples/DATA.json`. It holds the pages kept by the category filter
+and then by the selector (zones "accept" and "review"; the 308 "reject" pages were removed). The richer `pages.jsonl` files
 (all pages before filtering, with sections, coordinates, links and revisions) stay in `data/` and are not committed.
 
 ## Setup
@@ -35,7 +36,33 @@ Run all commands from this folder. Output goes to `data/<corpus name>/` (not com
 | `update_corpus.py` | Incremental update: re-downloads only pages that changed on Wikipedia. |
 | `filter_corpus.py` | Keeps military content, by the decisions in `filters/category_review.csv`. Writes a new corpus; the original is not touched. |
 | `export_corpus.py` | Writes `DATA.json` (`{title: text}`) in exactly the format of `examples/DATA.json`. |
+| `selector/` | The selector: decides from a page's text how related it is to the corpus (see below). |
 | `summarize_corpus.py` | Writes `summaries/<name>/summary.md` (overview) and `summary.csv` (one row per page). These are committed, so the team can see what's in the corpus without the data. |
+
+## The selector (`selector/`)
+Decides, from the text itself, whether a page belongs in the corpus (the Russia–Ukraine war, military focus).
+It is meant as the gate for new pages, and was also applied to the existing corpus.
+```
+page ─► paragraphs ─► E5 (multilingual-e5-large) vectors ─► logistic regression ─► probability per paragraph
+     ─► related paragraphs = probability ≥ 0.7;  page score = their share
+     ─► accept  if score ≥ 0.30, or ≥ 7 related paragraphs (long pages with a military section)
+        review  if 0.10 ≤ score < 0.30        reject  if score < 0.10
+```
+- **Training:** 1,194 paragraphs of the 20 pages in `selector/training_pages.csv`: 10 clearly related (battles,
+  a unit, a weapon) and 10 not (close in topic but not military, or military but another war).
+- **Thresholds:** chosen by testing on the existing corpus (2,853 pages, never trained on): AUC 0.834;
+  about 91% of the pages in "accept" were kept by the category filter.
+- **Use it:**
+  ```python
+  from selector.selector import Selector
+  gate = Selector.load("selector/model")     # downloads E5 on first use; a GPU is much faster
+  gate.score_page(text)    # {"score", "decision": "accept"/"review"/"reject", "paragraphs", "related_paragraphs"}
+  ```
+- **Files:** `selector.py` (the selector), `build_training_set.py` (splitting pages into paragraphs, the training set),
+  `prepare_eval.py` (the test set), `SelectorTraining.ipynb` (training and thresholds on Colab),
+  `apply_to_corpus.py` (applies the zones to the corpus), `model/` (the trained classifier).
+  The model was trained with scikit-learn 1.6 (Colab); newer versions load it with a version warning.
+- **Applied to the corpus:** `summaries/ukraine_war_selected/` (`selector_zones.csv`: every page's score and zone).
 
 ## Building the Russia–Ukraine war corpus
 ```bash

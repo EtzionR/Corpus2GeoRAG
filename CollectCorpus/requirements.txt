@@ -1,2 +1,7 @@
 wikipedia-api
 requests
+pandas
+numpy
+scikit-learn
+joblib
+sentence-transformers
