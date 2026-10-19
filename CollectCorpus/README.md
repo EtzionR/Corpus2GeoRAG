@@ -64,6 +64,20 @@ page ─► paragraphs ─► E5 (multilingual-e5-large) vectors ─► logistic
   The model was trained with scikit-learn 1.6 (Colab); newer versions load it with a version warning.
 - **Applied to the corpus:** `summaries/ukraine_war_selected/` (`selector_zones.csv`: every page's score and zone).
 
+## Expanding the corpus: BFS over page links (depth 1)
+New pages come from the links of the pages already in the corpus, one step away, and each new page
+enters only if the selector accepts it.
+```bash
+python -m selector.expand_bfs --min-links 10     # find candidates, resolve redirects, download (resumable)
+```
+- Candidates: pages linked from at least `--min-links` corpus pages, not in the corpus, real articles
+  ("List of …" pages skipped by default: their content is mostly tables). Redirects and other names of corpus
+  pages are resolved and dropped. Pages scored before are not downloaded again.
+- Scoring runs on Colab GPU: `selector/ScoreNewPages.ipynb` (upload `candidates_links10.jsonl` to `MyDrive/selector`).
+- First run (`--min-links 10`, 2026-10-19): 4,106 new pages → 938 accept, 505 review, 2,663 reject.
+  Every page's score and decision: `summaries/expansion_links10/expansion_scores.csv`.
+  The accepted pages are not in `DATA.json` yet (pending a review of the quantity rule on new pages).
+
 ## Building the Russia–Ukraine war corpus
 ```bash
 python build_corpus.py --name ukraine_war --depth 2 \
