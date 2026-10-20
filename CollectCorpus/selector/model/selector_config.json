@@ -1,0 +1,7 @@
+{
+  "model_name": "intfloat/multilingual-e5-large",
+  "paragraph_threshold": 0.7,
+  "accept_threshold": 0.3,
+  "reject_threshold": 0.1,
+  "min_related_paragraphs": 7
+}
