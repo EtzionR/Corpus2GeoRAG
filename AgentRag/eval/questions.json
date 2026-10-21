@@ -1,0 +1,54 @@
+{
+  "_about": "Test questions for the agent. q1-q14 are the project's question list (q15, z1, z2 added 2026-10-21) (q1-q10: places connected to X; q11-q14: the four core types). v1-v13 are variants added to stress the understand step (typos, lower case, off-topic, follow-ups, map conflicts). In a geo_location, coordinates are [lon, lat]. chat_history uses the result shape query() returns.",
+  "sets": {
+    "core4": ["q11", "q12", "q13", "q14"],
+    "focus": ["q1", "q3", "q10", "q11", "q12", "q13", "q14", "q15", "z1", "z2"],
+    "focus7": ["q1", "q3", "q10", "q11", "q12", "q13", "q14"],
+    "zelenskyy_pair": ["z1", "z2"],
+    "project14": ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10", "q11", "q12", "q13", "q14"],
+    "understand_stress": ["v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13", "v14"]
+  },
+  "fixtures": {
+    "kyiv_centre_point": {"type": "point", "coordinates": [30.5234, 50.4501]},
+    "donbas_box": {"type": "polygon", "coordinates": [[[36.0, 47.0], [39.0, 47.0], [39.0, 49.5], [36.0, 49.5], [36.0, 47.0]]]},
+    "bakhmut_history": [{"query": "Show me all locations mentioned in connection with the Battle of Bakhmut.",
+                         "response": {"answer": "According to the corpus, ...", "sources": [],
+                                      "geo_locations": [{"id": "Bakhmut", "label": "Bakhmut"},
+                                                        {"id": "Soledar", "label": "Soledar"},
+                                                        {"id": "Klishchiivka", "label": "Klishchiivka"}]}}]
+  },
+  "questions": [
+    {"id": "q1",  "text": "Show me all locations connected to Volodymyr Zelenskyy."},
+    {"id": "q2",  "text": "Show me the locations associated with Vladimir Putin."},
+    {"id": "q3",  "text": "Show me all locations mentioned in connection with the Battle of Bakhmut."},
+    {"id": "q4",  "text": "Show me the locations of major battles in the Russia–Ukraine war."},
+    {"id": "q5",  "text": "Show me Ukrainian cities connected to Russian military operations."},
+    {"id": "q6",  "text": "Show me all locations connected to the Wagner Group."},
+    {"id": "q7",  "text": "Show me the locations connected to the Siege of Mariupol."},
+    {"id": "q8",  "text": "Show me all locations associated with NATO in the context of the Russia–Ukraine war."},
+    {"id": "q9",  "text": "Show me Ukrainian locations connected to Russian military commanders."},
+    {"id": "q10", "text": "Show me locations where Russia and Ukraine are both mentioned in connection with the same country."},
+    {"id": "q11", "text": "Who is the president of Ukraine and the president of Russia?", "note": "replaced 2026-10-20; the old q11 is v14"},
+    {"id": "q12", "text": "anything within 500m?", "geo_location": "kyiv_centre_point"},
+    {"id": "q13", "text": "Where is Dnipro?"},
+    {"id": "q14", "text": "Drone attacks in this bounding box", "geo_location": "donbas_box"},
+    {"id": "q15", "text": "Show me Kyiv", "note": "a place lookup whose answer should carry Kyiv's polygon (added 2026-10-21)"},
+    {"id": "z1",  "text": "Tell me about locations with Volodymyr Zelenskyy", "note": "list answer, then a drill-down (z2)"},
+    {"id": "z2",  "text": "Tell me about Zelenskyy in the White House", "follows": "z1", "note": "follow-up: the harness passes z1's places as chat history"},
+
+    {"id": "v1",  "text": "where is dnipro", "note": "lower case: not a fast-path name"},
+    {"id": "v2",  "text": "Tell me about Kharkov", "note": "old spelling of Kharkiv"},
+    {"id": "v3",  "text": "Show me locations connected to Zelensky", "note": "short spelling"},
+    {"id": "v4",  "text": "Who attacked Mariupol?", "note": "relation"},
+    {"id": "v5",  "text": "Who leads the Wagner Group?", "note": "relation, LEADS"},
+    {"id": "v6",  "text": "What happened in Bakhmut in 2023?", "note": "time words"},
+    {"id": "v7",  "text": "What is a good recipe for pasta?", "note": "out of scope"},
+    {"id": "v8",  "text": "show more", "chat_history": "bakhmut_history", "note": "follow-up: more"},
+    {"id": "v9",  "text": "Tell me about number 2", "chat_history": "bakhmut_history", "note": "follow-up: item"},
+    {"id": "v10", "text": "What is here?", "geo_location": "kyiv_centre_point", "note": "map point, no distance: default radius"},
+    {"id": "v11", "text": "Drone attacks in Kharkiv", "geo_location": "donbas_box", "note": "named place vs. map selection"},
+    {"id": "v12", "text": "Which countries are connected to both Russia and Ukraine?", "note": "common"},
+    {"id": "v13", "text": "Who was in charge of Ukraine's army during the counteroffensive?", "note": "concept + event"},
+    {"id": "v14", "text": "Tell me about the head of the Russian military", "note": "the original q11: concept + low-confidence LEADS (P2-45)"}
+  ]
+}
