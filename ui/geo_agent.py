@@ -21,6 +21,7 @@ from __future__ import annotations
 import os
 import sys
 import logging
+import functools
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -51,26 +52,29 @@ _backend_get_source_text = None
 # Attempt to locate AgentRag dynamically
 _current_dir = Path(__file__).resolve().parent
 _potential_agent_dirs = [
-    _current_dir.parent / "AgentRag",
-    _current_dir / "AgentRag",
-    Path("C:/Users/Dani/Source/Corpus2GeoRAG/AgentRag"),
+    _current_dir.parent / "AgentRag",                             # Inside Corpus2GeoRAG repository (standard layout)
+    _current_dir / "AgentRag",                                    # Local vendored copy
+    _current_dir.parent / "Corpus2GeoRAG" / "AgentRag",           # Sibling project directory
 ]
+if "AGENT_RAG_PATH" in os.environ:
+    _potential_agent_dirs.insert(0, Path(os.environ["AGENT_RAG_PATH"]))
+
 for _p in _potential_agent_dirs:
     if (_p / "georag_agent.py").is_file():
         if str(_p) not in sys.path:
             sys.path.insert(0, str(_p))
         break
 
-# Discover default knowledge_graph.json if GRAPH_PATH is not explicitly set
-if "GRAPH_PATH" not in os.environ:
-    _potential_graph_paths = [
-        _current_dir.parent / "Graph_n_Geocoding" / "knowledge_graph.json",
-        Path("C:/Users/Dani/Source/Corpus2GeoRAG/Graph_n_Geocoding/knowledge_graph.json"),
-    ]
-    for _gp in _potential_graph_paths:
-        if _gp.is_file():
-            os.environ["GRAPH_PATH"] = str(_gp)
-            break
+# Note: AgentRag automatically locates Graph_n_Geocoding/knowledge_graph.json.gz (Vr6)
+# relative to its own directory unless GRAPH_PATH is explicitly set in the environment.
+# Clear any stale GRAPH_PATH from older sessions pointing to the deleted uncompressed .json file.
+if os.environ.get("GRAPH_PATH", "").endswith("knowledge_graph.json"):
+    os.environ.pop("GRAPH_PATH", None)
+
+# If an older Phase 1 georag_agent module is cached in sys.modules (pre-Vr6), evict it
+if "georag_agent" in sys.modules and not hasattr(sys.modules["georag_agent"], "pipeline"):
+    for _stale_mod in ("georag_agent", "agent", "contracts", "graph_client"):
+        sys.modules.pop(_stale_mod, None)
 
 try:
     from georag_agent import (
@@ -135,18 +139,35 @@ class AgentResponse:
 
     Attributes:
         answer (str): Natural language synthesis answering the user's inquiry,
-            including analytical assessments, spatial context, or situational reports.
+            including citation marks ([1], [S2], [L1]).
         layers (List[MapLayer]): A collection of map layers synthesized or retrieved
             by the agent to be displayed synchronously on the frontend map.
-        sources (List[str]): Source document titles or pointers backing the answer.
+        sources (List[str]): Source paragraph pointers (e.g. 'TEXT_50333') backing the answer.
         raw_response (Optional[Dict[str, Any]]): Original response dictionary from the backend.
         is_live_backend (bool): Whether the response was produced by the live GeoRAG agent.
+        answer_plain (str): Clean version of the answer with citation marks stripped.
+        citations (List[Dict[str, Any]]): Structured citation metadata ({id, pointer, article, section, spans}).
+        grounded (bool): True when backed by graph evidence; False if LLM-only fallback.
+        status (str): Backend status ('answered', 'no_data', 'out_of_scope', 'llm_failed').
     """
     answer: str
     layers: List[MapLayer] = field(default_factory=list)
     sources: List[str] = field(default_factory=list)
     raw_response: Optional[Dict[str, Any]] = None
     is_live_backend: bool = False
+    answer_plain: str = ""
+    citations: List[Dict[str, Any]] = field(default_factory=list)
+    grounded: bool = True
+    status: str = "answered"
+    shape: str = "fact"
+    map_bbox: Optional[List[float]] = None
+    follow_ups: List[str] = field(default_factory=list)
+    regions: List[Dict[str, Any]] = field(default_factory=list)
+    did_you_mean: List[Dict[str, Any]] = field(default_factory=list)
+
+    def __post_init__(self):
+        if not self.answer_plain:
+            self.answer_plain = self.answer
 
 
 # ==============================================================================
@@ -174,10 +195,13 @@ def to_bounding_box(
     return (lower_left, upper_right)
 
 
-def get_source_text(pointer: str) -> Optional[Dict[str, str]]:
+@functools.lru_cache(maxsize=4096)
+def get_source_text(pointer: str) -> Optional[Dict[str, Any]]:
     """
-    Retrieve verbatim source text passages for a given document pointer from the knowledge graph.
-    Returns {'text': ..., 'document': ...} or None if not found or backend unavailable.
+    Retrieve verbatim source text passages for a given paragraph pointer (e.g. 'TEXT_50333')
+    from the knowledge graph.
+    Returns {'pointer', 'text', 'document', 'section', 'paragraph_index'} or None if not found.
+    Results are cached in memory for sub-microsecond subsequent retrieval.
     """
     if _backend_get_source_text is not None:
         try:
@@ -241,19 +265,11 @@ def query_geo_agent(
         if has_text:
             query_text = text_prompt.strip()
         elif bounding_box:
-            (min_lat, min_lng), (max_lat, max_lng) = to_bounding_box(bounding_box[0], bounding_box[1])
-            query_text = (
-                f"Provide a tactical intelligence reconnaissance summary for the bounding box sector "
-                f"between SW ({min_lat:.4f}°, {min_lng:.4f}°) and NE ({max_lat:.4f}°, {max_lng:.4f}°)."
-            )
+            query_text = "What is in this bounding box sector?"
         elif selected_point:
-            query_text = (
-                f"Provide a tactical intelligence reconnaissance summary for coordinate "
-                f"({selected_point[0]:.4f}°, {selected_point[1]:.4f}°)."
-            )
+            query_text = "What is in this area?"
         else:
-            query_text = "Provide an intelligence assessment of key operational corridors and nodes."
-
+            query_text = "What are the major locations in Ukraine?"
         # 3. Prepare chat turns if passed
         turns = agent_turns if isinstance(agent_turns, list) else []
 
@@ -269,33 +285,94 @@ def query_geo_agent(
         layers: List[MapLayer] = []
         for loc in raw_result.get("geo_locations", []):
             geom = loc.get("geometry", {})
-            coords = geom.get("coordinates", [])
+            coords = geom.get("coordinates", []) if isinstance(geom, dict) else []
             if len(coords) >= 2:
                 lon, lat = coords[0], coords[1]
-                kind = loc.get("kind", "place")
-                label = loc.get("label", loc.get("id", "Unknown Node"))
-                node_id = loc.get("id", "")
-                sources_list = loc.get("sources", [])
+            elif "latitude" in loc and "longitude" in loc:
+                lat, lon = float(loc["latitude"]), float(loc["longitude"])
+            elif "lat" in loc and "lng" in loc:
+                lat, lon = float(loc["lat"]), float(loc["lng"])
+            elif "lat" in loc and "lon" in loc:
+                lat, lon = float(loc["lat"]), float(loc["lon"])
+            else:
+                continue
 
-                color = "red" if kind == "event" else "blue"
-                src_html = f"<br><b>Sources:</b> {', '.join(sources_list)}" if sources_list else ""
-                popup_content = (
-                    f"<div style='font-family:monospace; padding:6px;'>"
-                    f"<b>★ {label}</b><br>"
-                    f"ID: <code>{node_id}</code><br>"
-                    f"TYPE: <code>{kind.upper()}</code><br>"
-                    f"LAT: <code>{lat:.5f}°</code><br>"
-                    f"LNG: <code>{lon:.5f}°</code>"
-                    f"{src_html}"
-                    f"</div>"
-                )
+            number = loc.get("number")
+            kind = loc.get("kind", "place")
+            role = loc.get("role", "primary")
+            label = loc.get("label") or loc.get("name") or loc.get("id") or "Unknown Node"
+            node_id = loc.get("id") or loc.get("name") or ""
+            why = loc.get("why", "")
+            uncertain = loc.get("uncertain")
+            sources_list = loc.get("sources", [])
+
+            if uncertain:
+                color = "orange"
+            elif kind == "event":
+                color = "red"
+            elif role == "context":
+                color = "cadetblue"
+            else:
+                color = "blue"
+
+            num_prefix = f"{number}. " if number is not None else ""
+            uncertain_tag = " (?)" if uncertain else ""
+            layer_name = f"{num_prefix}[{kind.upper()}] {label}{uncertain_tag}"
+            tooltip_text = f"{num_prefix}{label} [{kind.upper()}]{uncertain_tag}"
+
+            why_html = f"<br><b>Evidence:</b> {why}" if why else ""
+            uncertain_html = f"<br><span style='color:#ff9800;'><b>⚠️ Uncertain:</b> {uncertain}</span>" if uncertain else ""
+            src_html = ""
+            if sources_list:
+                src_titles = []
+                for s_ptr in sources_list[:3]:
+                    s_text = get_source_text(s_ptr)
+                    if s_text and s_text.get("document"):
+                        doc_clean = str(s_text["document"]).replace("\ufffd", " - ")
+                        src_titles.append(doc_clean)
+                    else:
+                        src_titles.append(s_ptr)
+                src_html = f"<br><b>Sources:</b> {', '.join(src_titles)}{'...' if len(sources_list) > 3 else ''}"
+            header_title = f"#{number} {label}" if number is not None else label
+            popup_content = (
+                f"<div style='font-family:monospace; padding:6px;'>"
+                f"<b>★ {header_title}</b><br>"
+                f"ID: <code>{node_id}</code><br>"
+                f"TYPE: <code>{kind.upper()}</code> ({role})<br>"
+                f"LAT: <code>{lat:.5f}°</code><br>"
+                f"LNG: <code>{lon:.5f}°</code>"
+                f"{why_html}"
+                f"{uncertain_html}"
+                f"{src_html}"
+                f"</div>"
+            )
+            layers.append(MapLayer(
+                name=layer_name,
+                layer_type="marker",
+                data={
+                    "lat": round(lat, 5),
+                    "lng": round(lon, 5),
+                    "id": node_id,
+                    "kind": kind,
+                    "number": number,
+                    "role": role,
+                    "uncertain": uncertain,
+                },
+                color=color,
+                tooltip=tooltip_text,
+                popup=popup_content
+            ))
+
+            # Upgrade 1: GeoJSON Place Boundary Outlines (place["shape"])
+            shape_geom = loc.get("shape")
+            if shape_geom and isinstance(shape_geom, dict) and shape_geom.get("coordinates"):
                 layers.append(MapLayer(
-                    name=f"[{kind.upper()}] {label}",
-                    layer_type="marker",
-                    data={"lat": round(lat, 5), "lng": round(lon, 5), "id": node_id, "kind": kind},
-                    color=color,
-                    tooltip=f"[{kind.upper()}] {label}",
-                    popup=popup_content
+                    name=f"Outline: {label}",
+                    layer_type="geojson",
+                    data=shape_geom,
+                    color="cyan" if role == "primary" else "cadetblue",
+                    tooltip=f"Boundary: {label}",
+                    popup=f"<b>★ {label} Boundary</b><br>Type: <code>{shape_geom.get('type', 'Geometry')}</code>"
                 ))
 
         # Add visual search boundary layer
@@ -326,22 +403,71 @@ def query_geo_agent(
                 popup=f"<b>Target Coordinate:</b> ({selected_point[0]:.4f}°, {selected_point[1]:.4f}°)"
             ))
 
+        ans_text = raw_result.get("answer", "")
+        top_sources = list(raw_result.get("sources", []))
+        if not top_sources:
+            # In Vr6, 'list' and 'place_lookup' answers store TEXT_ pointers on each place in geo_locations
+            seen_ptrs = set()
+            geo_locs = raw_result.get("geo_locations", [])
+            for loc in geo_locs:
+                if loc.get("role", "primary") == "primary" or len(geo_locs) <= 10:
+                    for ptr in loc.get("sources", [])[:3]:
+                        if ptr not in seen_ptrs:
+                            seen_ptrs.add(ptr)
+                            top_sources.append(ptr)
+                        if len(top_sources) >= 15:
+                            break
+                if len(top_sources) >= 15:
+                    break
+
+        map_meta = raw_result.get("map", {})
+        map_bbox = map_meta.get("bbox") if isinstance(map_meta, dict) else None
+
         return AgentResponse(
-            answer=raw_result.get("answer", ""),
+            answer=ans_text,
             layers=layers,
-            sources=raw_result.get("sources", []),
+            sources=top_sources,
             raw_response=raw_result,
-            is_live_backend=True
+            is_live_backend=True,
+            answer_plain=raw_result.get("answer_plain", ans_text),
+            citations=raw_result.get("citations", []),
+            grounded=raw_result.get("grounded", True),
+            status=raw_result.get("status", "answered"),
+            shape=raw_result.get("shape", "fact"),
+            map_bbox=map_bbox,
+            follow_ups=list(raw_result.get("follow_ups") or raw_result.get("follow_up_questions") or []),
+            regions=raw_result.get("regions") if isinstance(raw_result.get("regions"), dict) else {},
+            did_you_mean=raw_result.get("did_you_mean") or None,
         )
 
     # Fallback to deterministic mock routing
-    return _query_mock_agent(
+    mock_resp = _query_mock_agent(
         text_prompt=text_prompt,
         selected_point=selected_point,
         bounding_box=bounding_box,
         chat_history=chat_history,
         **kwargs
     )
+    if mock_resp.raw_response is None:
+        mock_geo_locs = []
+        for ly in mock_resp.layers:
+            if isinstance(ly.data, dict) and "lat" in ly.data and "lng" in ly.data:
+                mock_geo_locs.append({
+                    "id": ly.data.get("id", ly.name),
+                    "label": ly.name,
+                    "geometry": {
+                        "type": "point",
+                        "coordinates": [ly.data["lng"], ly.data["lat"]]
+                    },
+                    "kind": ly.data.get("kind", "place"),
+                    "sources": mock_resp.sources
+                })
+        mock_resp.raw_response = {
+            "answer": mock_resp.answer,
+            "geo_locations": mock_geo_locs,
+            "sources": mock_resp.sources
+        }
+    return mock_resp
 
 
 def _query_mock_agent(
