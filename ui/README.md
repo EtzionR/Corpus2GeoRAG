@@ -1,196 +1,145 @@
-# 🌍 GeoAI Final Project - Spatial Intelligence Frontend & RAG Contract
+# 🌍 GeoAI Defense C2 - Spatial Intelligence Frontend & Vr6 RAG Interface
 
-A complete, production-ready Streamlit frontend and mock RAG backend contract built for the **GeoAI Final Project**. Features a synchronized split-screen architecture combining an interactive **Folium map of Ukraine** with an **AI chat interface**, supporting bi-directional spatial updates and automated multi-modal query routing.
+An interactive, high-performance Streamlit frontend and multi-modal RAG routing interface built for the **GeoAI Tactical Intelligence System**.
+
+The application synchronizes an interactive **Folium map centered over Ukraine** with an **LLM operator console**, connecting directly to the **Vr6 Phase 2 AgentRag backend** (knowledge graph, geocoding, boundary extraction, citation grounding, and automated reconnaissance).
 
 ---
 
 ## 🚀 Quick Start for Team Members
 
-This repository is configured to be completely **self-bootstrapping**. Any team member who clones this folder can run the application immediately on any operating system.
+The frontend environment is **completely self-bootstrapping**. It automatically verifies packages, installs missing dependencies, and discovers the local `AgentRag/` backend.
 
-### Option 1: Double-Click Launcher (Windows)
-Simply double-click the included batch file in the `ui/` folder:
+### Option 1: One-Click Windows Launcher (Recommended)
+Double-click the batch file inside the `ui/` folder:
 ```text
 run_app.bat
 ```
-*This script will automatically check for Python, create a virtual environment (`.venv`), install all requirements, and open the app in your browser.*
+*This automatically checks Python, verifies packages, launches Streamlit, and opens the app in your browser.*
 
 ### Option 2: Linux / macOS Launcher
-Open your terminal in the `ui/` folder:
 ```bash
+cd ui
 chmod +x run_app.sh
 ./run_app.sh
 ```
 
 ### Option 3: Manual Command Line Execution
 ```bash
-# Navigate to ui/ directory
+# From repository root or ui/ directory:
 cd ui
 
-# 1. Create and activate a virtual environment
-python -m venv .venv
-
+# 1. Activate your virtual environment (e.g., Python 3.10 - 3.14)
 # On Windows:
 .venv\Scripts\activate
 # On Linux/macOS:
 source .venv/bin/activate
 
-# 2. Install dependencies
+# 2. Install dependencies (UI + AgentRag requirements)
 pip install -r requirements.txt
+pip install -r ../AgentRag/requirements.txt
 
-# 3. Launch Streamlit
+# 3. Launch the Streamlit application
 streamlit run app.py
 ```
-*(Alternatively, simply running `python app.py` will auto-detect the environment and launch Streamlit).*
+*(Alternatively, direct execution via `python app.py` will automatically forward execution to the Streamlit runtime).*
 
 ---
 
-## 🏛️ Architecture & Component Overview
+## 🔑 Connecting to the Live Vr6 AgentRag Backend
+
+The UI operates in two seamless modes:
+1. **🟢 Live GeoRAG Agent**: Queries the Vr6 knowledge graph and live LLM pipeline via LangChain / OpenRouter.
+2. **🟡 Offline Simulation (Mock Engine)**: Operates 100% offline with zero API keys or external network calls, returning deterministic tactical scenarios for UI testing and demos.
+
+### Providing your OpenRouter API Key
+To activate the live agent, provide your key (format `sk-or-v1-...` from [openrouter.ai/keys](https://openrouter.ai/keys)) through any of these three methods:
+1. **Directly in App Sidebar**: Paste your key into the **"OpenRouter API Key"** password field in the left sidebar.
+2. **Via `AgentRag/.env` file**: Create `AgentRag/.env` containing:
+   ```env
+   OPENROUTER_API_KEY=sk-or-v1-your-key-here
+   ```
+3. **Via Streamlit Secrets**: Add `OPENROUTER_API_KEY = "..."` into `ui/.streamlit/secrets.toml`.
+
+---
+
+## 🏛️ Architecture & File Structure
 
 ```
 ui/
-├── app.py              # Main Streamlit frontend (Chat, Folium map, session state, adjustable layout)
-├── geo_agent.py        # Backend contract (MapLayer, AgentResponse, query_geo_agent router)
-├── test_app.py         # Pytest test suite validating contract typing and all query scenarios
-├── requirements.txt    # Project dependencies specification
-├── run_app.bat         # Automated one-click Windows launcher (venv setup + dependency check)
+├── app.py              # Main Streamlit frontend (Chat, Folium map, Leaflet HUD, layer management)
+├── geo_agent.py        # Backend adapter routing between Live AgentRag and Mock Engine
+├── test_app.py         # 55 automated pytest unit tests validating contracts, Vr6, and performance
+├── AGENTS.md           # Mandatory frontend & Streamlit performance rules (zero-latency guidelines)
+├── PULL_REQUEST.md     # Full Pull Request specification detailing connection to AgentRag
+├── requirements.txt    # Frontend dependencies specification
+├── run_app.bat         # Automated one-click Windows launcher
 ├── run_tests.bat       # Automated one-click Windows test runner
 ├── run_app.sh          # Automated Unix/macOS launcher
 ├── .gitignore          # Git exclusion rules for Python, virtual environments, and caches
-└── README.md           # UI documentation and architectural guide
+└── README.md           # This document
 ```
 
 ---
 
-## 🔄 Bi-Directional State Synchronization Flow
+## 🌟 Core Functionality & Vr6 Feature Breakdown
 
-The application bridges the conversational chat interface and the geospatial Folium map using `st.session_state`:
+### 1. Zero-Latency Client-Side Map (Leaflet & Folium)
+- **0ms Client-Side Pan & Zoom**: Panning, zooming, and opening marker popups execute 100% on the client side without triggering Python script reruns or dimming the screen (`returned_objects` constraint).
+- **Background Pin Clustering (`MarkerCluster`)**: When queries return dense context lists (50–500 places), context places (`role == "context"`) are clustered to prevent browser DOM choke, while primary places (`role == "primary"`) remain standalone prominent pins.
+- **Client-Side Pin Filter Controls**: A bottom-right Leaflet control allows operators to toggle visibility of Context pins and Uncertain pins with 0ms delay.
+- **Auto-Zoom to Operational Area (`map_bbox`)**: The map automatically calculates and applies `m.fit_bounds()` to frame the operational scope returned by the agent.
+- **GeoJSON Boundary Outlines**: When places include boundary polygons (`place["shape"]`), the frontend renders semi-transparent tactical sector outlines (`folium.GeoJson`).
+- **Basemap HUD Switcher**: CartoDB Voyager Dark (tactical dark navigation), CartoDB Dark Matter, Esri Dark Gray Canvas, High-Resolution Satellite Imagery, Topographic, and OSM.
 
-```mermaid
-graph TD
-    User([User]) -->|Click Map| Map[Folium Map]
-    Map -->|Click Event: lat, lng| Detector[Click Interception]
-    Detector -->|Update selected_points WITHOUT calling backend| State[(Session State)]
-    State -->|Rerun & Display Red Star Selection Marker| Map
-    
-    User -->|Manage Points: ❌ Remove / Clear| UI[Sidebar & Controls]
-    UI -->|Update / Remove Coordinate| State
-    
-    User -->|Type Inquiry or Click Recon Scan| Input[Chat Input / Recon Button]
-    Input -->|Query with Text + selected_points| Agent[query_geo_agent]
-    Agent -->|Multi-modal Synthesis + Tactical Layers| State
-    State -->|Rerun & Display Updated Tactical Overlays| Map
-```
+### 2. Multi-Modal Spatial Targeting
+- **Map Click Target Selection**: Clicking the map selects coordinate targets without triggering immediate backend queries.
+- **Area-of-Interest (AOI) Bounding Box Suite**: Draw tactical rectangles using the map toolbar to define spatial envelopes `(lower-left, upper-right)` in GeoJSON `[lon, lat]` order.
+- **Reconnaissance Scans**: Click the **🔍 Recon Scan** button (in sidebar or docked chat pill) to run instant multi-modal reconnaissance over points or bounding boxes without typing a question.
+- **One-Click Deletion**: Integrated trash bin controls on both the map toolbar and chat docked pill to clear selections instantly.
 
-1. **Decoupled Map Click Selection (Bounding Box vs. Point Selection)**:
-   - Clicking on the map selects coordinates without triggering immediate backend queries.
-   - **Bounding Box Mode (Default)**: Clicking two points calculates and saves a standardized two-point bounding box `(lower-left, upper-right)`:
-     - Point 1 (Lower-Left / South-West): `(min_lat, min_lng)`
-     - Point 2 (Upper-Right / North-East): `(max_lat, max_lng)`
-     - Visualized immediately on Folium with directional arrow markers and a dashed tactical rectangle. Clicking again starts a fresh bounding box.
-   - **Point Selection Mode**: Clicking on the map selects a single coordinate. Clicking again cancels the previous selection and selects the new point (no multi-point accumulation).
-
-2. **Selected Point & Bounding Box Management**:
-   - In the sidebar and chat status panel, the active selection is displayed with clear coordinates and `❌` removal buttons.
-   - For bounding boxes, Lower-Left and Upper-Right corners can be inspected, removed individually, or cleared simultaneously.
-   - A `🗑️ Clear All` / `🗑️ Clear Box` button removes the active selection in a single click.
-   - Tactical map layers from prior query results can also be inspected and removed individually.
-
-3. **Targeted Follow-Up Text Queries**:
-   - With one or more coordinates selected, the user enters an inquiry in the chat (e.g., *"What units are stationed here?"*).
-   - The frontend routes the prompt and selected points to `query_geo_agent` under **Scenario A**.
-   - The agent returns a synthesized response referencing both the user intent and coordinates, alongside tactical buffer layers.
-
-4. **On-Demand Reconnaissance Scan**:
-   - If the user desires a reconnaissance summary without typing a prompt, they can explicitly click **🔍 Run Reconnaissance** from the sidebar or chat banner (Scenario B).
-
-5. **General Spatial Query**:
-   - If no coordinate is selected, asking general questions (e.g., *"Show logistics corridors"*) triggers **Scenario C**, returning strategic regional intelligence markers across Kyiv, Kharkiv, and Dnipro.
+### 3. Operator Intel Console & Grounded Sources
+- **Show Citations Toggle**: Toggle between verified grounding marks (`result["answer"]` with `[1]`, `[S2]`) and clean conversational prose (`result["answer_plain"]`).
+- **Verified Source Drawer**: Resolves `TEXT_XXXXX` paragraph pointers into human-readable document titles and section names from the knowledge graph.
+- **Character Span Highlighting**: Inspected source passages highlight verbatim entity and concept mentions in styled `<mark>` tags using `citation["spans"]`.
+- **Interactive Follow-Up Buttons**: Up to 3 suggested questions (`result["follow_ups"]`) are rendered as clickable buttons (`🔍 {q}`) below assistant answers.
+- **Regional Distribution Expander**: Displays region-by-region counts (`result["regions"]`) for broad queries spanning multiple oblasts.
+- **Did-You-Mean Notices**: Displays alternative suggestions (`result["did_you_mean"]`) when queries involve ambiguous place names.
+- **RAG Telemetry & Debug Dialog**: Click **📋 RAG Debug Logs** in the sidebar to inspect raw JSON request and response payloads, round-trip latency (ms), and grounding evidence.
 
 ---
 
-## 🧩 Backend Contract (`geo_agent.py`)
+## ⚡ Streamlit Performance Guidelines (`AGENTS.md`)
 
-### `MapLayer` Dataclass
-Represents an individual visual layer rendered on the Folium map:
-```python
-@dataclass
-class MapLayer:
-    name: str
-    layer_type: str                     # 'marker', 'circle', 'polygon', or 'geojson'
-    data: Any                           # e.g., {'lat': 48.5, 'lng': 31.2, 'radius': 15000}
-    color: str = "blue"
-    tooltip: str = ""
-    popup: str = ""
-```
-
-### `AgentResponse` Dataclass
-Standardized multi-modal response object:
-```python
-@dataclass
-class AgentResponse:
-    answer: str                         # Markdown natural language synthesis
-    layers: List[MapLayer]              # Geospatial layers to render
-```
-
-### Routing Entrypoint
-```python
-def to_bounding_box(
-    p1: Tuple[float, float],
-    p2: Tuple[float, float]
-) -> Tuple[Tuple[float, float], Tuple[float, float]]:
-    """Standardizes two coordinates into ((min_lat, min_lng), (max_lat, max_lng))."""
-
-def query_geo_agent(
-    text_prompt: Optional[str] = None,
-    selected_point: Optional[Tuple[float, float]] = None,
-    bounding_box: Optional[Tuple[Tuple[float, float], Tuple[float, float]]] = None,
-    chat_history: Optional[List[Dict[str, Any]]] = None
-) -> AgentResponse:
-```
+To keep the application fast, responsive, and free from visual jumping, all agents and developers must adhere to the rules in [`AGENTS.md`](AGENTS.md):
+1. **Never allow map pan/zoom to trigger Python reruns**: Always constrain `returned_objects=["last_clicked", "last_active_drawing", "all_drawings"]` in `st_folium()`.
+2. **No unconditional module reloads or dependency scans**: Wrap bootstrap checks with `_BOOTSTRAP_DONE` once per process; do not call `importlib.reload(geo_agent)`.
+3. **In-memory LRU caching for knowledge graph text**: Wrap `get_source_text()` with `@functools.lru_cache(maxsize=4096)`.
+4. **Stable layout container heights**: Keep `chat_container_height = 465` constant to prevent the chat scroll area and input box from bouncing vertically.
+5. **Cluster background context pins**: Primary places remain individual pins; context places use `folium.plugins.MarkerCluster`.
 
 ---
 
 ## 🧪 Automated Testing (`pytest`)
 
-To run the automated test suite and validate all contract scenarios:
+To run the full suite of **55 automated unit tests**:
 
 ```bash
-# Using Python module runner
+# From ui/ directory:
 python -m pytest test_app.py -v
 
-# Or double-click:
+# Or double-click (Windows):
 run_tests.bat
 ```
 
-### Test Coverage
-- `test_map_layer_instantiation_and_defaults`: Validates dataclass attributes and default parameters.
-- `test_map_layer_custom_attributes`: Validates custom layer geometry and colors.
-- `test_agent_response_defaults`: Validates default response contract.
-- `test_scenario_a_both_text_and_clicked_point`: Verifies targeted query synthesis referencing both user prompt and coordinates, with tactical layers.
-- `test_scenario_b_only_clicked_point`: Verifies automated reconnaissance summary and location layers.
-- `test_scenario_c_only_text_prompt`: Verifies general spatial answer and strategic hub coordinates.
-- `test_scenario_fallback_neither_provided`: Validates graceful fallback for empty inputs.
-- `test_chat_history_preservation`: Validates conversation context handling.
-- `test_scenario_a_multiple_selected_points`: Validates multi-point targeting with prompt.
-- `test_scenario_b_multiple_selected_points`: Validates multi-point reconnaissance without prompt.
-- `test_point_selection_and_removal_lifecycle`: Simulates adding, removing, and clearing points.
-- `test_to_bounding_box_standard_ordering`: Validates lower-left (min) and upper-right (max) resolution.
-- `test_to_bounding_box_reversed_ordering`: Ensures identical SW/NE box regardless of click order.
-- `test_to_bounding_box_diagonal_nw_to_se`: Verifies diagonal corners resolve correctly.
-- `test_to_bounding_box_coordinate_rounding`: Tests 5-decimal place geodetic precision.
-- `test_query_geo_agent_with_bounding_box_and_prompt`: Verifies bounding box query synthesis and layers.
-- `test_query_geo_agent_with_bounding_box_reconnaissance`: Verifies bounding box reconnaissance scan.
-- `test_bounding_box_selection_lifecycle`: Simulates 2-point box selection, reset, and clear lifecycle.
-- `test_mode_transitions_bbox_and_point_selection`: Validates seamless mode switching between Bounding Box and Point Selection.
-- `test_point_selection_cancels_previous_on_click`: Verifies that clicking again in Point Selection mode cancels the previous coordinate and selects the new point.
-
----
-
-## 🔌 Connecting Your Real RAG Backend
-
-When your team is ready to connect the actual RAG pipeline:
-1. Replace or extend the logic in `geo_agent.py` inside `query_geo_agent()`.
-2. Connect your vector store (e.g., Chroma, FAISS, PGVector), spatial index (GeoPandas, PostGIS), or LLM client (e.g., Gemini, OpenAI, Claude).
-3. Ensure the return object conforms to `AgentResponse(answer=..., layers=[MapLayer(...)])`.
-4. The frontend in `app.py` will render the new intelligence feeds automatically without any changes needed!
+### Test Suite Coverage (55 Tests Passing)
+- **Data Contracts**: Validates `MapLayer` and `AgentResponse` typing, defaults, and serialization.
+- **Multimodal Routing Scenarios**: Scenario A (text + point), Scenario B (point-only reconnaissance), Scenario C (general text), and Bounding Box AOI scenarios.
+- **Vr6 Data Ingestion**: Numbered pin ordering, citation passthrough, document title resolution, and paragraph metadata.
+- **Upgrades 1–6 Verification**:
+  - `test_highlight_text_spans_basic_and_overlapping`: Character offset interval merging and `<mark>` generation.
+  - `test_highlight_text_spans_dict_format`: Handles `{'start': s, 'end': e}` span dictionaries.
+  - `test_build_assistant_message_vr6_fields`: Preserves `follow_ups`, `regions`, `did_you_mean`, and `map_bbox`.
+  - `test_geojson_boundary_layer_generation`: Verifies hydration of GeoJSON polygons from backend `shape`.
+  - `test_auto_zoom_map_bbox_extracted_and_fit`: Validates `map_bbox` extraction and `m.fit_bounds()` integration.
+- **Performance Rule Enforcement**: Static codebase verification ensuring all rules in `AGENTS.md` are actively enforced.

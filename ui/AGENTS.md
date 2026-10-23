@@ -67,3 +67,23 @@ This document establishes critical architectural rules and performance requireme
 
 ### 4.2 Auto-Zoom to Query Bounding Box
 - When the backend provides `result["map"]["bbox"]` (`[west, south, east, north]`), use `m.fit_bounds([[south, west], [north, east]], padding=(30, 30))` to automatically frame the operational area for the user upon query completion.
+
+---
+
+## 5. Development & Deployment Workflow
+
+### 5.1 Primary Workspace (`GeoAI - Project`)
+- **Rule:** All ongoing development, bug fixes, UI improvements, and test implementations must be conducted strictly within `GeoAI - Project`.
+- Always run and verify the test suite locally before any deployment:
+  ```bash
+  pytest test_app.py -v
+  ```
+
+### 5.2 Synchronization to `Corpus2GeoRAG\ui` & Remote
+- Once changes are tested and verified in `GeoAI - Project`:
+  1. Sync the updated files directly into `Corpus2GeoRAG\ui\` (`app.py`, `geo_agent.py`, `test_app.py`, `AGENTS.md`, `README.md`, etc.).
+  2. Confirm that changes in `Corpus2GeoRAG` remain 100% confined to the `ui/` directory.
+  3. Commit and push the feature branch to the remote (`origin`).
+  4. Create or update the pull request against upstream (`EtzionR/Corpus2GeoRAG:main`).
+- **Never make unverified direct modifications in `Corpus2GeoRAG\ui\` or outside the `ui/` folder.**
+
