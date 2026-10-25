@@ -954,15 +954,20 @@ class MapTrashBinHook(MacroElement):
                         }
                     }
 
+                    var _refreshTimer = null;
+                    function debouncedRefreshPinCounts(delay) {
+                        if (_refreshTimer) clearTimeout(_refreshTimer);
+                        _refreshTimer = setTimeout(refreshPinCounts, delay || 200);
+                    }
+
                     setTimeout(refreshPinCounts, 300);
-                    setTimeout(refreshPinCounts, 900);
                     map.on('layeradd', function(e) {
                         if (typeof L.MarkerClusterGroup !== 'undefined' && e.layer instanceof L.MarkerClusterGroup) {
                             if (clusterGroups.indexOf(e.layer) === -1) clusterGroups.push(e.layer);
                         }
-                        setTimeout(refreshPinCounts, 100);
+                        debouncedRefreshPinCounts(200);
                     });
-                    map.on('layerremove', function() { setTimeout(refreshPinCounts, 100); });
+                    map.on('layerremove', function() { debouncedRefreshPinCounts(200); });
 
                     return container;
                 }
@@ -1562,6 +1567,80 @@ if "last_map_bbox" not in st.session_state:
     # Bounding box [west, south, east, north] returned by agent for automatic framing
     st.session_state.last_map_bbox = None
 
+# ==============================================================================
+# 2b. Early Map Event Ingestion (Pre-render state synchronization)
+# ==============================================================================
+# Ingests map clicks, drawings, and deletions before the sidebar and chat mount,
+# ensuring all UI panels reflect the newest spatial selection on the initial rerun
+# without requiring a second st.rerun() cascade.
+_early_map_state = st.session_state.get("geoai_tactical_map")
+if _early_map_state and isinstance(_early_map_state, dict):
+    _early_drawing = _early_map_state.get("last_active_drawing")
+    _early_all_drawings = _early_map_state.get("all_drawings")
+    _early_clicked = _early_map_state.get("last_clicked")
+
+    # 1. Handle deletion / trash bin
+    if _early_drawing:
+        _props = _early_drawing.get("properties") or {}
+        _geom = _early_drawing.get("geometry")
+        if (_props.get("action") == "delete" or not _geom) and _early_drawing != st.session_state.get("ignored_drawing"):
+            st.session_state.ignored_drawing = _early_drawing
+            _has_sel = bool(st.session_state.get("selected_points") or st.session_state.get("bounding_box"))
+            clear_spatial_selection()
+            if not _has_sel and st.session_state.get("map_layers"):
+                st.session_state.map_layers = []
+            st.session_state.last_drawing_time = time.time()
+
+    elif _early_all_drawings == [] and (st.session_state.get("selected_points") or st.session_state.get("bounding_box")) and not _early_drawing:
+        _has_sel = bool(st.session_state.get("selected_points") or st.session_state.get("bounding_box"))
+        clear_spatial_selection()
+        if not _has_sel and st.session_state.get("map_layers"):
+            st.session_state.map_layers = []
+        st.session_state.last_drawing_time = time.time()
+
+    # 2. Handle drawn rectangle or point
+    elif _early_drawing and _early_drawing != st.session_state.get("last_processed_drawing") and _early_drawing != st.session_state.get("ignored_drawing"):
+        _geom = _early_drawing.get("geometry") or {}
+        _gtype = _geom.get("type")
+        _coords = _geom.get("coordinates")
+        if _gtype == "Polygon" and _coords and len(_coords[0]) >= 3:
+            st.session_state.last_processed_drawing = _early_drawing
+            st.session_state.ignored_drawing = None
+            _ring = _coords[0]
+            _lats = [float(pt[1]) for pt in _ring]
+            _lngs = [float(pt[0]) for pt in _ring]
+            _ll, _ur = to_bounding_box((min(_lats), min(_lngs)), (max(_lats), max(_lngs)))
+            st.session_state.selection_mode = "Bounding Box"
+            st.session_state.selected_points = [_ll, _ur]
+            st.session_state.bounding_box = (_ll, _ur)
+            st.session_state.active_point = _ur
+            st.session_state.last_drawing_time = time.time()
+            if _early_clicked:
+                st.session_state.last_clicked = (round(_early_clicked["lat"], 5), round(_early_clicked["lng"], 5))
+        elif _gtype == "Point" and _coords and len(_coords) >= 2:
+            st.session_state.last_processed_drawing = _early_drawing
+            st.session_state.ignored_drawing = None
+            _pt = (round(float(_coords[1]), 5), round(float(_coords[0]), 5))
+            st.session_state.selection_mode = "Point Selection"
+            st.session_state.selected_points = [_pt]
+            st.session_state.bounding_box = None
+            st.session_state.active_point = _pt
+            st.session_state.last_drawing_time = time.time()
+            if _early_clicked:
+                st.session_state.last_clicked = _pt
+
+    # 3. Handle map canvas click
+    elif _early_clicked and "lat" in _early_clicked and "lng" in _early_clicked:
+        _c_pt = (round(_early_clicked["lat"], 5), round(_early_clicked["lng"], 5))
+        _is_recent = (time.time() - st.session_state.get("last_drawing_time", 0.0)) < 2.0
+        if _is_recent:
+            st.session_state.last_clicked = _c_pt
+        elif _c_pt != st.session_state.last_clicked:
+            st.session_state.last_clicked = _c_pt
+            st.session_state.selection_mode = "Point Selection"
+            st.session_state.selected_points = [_c_pt]
+            st.session_state.bounding_box = None
+            st.session_state.active_point = _c_pt
 
 # ==============================================================================
 # 3. Sidebar Utility Controls & Intelligence Dashboard
@@ -1622,15 +1701,42 @@ with st.sidebar:
         st.rerun()
 
     if st.session_state.map_layers:
-        with st.expander(f"🗺️ Manage Tactical Layers ({len(st.session_state.map_layers)})"):
-            for l_idx, layer in enumerate(st.session_state.map_layers):
-                col_ly1, col_ly2 = st.columns([3, 1])
-                with col_ly1:
-                    st.caption(f"{layer.name}")
-                with col_ly2:
-                    if st.button("🗑️", key=f"del_layer_{l_idx}", help=f"Remove layer '{layer.name}'"):
-                        st.session_state.map_layers.pop(l_idx)
+        total_layers = len(st.session_state.map_layers)
+        with st.expander(f"🗺️ Manage Tactical Layers ({total_layers})"):
+            if total_layers > 10:
+                ctx_count = sum(1 for l in st.session_state.map_layers if l.color == "cadetblue" or (isinstance(l.data, dict) and l.data.get("role") == "context"))
+                pri_count = total_layers - ctx_count
+                st.caption(f"**Breakdown:** `{pri_count}` Primary / `{ctx_count}` Context")
+                c_clr_all, c_clr_ctx = st.columns(2)
+                with c_clr_all:
+                    if st.button("🗑️ Clear All", key="btn_clear_all_layers", use_container_width=True):
+                        st.session_state.map_layers = []
                         st.rerun()
+                with c_clr_ctx:
+                    if ctx_count > 0 and st.button("🔘 Clear Context", key="btn_clear_ctx_layers", use_container_width=True):
+                        st.session_state.map_layers = [l for l in st.session_state.map_layers if not (l.color == "cadetblue" or (isinstance(l.data, dict) and l.data.get("role") == "context"))]
+                        st.rerun()
+
+                layer_options = list(range(min(total_layers, 25)))
+                sel_to_del = st.selectbox(
+                    "Select layer to remove:",
+                    options=layer_options,
+                    format_func=lambda idx: f"#{idx+1}: {st.session_state.map_layers[idx].name[:40]}",
+                    key="sel_layer_to_delete"
+                )
+                if st.button("🗑️ Delete Selected Layer", key="btn_del_single_layer", use_container_width=True):
+                    if sel_to_del < len(st.session_state.map_layers):
+                        st.session_state.map_layers.pop(sel_to_del)
+                        st.rerun()
+            else:
+                for l_idx, layer in enumerate(st.session_state.map_layers):
+                    col_ly1, col_ly2 = st.columns([3, 1])
+                    with col_ly1:
+                        st.caption(f"{layer.name}")
+                    with col_ly2:
+                        if st.button("🗑️", key=f"del_layer_{l_idx}", help=f"Remove layer '{layer.name}'"):
+                            st.session_state.map_layers.pop(l_idx)
+                            st.rerun()
 
     st.markdown("---")
 
@@ -1841,6 +1947,9 @@ with col1:
                                     disp_article = _clean_doc_title(passage_data.get("document"))
                                     if not disp_section:
                                         disp_section = _clean_doc_title(passage_data.get("section"))
+                                else:
+                                    # Cache negative result so missing pointers are never repeatedly queried on reruns
+                                    st.session_state[f"src_meta_{m_idx}_{s_idx}"] = {"document": "", "section": ""}
 
                             if cit_id and disp_article:
                                 src_label = f"📄 **[{cit_id}] {disp_article}**" + (f" — *{disp_section}*" if disp_section else "")
