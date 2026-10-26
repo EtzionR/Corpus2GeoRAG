@@ -32,8 +32,13 @@ The table below details how every new field and recommendation from `AgentRag/CO
 ## ⚡ Frontend Zero-Latency & Stability Guidelines (`AGENTS.md`)
 To address previous app slowness and vertical screen dimming/jumping:
 1. **0ms Map Pan/Zoom (Rule 1.1)**: Constrained `st_folium()` using `returned_objects=["last_clicked", "last_active_drawing", "all_drawings"]`. Panning, zooming, and opening popups execute 100% on the client side with **0 Python reruns**.
-2. **Stable Chat Heights (Rule 3.1)**: Container height is fixed at `465px`, eliminating the 45px vertical screen bounce when spatial selections change.
-3. **Process-Guarded Bootstrap (Rule 2.1)**: Package verification runs once per process; removed unconditional `importlib.reload(geo_agent)`.
+2. **Double-Rerun Elimination (Section 2b)**: Ingests `geoai_tactical_map` state at the top of the script before sidebar and chat render, updating UI state in **1 single rerun** instead of cascading a second `st.rerun()`.
+3. **Debounced Pin Filter Event Loops**: In `MapTrashBinHook`, debounced `refreshPinCounts` to 200 ms, collapsing thousands of $N^2$ Leaflet DOM event loop iterations into a single update.
+4. **Widget ID Explosion Protection (Rule 3.2)**: Optimized sidebar layer manager for $> 10$ layers using bulk summaries, quick clear actions, and a selectbox instead of hundreds of individual `st.button` widgets.
+5. **Knowledge Graph Background Pre-warming**: Pre-warms `knowledge_graph.json.gz` (1.1 GB) in a background daemon thread upon import, eliminating the 13.7s freeze on user queries.
+6. **Source Metadata Negative-Lookup Caching**: Prevents repeated lookups on future reruns for missing or invalid pointer citations.
+7. **Stable Chat Heights (Rule 3.1)**: Container height is fixed at `465px`, eliminating the 45px vertical screen bounce when spatial selections change.
+8. **Process-Guarded Bootstrap (Rule 2.1)**: Package verification runs once per process; removed unconditional `importlib.reload(geo_agent)`.
 
 ---
 

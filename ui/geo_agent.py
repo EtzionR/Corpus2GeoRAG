@@ -87,6 +87,19 @@ try:
         LLMError,
     )
     _BACKEND_AVAILABLE = True
+
+    # Pre-warm knowledge graph index in a background daemon thread to eliminate the 13.7s freeze on first query
+    import threading
+    def _warmup_graph_worker():
+        try:
+            import georag_agent
+            if hasattr(georag_agent, "get_graph"):
+                georag_agent.get_graph()
+        except Exception:
+            pass
+
+    _warmup_thread = threading.Thread(target=_warmup_graph_worker, daemon=True, name="GeoAI-GraphPrewarm")
+    _warmup_thread.start()
 except Exception as _import_err:
     logger.debug("GeoRAG backend not importable directly: %s", _import_err)
 
@@ -203,6 +216,8 @@ def get_source_text(pointer: str) -> Optional[Dict[str, Any]]:
     Returns {'pointer', 'text', 'document', 'section', 'paragraph_index'} or None if not found.
     Results are cached in memory for sub-microsecond subsequent retrieval.
     """
+    if not pointer or not isinstance(pointer, str) or not pointer.startswith("TEXT_"):
+        return None
     if _backend_get_source_text is not None:
         try:
             return _backend_get_source_text(pointer)
