@@ -71,14 +71,20 @@ def split_paragraphs(content):
     return out
 
 
-def build(path=TRAINING_PAGES):
+def build(path=TRAINING_PAGES, out_dir=OUT_DIR, reuse=None):
+    """reuse: an earlier training_pages.json; pages found there keep that text (same revision as before)."""
     pages = approved_pages(path)
     print(f"{len(pages)} approved pages: {sum(l for _, l in pages)} relevant, {sum(1 - l for _, l in pages)} not relevant")
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    cached = json.loads(Path(reuse).read_text(encoding="utf-8")) if reuse else {}
 
     raw, rows = {}, []
     for title, label in pages:
-        page = fetch_raw(title)
+        if title in cached:
+            page = {"title": title, "revid": cached[title]["revid"], "content": cached[title]["content"]}
+        else:
+            page = fetch_raw(title)
         raw[page["title"]] = {"label": label, "revid": page["revid"], "content": page["content"]}
         for i, (section, text) in enumerate(split_paragraphs(page["content"])):
             terms = len(WAR_TERMS.findall(text))
@@ -87,9 +93,9 @@ def build(path=TRAINING_PAGES):
                          # goes against the page label? relevant page without war words, or the opposite
                          "flag": (label == 1 and terms == 0) or (label == 0 and terms >= 2)})
 
-    (OUT_DIR / "training_pages.json").write_text(json.dumps(raw, ensure_ascii=False, indent=1), encoding="utf-8")
+    (out_dir / "training_pages.json").write_text(json.dumps(raw, ensure_ascii=False, indent=1), encoding="utf-8")
     df = pd.DataFrame(rows)
-    df.to_csv(OUT_DIR / "paragraphs.csv", index=False, encoding="utf-8-sig")
+    df.to_csv(out_dir / "paragraphs.csv", index=False, encoding="utf-8-sig")
 
     summary = df.groupby(["label", "page"]).agg(paragraphs=("text", "size"), flagged=("flag", "sum"))
     print(summary.to_string())
@@ -99,4 +105,10 @@ def build(path=TRAINING_PAGES):
 
 
 if __name__ == "__main__":
-    build()
+    import argparse
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--pages", default=TRAINING_PAGES, help="csv of training pages (title, label)")
+    ap.add_argument("--out", default=str(OUT_DIR), help="output folder")
+    ap.add_argument("--reuse", default=None, help="earlier training_pages.json to take unchanged pages' text from")
+    args = ap.parse_args()
+    build(args.pages, args.out, args.reuse)
