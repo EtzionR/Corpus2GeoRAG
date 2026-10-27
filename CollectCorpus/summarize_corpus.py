@@ -24,7 +24,16 @@ def source_group(source):
         return "seed page"
     if source.startswith("seed-file:"):
         return source  # keep the file name, e.g. seed-file:team_DATA_json_titles.txt
+    if source.startswith("bfs-"):
+        return "BFS expansion (page links)"
+    if source == "selector-training":
+        return "selector training page"
     return "category tree"
+
+
+def text_of(p):
+    """Plain text when the page has it; pages added by the BFS expansion have only the raw `content`."""
+    return p.get("text") or p.get("content", "")
 
 
 def summarize(name):
@@ -38,13 +47,14 @@ def summarize(name):
         w.writerow(["title", "source", "chars", "sections", "lat", "lon", "last_edited", "url"])
         for p in sorted(pages, key=lambda p: p["title"]):
             c = p.get("coordinates") or {}
-            w.writerow([p["title"], p["source"], len(p["text"]), len(p["sections"]),
+            w.writerow([p["title"], p["source"], len(text_of(p)), len(p.get("sections", [])),
                         c.get("lat", ""), c.get("lon", ""), p.get("last_edited", ""), p["url"]])
 
-    sizes = sorted(len(p["text"]) for p in pages)
+    sizes = sorted(len(text_of(p)) for p in pages)
+    text_only = sum("sections" not in p for p in pages)
     groups = Counter(source_group(p["source"]) for p in pages)
     top_sources = Counter(p["source"] for p in pages if source_group(p["source"]) == "category tree")
-    top_cats = Counter(c for p in pages for c in p["categories"] if not c.startswith(NOISE_CATEGORY_PREFIXES))
+    top_cats = Counter(c for p in pages for c in p.get("categories", []) if not c.startswith(NOISE_CATEGORY_PREFIXES))
     buckets = [("< 1K", 0, 1_000), ("1K–5K", 1_000, 5_000), ("5K–20K", 5_000, 20_000),
                ("20K–50K", 20_000, 50_000), ("> 50K", 50_000, float("inf"))]
 
@@ -56,11 +66,14 @@ def summarize(name):
         "| | |", "|---|---|",
         f"| Pages | {len(pages):,} |",
         f"| Text | {sum(sizes) / 1e6:.1f}M characters |",
-        f"| Sections | {sum(len(p['sections']) for p in pages):,} |",
+        f"| Sections | {sum(len(p.get('sections', [])) for p in pages):,} |",
         f"| With coordinates | {sum(bool(p.get('coordinates')) for p in pages):,} |",
         f"| Median page size | {sizes[len(sizes) // 2]:,} characters |",
         f"| Most recent edit | {max(p.get('last_edited') or '' for p in pages)} |",
         "",
+        *([f"{text_only:,} pages (added by the BFS expansion or as selector training pages) were saved with their text "
+           "only: they have no sections, categories, coordinates or last-edit date in `pages.jsonl`, so the counts "
+           "of those below cover the other pages.", ""] if text_only else []),
         "## Where the pages came from",
         "| Source | Pages |", "|---|---|",
         *[f"| {g} | {n:,} |" for g, n in groups.most_common()],
@@ -79,7 +92,7 @@ def summarize(name):
         "",
         "## Largest pages",
         "| Page | Characters |", "|---|---|",
-        *[f"| {p['title']} | {len(p['text']):,} |" for p in sorted(pages, key=lambda p: -len(p["text"]))[:15]],
+        *[f"| {p['title']} | {len(text_of(p)):,} |" for p in sorted(pages, key=lambda p: -len(text_of(p)))[:15]],
         "",
         "Full per-page list: `summary.csv`.",
     ]

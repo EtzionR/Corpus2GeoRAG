@@ -1,5 +1,5 @@
 {
-  "model_name": "intfloat/multilingual-e5-large",
+  "model_name": "google/embeddinggemma-2",
   "paragraph_threshold": 0.7,
   "accept_threshold": 0.3,
   "reject_threshold": 0.1,

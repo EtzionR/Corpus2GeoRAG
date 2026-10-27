@@ -1,6 +1,6 @@
 """The selector: decides how related a page is to the corpus (the Russia-Ukraine war, military focus).
 
-    page text -> paragraphs -> E5 vectors -> logistic regression -> a probability per paragraph
+    page text -> paragraphs -> vectors (EmbeddingGemma 2) -> logistic regression -> a probability per paragraph
               -> page score = share of paragraphs whose probability >= PARAGRAPH_THRESHOLD   (0..1)
               -> three zones:  score >= ACCEPT_THRESHOLD  -> "accept"  (enters the corpus)
                                (optional quantity rule: also "accept" when a page has at least
@@ -8,8 +8,9 @@
                                score <  REJECT_THRESHOLD  -> "reject"  (listed in the report)
                                in between                 -> "review"  (listed in the report for a manual decision)
 
-Trained on paragraphs of 20 hand-picked pages (data/selector/paragraphs.csv): 10 clearly related (label 1)
-and 10 not related (label 0): close in topic but not military, or military but not this war.
+v3 (2026-10-23) is trained on the paragraphs of 40 hand-picked pages (selector/training_pages_v3.csv): 20 clearly
+related (label 1) and 20 not related (label 0): close in topic but not military, or military but not this war.
+Paragraphs that contradict their page's label were removed after cross-validation (selector/flag_paragraphs.py).
 The thresholds are chosen by testing on the existing corpus.
 """
 import json
@@ -22,6 +23,10 @@ from sklearn.linear_model import LogisticRegression
 from selector.build_training_set import split_paragraphs
 
 E5_MODEL = "intfloat/multilingual-e5-large"
+GEMMA_MODEL = "google/embeddinggemma-2"
+# Chosen 2026-10-23 (CompareEmbeddings.ipynb): same accuracy as E5 (exam AUC 0.868 vs 0.864, accept precision 92.3%
+# for both), more related pages accepted (1,456 vs 1,372), ~1.6x faster, 768 numbers per vector instead of 1024.
+MODEL = GEMMA_MODEL
 # Chosen on the v2 run (2026-10-18): AUC was best at a paragraph threshold of 0.7 (0.834);
 # the two page thresholds leave a "review" zone between them.
 PARAGRAPH_THRESHOLD = 0.7   # a paragraph counts as related from this probability
@@ -32,11 +37,24 @@ REJECT_THRESHOLD = 0.10     # a page below this share is rejected; in between = 
 MIN_RELATED_PARAGRAPHS = 7
 
 
+def load_encoder(model_name=MODEL, device=None):
+    """The embedding model. EmbeddingGemma 2 is loaded text-only (no image/audio parts), in float32 as its card says."""
+    from sentence_transformers import SentenceTransformer
+    if model_name == GEMMA_MODEL:
+        import torch
+        encoder = SentenceTransformer(model_name, device=device,
+                                      config_kwargs={"vision_config": None, "audio_config": None},
+                                      model_kwargs={"torch_dtype": torch.float32})
+        encoder.max_seq_length = 2048
+        return encoder
+    return SentenceTransformer(model_name, device=device)
+
+
 class Selector:
-    def __init__(self, encoder, model_name=E5_MODEL, paragraph_threshold=PARAGRAPH_THRESHOLD,
+    def __init__(self, encoder, model_name=MODEL, paragraph_threshold=PARAGRAPH_THRESHOLD,
                  accept_threshold=ACCEPT_THRESHOLD, reject_threshold=REJECT_THRESHOLD,
                  min_related_paragraphs=MIN_RELATED_PARAGRAPHS, clf=None):
-        self.encoder = encoder              # a sentence_transformers.SentenceTransformer (E5)
+        self.encoder = encoder              # a sentence_transformers.SentenceTransformer (load_encoder)
         self.model_name = model_name
         self.paragraph_threshold = paragraph_threshold
         self.accept_threshold = accept_threshold
@@ -45,9 +63,12 @@ class Selector:
         self.clf = clf
 
     # ---------------------------------------------------------------- vectors
-    def embed(self, texts, batch_size=64, show_progress_bar=False):
-        """E5 vectors; E5 expects the "query: " prefix for this kind of task."""
-        return self.encoder.encode(["query: " + t for t in texts], batch_size=batch_size,
+    def embed(self, texts, batch_size=32, show_progress_bar=False):
+        """Paragraph vectors, with each model's own prompt: E5 expects "query: ", Gemma its classification prompt."""
+        if self.model_name == E5_MODEL:
+            return self.encoder.encode(["query: " + t for t in texts], batch_size=batch_size,
+                                       normalize_embeddings=True, show_progress_bar=show_progress_bar)
+        return self.encoder.encode(texts, prompt_name="Classification", batch_size=batch_size,
                                    normalize_embeddings=True, show_progress_bar=show_progress_bar)
 
     # ---------------------------------------------------------------- training
@@ -89,7 +110,7 @@ class Selector:
 
     # ---------------------------------------------------------------- save / load
     def save(self, folder):
-        """The classifier and the settings; the E5 model itself is downloaded by name when loading."""
+        """The classifier and the settings; the embedding model itself is downloaded by name when loading."""
         folder = Path(folder)
         folder.mkdir(parents=True, exist_ok=True)
         joblib.dump(self.clf, folder / "selector_logreg.joblib")
@@ -104,6 +125,5 @@ class Selector:
         folder = Path(folder)
         config = json.loads((folder / "selector_config.json").read_text(encoding="utf-8"))
         if encoder is None:
-            from sentence_transformers import SentenceTransformer
-            encoder = SentenceTransformer(config["model_name"])
+            encoder = load_encoder(config["model_name"])
         return cls(encoder, clf=joblib.load(folder / "selector_logreg.joblib"), **config)
