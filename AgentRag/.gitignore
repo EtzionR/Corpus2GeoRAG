@@ -26,3 +26,8 @@ real_shaped_graph.json
 .idea/
 .DS_Store
 Thumbs.db
+
+# Evaluation harness: saved LLM answers (re-created on demand), and run reports (only the latest
+# run is committed, with git add -f)
+eval/cache/
+eval/results/
