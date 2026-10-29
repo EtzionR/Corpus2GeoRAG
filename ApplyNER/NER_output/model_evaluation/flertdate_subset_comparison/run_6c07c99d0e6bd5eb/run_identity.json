@@ -1,0 +1,8 @@
+{
+  "sample_sha256": "fdefbfe4411e1a7d9205fafc678cfe14faedb84117bdc7a0a478e3eb67322e84",
+  "flertdate_path": "C:\\Users\\idosc\\Corpus2GeoRAG\\ApplyNER\\NER_output\\model_evaluation\\fine_tuning\\flert_5label\\FlertDate\\best-model.pt",
+  "flertdate_size": 2256898906,
+  "flertdate_modified_ns": 1793022839022911000,
+  "batch_size": 16,
+  "original_model": "flair/ner-english-large"
+}

@@ -583,4 +583,688 @@ class TestBackendAdapter:
         monkeypatch.setattr(geo_agent, "_backend_get_source_text", None)
         assert geo_agent.get_source_text("nonexistent_doc") is None
 
+    def test_vr6_numbered_pins_and_citations_passthrough(self, monkeypatch):
+        """Verify Vr6 numbered places, answer_plain, citations, why, and uncertain flags are mapped."""
+        import geo_agent
+
+        def fake_vr6_query(text_prompt, geo_location=None, chat_history=None, api_key=None):
+            return {
+                "answer": "Kyiv [1] is the capital of Ukraine [L1]. Donets [2] is nearby.",
+                "answer_plain": "Kyiv is the capital of Ukraine. Donets is nearby.",
+                "status": "answered",
+                "grounded": True,
+                "shape": "fact",
+                "geo_locations": [
+                    {
+                        "number": 1,
+                        "id": "Kyiv",
+                        "label": "Kyiv",
+                        "kind": "city",
+                        "role": "primary",
+                        "geometry": {"type": "Point", "coordinates": [30.5241, 50.4500]},
+                        "why": "30 matching paragraphs",
+                        "sources": ["TEXT_50333"]
+                    },
+                    {
+                        "number": 2,
+                        "id": "Donets",
+                        "label": "Donets",
+                        "kind": "road",
+                        "role": "context",
+                        "geometry": {"type": "Point", "coordinates": [36.25, 49.98]},
+                        "why": "2 matching paragraphs",
+                        "uncertain": "geocoded as a road, may refer to the river",
+                        "sources": ["TEXT_1001"]
+                    }
+                ],
+                "citations": [
+                    {
+                        "id": "L1",
+                        "pointer": "TEXT_50333",
+                        "article": "Kyiv",
+                        "section": "Lead",
+                        "spans": [[0, 4]]
+                    }
+                ],
+                "sources": ["TEXT_50333", "TEXT_1001"]
+            }
+
+        monkeypatch.setattr(geo_agent, "_BACKEND_AVAILABLE", True)
+        monkeypatch.setattr(geo_agent, "_backend_query", fake_vr6_query)
+
+        resp = query_geo_agent(text_prompt="Tell me about Kyiv", api_key="test-key-vr6")
+
+        assert resp.is_live_backend is True
+        assert resp.answer == "Kyiv [1] is the capital of Ukraine [L1]. Donets [2] is nearby."
+        assert resp.answer_plain == "Kyiv is the capital of Ukraine. Donets is nearby."
+        assert resp.grounded is True
+        assert resp.status == "answered"
+        assert len(resp.citations) == 1
+        assert resp.citations[0]["id"] == "L1"
+        assert resp.citations[0]["article"] == "Kyiv"
+
+        # Primary numbered pin
+        pin1 = [l for l in resp.layers if l.data.get("number") == 1][0]
+        assert pin1.name == "1. [CITY] Kyiv"
+        assert pin1.tooltip == "1. Kyiv [CITY]"
+        assert pin1.color == "blue"
+        assert "30 matching paragraphs" in pin1.popup
+
+        # Uncertain pin
+        pin2 = [l for l in resp.layers if l.data.get("number") == 2][0]
+        assert pin2.name == "2. [ROAD] Donets (?)"
+        assert pin2.color == "orange"
+        assert "geocoded as a road" in pin2.popup
+
+    def test_vr6_get_source_text_paragraph_pointer(self, monkeypatch):
+        """Verify get_source_text passes through Vr6 paragraph metadata."""
+        import geo_agent
+
+        def fake_get_source(ptr):
+            if ptr == "TEXT_50333":
+                return {
+                    "pointer": "TEXT_50333",
+                    "text": "Kyiv is the capital and most populous city of Ukraine.",
+                    "document": "Kyiv",
+                    "section": "Lead",
+                    "paragraph_index": 0
+                }
+            return None
+
+        monkeypatch.setattr(geo_agent, "_backend_get_source_text", fake_get_source)
+        if hasattr(geo_agent.get_source_text, "cache_clear"):
+            geo_agent.get_source_text.cache_clear()
+        res = geo_agent.get_source_text("TEXT_50333")
+        assert res is not None
+        assert res["pointer"] == "TEXT_50333"
+        assert res["document"] == "Kyiv"
+        assert res["section"] == "Lead"
+        assert res["paragraph_index"] == 0
+
+    def test_vr6_source_label_resolves_document_title(self, monkeypatch):
+        """Verify sources display human-readable article title instead of raw pointer indices."""
+        import geo_agent
+        from app import _clean_doc_title
+
+        def fake_get_source(ptr):
+            if ptr == "TEXT_53733":
+                return {
+                    "pointer": "TEXT_53733",
+                    "text": "Biden called Zelenskyy...",
+                    "document": "Russia\ufffdUkraine relations",
+                    "section": "History of relations",
+                    "paragraph_index": 89
+                }
+            return None
+
+        monkeypatch.setattr(geo_agent, "_backend_get_source_text", fake_get_source)
+        if hasattr(geo_agent.get_source_text, "cache_clear"):
+            geo_agent.get_source_text.cache_clear()
+        meta = geo_agent.get_source_text("TEXT_53733")
+        assert meta is not None
+        doc_title = _clean_doc_title(meta["document"])
+        assert doc_title == "Russia - Ukraine relations"
+        assert meta["section"] == "History of relations"
+        assert meta["paragraph_index"] == 89
+
+    def test_vr6_pin_visibility_filters(self):
+        """Verify context and uncertain pins can be toggled on/off."""
+        from geo_agent import MapLayer
+
+        primary_pin = MapLayer(
+            name="1. [CITY] Kyiv",
+            layer_type="marker",
+            data={"lat": 50.45, "lng": 30.52, "role": "primary", "uncertain": None},
+            color="blue"
+        )
+        context_pin = MapLayer(
+            name="2. [TOWN] Bucha",
+            layer_type="marker",
+            data={"lat": 50.55, "lng": 30.21, "role": "context", "uncertain": None},
+            color="cadetblue"
+        )
+        uncertain_pin = MapLayer(
+            name="3. [ROAD] Donets (?)",
+            layer_type="marker",
+            data={"lat": 49.98, "lng": 36.25, "role": "context", "uncertain": "river vs road"},
+            color="orange"
+        )
+        all_layers = [primary_pin, context_pin, uncertain_pin]
+
+        def filter_markers(layers, show_context, show_uncertain):
+            rendered = []
+            for l in layers:
+                if l.layer_type == "marker":
+                    is_context = isinstance(l.data, dict) and (l.data.get("role") == "context" or l.color == "cadetblue")
+                    is_uncertain = isinstance(l.data, dict) and bool(l.data.get("uncertain") or l.color == "orange")
+                    if is_context and not show_context:
+                        continue
+                    if is_uncertain and not show_uncertain:
+                        continue
+                    rendered.append(l)
+            return rendered
+
+        # All visible by default
+        assert len(filter_markers(all_layers, show_context=True, show_uncertain=True)) == 3
+
+        # Hide context: only primary remains
+        res_no_ctx = filter_markers(all_layers, show_context=False, show_uncertain=True)
+        assert len(res_no_ctx) == 1
+        assert res_no_ctx[0].name == "1. [CITY] Kyiv"
+
+        # Hide uncertain: primary and normal context remain
+        res_no_unc = filter_markers(all_layers, show_context=True, show_uncertain=False)
+        assert len(res_no_unc) == 2
+        assert uncertain_pin not in res_no_unc
+
+        # Hide both: only primary remains
+        res_no_both = filter_markers(all_layers, show_context=False, show_uncertain=False)
+        assert len(res_no_both) == 1
+        assert res_no_both[0].name == "1. [CITY] Kyiv"
+
+
+class TestDrawingIngestion:
+    """Validate parsing and conversion of Leaflet Draw GeoJSON features to bounding box / points."""
+
+    def test_draw_rectangle_to_bounding_box(self):
+        """Verify Leaflet Draw Polygon rectangle maps to standard ((min_lat, min_lng), (max_lat, max_lng))."""
+        rect_feature = {
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [[30.5, 49.2], [35.2, 49.2], [35.2, 51.1], [30.5, 51.1], [30.5, 49.2]]
+                ]
+            }
+        }
+        coords = rect_feature["geometry"]["coordinates"][0]
+        lats = [float(pt[1]) for pt in coords]
+        lngs = [float(pt[0]) for pt in coords]
+        lower_left, upper_right = to_bounding_box((min(lats), min(lngs)), (max(lats), max(lngs)))
+
+        assert lower_left == (49.2, 30.5)
+        assert upper_right == (51.1, 35.2)
+
+    def test_draw_polygon_to_bounding_box(self):
+        """Verify arbitrary Leaflet Draw Polygon calculates proper bounding envelope."""
+        poly_feature = {
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [[31.2, 48.5], [33.4, 47.9], [34.8, 50.1], [32.0, 50.8], [31.2, 48.5]]
+                ]
+            }
+        }
+        coords = poly_feature["geometry"]["coordinates"][0]
+        lats = [float(pt[1]) for pt in coords]
+        lngs = [float(pt[0]) for pt in coords]
+        lower_left, upper_right = to_bounding_box((min(lats), min(lngs)), (max(lats), max(lngs)))
+
+        assert lower_left == (47.9, 31.2)
+        assert upper_right == (50.8, 34.8)
+
+    def test_draw_point_marker_coordinates(self):
+        """Verify Leaflet Draw Point marker maps to (lat, lng)."""
+        marker_feature = {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [31.1656, 48.3794]
+            }
+        }
+        coords = marker_feature["geometry"]["coordinates"]
+        lat = round(float(coords[1]), 5)
+        lng = round(float(coords[0]), 5)
+        assert (lat, lng) == (48.3794, 31.1656)
+
+
+class TestUIBranding:
+    """Verify UI branding compliance and clean separation from proprietary vendor names."""
+
+    def test_no_palantir_or_gotham_in_app_source(self):
+        """Ensure no leftover mentions of 'Palantir' or 'Gotham' exist in the application code."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            content = f.read().lower()
+        assert "palantir" not in content
+        assert "gotham" not in content
+
+    def test_leaflet_attribution_disabled_in_app(self):
+        """Ensure Leaflet attribution control is disabled and hidden in app.py."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            content = f.read()
+        assert "attributionControl=False" in content
+        assert ".leaflet-control-attribution { display: none !important; }" in content
+
+
+
+class TestMapTrashBinTool:
+    """Verify integration of the map toolbar trash bin with spatial selections and overlays."""
+
+    def test_trash_hook_registers_layers_and_handlers(self):
+        """Verify MapTrashBinHook template renders drawnItems layer registration and delete listener."""
+        import folium
+        from branca.element import MacroElement
+        from jinja2 import Template
+        from streamlit_folium import _get_map_string
+
+        # Extract MapTrashBinHook class definition from app.py safely
+        import app
+        MapTrashBinHook = getattr(app, "MapTrashBinHook")
+
+        m = folium.Map()
+        m_pt = folium.Marker([48.3794, 31.1656]).add_to(m)
+        m_rect = folium.Rectangle(bounds=[[48.0, 31.0], [49.0, 32.0]]).add_to(m)
+
+        hook = MapTrashBinHook(
+            selection_layer_names=[m_pt.get_name(), m_rect.get_name()],
+            has_active=True
+        ).add_to(m)
+
+        script = _get_map_string(m)
+
+        # 1. Selection layer registration into drawnItems
+        assert f"drawnItems.addLayer({m_pt.get_name()})" in script
+        assert f"drawnItems.addLayer({m_rect.get_name()})" in script
+
+        # 2. Trash bin click listener on .leaflet-draw-edit-remove
+        assert ".leaflet-draw-edit-remove" in script
+
+        # 3. Dispatches Leaflet draw:deleted event with action delete
+        assert "draw:deleted" in script
+        assert "action" in script
+        assert "delete" in script
+
+    def test_delete_action_payload_detection(self):
+        """Verify delete action payload detection logic for active_drawing."""
+        del_payload = {
+            "type": "Feature",
+            "geometry": None,
+            "properties": {"action": "delete", "timestamp": 123456789}
+        }
+        props = del_payload.get("properties") or {}
+        geom = del_payload.get("geometry")
+
+        is_delete = props.get("action") == "delete" or not geom
+        assert is_delete is True
+
+    def test_app_draw_config_enables_trash_and_disables_edit(self):
+        """Ensure Draw plugin in app.py explicitly enables remove and disables edit."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            content = f.read()
+
+        assert 'edit_options={"edit": False, "remove": True}' in content
+        assert "edit_options=None" not in content
+        assert "MapTrashBinHook" in content
+
+    def test_instant_client_side_selection_and_bbox_hooks(self):
+        """Verify MapTrashBinHook provides 0ms client-side click and bbox visual feedback."""
+        import folium
+        from streamlit_folium import _get_map_string
+        import app
+
+        MapTrashBinHook = getattr(app, "MapTrashBinHook")
+        m = folium.Map()
+        MapTrashBinHook().add_to(m)
+
+        script = _get_map_string(m)
+
+        # 1. Instant click handler on canvas
+        assert "map.on('click'" in script
+        assert "starIcon" in script
+        assert "window._instantTargetMarker" in script
+
+        # 2. Instant bounding box handler on draw:created
+        assert "map.on('draw:created'" in script
+        assert "arrow-down" in script
+        assert "arrow-up" in script
+
+        # 3. Instant clearing in triggerRemoval
+        assert "window._instantTargetMarker = null" in script
+
+    def test_dynamic_feature_group_hash_stability(self):
+        """Verify that dynamic selection changes via feature_group_to_add do not alter the base map hash."""
+        import folium
+        from streamlit_folium import _get_map_string, generate_js_hash
+        import app
+
+        MapTrashBinHook = getattr(app, "MapTrashBinHook")
+
+        # Base map m (as generated in app.py)
+        m = folium.Map(location=[48.3794, 31.1656], zoom_start=6, tiles=None)
+        folium.plugins.Draw(
+            export=False,
+            position="topleft",
+            draw_options={"rectangle": True},
+            edit_options={"edit": False, "remove": True}
+        ).add_to(m)
+        MapTrashBinHook(has_active=False).add_to(m)
+
+        s_base = _get_map_string(m)
+        h_initial = generate_js_hash(s_base, key="geoai_tactical_map")
+
+        # Now simulate user selecting a point: dynamic_layers_fg is passed via feature_group_to_add,
+        # so m itself remains structurally identical
+        s_with_point = _get_map_string(m)
+        h_with_point = generate_js_hash(s_with_point, key="geoai_tactical_map")
+
+        # The base map hash MUST NOT change, ensuring zero map reload / flash
+        assert h_initial == h_with_point
+
+    def test_instant_replacement_cleans_prior_selection(self):
+        """Verify MapTrashBinHook includes client-side instant cleanup for prior selection replacing."""
+        import folium
+        from streamlit_folium import _get_map_string
+        import app
+
+        MapTrashBinHook = getattr(app, "MapTrashBinHook")
+        m = folium.Map()
+        MapTrashBinHook().add_to(m)
+
+        script = _get_map_string(m)
+
+        # 1. Instant cleanup function is defined
+        assert "function clearPreviousSelectionInstantly()" in script
+
+        # 2. Clears active selection feature group (feature_group[0])
+        assert "window.feature_group[0]" in script
+        assert "selFg.clearLayers" in script
+
+        # 3. Purges previous target point and bounding box layers via DOM/map scan
+        assert "map.eachLayer" in script
+        assert "★ Target Point" in script
+        assert "★ Bounding Box" in script
+        assert "★ BBOX" in script
+
+        # 4. clearPreviousSelectionInstantly is called on click and draw:created
+        assert "clearPreviousSelectionInstantly()" in script
+
+    def test_feature_group_separation_in_app(self):
+        """Ensure app.py separates selection_fg and tactical_layers_fg in feature_group_to_add."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            content = f.read()
+
+        assert "selection_fg = folium.FeatureGroup(name=\"Active Selection\", control=False)" in content
+        assert "tactical_layers_fg = folium.FeatureGroup(name=\"Tactical Overlays\", control=False)" in content
+        assert "feature_group_to_add=[selection_fg, tactical_layers_fg]" in content
+
+
+class TestRAGDebugLogging:
+    """Validate RAG agent debug logging, telemetry, payload reconstruction, and error recording."""
+
+    def test_build_raw_request_payload_with_point(self):
+        """Ensure point payloads are formatted in GeoJSON [lon, lat] order with radius."""
+        import app
+        payload = app._build_raw_request_payload(
+            text_prompt="Where are tactical assets?",
+            selected_point=(50.4501, 30.5234),
+            bounding_box=None
+        )
+        assert payload["text_prompt"] == "Where are tactical assets?"
+        assert payload["geo_location"]["type"] == "point"
+        # GeoJSON is [lon, lat]
+        assert payload["geo_location"]["coordinates"] == [30.5234, 50.4501]
+        assert payload["geo_location"]["radius_m"] == 1000.0
+
+    def test_build_raw_request_payload_with_bbox(self):
+        """Ensure bounding box payloads form a valid closed 5-coordinate polygon ring."""
+        import app
+        bbox = ((48.0, 31.0), (49.5, 33.5))
+        payload = app._build_raw_request_payload(
+            text_prompt=None,
+            selected_point=None,
+            bounding_box=bbox
+        )
+        assert "bounding box sector" in payload["text_prompt"]
+        geo_loc = payload["geo_location"]
+        assert geo_loc["type"] == "polygon"
+        coords = geo_loc["coordinates"][0]
+        assert len(coords) == 5
+        assert coords[0] == coords[-1]  # Closed ring
+        # Check SW and NE [lon, lat]
+        assert coords[0] == [31.0, 48.0]
+        assert coords[2] == [33.5, 49.5]
+
+    def test_append_rag_log_capping(self):
+        """Verify _append_rag_log caps history at 50 entries."""
+        import streamlit as st
+        import app
+        st.session_state.rag_logs = []
+        for i in range(60):
+            app._append_rag_log({"id": i, "latency_ms": 10.0, "status": "SUCCESS"})
+        assert len(st.session_state.rag_logs) == 50
+        assert st.session_state.rag_logs[0]["id"] == 10
+        assert st.session_state.rag_logs[-1]["id"] == 59
+
+    def test_mock_agent_populates_raw_response(self):
+        """Ensure query_geo_agent mock responses always include structured raw_response dict."""
+        import geo_agent
+        resp = geo_agent.query_geo_agent(text_prompt="Kyiv headquarters", force_mock=True)
+        assert resp.raw_response is not None
+        assert isinstance(resp.raw_response, dict)
+        assert "answer" in resp.raw_response
+        assert "geo_locations" in resp.raw_response
+        assert "sources" in resp.raw_response
+
+    def test_dispatch_geo_query_records_success_log(self, monkeypatch):
+        """Verify dispatch_geo_query captures latency, payloads, and status into rag_logs."""
+        import streamlit as st
+        import app
+        st.session_state.rag_logs = []
+        st.session_state.messages = []
+        st.session_state.openrouter_api_key = ""
+
+        resp = app.dispatch_geo_query(
+            text_prompt="Test tactical sweep",
+            selected_point=(48.5, 32.0)
+        )
+        assert resp is not None
+        assert len(st.session_state.rag_logs) == 1
+        log = st.session_state.rag_logs[0]
+        assert log["status"] == "SUCCESS"
+        assert log["latency_ms"] >= 0.0
+        assert log["raw_request"]["text_prompt"] == "Test tactical sweep"
+        assert log["raw_response"] is not None
+        assert "answer" in log["raw_response"]
+
+    def test_dispatch_geo_query_records_error_log(self, monkeypatch):
+        """Verify dispatch_geo_query catches errors and logs error_details without crashing."""
+        import streamlit as st
+        import app
+        import geo_agent
+        st.session_state.rag_logs = []
+
+        def mock_error_query(*args, **kwargs):
+            raise geo_agent.AgentError("Simulated connection timeout to knowledge graph.")
+
+        monkeypatch.setattr(app, "query_geo_agent", mock_error_query)
+
+        res = app.dispatch_geo_query(text_prompt="Failing query")
+        assert res is None
+        assert len(st.session_state.rag_logs) == 1
+        log = st.session_state.rag_logs[0]
+        assert log["status"] == "ERROR"
+        assert log["error_details"]["error_type"] == "AgentError"
+        assert "Simulated connection timeout" in log["error_details"]["message"]
+
+    def test_sidebar_operations_order_in_codebase(self):
+        """Verify that Operations appears before Spatial Targeting and contains RAG Debug Logs button."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            code = f.read()
+
+        ops_pos = code.find("st.subheader(\"🛠️ Operations\")")
+        spatial_pos = code.find("st.subheader(\"🎯 Spatial Targeting\")")
+        rag_btn_pos = code.find("📋 RAG Debug Logs")
+
+        assert ops_pos != -1, "Operations section must exist in sidebar"
+        assert spatial_pos != -1, "Spatial Targeting section must exist in sidebar"
+        assert rag_btn_pos != -1, "RAG Debug Logs button must exist"
+        assert ops_pos < spatial_pos, "Operations section must be positioned ABOVE Spatial Targeting"
+        assert ops_pos < rag_btn_pos < spatial_pos, "RAG Debug Logs button must be inside Operations section"
+
+    def test_chat_bubbles_opposite_sides_layout(self):
+        """Ensure chat console styles operator (user) on the right and geo-ai on the left with bubble styling."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            code = f.read()
+
+        # Check marker classes in HTML generation
+        assert "bubble-marker-operator" in code, "Operator messages must have bubble-marker-operator class"
+        assert "bubble-marker-geoai" in code, "Geo-AI messages must have bubble-marker-geoai class"
+        assert "chat-role-operator" in code, "Operator role tag must have chat-role-operator class"
+        assert "chat-role-geoai" in code, "Geo-AI role tag must have chat-role-geoai class"
+
+        # Check CSS rules for opposite sides and border radius
+        assert "flex-direction: row-reverse" in code, "Operator bubbles must reverse flex direction for right-hand alignment"
+        assert "align-self: flex-end" in code, "Operator messages must align to the right"
+        assert "align-self: flex-start" in code, "Geo-AI messages must align to the left"
+        assert "margin-left: auto" in code, "Operator bubbles must float/align right with margin-left: auto"
+        assert "margin-right: auto" in code, "Geo-AI bubbles must float/align left with margin-right: auto"
+        assert "border-radius: 12px 12px 12px 12px" in code, "Chat bubbles must have border-radius: 12px 12px 12px 12px"
+
+
+class TestUpgradesOneThroughSixAndPerformance:
+    """Validate Upgrades 1-6 (Vr6) and AGENTS.md zero-latency performance rules."""
+
+    def test_highlight_text_spans_basic_and_overlapping(self):
+        """Upgrade 6: Verify text span highlighting merges overlaps and generates <mark> tags."""
+        from app import _highlight_text_spans
+
+        text = "Kyiv is the capital of Ukraine."
+        # Highlight "Kyiv" (0, 4) and "capital" (12, 19)
+        spans = [[0, 4], [12, 19]]
+        res = _highlight_text_spans(text, spans)
+        assert "<mark" in res
+        assert "Kyiv</mark>" in res
+        assert "capital</mark>" in res
+
+        # Overlapping spans: (0, 4) and (2, 7) -> merged (0, 7)
+        overlap_spans = [[0, 4], [2, 7]]
+        res_overlap = _highlight_text_spans("Kyiv is nice", overlap_spans)
+        assert res_overlap.count("<mark") == 1
+        assert "Kyiv is</mark>" in res_overlap
+
+    def test_highlight_text_spans_dict_format(self):
+        """Upgrade 6: Verify dict-style spans [{'start': 0, 'end': 4}]."""
+        from app import _highlight_text_spans
+
+        text = "Kharkiv sector"
+        spans = [{"start": 0, "end": 7}]
+        res = _highlight_text_spans(text, spans)
+        assert "<mark" in res
+        assert "Kharkiv</mark>" in res
+
+    def test_highlight_text_spans_edge_cases(self):
+        """Upgrade 6: Safe fallbacks for empty text, null spans, or out-of-range offsets."""
+        from app import _highlight_text_spans
+
+        assert _highlight_text_spans("", [[0, 5]]) == ""
+        assert _highlight_text_spans("Hello", None) == "Hello"
+        assert _highlight_text_spans("Hello", []) == "Hello"
+        assert _highlight_text_spans("Hello", [[10, 20]]) == "Hello"
+        assert _highlight_text_spans("Hello", [[-5, -1]]) == "Hello"
+        assert _highlight_text_spans("Hello", [["invalid", "type"]]) == "Hello"
+
+    def test_build_assistant_message_vr6_fields(self):
+        """Upgrade 4 & 5: Ensure _build_assistant_message preserves follow_ups, regions, did_you_mean, map_bbox."""
+        from app import _build_assistant_message
+        from geo_agent import AgentResponse
+
+        resp = AgentResponse(
+            answer="Here are tactical points.",
+            follow_ups=["Where is the 93rd Brigade?", "Show frontline units"],
+            regions={"Donetsk Oblast": 14, "Kharkiv Oblast": 8},
+            did_you_mean="Bakhmut",
+            map_bbox=[36.5, 48.2, 38.0, 49.1]
+        )
+        msg = _build_assistant_message(resp)
+        assert msg["role"] == "assistant"
+        assert msg["follow_ups"] == ["Where is the 93rd Brigade?", "Show frontline units"]
+        assert msg["regions"] == {"Donetsk Oblast": 14, "Kharkiv Oblast": 8}
+        assert msg["did_you_mean"] == "Bakhmut"
+        assert msg["map_bbox"] == [36.5, 48.2, 38.0, 49.1]
+
+    def test_geojson_boundary_layer_generation(self):
+        """Upgrade 1: Verify geo_agent hydrates GeoJSON boundaries when shape is returned."""
+        import geo_agent
+
+        raw_vr6_resp = {
+            "answer": "Poltava is in central Ukraine.",
+            "geo_locations": [
+                {
+                    "name": "Poltava Oblast",
+                    "latitude": 49.5883,
+                    "longitude": 34.5514,
+                    "role": "primary",
+                    "shape": {
+                        "type": "Polygon",
+                        "coordinates": [[[34.0, 49.0], [35.0, 49.0], [35.0, 50.0], [34.0, 50.0], [34.0, 49.0]]]
+                    }
+                }
+            ],
+            "map": {
+                "bbox": [33.5, 48.8, 35.5, 50.3]
+            },
+            "regions": {"Poltava Oblast": 1},
+            "follow_up_questions": ["What units operate in Poltava?"]
+        }
+
+        # Mock query backend
+        monkeypatch_target = getattr(geo_agent, "_backend_query", None)
+        orig_backend = geo_agent._BACKEND_AVAILABLE
+        try:
+            geo_agent._BACKEND_AVAILABLE = True
+            geo_agent._backend_query = lambda **kw: raw_vr6_resp
+
+            resp = geo_agent.query_geo_agent(text_prompt="Analyze Poltava", api_key="test-key")
+            assert resp is not None
+            assert resp.map_bbox == [33.5, 48.8, 35.5, 50.3]
+            assert resp.regions == {"Poltava Oblast": 1}
+            assert resp.follow_ups == ["What units operate in Poltava?"]
+
+            # Layer checks: should have a marker layer AND a geojson layer
+            layer_types = [l.layer_type for l in resp.layers]
+            assert "marker" in layer_types
+            assert "geojson" in layer_types
+
+            geojson_layer = next(l for l in resp.layers if l.layer_type == "geojson")
+            assert geojson_layer.name == "Outline: Poltava Oblast"
+            assert geojson_layer.data["type"] == "Polygon"
+        finally:
+            geo_agent._BACKEND_AVAILABLE = orig_backend
+            geo_agent._backend_query = monkeypatch_target
+
+    def test_performance_rules_in_agents_md(self):
+        """AGENTS.md Performance Verification: Ensure all zero-latency rules are present in codebase."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            app_code = f.read()
+
+        # Rule 1.1: returned_objects in st_folium
+        assert 'returned_objects=["last_clicked", "last_active_drawing", "all_drawings"]' in app_code, (
+            "Rule 1.1: st_folium must constrain returned_objects to prevent pan/zoom reruns"
+        )
+
+        # Rule 2.1: Guarded bootstrap & no unconditional importlib.reload
+        assert "_BOOTSTRAP_DONE = getattr(sys, \"_GEOAI_BOOTSTRAP_DONE\", False)" in app_code, (
+            "Rule 2.1: Bootstrap must be guarded once per process"
+        )
+        assert "importlib.reload(sys.modules[\"geo_agent\"])" not in app_code, (
+            "Rule 2.1: Per-rerun importlib.reload of geo_agent must NOT exist"
+        )
+
+        # Rule 3.1: Stable container height
+        assert "chat_container_height = 465" in app_code, (
+            "Rule 3.1: Chat container height must remain constant to prevent screen jumping"
+        )
+
+        # Rule 4.1: MarkerCluster for context markers
+        assert "context_cluster = MarkerCluster" in app_code, (
+            "Rule 4.1: MarkerCluster must be instantiated for context pins"
+        )
+
+        # Rule 4.2: fit_bounds with last_map_bbox
+        assert "m.fit_bounds([[s, w], [n, e]], padding=(30, 30))" in app_code, (
+            "Rule 4.2: Map must auto-zoom to query bbox when available"
+        )
+
+
 

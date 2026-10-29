@@ -7,11 +7,7 @@ relation can be traced back to the exact words in a source text.
 * **Format:** NetworkX *node-link* JSON, undirected graph: `{"directed": false, "multigraph": false, "graph": {}, "nodes": [...], "links": [...]}`.
 * **Size:** 120,019 nodes — 64,301 texts and 55,718 entities (19,266 PER, 23,317 ORG, 13,135 LOC) — and 697,333 edges.
 * **File:** `knowledge_graph.json.gz`, 37 MB (gzip, lossless; the JSON inside is 228 MB). Python reads it directly (section 1);
-  to look inside by hand, decompress it with 7-Zip or open the small samples below.
-* **Small samples to explore first** (same project folder):
-  * `knowledge_graph_examples_real_format.json` — 51 nodes and 29 edges in exactly this format, covering every node and relation type.
-  * `knowledge_graph_examples.json` — the same examples plus a readable view (the words at each position and their sentence).
-* How the graph is built: `PIPELINE.md`.
+  to look inside by hand, decompress it with 7-Zip.
 
 ---
 
@@ -29,7 +25,7 @@ G = nx.node_link_graph(data, edges='links')   # NetworkX >= 3.4
 ```
 
 Compression only saves disk space and download time: once loaded, the graph takes the same memory as the plain JSON
-(about 3 seconds to decompress and parse). The small sample files are plain JSON — read them with `open(...)` instead of `gzip.open(...)`.
+(about 3 seconds to decompress and parse).
 
 You can also work on `data['nodes']` / `data['links']` directly — every edge there has an explicit `source` and `target`
 (see the note on direction in 3.1).
@@ -248,5 +244,3 @@ inside_area = [n for n, d in G.nodes(data=True)
 * **NER noise:** some entity names are fragments (`'s Republic`, `92`, ` HR`); they have few connections and low weights.
 * **Geocoding mistakes:** some names matched the wrong place (e.g. `Donbas` → a street in Skopje, `place_type: road`).
   `place_type` and `importance` help to spot them.
-* **Check-mode files:** a graph built in check mode has text relations for only ~20 texts (all `IN_THE_TEXT` and `INSIDE`
-  edges are complete). The full run has relations for the whole corpus.

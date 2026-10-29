@@ -16,10 +16,18 @@ The scripts' `main()` only parses arguments and calls the same functions
 (`build()`, `update()`, `filter_corpus()`, `export_data_json()`; `summarize()` is in the scripts only).
 [Open in Colab](https://colab.research.google.com/github/arielax-212/Corpus2GeoRAG/blob/main/CollectCorpus/CollectCorpus.ipynb).
 
-**`DATA.json`** in this folder is the output for the next step: the filtered (military) corpus, 1,602 pages,
-`{title: text}`, in exactly the format of `examples/DATA.json`. It holds the pages kept by the category filter
-and then by the selector (zones "accept" and "review"; the 308 "reject" pages were removed). The richer `pages.jsonl` files
-(all pages before filtering, with sections, coordinates, links and revisions) stay in `data/` and are not committed.
+**`DATA.json.gz`** in this folder is the output for the next step: the final corpus, **2,081 pages** (2026-10-23),
+`{title: text}`, in exactly the format of `examples/DATA.json`, compressed with gzip (9 MB; 28 MB uncompressed is
+too big for GitHub):
+```python
+import gzip, json
+with gzip.open("DATA.json.gz", "rt", encoding="utf-8") as f:
+    data = json.load(f)          # {title: text}, the same dict as DATA.json
+```
+It holds the pages of the earlier corpus and of the
+BFS expansion that the selector (v3, EmbeddingGemma 2) **accepts**; the "review" zone is kept aside for a manual
+decision (see "The final corpus" below). What is in it and how it was chosen: [`DATA_SUMMARY.md`](DATA_SUMMARY.md). The richer `pages.jsonl` files (with sections, coordinates, links and
+revisions) stay in `data/` and are not committed.
 
 ## Setup
 ```bash
@@ -43,26 +51,58 @@ Run all commands from this folder. Output goes to `data/<corpus name>/` (not com
 Decides, from the text itself, whether a page belongs in the corpus (the Russia–Ukraine war, military focus).
 It is meant as the gate for new pages, and was also applied to the existing corpus.
 ```
-page ─► paragraphs ─► E5 (multilingual-e5-large) vectors ─► logistic regression ─► probability per paragraph
+page ─► paragraphs ─► EmbeddingGemma 2 vectors ─► logistic regression ─► probability per paragraph
      ─► related paragraphs = probability ≥ 0.7;  page score = their share
      ─► accept  if score ≥ 0.30, or ≥ 7 related paragraphs (long pages with a military section)
         review  if 0.10 ≤ score < 0.30        reject  if score < 0.10
 ```
-- **Training:** 1,194 paragraphs of the 20 pages in `selector/training_pages.csv`: 10 clearly related (battles,
-  a unit, a weapon) and 10 not (close in topic but not military, or military but another war).
-- **Thresholds:** chosen by testing on the existing corpus (2,853 pages, never trained on): AUC 0.834;
-  about 91% of the pages in "accept" were kept by the category filter.
+- **Training (v3):** 3,009 paragraphs of the 40 pages in `selector/training_pages_v3.csv`: 20 clearly related
+  (battles, units, weapons, commanders, strikes) and 20 not (close in topic but not military, or military but another
+  war). Each paragraph is an example. 61 paragraphs that contradict their page's label (e.g. a football paragraph on a
+  military page) were removed after cross-validation by page (`flag_paragraphs.py`).
+- **Embedding model:** [google/embeddinggemma-2](https://huggingface.co/google/embeddinggemma-2) (text part, 768
+  numbers per vector), compared on the same data with E5 (multilingual-e5-large): about the same accuracy
+  (AUC 0.868 vs 0.864 on 2,842 corpus pages never trained on; 92.3% of "accept" pages correct for both), but more
+  related pages accepted (1,456 vs 1,372) and ~1.6x faster.
 - **Use it:**
   ```python
   from selector.selector import Selector
-  gate = Selector.load("selector/model")     # downloads E5 on first use; a GPU is much faster
+  gate = Selector.load("selector/model")     # downloads EmbeddingGemma 2 on first use; a GPU is much faster
   gate.score_page(text)    # {"score", "decision": "accept"/"review"/"reject", "paragraphs", "related_paragraphs"}
   ```
-- **Files:** `selector.py` (the selector), `build_training_set.py` (splitting pages into paragraphs, the training set),
-  `prepare_eval.py` (the test set), `SelectorTraining.ipynb` (training and thresholds on Colab),
-  `apply_to_corpus.py` (applies the zones to the corpus), `model/` (the trained classifier).
-  The model was trained with scikit-learn 1.6 (Colab); newer versions load it with a version warning.
-- **Applied to the corpus:** `summaries/ukraine_war_selected/` (`selector_zones.csv`: every page's score and zone).
+  EmbeddingGemma 2 needs recent `sentence-transformers` and `transformers`, and `torchvision`.
+- **Files:** `selector.py` (the selector), `build_training_set.py` (splitting pages into paragraphs, the training set:
+  `python -m selector.build_training_set --pages selector/training_pages_v3.csv --out data/selector/v3`),
+  `flag_paragraphs.py` (training paragraphs that contradict their page), `prepare_eval.py` (the test set),
+  `model/` (the trained classifier, v3 with Gemma).
+- **Earlier versions:** v2 (E5, 20 pages, `training_pages.csv`, `SelectorTraining.ipynb`, `ScoreNewPages.ipynb`,
+  `apply_to_corpus.py`, `summaries/ukraine_war_selected/`) built the previous `DATA.json` (1,602 pages);
+  its model is in the git history.
+
+## Expanding the corpus: BFS over page links (depth 1)
+New pages come from the links of the pages already in the corpus, one step away, and each new page
+enters only if the selector accepts it.
+```bash
+python -m selector.expand_bfs --min-links 10     # find candidates, resolve redirects, download (resumable)
+```
+- Candidates: pages linked from at least `--min-links` corpus pages, not in the corpus, real articles
+  ("List of …" pages skipped by default: their content is mostly tables). Redirects and other names of corpus
+  pages are resolved and dropped. Pages scored before are not downloaded again.
+- Scoring runs on Colab GPU: `selector/ScoreNewPages.ipynb` (upload `candidates_links10.jsonl` to `MyDrive/selector`).
+- First run (`--min-links 10`, 2026-10-19): 4,106 new pages (scored then with v2:
+  `summaries/expansion_links10/expansion_scores.csv`). With v3 they are part of the final corpus below.
+
+## The final corpus (`selector/build_final_corpus.py`)
+```bash
+python -m selector.build_final_corpus     # -> data/ukraine_war_final/ (pages.jsonl, DATA.json, review_pages.jsonl)
+python -m selector.add_reviewed           # adds the review pages marked "להוסיף" in the Excel
+```
+- Pages: the earlier corpus (1,910), the BFS pages collected before (354) and downloaded (3,543), and the 40
+  training pages (decided by their hand label). Scores were computed on Colab (GPU) with both Gemma and E5.
+- **Only "accept" enters** (2,061 + 20 related training pages = 2,081). The 589 "review" pages are kept aside with
+  their full text and an Excel (`summaries/ukraine_war_final/review_pages.xlsx`, local) showing each page's most
+  military paragraphs; `add_reviewed` adds the marked ones and logs them, and can be run after every round.
+- The same corpus is built with E5 for comparison (1,953 pages; 1,807 in both).
 
 ## Building the Russia–Ukraine war corpus
 ```bash
