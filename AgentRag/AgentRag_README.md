@@ -141,8 +141,9 @@ ten questions on Gemini 2.5 Flash cost about $0.02.
 
 **On the model:** `MODEL` is a hardcoded constant in `agent.py`, never read from `.env` or from the
 caller. This is intentional: changing it is a deliberate, reviewed code change, not a per-person
-setting. Today it's a free model (`nvidia/nemotron-3-ultra-550b-a55b:free`), with OpenRouter's free
-router as backup when it's busy, so answers can vary a little between runs.
+setting. Today it's Gemini 2.5 Flash (`google/gemini-2.5-flash`): 2–3 s an answer and about 0.15
+cents a question, so your OpenRouter key needs a little credit (a few dollars lasts thousands of
+questions). Without credit, OpenRouter falls back to its free router: slower, and answers vary.
 
 ## Interface
 

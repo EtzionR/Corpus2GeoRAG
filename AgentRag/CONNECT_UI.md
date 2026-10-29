@@ -159,8 +159,8 @@ Suggestions, all optional:
 
 ## 8. Good to know
 
-- With the model we tested on (Gemini 2.5 Flash), a question takes 1–6 s. The app's default is a
-  free model: slower, rate-limited, and answers vary a little.
+- The agent uses Gemini 2.5 Flash: a question takes 1–6 s and about 0.15 cents, so your OpenRouter
+  key needs a little credit. Without credit it falls back to a free model: much slower.
 - A rate limit or network failure doesn't raise: you get `status: "llm_failed"` (or a short
   template answer for lists) with the places still filled in. Retrying usually works.
 - Errors that do raise are all `AgentError`: `InvalidRequestError` (bad argument),

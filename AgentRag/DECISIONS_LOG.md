@@ -979,6 +979,18 @@ from the material, in forms our routes answer ("Tell me about X", "Which places 
 material. The name is the pointer: the next question resolves it to the same graph entry. *Outcome:*
 "What happened in Azovstal?", "Which places are linked to the 36th Separate Marine Brigade?".
 
+**P2-68. The app runs on Gemini 2.5 Flash** (decided 2026-10-29, owner). `MODEL =
+"google/gemini-2.5-flash"`, the free router still behind it. Through the UI: 48 s on the free model,
+2–3 s on Flash (first question 9.7 s with the graph load), 0.17 cents a question. Each person's
+OpenRouter key now needs a little credit.
+
+**The missing articles, traced** (2026-10-29). Not a graph or NER fault: the data team's selector
+(Oct 18) rejects broad pages by their share of war paragraphs (Kyiv 3 of 197). The first Vr6 graph
+was built on NER from before it (1,909 articles, Kyiv included); today's graph on the selected corpus
+(1,602); the newest corpus (2,081, BFS expansion) brings back Ukraine, Kharkiv and Zelenskyy but not
+Kyiv, Dnipro, Russia or Crimea. *Recommendation:* keep the new corpus and force-include anchor pages
+(GRAPH_TEAM_ISSUES G), rather than go back to the old one.
+
 **The UI, end to end** (2026-10-29). The UI team's app (`ui/app.py`, from main) runs against the
 agent unchanged: answer, 52 map layers and follow-ups for the Siege of Mariupol. On the app's free
 model the answer took 48 s, against 2–3 s on Gemini 2.5 Flash.
