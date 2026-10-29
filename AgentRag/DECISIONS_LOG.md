@@ -991,6 +991,12 @@ was built on NER from before it (1,909 articles, Kyiv included); today's graph o
 Kyiv, Dnipro, Russia or Crimea. *Recommendation:* keep the new corpus and force-include anchor pages
 (GRAPH_TEAM_ISSUES G), rather than go back to the old one.
 
+**The UI wouldn't render on the owner's PC** (2026-10-29): no map, no chat box. *Cause:* Windows
+Smart App Control blocks a compiled file of pandas 3.1 ("An Application Control policy has blocked
+this file"); Streamlit imports pandas to draw the page, so the script stopped. Not the UI's code.
+*Fix, in our environment only:* `pandas<3` (2.3.3 is allowed). *For the UI team:* pin `pandas<3` in
+`ui/requirements.txt`, or anyone with Smart App Control on hits the same blank page.
+
 **The UI, end to end** (2026-10-29). The UI team's app (`ui/app.py`, from main) runs against the
 agent unchanged: answer, 52 map layers and follow-ups for the Siege of Mariupol. On the app's free
 model the answer took 48 s, against 2–3 s on Gemini 2.5 Flash.
