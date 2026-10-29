@@ -997,6 +997,23 @@ this file"); Streamlit imports pandas to draw the page, so the script stopped. N
 *Fix, in our environment only:* `pandas<3` (2.3.3 is allowed). *For the UI team:* pin `pandas<3` in
 `ui/requirements.txt`, or anyone with Smart App Control on hits the same blank page.
 
+**Owner's UI testing, round 1 (2026-10-29).** Replayed through `ui/geo_agent.py` with the same chat
+history the app sends; history turned out not to matter, the question kind did:
+
+- **P2-69. "Tell me about <event>" found nothing** ("No data from the graph"). The about route looked
+  only for people, organizations and places; an event is an article. *Fix:* an about question that
+  names only an event uses the event's article (its places, summary and passages); an event named next
+  to a person or place adds its summary. *Outcome:* "Tell me about the Siege of Mariupol" → answered
+  from the article, 22 places.
+- **P2-70. A topic with no place or map had no route** ("Where were drone attacks?" → no data;
+  "Show me drone attacks" typed `other`). *Fix:* a corpus-wide topic search, places mentioned in any
+  paragraph that mentions the topic, ranked by those paragraphs; `other` with keywords and no names
+  goes there. *Outcome:* 1,486 places, Kyiv, Moscow, Belgorod, Odesa first.
+- **No follow-ups:** a consequence of the two above; no-data answers carry none.
+- **P2-71. Extra polygons:** the UI adds each answer's layers to the map and never clears them
+  (UI_TEAM_NOTES.md). On our side, a non-list answer now outlines only the place it is about, named
+  in `map.focus`, so the UI can show the rest behind a toggle.
+
 **The UI, end to end** (2026-10-29). The UI team's app (`ui/app.py`, from main) runs against the
 agent unchanged: answer, 52 map layers and follow-ups for the Siege of Mariupol. On the app's free
 model the answer took 48 s, against 2–3 s on Gemini 2.5 Flash.

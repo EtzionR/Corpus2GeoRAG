@@ -367,3 +367,8 @@ def test_the_writer_reads_the_place_name_instead_of_the_old_number():
     assert question_for_answer(plan) == "What happened at Illich?"
     plan.question = "And that one?"
     assert question_for_answer(plan) == "And that one? (meaning Illich, from the previous answer)"
+
+
+def test_a_topic_typed_other_becomes_a_topic_search():
+    plan = understand("Show me drone attacks", llm=FakePlanner(PlanDraft(type="other", keywords=["drone", "attacks"])))
+    assert plan.type == "area_topic" and any("searched as a topic" in n for n in plan.notes)

@@ -194,3 +194,11 @@ def test_the_asked_place_is_on_the_map_even_if_the_answer_forgets_its_number(mon
             answer=WriteDraft(answer="Bakhmut saw heavy fighting."))      # no [n] at all
     result = query("Tell me about Bakhmut")
     assert result["geo_locations"][0]["id"] == "Bakhmut" and result["geo_locations"][0]["role"] == "primary"
+
+
+def test_a_non_list_answer_outlines_only_the_place_in_focus(monkeypatch):
+    install(monkeypatch, plan=PlanDraft(type="about", entities=[EntityMention(text="Ukraine", name="Ukraine", kind="LOC")]),
+            answer=WriteDraft(answer="Ukraine [1] borders Belarus and Russia.", places_discussed=[1, 2, 3]))
+    result = query("Tell me about Ukraine")
+    outlined = [p["id"] for p in result["geo_locations"] if p.get("shape")]
+    assert outlined == ["Ukraine"] and result["map"]["focus"] == [1]

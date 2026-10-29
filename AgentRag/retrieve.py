@@ -188,9 +188,15 @@ def topic_words(keywords: list[str]) -> list[str]:
 
 
 def _area_topic(plan, res, gi) -> Retrieval:
+    keywords = topic_words(plan.keywords)
+    if plan.area is None and not [g for g in _groups(res, {"LOC"}) if g.place] and keywords:
+        # no map selection and no named place: the topic over the whole corpus (P2-70)
+        run = _Run("topic: places across the corpus whose paragraphs mention the topic")
+        run.out.places = run.call("topic_places", lambda: T.topic_places(gi, keywords), lambda h: _n(h, "places"),
+                                  keywords=keywords)
+        return run.out
     run = _Run("area_topic: places in the area × paragraphs about the topic")
     hits = _search_area(plan, res, gi, run)
-    keywords = topic_words(plan.keywords)
     if keywords != plan.keywords:
         run.out.notes.append(f"searching for {', '.join(keywords)}; ignoring the generic "
                              f"{', '.join(k for k in plan.keywords if k not in keywords)}")
@@ -303,6 +309,11 @@ def _drilldown(plan, gi, actor: Group, place: Group) -> Retrieval:
 def _about(plan, res, gi) -> Retrieval:
     run = _Run("about / relation: what the graph links to the entity (by relation, if one is asked)")
     targets = list({g.id: g for g in _groups(res) + _concept_groups(res)}.values())   # each group once
+    if not targets and _articles(res):
+        # "Tell me about the Siege of Mariupol": an event is an article, not a node (P2-69)
+        return _event_places(plan, res, gi)
+    for title in _articles(res):          # an event named next to a person or place: read its summary too
+        run.summary(gi, title, title)
     if not targets:
         run.out.notes.append("nothing resolved to look up")
         return run.out

@@ -331,6 +331,10 @@ def _finalize(draft: PlanDraft, question: str, area: Optional[Area], history: li
         needs="locations" if qtype == "place_lookup" else draft.needs,
         time_words=draft.time_words, follow_up=follow_up, in_scope=draft.in_scope,
         source="llm", notes=notes)
+    if plan.type == "other" and plan.keywords and not plan.entities and plan.in_scope:
+        # "Show me drone attacks": a topic with no name has a route, the topic search (P2-70)
+        plan.type = "area_topic"
+        plan.notes.append(f"a topic with no name ({', '.join(plan.keywords)}): searched as a topic")
     _set_radius(plan, draft.radius_m or radius_from_text(question), map_radius_m)
     return plan
 

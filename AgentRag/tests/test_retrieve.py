@@ -185,3 +185,18 @@ def test_a_follow_up_naming_the_same_place_twice_is_still_a_drilldown(vr6_index)
 def test_types_without_a_route_say_so(vr6_index):
     out = run(vr6_index, "other")
     assert out.route == "none" and "fallback" in out.notes[0]
+
+
+def test_tell_me_about_an_event_uses_its_article():
+    from conftest import build_vr6_graph
+    from graph_index import GraphIndex
+    gi = GraphIndex(build_vr6_graph())
+    ret = run(gi, "about", ("Battle of Bakhmut", "EVENT"))
+    assert ret.route.startswith("event_places") and [h.group.id for h in ret.places][:1] == ["Bakhmut"]
+    assert ret.summaries and ret.summaries[0].article == "Battle of Bakhmut"
+
+
+def test_a_topic_with_no_place_or_map_searches_the_whole_corpus(vr6_index):
+    ret = run(vr6_index, "area_topic", keywords=["drone", "attacks"])
+    assert ret.route.startswith("topic")
+    assert {"Bakhmut", "Maidan Nezalezhnosti"} <= {h.group.id for h in ret.places}   # both drone paragraphs

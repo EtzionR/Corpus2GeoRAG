@@ -207,6 +207,9 @@ def describe_search(plan: QueryPlan, ret: Retrieval) -> str:
         return found + (f"; ranked by {', '.join(plan.relations)} records" if plan.relations else "")
     if route == "area":
         return f"places {where}"
+    if route == "topic":
+        return (f"places mentioned in any paragraph of the corpus that mentions: {', '.join(plan.keywords)}; "
+                f"ranked by how many such paragraphs mention them")
     targets = ", ".join(e.name for e in plan.entities) or ", ".join(c.text for c in plan.concepts)
     if route == "entity_places":
         return (f"places linked to {targets} in the text; ranked by relations that put it at the place, "
