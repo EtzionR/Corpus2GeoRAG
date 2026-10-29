@@ -149,3 +149,13 @@ skipping bracketed native-language names, or linking them to the English name (S
 citation titles. Dropping reference sections (F1) removed it and cut every Russian region off from
 Russia, until we kept such containers. *What would help:* INSIDE pointing at the main node
 (`Russia`), which has the text.
+
+## G. The rebuilt graph (main, 2026-10-29) is missing core articles (data collection)
+
+The graph rebuilt on the new NER output (87,065 nodes, 47,398 paragraphs; was 120,019 / 64,301) has
+no article for **Kyiv, Dnipro, Kharkiv, Russia, Ukraine, Crimea or Volodymyr Zelenskyy** (Mariupol,
+Bakhmut, Battle of Bakhmut, Vladimir Putin and Wagner Group are still there). The agent uses a
+place's own article for "where is" and "tell me about" answers, so "Show me Kyiv" now says the
+material has nothing specific about Kyiv, and "Where is Dnipro?" answers "The Dnipro is a river"
+(B1: it is also still geocoded as the river). Was this the new content filter? These articles should
+be in the final corpus.

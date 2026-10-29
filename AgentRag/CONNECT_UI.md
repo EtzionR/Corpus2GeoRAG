@@ -131,10 +131,18 @@ for place in result["geo_locations"]:   # every place found, strongest first
 
 result["regions"]     # lists only: [{"id": "Ukraine", "count": 50, "places": [...], "children": [...]}]
 result["citations"]   # one per [S2] / [L1] in the answer: {"id", "pointer", "article", "section", "spans"}
-result["map"]         # {"bbox": [west, south, east, north], "highlight": [numbers]}
-result["follow_ups"]  # up to 3 suggested questions, ready to send as typed
+result["map"]         # {"bbox": [west, south, east, north], "highlight": [numbers],
+                      #  "showing": "all" | "discussed", "not_shown": N}
+result["follow_ups"]  # up to 3 suggested questions, ready to send as typed; each names a place,
+                      # person or event from this answer, so the agent can answer it from the graph
 result["did_you_mean"]  # other entries the question's names could mean
 ```
+
+**Which places come back for the map.** The agent decides, per kind of answer: a list or an
+area question returns every place found (`map.showing: "all"`); any other answer (where a place
+is, who did what, one person at one place) returns only the places it talks about
+(`"discussed"`), and `map.not_shown` says how many more were found. So you can draw every entry of
+`geo_locations` as is. The numbers stay the ones the answer cites, so they may skip (2, 5, 9).
 
 Suggestions, all optional:
 

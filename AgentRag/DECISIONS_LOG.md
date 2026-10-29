@@ -936,6 +936,53 @@ town in its own article."
 | q15 Kyiv | fact | 1 | 1 | the city's summary |
 | z2 Zelenskyy in the White House | drilldown | 1 | 8 | dated visits, 2022 to 2025 |
 
+---
+
+## Final stage: the MVP (from 2026-10-29)
+
+**The rebuilt graph on main** (graph team, on the new NER output; not yet the final graph). Loads
+with no code change: 87,065 nodes (was 120,019), 47,398 paragraphs (was 64,301), relations for 34,427
+paragraphs (a full build, not a check-mode one), load + indexes 6.5 s (was 14). Reference sections
+dropped: 3,613 paragraphs, 733 entities (9 kept for the hierarchy). **Lost:** the articles for Kyiv,
+Dnipro, Kharkiv, Russia, Ukraine, Crimea and Volodymyr Zelenskyy, so "Show me Kyiv" now has no
+summary and "Where is Dnipro?" answers "a river" (GRAPH_TEAM_ISSUES G). Dnipro is no longer flagged
+uncertain, because the flag needs the city's article (P2-64).
+
+**Owner's notes after using the agent (2026-10-29):**
+
+**P2-65. Which places go on the map** (decided). *Owner:* "a deep dive should show only the place
+we dive into; the map shouldn't get convoluted for every type of question." *Decision:* a list
+answer or an area question returns every place found; every other answer (where is, who did what,
+drill-down, a question about something) returns only the places it discusses, plus the places the
+question asks about even if the answer forgets their number. `map.showing` ("all" / "discussed")
+and `map.not_shown` say so. The numbers stay the ones the answer cites. *Why in `geo_locations`
+and not a flag:* the UI draws every entry already, so it works without a UI change, and "number N"
+follow-ups refer to what the user saw. *Outcome:* "Tell me more about Mariupol" went from 552 pins
+to the places its answer names.
+
+**P2-66. "Number 4" answered about place 5** (bug, fixed). *Owner:* "asking about location number
+four gives one away, like five." *Cause:* step ① found the right place (number 4 = Illich), but every
+answer numbers its places from 1 again; in the follow-up Illich was [1] and Ukraine [4], and the
+writer, still reading "location number 4" in the question, took [4] of the new list. *Fix:* the
+writer reads the question with the reference replaced by the place's name ("Tell me about Illich"),
+`planner.question_for_answer`. A number the previous answer doesn't have gets a plain reply without
+an LLM call ("The previous answer has no place number 4"). *Outcome:* "number 4" and "number four"
+both answered about Illich.
+
+**P2-67. Suggested follow-ups must be answerable** (decided). *Owner:* "follow-up questions aren't
+answered correctly; they came from the text we found, so maybe attach a pointer." *Found:* they
+didn't all come from the text: "What is the capital of Ukraine?", "What is the population of
+Kyiv?" (no Kyiv article any more) were the model's own ideas, and the graph has nothing to answer
+them. *Decision:* the prompt asks for follow-ups that name a place, person, organization or event
+from the material, in forms our routes answer ("Tell me about X", "Which places are linked to X?",
+"Who attacked X?", "What happened in X?", "X in Y"); code drops any that names nothing in the
+material. The name is the pointer: the next question resolves it to the same graph entry. *Outcome:*
+"What happened in Azovstal?", "Which places are linked to the 36th Separate Marine Brigade?".
+
+**The UI, end to end** (2026-10-29). The UI team's app (`ui/app.py`, from main) runs against the
+agent unchanged: answer, 52 map layers and follow-ups for the Siege of Mariupol. On the app's free
+model the answer took 48 s, against 2–3 s on Gemini 2.5 Flash.
+
 ### ④ Evidence pack
 
 **P2-15. Choosing the least text that answers.**

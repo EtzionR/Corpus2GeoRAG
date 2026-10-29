@@ -20,7 +20,7 @@ from pydantic import BaseModel, Field, ValidationError
 
 from evidence import LIST_TOP, EvidencePack, render_for_llm
 from llm_calls import LLMCall, structured_call
-from planner import QueryPlan
+from planner import QueryPlan, question_for_answer
 
 NO_DATA_DISCLAIMER = "No data from the graph — answer from the LLM only."
 MAX_FOLLOW_UPS = 3
@@ -56,8 +56,13 @@ in the material.
 If a passage is marked LOW-CONFIDENCE, say the corpus only suggests it.
 If the graph's point for a place may be wrong, mention that.
 If the material doesn't answer the question, say so plainly instead of guessing.
-In places_discussed, list the numbers of the places your answer talks about. Suggest up to 3 short
-follow-up questions the user could ask next (for example "Tell me about number 2")."""
+In places_discussed, list the numbers of the places your answer talks about.
+
+Suggest up to 3 follow-up questions the user could ask next. Each one must name a place, person,
+organization or event that appears in the material above, by its name (not "it" or "number 2"), and be
+one of these kinds, which the knowledge graph can answer: "Tell me about <name>", "Which places are
+linked to <person, organization or event>?", "Who attacked <place>?", "What happened in <place>?",
+"<person> in <place>". Don't ask for facts the material doesn't hold (populations, definitions, capitals)."""
 
 NO_DATA_PROMPT = """The knowledge graph of the Russia-Ukraine war corpus returned nothing for this question.
 Answer it briefly (2-3 sentences) from general knowledge, or say you don't know. Don't cite anything."""
@@ -115,6 +120,21 @@ def check_citations(text: str, pack: EvidencePack) -> tuple[str, list[str], list
     return text, list(dict.fromkeys(cited_passages)), list(dict.fromkeys(cited_places)), removed, capped
 
 
+def grounded_follow_ups(follow_ups: list[str], pack: EvidencePack) -> tuple[list[str], list[str]]:
+    """Keep the follow-ups that name something in the material (a place, a person or organization, an
+    article), so the next question can be answered from the graph: "What is the capital of Ukraine?"
+    with no passage about it goes. Returns (kept, dropped)."""
+    names = ({p.label for p in pack.places} | {e.id for e in pack.entities} | {p.article for p in pack.passages}
+             | {a for p in pack.passages for a in p.about if not a.startswith("[")})
+    names = {n.lower() for n in names if len(n) >= 3}
+    kept, dropped = [], []
+    for f in follow_ups:
+        low = f.lower()
+        named = any(re.search(rf"(?<!\w){re.escape(n)}(?!\w)", low) for n in names)
+        (kept if named else dropped).append(f)
+    return kept, dropped
+
+
 def strip_citations(text: str) -> str:
     """The text without [3] / [S2] marks: for follow-ups, and for UIs that show the answer plain."""
     return _tidy(_CITATION.sub("", text))
@@ -168,6 +188,10 @@ def template_list_answer(pack: EvidencePack) -> str:
 
 def write(plan: QueryPlan, pack: EvidencePack, llm) -> Answer:
     """Write the answer for one question from its evidence pack."""
+    fu = plan.follow_up
+    if fu and fu.kind == "item" and fu.item_number and not fu.target_id:   # "number 4" of a 1-place answer
+        return Answer(text=f"The previous answer has no place number {fu.item_number}. Ask about one of the "
+                           f"numbered places on the map.", status="no_data", grounded=False, shape=pack.shape)
     if plan.type == "out_of_scope" or is_empty(pack):
         return _no_data_answer(plan, pack, llm)
     answer = Answer(text="", status="answered", grounded=True, shape=pack.shape)
@@ -175,7 +199,7 @@ def write(plan: QueryPlan, pack: EvidencePack, llm) -> Answer:
     for attempt in (1, 2):   # one retry when the model answers without filling in the structure
         try:
             draft, call = structured_call(llm, WriteDraft, [("system", WRITE_PROMPT),
-                                                            ("human", render_for_llm(pack, plan.question))], step="write")
+                                                            ("human", render_for_llm(pack, question_for_answer(plan)))], step="write")
             answer.llm_calls.append(call)
         except (ValidationError, OutputParserException, ValueError) as e:
             answer.notes.append(f"write attempt {attempt} failed ({type(e).__name__})")
@@ -198,7 +222,11 @@ def write(plan: QueryPlan, pack: EvidencePack, llm) -> Answer:
     answer.places_discussed = list(dict.fromkeys([n for n in draft.places_discussed if n in numbers] + places))
     # a follow-up must be a whole question or request (models sometimes cut the last one off)
     # and reads as a question the user could type: no citation marks ("Tell me about Bakhmut [1].")
-    answer.follow_ups = [strip_citations(f) for f in draft.follow_ups if f.strip().endswith(("?", "."))][:MAX_FOLLOW_UPS]
+    whole = [strip_citations(f) for f in draft.follow_ups if f.strip().endswith(("?", "."))]
+    answer.follow_ups, ungrounded = grounded_follow_ups(whole, pack)
+    answer.follow_ups = answer.follow_ups[:MAX_FOLLOW_UPS]
+    if ungrounded:
+        answer.notes.append(f"dropped follow-ups that name nothing in the material: {' | '.join(ungrounded)}")
     if removed:
         answer.notes.append(f"removed citations that point at nothing: {' '.join(removed)}")
     if cut:

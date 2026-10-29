@@ -395,6 +395,24 @@ def radius_from_text(question: str) -> Optional[float]:
     return value * 1000 if m.group(2).lower().startswith("k") else value
 
 
+_NUMBER_WORDS = ("one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|"
+                 "sixteen|seventeen|eighteen|nineteen|twenty")
+_ITEM_REFERENCE = re.compile(rf"\b(?:(?:location|place|pin|item|point|the)\s+)?(?:number|no\.?|#)\s*(?:\d+|{_NUMBER_WORDS})\b"
+                             rf"|\bthe\s+(?:first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)(?:\s+one)?\b",
+                             re.I)
+
+
+def question_for_answer(plan: "QueryPlan") -> str:
+    """The question as the write step should read it. "Tell me about number 4" means place 4 of the
+    PREVIOUS answer, but the new answer numbers its places from 1 again, so the writer would take [4]
+    of the new list. The reference is replaced by the place's name: "Tell me about Illich"."""
+    fu = plan.follow_up
+    if not (fu and fu.kind == "item" and fu.target_label):
+        return plan.question
+    rewritten, n = _ITEM_REFERENCE.subn(fu.target_label, plan.question, count=1)
+    return rewritten if n else f"{plan.question} (meaning {fu.target_label}, from the previous answer)"
+
+
 def _resolve_follow_up(kind, item, history, notes) -> FollowUp:
     follow_up = FollowUp(kind=kind, item_number=item)
     if not history:

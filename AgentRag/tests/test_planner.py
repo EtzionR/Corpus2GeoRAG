@@ -356,3 +356,14 @@ def test_history_summary_lists_at_most_20_places():
         {"number": n, "id": f"P{n}", "label": f"Place {n}"} for n in range(1, 501)]}}]
     summary = summarize_history(previous)
     assert "20. Place 20 (+480 more on the map)" in summary and "Place 21" not in summary
+
+
+def test_the_writer_reads_the_place_name_instead_of_the_old_number():
+    from planner import FollowUp, QueryPlan, question_for_answer
+    plan = QueryPlan(question="Tell me about location number 4", type="follow_up", source="llm",
+                     follow_up=FollowUp(kind="item", item_number=4, target_id="Illich", target_label="Illich"))
+    assert question_for_answer(plan) == "Tell me about Illich"
+    plan.question = "What happened at number four?"
+    assert question_for_answer(plan) == "What happened at Illich?"
+    plan.question = "And that one?"
+    assert question_for_answer(plan) == "And that one? (meaning Illich, from the previous answer)"

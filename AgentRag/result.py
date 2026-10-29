@@ -70,6 +70,11 @@ def build_result(plan: QueryPlan, res: Resolution, ret: Retrieval, pack: Evidenc
     primary = list(answer.places_discussed)
     if plan.type == "place_lookup" or (not primary and len(pack.places) == 1):
         primary = [p.number for p in pack.places[:1]] + [n for n in primary if n != 1]
+    # the places the question asks about count as discussed even when the answer names them without
+    # their number ("Illich refers to the Illich steel plant..."), so they're always on the map
+    asked = {e.group.id for e in res.entities if e.group} | (
+        {plan.follow_up.target_id} if plan.follow_up and plan.follow_up.target_id else set())
+    primary += [n for n, h in enumerate(ret.places, 1) if h.group.id in asked and n not in primary]
 
     places, shapes = [], 0
     for number, hit in enumerate(ret.places, 1):
@@ -89,6 +94,14 @@ def build_result(plan: QueryPlan, res: Resolution, ret: Retrieval, pack: Evidenc
             shape=Geometry(**shape) if shape else None,
             why=ref.why if ref else "", uncertain=ref.uncertain if ref else None,
             sources=_place_sources(gi, hit)))
+
+    # P2-65: a list or an area answer is about all its places, so the map shows them all. Any other
+    # answer (where a place is, who did what, one person at one place, a question about something)
+    # shows only the places it discusses: "Tell me about Mariupol" found 552 linked places.
+    show_all = answer.shape == "list" or plan.type in ("area", "area_topic")
+    shown = places if show_all else ([p for p in places if p.role == "primary"] or places[:1])
+    not_shown = len(places) - len(shown)
+    places = shown
 
     passages = {p.id: p for p in pack.passages}
     citations = []
@@ -111,7 +124,8 @@ def build_result(plan: QueryPlan, res: Resolution, ret: Retrieval, pack: Evidenc
         geo_locations=places, regions=pack.regions,
         entities=[EntityOut(id=e.id, type=e.type, role=e.role, records=e.records) for e in pack.entities[:MAX_ENTITIES]],
         citations=citations, sources=list(dict.fromkeys(c.pointer for c in citations)),
-        map=_map_hint(places, [n for n in primary if n in {p.number for p in places}]),
+        map=_map_hint(places, [n for n in primary if n in {p.number for p in places}]).model_copy(
+            update={"showing": "all" if show_all else "discussed", "not_shown": not_shown}),
         follow_ups=answer.follow_ups, did_you_mean=list(alternatives.values()), notes=notes,
         meta=Meta(question_type=plan.type, model=next((c.model for c in reversed(calls) if c.model), None),
                   llm_calls=len(calls), cost_usd=round(sum(c.cost_usd for c in calls), 6), seconds=round(seconds, 2)))

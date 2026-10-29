@@ -94,6 +94,26 @@ def test_follow_up_by_number_uses_the_previous_results_numbers(monkeypatch):
     assert result["geo_locations"][0]["id"] == "Soledar"
     sent_plan = next(m for name, m in fake.sent if name == "PlanDraft")
     assert "1. Bakhmut, 2. Soledar" in sent_plan[1][1]
+    # the writer reads the place's name, not "number 2": in the new answer Soledar is [1], not [2]
+    sent_write = next(m for name, m in fake.sent if name == "WriteDraft")
+    assert sent_write[1][1].startswith("QUESTION: Tell me about Soledar\n")
+
+
+def test_a_number_the_previous_answer_doesnt_have_gets_a_plain_reply(monkeypatch):
+    fake = install(monkeypatch, plan=PlanDraft(type="follow_up", follow_up_kind="item", follow_up_item=4))
+    previous = {"answer": "...", "geo_locations": [{"number": 1, "id": "Kyiv", "label": "Kyiv"}]}
+    result = query("Tell me about number 4", chat_history=[{"query": "Where is Kyiv?", "response": previous}])
+    assert result["answer"].startswith("The previous answer has no place number 4.")
+    assert not any(name == "WriteDraft" for name, _ in fake.sent)        # no LLM call to say so
+
+
+def test_the_map_shows_only_the_discussed_places_unless_the_answer_is_a_list(monkeypatch):
+    install(monkeypatch, plan=PlanDraft(type="about", entities=[
+        EntityMention(text="Zelenskyy", name="Zelenskyy", kind="PER")]),
+        answer=WriteDraft(answer="Zelenskyy visited Kharkiv [2].", places_discussed=[2]))
+    result = query("Tell me about Zelenskyy")              # finds Ukraine, Kharkiv, Kyiv
+    assert result["shape"] != "list" and [(p["number"], p["id"]) for p in result["geo_locations"]] == [(2, "Kharkiv")]
+    assert result["map"]["showing"] == "discussed" and result["map"]["not_shown"] == 2
 
 
 def test_the_map_box_stays_inside_valid_coordinates():
@@ -167,3 +187,10 @@ def test_graph_is_loaded_once():
     loaded = georag_agent._graph
     get_source_text("TEXT_1")
     assert georag_agent._graph is loaded
+
+
+def test_the_asked_place_is_on_the_map_even_if_the_answer_forgets_its_number(monkeypatch):
+    install(monkeypatch, plan=PlanDraft(type="about", entities=[EntityMention(text="Bakhmut", name="Bakhmut", kind="LOC")]),
+            answer=WriteDraft(answer="Bakhmut saw heavy fighting."))      # no [n] at all
+    result = query("Tell me about Bakhmut")
+    assert result["geo_locations"][0]["id"] == "Bakhmut" and result["geo_locations"][0]["role"] == "primary"
