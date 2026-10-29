@@ -194,9 +194,3 @@ def test_tell_me_about_an_event_uses_its_article():
     ret = run(gi, "about", ("Battle of Bakhmut", "EVENT"))
     assert ret.route.startswith("event_places") and [h.group.id for h in ret.places][:1] == ["Bakhmut"]
     assert ret.summaries and ret.summaries[0].article == "Battle of Bakhmut"
-
-
-def test_a_topic_with_no_place_or_map_searches_the_whole_corpus(vr6_index):
-    ret = run(vr6_index, "area_topic", keywords=["drone", "attacks"])
-    assert ret.route.startswith("topic")
-    assert {"Bakhmut", "Maidan Nezalezhnosti"} <= {h.group.id for h in ret.places}   # both drone paragraphs

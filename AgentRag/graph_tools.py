@@ -304,32 +304,6 @@ def keyword_spans(text: str, keywords: list[str]) -> list[list[int]]:
     return spans
 
 
-def topic_places(gi: GraphIndex, keywords: list[str]) -> list[Hit]:
-    """Geocoded places mentioned in any paragraph that mentions the topic ("drone"), across the whole
-    corpus; ranked by how many such paragraphs mention them (P2-70)."""
-    by_group: dict[str, list[Pointer]] = {}
-    for node, d in gi.G.nodes(data=True):
-        if d.get("type") != "TEXT":
-            continue
-        kw = keyword_spans(d["text"], keywords)
-        if not kw:
-            continue
-        for m in gi.G.neighbors(node):
-            if gi.G.nodes[m]["type"] == "LOC":
-                recs = gi.G[node][m]["relations"].get("IN_THE_TEXT", [])
-                by_group.setdefault(gi.group_of[m], []).append(
-                    Pointer(text_id=d["text_id"], spans=sorted([[r["start"], r["end"]] for r in recs] + kw)))
-    hits = []
-    for gid, ptrs in by_group.items():
-        g = gi.group(gid)
-        if g.place:
-            ptrs = _unique_pointers(ptrs)
-            hits.append(Hit(group=g, records=len(ptrs), score=len(ptrs), pointers=ptrs[:MAX_POINTERS],
-                            pointers_total=len(ptrs)))
-    hits.sort(key=lambda h: (-h.records, -h.group.texts))
-    return hits
-
-
 def article_places(gi: GraphIndex, title: str) -> list[Hit]:
     """Geocoded places mentioned in an article, ranked by how many of its paragraphs mention them."""
     by_group: dict[str, list[Pointer]] = {}

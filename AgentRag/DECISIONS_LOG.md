@@ -1009,10 +1009,15 @@ history the app sends; history turned out not to matter, the question kind did:
   "Show me drone attacks" typed `other`). *Fix:* a corpus-wide topic search, places mentioned in any
   paragraph that mentions the topic, ranked by those paragraphs; `other` with keywords and no names
   goes there. *Outcome:* 1,486 places, Kyiv, Moscow, Belgorod, Odesa first.
+  **Reverted (owner, 2026-10-29):** too big a change for the final stage; it swept every paragraph
+  in the graph for the word, and the owner wants answers from the graph's structure.
 - **No follow-ups:** a consequence of the two above; no-data answers carry none.
 - **P2-71. Extra polygons:** the UI adds each answer's layers to the map and never clears them
   (UI_TEAM_NOTES.md). On our side, a non-list answer now outlines only the place it is about, named
-  in `map.focus`, so the UI can show the rest behind a toggle.
+  in `map.focus`, so the UI can show the rest behind a toggle. **Reverted (owner, 2026-10-29):** what
+  to show by default is the UI's job; the agent returns the places and a hint.
+- **Owner's rule from here on:** in the final stage, diagnose and propose; implement only after the
+  owner's go.
 
 **The UI, end to end** (2026-10-29). The UI team's app (`ui/app.py`, from main) runs against the
 agent unchanged: answer, 52 map layers and follow-ups for the Siege of Mariupol. On the app's free

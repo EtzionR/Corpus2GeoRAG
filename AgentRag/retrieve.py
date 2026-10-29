@@ -188,15 +188,9 @@ def topic_words(keywords: list[str]) -> list[str]:
 
 
 def _area_topic(plan, res, gi) -> Retrieval:
-    keywords = topic_words(plan.keywords)
-    if plan.area is None and not [g for g in _groups(res, {"LOC"}) if g.place] and keywords:
-        # no map selection and no named place: the topic over the whole corpus (P2-70)
-        run = _Run("topic: places across the corpus whose paragraphs mention the topic")
-        run.out.places = run.call("topic_places", lambda: T.topic_places(gi, keywords), lambda h: _n(h, "places"),
-                                  keywords=keywords)
-        return run.out
     run = _Run("area_topic: places in the area × paragraphs about the topic")
     hits = _search_area(plan, res, gi, run)
+    keywords = topic_words(plan.keywords)
     if keywords != plan.keywords:
         run.out.notes.append(f"searching for {', '.join(keywords)}; ignoring the generic "
                              f"{', '.join(k for k in plan.keywords if k not in keywords)}")

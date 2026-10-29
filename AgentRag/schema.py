@@ -107,7 +107,6 @@ class MapHint(BaseModel):
     highlight: list[int] = Field(default_factory=list)   # place numbers the answer discusses
     showing: Literal["all", "discussed"] = "all"         # which places geo_locations holds (P2-65)
     not_shown: int = 0                  # places found but left off the map (e.g. a drill-down's context)
-    focus: list[int] = Field(default_factory=list)       # non-list answers: the place(s) the answer is about (P2-71)
 
 
 class Alternative(BaseModel):

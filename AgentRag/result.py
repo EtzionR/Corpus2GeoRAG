@@ -75,10 +75,6 @@ def build_result(plan: QueryPlan, res: Resolution, ret: Retrieval, pack: Evidenc
     asked = {e.group.id for e in res.entities if e.group} | (
         {plan.follow_up.target_id} if plan.follow_up and plan.follow_up.target_id else set())
     primary += [n for n, h in enumerate(ret.places, 1) if h.group.id in asked and n not in primary]
-    show_all = answer.shape == "list" or plan.type in ("area", "area_topic")
-    # P2-71: the place(s) the answer is about. A non-list answer outlines only these, so "Where is
-    # Ukraine?" draws Ukraine, not every country the answer mentions; the UI can offer the rest.
-    focus = [n for n, h in enumerate(ret.places, 1) if h.group.id in asked] or primary[:1]
 
     places, shapes = [], 0
     for number, hit in enumerate(ret.places, 1):
@@ -87,7 +83,7 @@ def build_result(plan: QueryPlan, res: Resolution, ret: Retrieval, pack: Evidenc
         ref = refs.get(number)
         is_primary = number in primary
         shape = None
-        if (number in focus if not show_all else is_primary) and shapes < MAX_SHAPES:
+        if is_primary and shapes < MAX_SHAPES:
             shape = outline(gi, hit.group.place.from_name)
             shapes += shape is not None
         places.append(PlaceOut(
@@ -102,6 +98,7 @@ def build_result(plan: QueryPlan, res: Resolution, ret: Retrieval, pack: Evidenc
     # P2-65: a list or an area answer is about all its places, so the map shows them all. Any other
     # answer (where a place is, who did what, one person at one place, a question about something)
     # shows only the places it discusses: "Tell me about Mariupol" found 552 linked places.
+    show_all = answer.shape == "list" or plan.type in ("area", "area_topic")
     shown = places if show_all else ([p for p in places if p.role == "primary"] or places[:1])
     not_shown = len(places) - len(shown)
     places = shown
@@ -128,8 +125,7 @@ def build_result(plan: QueryPlan, res: Resolution, ret: Retrieval, pack: Evidenc
         entities=[EntityOut(id=e.id, type=e.type, role=e.role, records=e.records) for e in pack.entities[:MAX_ENTITIES]],
         citations=citations, sources=list(dict.fromkeys(c.pointer for c in citations)),
         map=_map_hint(places, [n for n in primary if n in {p.number for p in places}]).model_copy(
-            update={"showing": "all" if show_all else "discussed", "not_shown": not_shown,
-                    "focus": [] if show_all else [n for n in focus if n in {p.number for p in places}]}),
+            update={"showing": "all" if show_all else "discussed", "not_shown": not_shown}),
         follow_ups=answer.follow_ups, did_you_mean=list(alternatives.values()), notes=notes,
         meta=Meta(question_type=plan.type, model=next((c.model for c in reversed(calls) if c.model), None),
                   llm_calls=len(calls), cost_usd=round(sum(c.cost_usd for c in calls), 6), seconds=round(seconds, 2)))

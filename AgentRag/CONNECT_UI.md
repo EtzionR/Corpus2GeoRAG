@@ -132,8 +132,7 @@ for place in result["geo_locations"]:   # every place found, strongest first
 result["regions"]     # lists only: [{"id": "Ukraine", "count": 50, "places": [...], "children": [...]}]
 result["citations"]   # one per [S2] / [L1] in the answer: {"id", "pointer", "article", "section", "spans"}
 result["map"]         # {"bbox": [west, south, east, north], "highlight": [numbers],
-                      #  "showing": "all" | "discussed", "not_shown": N,
-                      #  "focus": [numbers]}  non-list answers: the place(s) the answer is about
+                      #  "showing": "all" | "discussed", "not_shown": N}
 result["follow_ups"]  # up to 3 suggested questions, ready to send as typed; each names a place,
                       # person or event from this answer, so the agent can answer it from the graph
 result["did_you_mean"]  # other entries the question's names could mean
