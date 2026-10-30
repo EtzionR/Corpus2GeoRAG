@@ -1063,6 +1063,13 @@ pass ($0.017); "Show me Kyiv" now has a description instead of "no passages desc
   a country node: 146 links; the 28 left name a sea or a non-country. Crimea's addresses say
   Ukraine, so it sits under Ukraine. "What happened in Crimea?" still tells the 2014 annexation and
   the 2022 advance from occupied Crimea; that comes from the text, not the hierarchy.
+- **Event titles with lower-case words were thrown away.** "Show me all locations connected to the
+  Kharkiv counteroffensive" → no data, though the article has 96 paragraphs: the P2-27 rule calls a
+  name with a lower-case word a description ("Russian generals"), and so also "Bucha massacre",
+  "Wagner Group rebellion". The user's own typing never mattered: the rule reads the LLM's spelling
+  ("where is ukraine" → Ukraine). *Fix (owner's go):* a name the LLM marks as an event that starts
+  with a capital or a year stays a name. *Outcome:* Bucha massacre 52 places, Kharkiv
+  counteroffensive 132, Wagner Group rebellion 14 citations; the 10 questions unchanged.
 
 ### ④ Evidence pack
 

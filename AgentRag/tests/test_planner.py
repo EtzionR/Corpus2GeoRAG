@@ -211,6 +211,18 @@ def test_a_description_becomes_a_concept():
     assert plan.entities == [] and plan.concepts[0].text == "Russian military commanders"
 
 
+@pytest.mark.parametrize("text, name, kept", [
+    ("bucha massacre", "Bucha massacre", True),
+    ("Kharkiv counteroffensive", "2022 Kharkiv counteroffensive", True),
+    ("drone attacks", "drone attacks", False),          # an event-like description stays a concept
+])
+def test_an_event_title_with_lower_case_words_is_a_name(text, name, kept):
+    draft = PlanDraft(type="event_places", entities=[EntityMention(text=text, name=name, kind="EVENT")])
+    plan = understand(f"Show me all locations connected to the {text}", llm=FakePlanner(draft))
+    assert ([e.name for e in plan.entities] == [name]) is kept
+    assert (plan.concepts == []) is kept
+
+
 def test_place_candidates_are_dropped_when_the_question_asks_for_places():
     draft = PlanDraft(type="event_list", concepts=[Concept(text="major battles", candidates=[
         ConceptCandidate(name="Battle of Kyiv", kind="LOC"), ConceptCandidate(name="Battle of Bakhmut", kind="LOC")])])

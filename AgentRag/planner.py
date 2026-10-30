@@ -455,6 +455,13 @@ def _is_description(name: str) -> bool:
     return any(w and w[0].islower() and w not in _CONNECTORS and not w.startswith("'s") for w in words)
 
 
+def _is_event_name(e: EntityMention) -> bool:
+    """Event titles have lower-case words ("Bucha massacre", "Wagner Group rebellion"); one the LLM marked as
+    an event that starts with a capital or a year is a name, not a description (P2-72)."""
+    first = e.name.split()[0].strip(".,;:()'\"") if e.name.split() else ""
+    return e.kind == "EVENT" and (first[:1].isupper() or first.isdigit())
+
+
 def _clean_entities(entities: list[EntityMention], question: str, notes: list[str]):
     """P2-27: names must come from the question. Returns (entities, concepts made from descriptions)."""
     q = _norm(question)
@@ -471,7 +478,7 @@ def _clean_entities(entities: list[EntityMention], question: str, notes: list[st
         elif len(group) > 1:   # one phrase turned into several names = the LLM's own list
             notes.append(f"dropped {names}: the LLM's expansion of {group[0].text!r}")
             concepts.append(Concept(text=group[0].text))
-        elif _is_description(group[0].name):
+        elif _is_description(group[0].name) and not _is_event_name(group[0]):
             notes.append(f"{group[0].text!r} is a description, not a name: moved to concepts")
             concepts.append(Concept(text=group[0].text))
         else:
