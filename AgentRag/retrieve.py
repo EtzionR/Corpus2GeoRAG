@@ -114,6 +114,7 @@ def _place_lookup(plan, res, gi) -> Retrieval:
     for g in _groups(res):
         if not g.place:
             run.out.notes.append(f"{g.id} has no coordinates in the graph")
+            run.summary(gi, g.own_article, g.id)   # no pin, but its own article still says what it is (P2-72)
             continue
         chain = run.call("parents", lambda: T.parents(gi, g.place.from_name),
                          lambda c: " → ".join(c), place=g.place.from_name)

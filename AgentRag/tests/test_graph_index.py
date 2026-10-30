@@ -52,7 +52,7 @@ def test_group_summary(vr6_index):
 
 
 def test_suspicious_geocode_is_flagged_not_hidden(vr6_index):
-    place = vr6_index.group("Donbas").place
+    place = vr6_index.group("Hrushevsky Street").place
     assert place.uncertain and "road" in place.uncertain_reason and place.lat == 41.99
 
 
@@ -137,6 +137,52 @@ def test_a_place_fix_takes_the_point_and_parent_of_the_right_node():
     assert T.parents(gi, "Dnipro") == ["Dnipro", "Dnipro Raion"]       # no longer inside Chernihiv Raion
     assert not gi.G.has_edge("Dnipro", "Chernihiv Raion")
     assert "Dnipro City" in gi.group("Dnipro").names                  # same point now: one group
+
+
+def test_a_parent_in_another_country_is_replaced_by_the_own_country():
+    import graph_tools as T
+    from conftest import build_vr6_graph
+    from graph_index import GraphIndex
+    G = build_vr6_graph()
+    G.add_node("Central Russian Upland", type="LOC", latitude=52.0, longitude=37.0, place_type="natural",
+               importance=0.5, address="Central Russian Upland, Russia", geometry_wkt="POINT (37 52)")
+    G.add_node("Kharkiv Oblast", type="LOC", latitude=49.6, longitude=36.5, place_type="state", importance=0.6,
+               address="Kharkiv Oblast, Ukraine", geometry_wkt="POINT (36.5 49.6)")
+    G.add_node("Izium", type="LOC", latitude=49.2, longitude=37.3, place_type="town", importance=0.4,
+               address="Izium, Kharkiv Oblast, Ukraine", geometry_wkt="POINT (37.3 49.2)")
+    for i, name in enumerate(["Kharkiv Oblast", "Izium"]):
+        G.add_node(f"TEXT_{8200 + i}", type="TEXT", text_id=8200 + i, text=f"{name} was shelled.", source="Kharkiv",
+                   index=i, title=None, sub_title=None)
+        G.add_edge(name, f"TEXT_{8200 + i}", weight=1, relations={"IN_THE_TEXT": [{"start": 0, "end": len(name)}]})
+    for inner, outer in [("Izium", "Kharkiv Oblast"), ("Kharkiv Oblast", "Central Russian Upland"),
+                         ("Central Russian Upland", "Russia")]:
+        G.add_edge(inner, outer, weight=0.1, relations={"INSIDE": [{"subject": inner, "basis": "geometry"}]})
+    gi = GraphIndex(G)
+    assert T.parents(gi, "Izium") == ["Izium", "Kharkiv Oblast", "Ukraine"]   # the address says Ukraine
+    assert T.parents(gi, "Central Russian Upland") == ["Central Russian Upland", "Russia"]   # same country: kept
+
+
+def test_a_name_with_no_right_point_gets_none_and_a_real_place_at_its_spot_keeps_its_own():
+    from conftest import build_vr6_graph
+    from graph_index import GraphIndex
+    G = build_vr6_graph()
+    village = dict(latitude=48.45, longitude=37.18, place_type="village", importance=0.38,
+                   address="Novyi Donbas, Donetsk Oblast, Ukraine", geometry_wkt="POINT (37.18 48.45)")
+    G.add_node("Donbass", type="LOC", **village)          # the region, geocoded as the village
+    G.add_node("Novyi Donbas", type="LOC", **village)
+    G.add_node("Soviet Union", type="LOC", latitude=44.56, longitude=27.36, place_type="amenity", importance=0.0,
+               address="Soviet Union, Slobozia, Romania", geometry_wkt="POINT (27.36 44.56)")
+    G.add_node("Soviet Union.", type="LOC", latitude=48.7, longitude=44.5, place_type="historic", importance=0.0,
+               address="Memorial plaque, Volgograd, Russia", geometry_wkt="POINT (44.5 48.7)")
+    for i, name in enumerate(["Donbass", "Novyi Donbas", "Soviet Union", "Soviet Union."]):
+        G.add_node(f"TEXT_{8300 + i}", type="TEXT", text_id=8300 + i, text=f"{name} is mentioned.", source="X",
+                   index=i, title=None, sub_title=None)
+        G.add_edge(name, f"TEXT_{8300 + i}", weight=1, relations={"IN_THE_TEXT": [{"start": 0, "end": len(name)}]})
+    gi = GraphIndex(G)
+    assert gi.group("Donbass").place is None
+    assert gi.group("Novyi Donbas").place.place_type == "village"
+    assert gi.group_of["Novyi Donbas"] != gi.group_of["Donbass"]
+    assert gi.group("Soviet Union").place is None and "Soviet Union." in gi.group("Soviet Union").names
 
 
 def test_a_city_geocoded_as_a_river_is_flagged():

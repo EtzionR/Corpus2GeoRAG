@@ -76,8 +76,18 @@ def test_place_lookup_returns_the_place_its_parents_and_its_summary(vr6_index):
     assert out.steps[0].tool == "parents"
 
 
+def test_place_lookup_without_a_point_still_reads_its_own_article(vr6_index):
+    vr6_index.articles["Novorossiya"] = vr6_index.articles["Kyiv"]          # give the ungeocoded place an article
+    try:
+        out = run(vr6_index, "place_lookup", ("Novorossiya", "LOC"))
+    finally:
+        del vr6_index.articles["Novorossiya"]
+    assert not out.places and "Novorossiya has no coordinates in the graph" in out.notes
+    assert [s.article for s in out.summaries] == ["Novorossiya"]
+
+
 def test_place_lookup_reports_an_uncertain_point(vr6_index):
-    out = run(vr6_index, "place_lookup", ("Donbas", "LOC"))
+    out = run(vr6_index, "place_lookup", ("Hrushevsky Street", "LOC"))
     assert any("uncertain" in n for n in out.notes)
 
 

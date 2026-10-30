@@ -1046,6 +1046,23 @@ pass ($0.017); "Show me Kyiv" now has a description instead of "no passages desc
   Dnipro, Дніпро → Dnipro City; Dnipro Oblast → Dnipropetrovsk Oblast. *Outcome:* the pin is on the
   city, no "uncertain" warning, the region is Dnipropetrovsk Oblast, and Yekaterinoslav / Dnepr /
   Dnepropetrovsk now join Dnipro's group (same point).
+- **More wrong points, same fix** (owner: "if we can't fix the location, we don't show a wrong
+  point"). Listed by names in 15+ paragraphs geocoded with importance under 0.1 (the "uncertain" flag
+  missed some: "Soviet Union" is typed `historic`). Eight more take a right node's point
+  (Zaporizhzhia Oblast was a village in Kherson Oblast; Oval Office a road in Alabama → White House).
+  36 have no right point anywhere in the graph, mostly regions, former states and military
+  districts matched to a shop, plaque or street (Donbas: a street in Skopje); `NO_POINT` clears them
+  for every spelling, before grouping too, so a real place at the same spot keeps its own point
+  ("Donbass" sat on the village Novyi Donbas). A place lookup with no point still gets its own
+  article's lead: "Where is Donbas?" is answered, with no pin.
+- **The hierarchy follows the addresses** (owner: "take the graph as the truth"). 173 INSIDE links
+  join two places whose addresses name different countries, mostly through landforms that cross
+  borders: Kharkiv Oblast → Central Russian Upland → Russia (about 300 places), Zakarpattia → Eastern
+  Carpathians → Romania, Crimea → Southern Federal District → Russia (about 240), St Petersburg →
+  a bay → Estonia. *Fix:* such a parent is replaced by the place's own address country, when that is
+  a country node: 146 links; the 28 left name a sea or a non-country. Crimea's addresses say
+  Ukraine, so it sits under Ukraine. "What happened in Crimea?" still tells the 2014 annexation and
+  the 2022 advance from occupied Crimea; that comes from the text, not the hierarchy.
 
 ### ④ Evidence pack
 

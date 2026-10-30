@@ -64,10 +64,10 @@ def test_relation_question_puts_records_first_and_flags_low_confidence(vr6_index
 
 
 def test_place_lookup_is_places_and_summary_only_and_warns_on_a_doubtful_point(vr6_index):
-    _, _, pack = pack_for(vr6_index, "place_lookup", ("Donbas", "LOC"))
+    _, _, pack = pack_for(vr6_index, "place_lookup", ("Hrushevsky Street", "LOC"))
     assert pack.level.startswith("L0+L1") and all(p.kind == "summary" for p in pack.passages)
-    text = render_for_llm(pack, "Where is Donbas?")
-    assert "[1] Donbas (road; Donbas, Skopje, North Macedonia)" in text
+    text = render_for_llm(pack, "Where is Hrushevsky Street?")
+    assert "[1] Hrushevsky Street (road; Hrushevsky Street, Zdovbytsia, Ukraine)" in text
     assert "the graph's point for this place may be wrong: geocoded as a road" in text
 
 
