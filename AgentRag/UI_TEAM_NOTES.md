@@ -46,6 +46,23 @@ Some list answers return many places (Zelenskyy: ~550; "Russia and Ukraine with 
 when the model misses the country filter: ~1,700). Drawing them as individual Folium markers is
 slow; a `MarkerCluster` keeps the map responsive.
 
+## 6. The welcome note takes a third of the chat area
+
+The greeting is the first chat message and stays at the top of the 465 px chat box after every
+question. **Suggested:** show it as a fold-out, open on the first visit and folded to one line once
+a question is asked. In the message loop (`app.py` ~line 1904), at the top of the loop body:
+
+```python
+            if m_idx == 0 and role == "assistant" and not msg.get("is_live"):
+                # The welcome note: open on the first visit, folded to one line once a question is asked
+                with st.expander("👋 Welcome: how to use the map and the chat",
+                                 expanded=len(st.session_state.messages) == 1):
+                    st.markdown(msg["content"])
+                continue
+```
+
+We tried it on a local copy only (Streamlit's AppTest: no errors, the chat box still there).
+
 ## What changed on our side that you will see (no format change)
 
 - Some places now come **without a point** when the graph's point was wrong and the graph has no right
