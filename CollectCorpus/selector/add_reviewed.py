@@ -1,46 +1,49 @@
-"""Add review-zone pages marked "להוסיף" to the corpus.
+"""Apply the manual decisions from the two Excels and rebuild the corpus.
 
-    python -m selector.add_reviewed                (run from the CollectCorpus folder, with the Excel closed)
+    python -m selector.add_reviewed                (run from the CollectCorpus folder, with the Excels closed)
 
-Reads the decision column of summaries/<name>/review_pages.xlsx, takes the marked pages from
-data/<name>/review_pages.jsonl (full text, nothing is downloaded), appends them to data/<name>/pages.jsonl and
-exports DATA.json again. Pages already in the corpus are skipped, so it can be run after every round of review.
-Each run is logged in summaries/<name>/added_from_review.csv.
+* summaries/ukraine_war_final/review_pages.xlsx  - review-zone pages: "להוסיף" adds the page to the corpus.
+* summaries/ukraine_war_final/cleanup_pages.xlsx - borderline pages in the corpus: "להוציא" removes the page.
+"לא להוסיף" / "להשאיר" are recorded too, so a checked page shows its decision in the next Excels.
+
+The decisions are appended to selector/manual_decisions.csv (committed, so the team sees what was decided by hand)
+and the corpus is rebuilt (selector.build_final_corpus): DATA.json + DATA.json.gz, the reports and the two Excels.
+It can be run after every round of review; pages without a decision are left as they are.
 """
-import argparse
-import json
 import sys
-from datetime import date
 from pathlib import Path
 
 import pandas as pd
 
-from build_corpus import corpus_dir, load_pages
-from export_corpus import export_data_json
+from selector import build_final_corpus as final
 
 sys.stdout.reconfigure(encoding="utf-8")
 
 
-def add_reviewed(name):
-    sheet = pd.read_excel(Path("summaries") / name / "review_pages.xlsx")
-    marked = sheet[sheet["החלטה"].astype(str).str.strip() == "להוסיף"]["כותרת"].tolist()
-    review = load_pages(corpus_dir(name) / "review_pages.jsonl")
-    corpus = load_pages(corpus_dir(name) / "pages.jsonl")
-    new = [t for t in marked if t not in corpus]
-    if not new:
-        print(f"nothing new to add ({len(marked)} marked, all already in the corpus)")
+def read_decisions(path, kind):
+    """{title: decision code} for the rows with a decision in one Excel."""
+    if not path.exists():
+        return {}
+    yes, no, yes_code, no_code = final.DECISION_WORDS[kind]
+    sheet = pd.read_excel(path)
+    words = sheet["החלטה"].astype(str).str.strip()
+    codes = words.map({yes: yes_code, no: no_code})
+    return dict(zip(sheet.loc[codes.notna(), "כותרת"], codes.dropna()))
+
+
+def main():
+    rep = Path("summaries") / final.OUT
+    new = {**read_decisions(rep / "review_pages.xlsx", "review"), **read_decisions(rep / "cleanup_pages.xlsx", "cleanup")}
+    earlier = final.load_decisions()
+    changed = {t: d for t, d in new.items() if earlier.get(t) != d}
+    if not changed:
+        print("no new decisions in the Excels")
         return
-    with (corpus_dir(name) / "pages.jsonl").open("a", encoding="utf-8") as f:
-        for t in new:
-            f.write(json.dumps(review[t], ensure_ascii=False) + "\n")
-    export_data_json(name)
-    log = Path("summaries") / name / "added_from_review.csv"
-    pd.DataFrame({"title": new, "added": date.today().isoformat()}).to_csv(
-        log, mode="a", header=not log.exists(), index=False, encoding="utf-8-sig")
-    print(f"added {len(new)} pages -> {len(corpus) + len(new)} in the corpus; logged in {log}")
+    final.record_decisions(changed)
+    counts = pd.Series(changed).value_counts().to_dict()
+    print(f"recorded {len(changed)} decisions in {final.DECISIONS}: {counts}; rebuilding...")
+    final.main()
 
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--name", default="ukraine_war_final", help="the corpus (data/<name>/)")
-    add_reviewed(ap.parse_args().name)
+    main()
