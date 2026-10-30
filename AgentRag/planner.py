@@ -65,6 +65,9 @@ DEFAULT_RADIUS_M = 1000   # P2-23: a map point with no distance given anywhere
 HISTORY_TURNS = 3         # P2-25: how many previous turns the LLM sees
 HISTORY_PLACES = 20       # places listed per previous turn; "number N" is still resolved from the full list
 _NOT_A_KEYWORD = re.compile(r"[\d\s.,°+\-\[\]]+")   # numbers and coordinates are not search words
+# Words that name no topic: "What happened in Moscow?" searched Moscow's paragraphs for "happened" (P2-72)
+_GENERIC_KEYWORDS = {"happened", "happen", "happens", "happening", "event", "events", "news", "situation",
+                     "going on", "information", "details", "overview"}
 
 
 # --- The plan --------------------------------------------------------------------------------
@@ -196,7 +199,7 @@ Rules:
   "commander of", "in charge of" mean LEADS. Words like "connected", "associated", "linked",
   "related" or "mentioned" ask for no specific relation, so leave relations empty.
 - keywords: topic words to search the text for ("missile", "evacuation"). Never names, numbers or
-  coordinates.
+  coordinates, and never words that name no topic ("happened", "events", "situation", "news").
 - place_country / place_kinds: only when the question limits which places count ("Ukrainian cities",
   "towns in Belarus", "which countries").
 - refers_to_map: true only when the question is about the map selection ("here", "this area",
@@ -213,6 +216,7 @@ Examples:
   keywords missile, strike; relations ATTACKED; time_words "in 2024".
 - "Shelling in Kherson" (with a map selection somewhere else) -> type area_topic; entities Kherson (LOC);
   refers_to_map false; keywords shelling; relations ATTACKED.
+- "What happened in Kherson?" -> type about; entities Kherson (LOC); keywords empty (no topic is named).
 - "Which organizations are linked to both Belarus and Russia?" -> type common; entities Belarus (LOC),
   Russia (LOC); relations empty.
 - "Who is the prime minister of Poland?" -> type relation; entities Poland (LOC); relations LEADS.
@@ -320,7 +324,12 @@ def _finalize(draft: PlanDraft, question: str, area: Optional[Area], history: li
 
     entity_names = {e.name.lower() for e in entities} | {e.text.lower() for e in entities}
     keywords = [k.strip() for k in draft.keywords
-                if k.strip() and not _NOT_A_KEYWORD.fullmatch(k.strip()) and k.strip().lower() not in entity_names]
+                if k.strip() and not _NOT_A_KEYWORD.fullmatch(k.strip()) and k.strip().lower() not in entity_names
+                and k.strip().lower() not in _GENERIC_KEYWORDS]
+    if qtype == "area_topic" and not keywords and not relations:
+        # no topic left to search for: a question about the named place, or about the map selection
+        qtype = "about" if named_places and not use_map else "area"
+        notes.append(f"area_topic with no topic words: treated as {qtype}")
 
     plan = QueryPlan(
         question=question, type=qtype, entities=entities, concepts=concepts, relations=relations,

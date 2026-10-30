@@ -65,6 +65,16 @@ WATER_TYPES = {"river", "stream", "canal", "water", "lake", "reservoir"}
 _SETTLEMENT = re.compile(r"\b(?:is|was)\b[^.]{0,100}?\b(?:city|town|village|capital)\b", re.I)
 SURNAME_DOMINANCE = 0.8   # a bare surname joins a person's group only if that group has 80 % of its texts
 
+# P2-72: places the graph geocoded wrongly, each mapped to another node of the same graph that has the right
+# point. On load the name takes that node's point, outline, place type, address and INSIDE parent, so the
+# map, the region overview and the variant groups all use it. The graph file is not changed.
+PLACE_FIXES = {
+    "Dnipro": "Dnipro City",                     # the river near Chernihiv; the city is 300 km south-east
+    "Дніпро": "Dnipro City",
+    "Dnipro Oblast": "Dnipropetrovsk Oblast",    # the same river point
+}
+GEO_FIELDS = ("latitude", "longitude", "place_type", "importance", "address", "geometry_wkt")
+
 
 def normalize(name: str) -> str:
     """Case, unicode spaces, quotes, dashes, stray punctuation, a leading 'the', UK/US spelling."""
@@ -137,6 +147,39 @@ def drop_reference_sections(G: nx.Graph) -> dict:
             "kept_for_hierarchy": len(containers)}
 
 
+def apply_place_fixes(G: nx.Graph, fixes: dict[str, str] = PLACE_FIXES) -> list[str]:
+    """Give each name in `fixes` the point and INSIDE parent of the node it maps to (P2-72). Returns the
+    names fixed; a name or source missing from this graph is skipped."""
+    fixed = []
+    for name, source in fixes.items():
+        if name not in G or source not in G or G.nodes[source].get("latitude") is None:
+            continue
+        for k in GEO_FIELDS:
+            G.nodes[name][k] = G.nodes[source].get(k)
+        parent = _inside_parent(G, source)
+        for m in list(G.neighbors(name)):   # drop the wrong parent
+            rels = G[name][m]["relations"]
+            kept = [r for r in rels.get("INSIDE", []) if r.get("subject") != name]
+            if len(kept) < len(rels.get("INSIDE", [])):
+                if kept:
+                    rels["INSIDE"] = kept
+                else:
+                    del rels["INSIDE"]
+                if not rels:
+                    G.remove_edge(name, m)
+        if parent and parent != name:
+            if not G.has_edge(name, parent):
+                G.add_edge(name, parent, weight=0.1, relations={})
+            G[name][parent]["relations"].setdefault("INSIDE", []).append({"subject": name, "basis": "place fix"})
+        fixed.append(name)
+    return fixed
+
+
+def _inside_parent(G: nx.Graph, name: str) -> Optional[str]:
+    return next((m for m in G.neighbors(name)
+                 if any(r.get("subject") == name for r in G[name][m]["relations"].get("INSIDE", []))), None)
+
+
 def _contains_places(G: nx.Graph, name: str) -> bool:
     return any(r.get("subject") == other
                for other in G.neighbors(name)
@@ -149,6 +192,7 @@ class GraphIndex:
     def __init__(self, G: nx.Graph):
         start = time.time()
         self.dropped = drop_reference_sections(G)
+        self.place_fixes = apply_place_fixes(G)
         self.G = G
         self.entities = [n for n, d in G.nodes(data=True) if d.get("type") != "TEXT"]
         self.text_ids: dict[str, list[int]] = {}
@@ -185,8 +229,8 @@ class GraphIndex:
         index.load_seconds = load_seconds
         index.path = str(path)
         logger.info("graph loaded from %s in %.1f s (%d nodes, %d edges); indexes in %.1f s; reference sections "
-                    "dropped: %s", path, load_seconds, G.number_of_nodes(), G.number_of_edges(), index.index_seconds,
-                    index.dropped)
+                    "dropped: %s; places fixed: %s", path, load_seconds, G.number_of_nodes(), G.number_of_edges(),
+                    index.index_seconds, index.dropped, index.place_fixes)
         return index
 
     # --- articles (events live here: "Battle of Bakhmut" is an article, not a node) ----------

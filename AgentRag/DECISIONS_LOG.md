@@ -1023,6 +1023,30 @@ history the app sends; history turned out not to matter, the question kind did:
 agent unchanged: answer, 52 map layers and follow-ups for the Siege of Mariupol. On the app's free
 model the answer took 48 s, against 2–3 s on Gemini 2.5 Flash.
 
+**The final graph (2026-10-30, eb2c6be).** Corpus v3 (2,285 pages), NER of 03d6943, Vr6 notebook
+unchanged: 149,085 nodes after the reference drop (83,008 paragraphs, 2,285 articles), 812k edges,
+same format, so nothing in our code had to change. 1.4 GB in memory, about 11 s to load and index.
+Ukraine, Kyiv, Kharkiv, Donetsk, Luhansk, Zaporizhzhia, Dnipro and Zelenskyy have their own articles
+again (242 of the 548 dropped articles are back); Russia, Crimea, Moscow, Odesa and most oblasts are
+still out (the selector rejects them: 0–2 military paragraphs each). 180 tests and the 10 questions
+pass ($0.017); "Show me Kyiv" now has a description instead of "no passages describing Kyiv".
+
+**P2-72. Fixes found on the final graph** (owner's go, 2026-10-30):
+
+- **"What happened in Moscow?" answered "no data"** although Moscow is in 1,411 paragraphs. The
+  question went to the LLM planner (not the fast path), which typed it `area_topic` with the keyword
+  "happened", so the retrieve step searched Moscow's paragraphs for that word. *Fix:* the prompt says
+  words like "happened", "events", "situation" are no topic (one example added), and a code check
+  drops such words; an `area_topic` left with no topic becomes `about` (a named place) or `area` (the
+  map selection). *Outcome:* 22 citations; "What happened in Dnipro / Bakhmut in 2023?" answered too.
+- **Dnipro on the river near Chernihiv**, 300 km off, though its own article now says "city". The
+  graph has the right point under another node, "Dnipro City" (city, with outline). *Fix:*
+  `PLACE_FIXES` in `graph_index.py`: on load, a wrongly geocoded name takes the point, outline, place
+  type, address and INSIDE parent of the node that has it right; the graph file is not changed.
+  Dnipro, Дніпро → Dnipro City; Dnipro Oblast → Dnipropetrovsk Oblast. *Outcome:* the pin is on the
+  city, no "uncertain" warning, the region is Dnipropetrovsk Oblast, and Yekaterinoslav / Dnepr /
+  Dnepropetrovsk now join Dnipro's group (same point).
+
 ### ④ Evidence pack
 
 **P2-15. Choosing the least text that answers.**
@@ -1100,7 +1124,7 @@ Things we chose not to do yet, kept here so we can pick them up if the results c
 | "Tell me about number 3" drill-down: carry the previous question's subject (e.g. Zelenskyy) into the follow-up | ① / ③ | Works today when the follow-up names both; a bare number gives only the place | 2026-10-21 |
 | For a concept, also look at organizations connected to the LLM's candidates (e.g. reach General Staff from Russian Armed Forces / Ministry of Defence) | ③ Retrieve | q11's success shouldn't depend on the LLM naming the right organization (Part 2 results) | 2026-10-20 |
 | Collapse nested places in a list (Oval Office → White House → Washington) into one line with the inner ones under it | ③ / ⑥ | They're different places with their own text (P2-57); the UI can cluster pins first | 2026-10-21 |
-| Fix the place itself when its map point disagrees with its own article (Dnipro: a river near Chernihiv; the article says "city"), e.g. by using the article's coordinates | ② / ⑥ | For later (owner); the graph team is asked to fix it (B1). Meanwhile flagged as uncertain (P2-64) | 2026-10-21 |
+| Fix the place itself when its map point disagrees with its own article (Dnipro: a river near Chernihiv; the article says "city"), e.g. by using the article's coordinates | ② / ⑥ | **Done 2026-10-30 (P2-72)**, from the graph's own "Dnipro City" point, not the article | 2026-10-21 |
 | "Battle of Avdiivka" with no year resolves to the 2017 battle, not 2023–2024; check that the other is offered in `did_you_mean`, and whether the newest should win | ② Resolve | Found in the unseen-questions check (P2-55 update) | 2026-10-21 |
 | Entity lists ranked first by place relations put geocoding noise on top for some entities (Azov Brigade: "Treasure Island", "United States Government") | ③ Retrieve | Found in the unseen-questions check; needs the unification/geocoding fixes or a noise filter | 2026-10-21 |
 | Leaner results for very big lists (e.g. context places without `why`/`sources`, fetched on demand) | ⑥ Result | 500 KB for q10 is fine in-process; matters only behind an HTTP API (P2-59) | 2026-10-21 |

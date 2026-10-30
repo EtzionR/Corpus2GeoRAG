@@ -110,6 +110,35 @@ def test_reference_sections_are_dropped_with_what_only_they_mention():
     assert "SAME_AS" in gi.G["Kyiv"]["Kiev"]["relations"]           # records from other paragraphs stay
 
 
+def test_a_place_fix_takes_the_point_and_parent_of_the_right_node():
+    import graph_tools as T
+    from conftest import build_vr6_graph
+    from graph_index import GraphIndex
+    G = build_vr6_graph()
+    G.add_node("Chernihiv Raion", type="LOC", latitude=51.5, longitude=31.3, place_type="county", importance=0.5,
+               address="Chernihiv Raion, Ukraine", geometry_wkt="POINT (31.3 51.5)")
+    G.add_node("Dnipro Raion", type="LOC", latitude=48.4, longitude=35.0, place_type="county", importance=0.5,
+               address="Dnipro Raion, Ukraine", geometry_wkt="POINT (35 48.4)")
+    G.add_node("Dnipro", type="LOC", latitude=51.55, longitude=30.61, place_type="river", importance=0.67,
+               address="Dnipro, Chernihiv Raion", geometry_wkt="POINT (30.61 51.55)")
+    G.add_node("Dnipro City", type="LOC", latitude=48.47, longitude=35.04, place_type="city", importance=0.66,
+               address="Dnipro, Dnipro Raion, Ukraine", geometry_wkt="POLYGON ((34.9 48.4, 35.1 48.4, 35.1 48.5, 34.9 48.4))")
+    for i, name in enumerate(["Dnipro", "Dnipro City"]):
+        G.add_node(f"TEXT_{8100 + i}", type="TEXT", text_id=8100 + i, text=f"{name} was shelled.", source="Dnipro",
+                   index=i, title=None, sub_title=None)
+        G.add_edge(name, f"TEXT_{8100 + i}", weight=1, relations={"IN_THE_TEXT": [{"start": 0, "end": len(name)}]})
+    G.add_edge("Dnipro", "Chernihiv Raion", weight=0.1, relations={"INSIDE": [{"subject": "Dnipro", "basis": "geometry"}]})
+    G.add_edge("Dnipro City", "Dnipro Raion", weight=0.1,
+               relations={"INSIDE": [{"subject": "Dnipro City", "basis": "geometry"}]})
+    gi = GraphIndex(G)
+    assert gi.place_fixes == ["Dnipro"]
+    place = gi.group("Dnipro").place
+    assert (place.lon, place.lat, place.place_type, place.uncertain) == (35.04, 48.47, "city", False)
+    assert T.parents(gi, "Dnipro") == ["Dnipro", "Dnipro Raion"]       # no longer inside Chernihiv Raion
+    assert not gi.G.has_edge("Dnipro", "Chernihiv Raion")
+    assert "Dnipro City" in gi.group("Dnipro").names                  # same point now: one group
+
+
 def test_a_city_geocoded_as_a_river_is_flagged():
     from conftest import build_vr6_graph
     from graph_index import GraphIndex

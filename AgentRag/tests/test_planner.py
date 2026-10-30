@@ -123,6 +123,28 @@ def test_numbers_coordinates_and_names_are_not_keywords():
     assert plan.keywords == ["drone"]
 
 
+def test_what_happened_in_a_place_is_a_question_about_the_place():
+    # the model typed it as a topic search for the word "happened" (P2-72)
+    draft = PlanDraft(type="area_topic", keywords=["happened"],
+                      entities=[EntityMention(text="Moscow", name="Moscow", kind="LOC")])
+    plan = understand("What happened in Moscow?", llm=FakePlanner(draft))
+    assert plan.type == "about" and plan.keywords == []
+    assert "area_topic with no topic words: treated as about" in plan.notes
+
+
+def test_what_happened_here_stays_a_question_about_the_map_selection():
+    draft = PlanDraft(type="area_topic", refers_to_map=True, keywords=["events"])
+    plan = understand("What happened here?", area=DONBAS_BOX, llm=FakePlanner(draft))
+    assert plan.type == "area" and plan.area is not None
+
+
+def test_a_real_topic_keeps_the_area_topic_type():
+    draft = PlanDraft(type="area_topic", keywords=["happened", "shelling"],
+                      entities=[EntityMention(text="Kherson", name="Kherson", kind="LOC")])
+    plan = understand("What shelling happened in Kherson?", llm=FakePlanner(draft))
+    assert plan.type == "area_topic" and plan.keywords == ["shelling"]
+
+
 def test_the_map_selection_is_used_when_the_question_refers_to_it():
     draft = PlanDraft(type="area_topic", refers_to_map=True, keywords=["drone"], relations=["ATTACKED"])
     plan = understand("Drone attacks in this bounding box", area=DONBAS_BOX, llm=FakePlanner(draft))
