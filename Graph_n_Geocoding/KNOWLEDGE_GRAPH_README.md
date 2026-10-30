@@ -5,8 +5,8 @@ Russia–Ukraine war), compressed with gzip. It links people, organizations and 
 relation can be traced back to the exact words in a source text.
 
 * **Format:** NetworkX *node-link* JSON, undirected graph: `{"directed": false, "multigraph": false, "graph": {}, "nodes": [...], "links": [...]}`.
-* **Size:** 120,019 nodes — 64,301 texts and 55,718 entities (19,266 PER, 23,317 ORG, 13,135 LOC) — and 697,333 edges.
-* **File:** `knowledge_graph.json.gz`, 37 MB (gzip, lossless; the JSON inside is 228 MB). Python reads it directly (section 1);
+* **Size:** 155,124 nodes — 88,120 texts and 67,004 entities (19,771 PER, 32,226 ORG, 15,007 LOC) — and 819,111 edges.
+* **File:** `knowledge_graph.json.gz`, 42 MB (gzip, lossless; the JSON inside is 268 MB). Python reads it directly (section 1);
   to look inside by hand, decompress it with 7-Zip.
 
 ---
@@ -47,7 +47,7 @@ Every node has an `id` and a `type`. There are four types.
 | Field | Meaning |
 |---|---|
 | `id` | `TEXT_<text_id>` |
-| `text_id` | 0 … 64,300, in the order of the corpus file; this is the number the relations point to |
+| `text_id` | 0 … 88,119, in the order of the corpus file; this is the number the relations point to |
 | `text` | the paragraph |
 | `source` | the Wikipedia article |
 | `index` | the paragraph number inside the article |
@@ -76,7 +76,7 @@ Every node has an `id` and a `type`. There are four types.
 | `importance` | 0–1, how prominent the place is in OSM/Wikipedia; a rough confidence for the match |
 | `geometry_wkt` | the polygon (or point / line) as WKT, simplified by size (~0.2 % of the place's size). **WKT order is `lon lat`** |
 
-About 26 % of the LOC entities were not found by Nominatim; their geocoding fields are `null`.
+About 25 % of the LOC entities were not found by Nominatim; their geocoding fields are `null`.
 
 ---
 

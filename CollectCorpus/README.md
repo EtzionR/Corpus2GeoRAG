@@ -16,7 +16,7 @@ The scripts' `main()` only parses arguments and calls the same functions
 (`build()`, `update()`, `filter_corpus()`, `export_data_json()`; `summarize()` is in the scripts only).
 [Open in Colab](https://colab.research.google.com/github/arielax-212/Corpus2GeoRAG/blob/main/CollectCorpus/CollectCorpus.ipynb).
 
-**`DATA.json.gz`** in this folder is the output for the next step: the final corpus, **2,081 pages** (2026-10-23),
+**`DATA.json.gz`** in this folder is the output for the next step: the final corpus, **2,285 pages** (2026-10-30),
 `{title: text}`, in exactly the format of `examples/DATA.json`, compressed with gzip (9 MB; 28 MB uncompressed is
 too big for GitHub):
 ```python
@@ -25,8 +25,9 @@ with gzip.open("DATA.json.gz", "rt", encoding="utf-8") as f:
     data = json.load(f)          # {title: text}, the same dict as DATA.json
 ```
 It holds the pages of the earlier corpus and of the
-BFS expansion that the selector (v3, EmbeddingGemma 2) **accepts**; the "review" zone is kept aside for a manual
-decision (see "The final corpus" below). What is in it and how it was chosen: [`DATA_SUMMARY.md`](DATA_SUMMARY.md). The richer `pages.jsonl` files (with sections, coordinates, links and
+BFS expansion that the selector (v3, EmbeddingGemma 2) accepts, plus earlier-corpus pages that are partly military
+(two signals: the category filter and the text); the "review" zone is kept aside for a manual decision
+(see "The final corpus" below). What is in it and how it was chosen: [`DATA_SUMMARY.md`](DATA_SUMMARY.md). The richer `pages.jsonl` files (with sections, coordinates, links and
 revisions) stay in `data/` and are not committed.
 
 ## Setup
@@ -95,14 +96,19 @@ python -m selector.expand_bfs --min-links 10     # find candidates, resolve redi
 ## The final corpus (`selector/build_final_corpus.py`)
 ```bash
 python -m selector.build_final_corpus     # -> data/ukraine_war_final/ (pages.jsonl, DATA.json, review_pages.jsonl)
-python -m selector.add_reviewed           # adds the review pages marked "להוסיף" in the Excel
+python -m selector.add_reviewed           # applies the decisions marked in the two Excels and rebuilds
 ```
 - Pages: the earlier corpus (1,910), the BFS pages collected before (354) and downloaded (3,543), and the 40
   training pages (decided by their hand label). Scores were computed on Colab (GPU) with both Gemma and E5.
-- **Only "accept" enters** (2,061 + 20 related training pages = 2,081). The 589 "review" pages are kept aside with
-  their full text and an Excel (`summaries/ukraine_war_final/review_pages.xlsx`, local) showing each page's most
-  military paragraphs; `add_reviewed` adds the marked ones and logs them, and can be run after every round.
-- The same corpus is built with E5 for comparison (1,953 pages; 1,807 in both).
+- **Who enters (two signals):** the selector's "accept" (2,023), plus earlier-corpus pages - which passed the
+  military category filter - in the review zone (209) or rejected but with ≥ 3 military paragraphs (33, e.g. Kyiv,
+  Donetsk); BFS pages accepted only by the 7-paragraph rule with < 10% military go to review (38, e.g.
+  International Space Station). With the 20 related training pages: **2,285**. Details: `DATA_SUMMARY.md`.
+- **Manual decisions:** two Excels (local, `summaries/ukraine_war_final/`) show each page's opening and most
+  military paragraphs, with a dropdown: `review_pages.xlsx` (418 review pages: להוסיף / לא להוסיף) and
+  `cleanup_pages.xlsx` (467 borderline pages in the corpus, weakest first: להוציא / להשאיר). `add_reviewed`
+  records the decisions in `selector/manual_decisions.csv` (committed) and rebuilds; run it after every round.
+- The same corpus is built with E5 for comparison (2,216 pages; 2,078 in both).
 
 ## Building the Russia–Ukraine war corpus
 ```bash
