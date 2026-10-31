@@ -90,6 +90,7 @@ class Answer(BaseModel):
 
 # A citation group: [3], [S2], or several ids in one bracket, like [S4, S10] or [2; L1].
 _CITATION = re.compile(r"\[\s*((?:[SL]?\d+)(?:\s*[,;]\s*[SL]?\d+)*)\s*\]")
+_CITATION_RUN = re.compile(rf"{_CITATION.pattern}(?:\s*[,;]?\s*{_CITATION.pattern})*")
 
 
 def check_citations(text: str, pack: EvidencePack) -> tuple[str, list[str], list[int], list[str], list[str]]:
@@ -136,8 +137,9 @@ def grounded_follow_ups(follow_ups: list[str], pack: EvidencePack) -> tuple[list
 
 
 def strip_citations(text: str) -> str:
-    """The text without [3] / [S2] marks: for follow-ups, and for UIs that show the answer plain."""
-    return _tidy(_CITATION.sub("", text))
+    """The text without [3] / [S2] marks: for follow-ups, and for UIs that show the answer plain.
+    A run of marks goes with the commas between them ("since 2019 [L1], [S5]." -> "since 2019.")."""
+    return _tidy(_CITATION_RUN.sub("", text))
 
 
 def _tidy(text: str) -> str:
@@ -192,6 +194,12 @@ def write(plan: QueryPlan, pack: EvidencePack, llm) -> Answer:
     if fu and fu.kind == "item" and fu.item_number and not fu.target_id:   # "number 4" of a 1-place answer
         return Answer(text=f"The previous answer has no place number {fu.item_number}. Ask about one of the "
                            f"numbered places on the map.", status="no_data", grounded=False, shape=pack.shape)
+    if pack.needs_area:   # "Show me where drone attacks happened": ask for the area, don't search everything (P2-75)
+        topic = " ".join(plan.keywords)
+        example = f' (for example "{topic} in Kharkiv")' if topic else ""
+        return Answer(text="There is no area to search: the question names no place with a map location, and "
+                           "nothing is selected on the map. Draw a box or pick a point on the map and ask again, "
+                           f"or name a place{example}.", status="no_data", grounded=False, shape=pack.shape)
     if plan.type == "out_of_scope" or is_empty(pack):
         return _no_data_answer(plan, pack, llm)
     answer = Answer(text="", status="answered", grounded=True, shape=pack.shape)

@@ -44,6 +44,24 @@ def _place_sources(gi: GraphIndex, hit) -> list[str]:
     return pointers
 
 
+def _zoom_box(p: PlaceOut) -> tuple[float, float, float, float]:
+    """[west, south, east, north] of one place. An outline that crosses the 180th meridian (Russia's
+    Chukotka, the Aleutians of the US) spans every longitude, so only its parts on the side of the
+    place's point count (P2-76)."""
+    lon, lat = p.geometry.coordinates
+    if not p.shape:
+        return lon, lat, lon, lat
+    geom = p.shape.model_dump()
+    w, s, e, n = bbox(geom)
+    if e - w > 180 and geom["type"] == "MultiPolygon":
+        parts = [bbox({"type": "Polygon", "coordinates": c}) for c in geom["coordinates"]]
+        near = [b for b in parts if ((b[0] + b[2]) / 2 >= 0) == (lon >= 0)]
+        if near:
+            w, s, e, n = (min(b[0] for b in near), min(b[1] for b in near),
+                          max(b[2] for b in near), max(b[3] for b in near))
+    return w, s, e, n
+
+
 def _map_hint(places: list[PlaceOut], highlight: list[int], zoom_to: Sequence[int] = ()) -> MapHint:
     """Zooms to the places the question is about; with none, to the places the answer discusses."""
     focus = [p for p in places if p.number in (zoom_to or highlight)] or places[:10]
@@ -51,17 +69,12 @@ def _map_hint(places: list[PlaceOut], highlight: list[int], zoom_to: Sequence[in
         return MapHint(highlight=highlight)
     xs, ys = [], []
     for p in focus:
-        geom = p.shape.model_dump() if p.shape else p.geometry.model_dump()
-        if geom["type"] == "Point":
-            xs.append(geom["coordinates"][0])
-            ys.append(geom["coordinates"][1])
-        else:
-            w, s, e, n = bbox(geom)
-            xs += [w, e]
-            ys += [s, n]
+        w, s, e, n = _zoom_box(p)
+        xs += [w, e]
+        ys += [s, n]
     pad_x = max((max(xs) - min(xs)) * 0.1, 0.01)
     pad_y = max((max(ys) - min(ys)) * 0.1, 0.01)
-    # kept inside valid coordinates: Russia's outline crosses the 180th meridian and spans every longitude
+    # kept inside valid coordinates
     return MapHint(bbox=[round(max(min(xs) - pad_x, -180), 5), round(max(min(ys) - pad_y, -90), 5),
                          round(min(max(xs) + pad_x, 180), 5), round(min(max(ys) + pad_y, 90), 5)], highlight=highlight)
 

@@ -79,6 +79,8 @@ def test_at_most_two_passages_per_claim(vr6_index):
 
 def test_strip_citations():
     assert strip_citations("Kyiv [5] is the capital [L1, S2].") == "Kyiv is the capital."
+    assert strip_citations("President since 2019 [L1], [S5], [S26]. Kyiv [1] and Lviv [2].") == \
+        "President since 2019. Kyiv and Lviv."
 
 
 def test_check_citations_tidies_spacing():

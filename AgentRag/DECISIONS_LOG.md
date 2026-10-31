@@ -1111,6 +1111,30 @@ places, cities, ...; "take place" is no list word) becomes a place lookup. *Outc
 runs (Bakhmut's pin and outline, zoomed in, 73 not shown), Siege of Mariupol, Bucha massacre,
 Battle of Avdiivka the same; "Show me all locations ... Battle of Bakhmut" stays the 75-place list.
 
+**P2-75. A topic with no area asks for one** (owner's go, 2026-10-31). "Show me where drone attacks
+happened" names no place and nothing was selected, so the topic search had no area and the answer
+was "No data". *Considered:* searching the whole graph's text (measured: 4,300 of 83,008 paragraphs,
+1,758 places, 1.2 s; owner: after the MVP), and a default box around the war area (hides a choice
+from the user, leaves out Moscow and the Black Sea, and with the per-place search costs about the
+same as the whole graph). *Chosen (owner: the better of asking and a default box):* ask. An `area`
+or `area_topic` plan with no area gets a fixed reply without the second LLM call: "There is no area
+to search ... Draw a box or pick a point on the map and ask again, or name a place (for example
+"drone attack in Kharkiv")." A named place with no point (Eastern Ukraine) gets the same.
+
+**P2-76. Russia zooms to Russia.** Its outline crosses the 180th meridian (Chukotka), so the zoom
+box spanned every longitude: "Where is Russia?" and q11 showed the whole world. *Fix:* for an
+outline more than 180° wide, only its parts on the side of the place's point count: Russia
+11°E-180°, the US 180°W-53°W (the Aleutians west of the line left out).
+
+**Also (2026-10-31):** `answer_plain` kept the commas between citation marks ("since 2019,,."); a run
+of marks now goes with its commas. **The launcher** (owner: for all teams, in the repo root):
+`RUN_GEORAG.bat` finds Python 3.10+, and `AgentRag/launch.py` sets up `AgentRag/venv` once, installs
+the packages (with `pandas<3`), asks once for the key (hidden, saved in the git-ignored
+`AgentRag/.env`), checks the graph and opens the app. It runs `AgentRag/ui_mvp/`, a copy of `ui/`
+with the UI_TEAM_NOTES fixes, until the UI team's own `ui/` has them (owner's idea; the UI team
+pushes its final version to `ui/`, then the copy goes). Not an .exe: Smart App Control blocks
+unsigned programs, and the graph alone is 42 MB.
+
 ### ④ Evidence pack
 
 **P2-15. Choosing the least text that answers.**

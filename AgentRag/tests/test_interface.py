@@ -99,6 +99,15 @@ def test_follow_up_by_number_uses_the_previous_results_numbers(monkeypatch):
     assert sent_write[1][1].startswith("QUESTION: Tell me about Soledar\n")
 
 
+def test_a_topic_with_no_area_asks_for_one(monkeypatch):
+    fake = install(monkeypatch, plan=PlanDraft(type="area_topic", keywords=["drone"]))
+    result = query("Show me where drone attacks happened")         # no place named, nothing selected
+    assert result["answer"].startswith("There is no area to search")
+    assert 'name a place (for example "drone in Kharkiv")' in result["answer"]
+    assert result["status"] == "no_data" and result["geo_locations"] == []
+    assert not any(name == "WriteDraft" for name, _ in fake.sent)        # no LLM call to say so
+
+
 def test_a_number_the_previous_answer_doesnt_have_gets_a_plain_reply(monkeypatch):
     fake = install(monkeypatch, plan=PlanDraft(type="follow_up", follow_up_kind="item", follow_up_item=4))
     previous = {"answer": "...", "geo_locations": [{"number": 1, "id": "Kyiv", "label": "Kyiv"}]}
@@ -139,14 +148,15 @@ def test_a_question_about_a_person_outlines_no_place(monkeypatch):
     assert result["map"]["bbox"]                           # zooms to the pins
 
 
-def test_the_map_box_stays_inside_valid_coordinates():
+def test_an_outline_across_the_180th_meridian_zooms_to_its_own_side():
     from result import _map_hint
     from schema import Geometry, PlaceOut
     across_180 = Geometry(type="MultiPolygon", coordinates=[[[[-180, 60], [-170, 60], [-170, 70], [-180, 60]]],
                                                            [[[20, 41], [180, 41], [180, 82], [20, 41]]]])
     russia = PlaceOut(number=1, id="Russia", label="Russia", kind="country", role="primary",
                       geometry=Geometry(type="Point", coordinates=[97.7, 64.7]), shape=across_180)
-    assert _map_hint([russia], [1]).bbox == [-180, 36.9, 180, 86.1]
+    # Chukotka's part west of the line is left out: Russia, not every longitude; still inside [-180, 180]
+    assert _map_hint([russia], [1]).bbox == [4, 36.9, 180, 86.1]
 
 
 @pytest.mark.parametrize("geo", [

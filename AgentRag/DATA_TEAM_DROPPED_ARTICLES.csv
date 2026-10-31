@@ -1,0 +1,549 @@
+﻿article,graph_type,paragraphs_mentioning_it,selector_verdict,related_paragraphs,page_paragraphs,score
+Russia,LOC,9369,reject,2.0,147.0,0.014
+Donetsk,LOC,2331,reject,6.0,144.0,0.042
+Donetsk Oblast,LOC,2331,reject,2.0,30.0,0.067
+Crimea,LOC,1760,reject,2.0,105.0,0.019
+Kyiv,LOC,1658,reject,3.0,197.0,0.015
+Moscow,LOC,1018,reject,1.0,233.0,0.004
+Luhansk,LOC,721,reject,5.0,73.0,0.068
+Odesa,LOC,594,reject,2.0,151.0,0.013
+Kharkiv Oblast,LOC,497,reject,2.0,45.0,0.044
+Zaporizhzhia,LOC,473,reject,4.0,106.0,0.038
+Luhansk Oblast,LOC,464,review,4.0,34.0,0.118
+Poland,LOC,448,reject,0.0,134.0,0.0
+Zaporizhzhia Oblast,LOC,433,review,5.0,41.0,0.122
+Sevastopol,LOC,414,reject,5.0,103.0,0.049
+Kursk Oblast,LOC,393,reject,1.0,33.0,0.03
+Belgorod Oblast,LOC,328,reject,2.0,36.0,0.056
+Dnipro,LOC,321,reject,6.0,228.0,0.026
+Kursk,LOC,313,reject,0.0,55.0,0.0
+Dnipropetrovsk Oblast,LOC,305,reject,3.0,69.0,0.043
+Sumy Oblast,LOC,291,reject,3.0,48.0,0.062
+Belgorod,LOC,267,reject,1.0,41.0,0.024
+Izium,LOC,225,review,6.0,36.0,0.167
+Sumy,LOC,224,reject,3.0,62.0,0.048
+Dnieper,LOC,219,reject,1.0,45.0,0.022
+The New York Times,ORG,213,reject,0.0,81.0,0.0
+Institute for the Study of War,ORG,212,reject,1.0,19.0,0.053
+Sea of Azov,LOC,193,reject,3.0,53.0,0.057
+Kyiv Oblast,LOC,180,reject,1.0,65.0,0.015
+Melitopol,LOC,179,reject,2.0,63.0,0.032
+Chernihiv,LOC,178,reject,5.0,102.0,0.049
+Reuters,ORG,175,reject,0.0,47.0,0.0
+Sievierodonetsk,LOC,173,review,5.0,34.0,0.147
+Berdiansk,LOC,148,reject,3.0,48.0,0.062
+Odesa Oblast,LOC,138,reject,0.0,43.0,0.0
+Bryansk Oblast,LOC,135,reject,1.0,36.0,0.028
+Alexander Lukashenko,PER,117,reject,4.0,138.0,0.029
+Kerch Strait,LOC,117,reject,2.0,29.0,0.069
+Chernihiv Oblast,LOC,111,reject,1.0,30.0,0.033
+Mykolaiv Oblast,LOC,100,reject,1.0,55.0,0.018
+The Washington Post,ORG,100,reject,0.0,81.0,0.0
+Dmytro Yarosh,PER,89,reject,4.0,43.0,0.093
+Lviv Oblast,LOC,85,review,4.0,38.0,0.105
+Euromaidan,ORG,80,reject,6.0,154.0,0.039
+Meduza,ORG,76,reject,0.0,3.0,0.0
+Ukrainska Pravda,ORG,73,reject,1.0,62.0,0.016
+Zhytomyr Oblast,LOC,64,reject,1.0,28.0,0.036
+Poltava Oblast,LOC,61,review,4.0,31.0,0.129
+Vyacheslav Volodin,PER,58,review,6.0,48.0,0.125
+Novorossiya,LOC,57,review,5.0,30.0,0.167
+Vyacheslav Gladkov,PER,57,reject,1.0,27.0,0.037
+Volyn Oblast,LOC,56,reject,0.0,25.0,0.0
+Makiivka,LOC,54,reject,5.0,68.0,0.074
+Leonid Pasechnik,PER,44,review,2.0,11.0,0.182
+Alexander Bortnikov,PER,41,review,5.0,30.0,0.167
+Zakarpattia Oblast,LOC,41,reject,0.0,89.0,0.0
+Alexey Milchakov,PER,37,review,4.0,15.0,0.267
+Chystiakove,LOC,35,reject,1.0,17.0,0.059
+Kirovohrad Oblast,LOC,34,reject,1.0,30.0,0.033
+Rivne Oblast,LOC,33,reject,0.0,30.0,0.0
+Aiden Aslin,PER,31,review,3.0,20.0,0.15
+Vladimir Saldo,PER,30,review,4.0,32.0,0.125
+Khmelnytskyi Oblast,LOC,29,reject,1.0,31.0,0.032
+Andriy Yermak,PER,27,review,2.0,16.0,0.125
+Ivano-Frankivsk Oblast,LOC,27,reject,1.0,80.0,0.012
+Vadym Boychenko,PER,27,reject,0.0,8.0,0.0
+Vinnytsia Oblast,LOC,27,reject,0.0,61.0,0.0
+Illia Kyva,PER,26,review,4.0,26.0,0.154
+Yavoriv,LOC,26,reject,1.0,16.0,0.062
+Denys Monastyrsky,PER,25,review,4.0,16.0,0.25
+Cherkasy Oblast,LOC,23,reject,0.0,28.0,0.0
+Valery Bolotov,PER,23,review,2.0,7.0,0.286
+Ilya Ponomarev,PER,21,reject,3.0,56.0,0.054
+Shaun Pinner,PER,20,review,2.0,7.0,0.286
+Maria Lvova-Belova,PER,19,reject,1.0,13.0,0.077
+Myrotvorets,ORG,19,reject,2.0,28.0,0.071
+Viktor Zolotov,PER,19,review,2.0,17.0,0.118
+Finbar Cafferkey,PER,18,review,2.0,17.0,0.118
+Ternopil Oblast,LOC,18,reject,1.0,55.0,0.018
+Internet Research Agency,ORG,17,reject,2.0,176.0,0.011
+PMC Patriot,ORG,17,review,2.0,8.0,0.25
+Alexander Bednov,PER,16,review,1.0,4.0,0.25
+Vitaly Ganchev,PER,16,reject,1.0,11.0,0.091
+Arman Soldin,PER,15,review,2.0,14.0,0.143
+Maks Levin,PER,15,review,2.0,11.0,0.182
+National Post,ORG,15,reject,0.0,26.0,0.0
+Ukrainian Choice,ORG,15,reject,1.0,19.0,0.053
+Mikhail Mishustin,PER,14,reject,0.0,68.0,0.0
+Sergey Naryshkin,PER,13,reject,1.0,34.0,0.029
+Solidarity Collectives,ORG,13,review,2.0,13.0,0.154
+Killnet,ORG,12,review,4.0,17.0,0.235
+Mantas Kvedaravičius,PER,12,reject,1.0,13.0,0.077
+Sviatohirsk Lavra,LOC,12,review,2.0,10.0,0.2
+Aliaksiej Skoblia,PER,11,review,4.0,14.0,0.286
+Arabat Spit,LOC,11,reject,1.0,14.0,0.071
+Chernivtsi Oblast,LOC,11,reject,0.0,32.0,0.0
+Euromaidan Press,ORG,11,reject,0.0,5.0,0.0
+International Legion of the Defence Intelligence of Ukraine,ORG,11,review,4.0,15.0,0.267
+Russian Unity,ORG,11,reject,0.0,8.0,0.0
+20th Guards Motor Rifle Division,ORG,10,review,6.0,25.0,0.24
+Brent Renaud,PER,10,review,1.0,10.0,0.1
+Klintsy,LOC,10,reject,1.0,14.0,0.071
+Okhmatdyt,LOC,10,review,2.0,16.0,0.125
+Trilateral Contact Group on Ukraine,ORG,10,reject,1.0,15.0,0.067
+Yevhen Zhylin,PER,10,reject,0.0,6.0,0.0
+42nd Guards Motor Rifle Division,ORG,9,review,4.0,16.0,0.25
+ANNA News,ORG,9,review,1.0,10.0,0.1
+Cyber Partisans,ORG,9,reject,0.0,22.0,0.0
+Dzmitry Shautsou,PER,9,reject,1.0,13.0,0.077
+Eduard Lobau,PER,9,review,2.0,8.0,0.25
+Leonid Ivashov,PER,9,review,2.0,11.0,0.182
+Ben Hodges,PER,8,reject,1.0,21.0,0.048
+Conflict Observatory,ORG,8,review,1.0,8.0,0.125
+HACKEN,ORG,8,reject,0.0,7.0,0.0
+Maria Zaitseva,PER,8,review,1.0,5.0,0.2
+New Russia Party,ORG,8,reject,0.0,8.0,0.0
+Pavel Kanygin,PER,8,review,3.0,18.0,0.167
+Russian Action Committee,ORG,8,reject,0.0,6.0,0.0
+Salvation Committee for Peace and Order,ORG,8,review,2.0,7.0,0.286
+Sevastopol City Council,ORG,8,review,1.0,6.0,0.167
+Stanislav Aseyev,PER,8,reject,3.0,39.0,0.077
+State Council of Crimea,ORG,8,reject,2.0,26.0,0.077
+United24,ORG,8,reject,0.0,12.0,0.0
+Yulia Svyrydenko,PER,8,reject,0.0,18.0,0.0
+Aleksey Nagin,PER,7,review,2.0,7.0,0.286
+CyberBerkut,ORG,7,review,3.0,24.0,0.125
+Polish Volunteer Corps,ORG,7,review,1.0,5.0,0.2
+19th Motor Rifle Division,ORG,6,review,4.0,32.0,0.125
+Alexander Lentsov,PER,6,reject,0.0,5.0,0.0
+Andrey Vorobyov,PER,6,reject,0.0,46.0,0.0
+Club of Angry Patriots,ORG,6,review,2.0,11.0,0.182
+Dallas Analytics,ORG,6,review,3.0,17.0,0.176
+Frederick Kagan,PER,6,reject,0.0,8.0,0.0
+Lublin Voivodeship,LOC,6,reject,0.0,37.0,0.0
+Mejlis of the Crimean Tatar People,ORG,6,reject,1.0,23.0,0.043
+Pavel Shurmei,PER,6,reject,1.0,11.0,0.091
+Serhiy Prytula Charity Foundation,ORG,6,review,4.0,27.0,0.148
+Skrepach,ORG,6,review,5.0,18.0,0.278
+Timur Ivanov,PER,6,review,3.0,22.0,0.136
+Verkhovna Rada of Crimea,ORG,6,review,1.0,7.0,0.143
+Victoria Amelina,PER,6,reject,1.0,16.0,0.062
+Eurasian Youth Union,ORG,5,reject,0.0,10.0,0.0
+Khamzat Gelayev Detachment,ORG,5,review,1.0,5.0,0.2
+Kyiv TV Tower,ORG,5,review,2.0,7.0,0.286
+Odesa Military Academy,ORG,5,review,2.0,9.0,0.222
+Sarah Ashton-Cirillo,PER,5,review,5.0,36.0,0.139
+Save Ukraine,ORG,5,reject,0.0,21.0,0.0
+Task Force KleptoCapture,ORG,5,reject,0.0,20.0,0.0
+Yevhen Yenin,PER,5,review,2.0,12.0,0.167
+Aleksey Dyumin,PER,4,reject,2.0,25.0,0.08
+Andriy Senchenko,PER,4,reject,0.0,6.0,0.0
+Community of Railway Workers of Belarus,ORG,4,review,1.0,5.0,0.2
+Donbas Post,ORG,4,reject,1.0,13.0,0.077
+Drobytsky Yar,LOC,4,review,1.0,10.0,0.1
+E.N.O.T. Corp.,ORG,4,review,2.0,8.0,0.25
+Feminist Anti-War Resistance,ORG,4,reject,0.0,18.0,0.0
+Free Russia Forum,ORG,4,reject,0.0,47.0,0.0
+Ivano-Frankivsk International Airport,ORG,4,review,2.0,7.0,0.286
+KibOrg News,ORG,4,review,1.0,10.0,0.1
+Lyubov Panchenko,PER,4,review,1.0,10.0,0.1
+Mykola Kravchenko,PER,4,review,4.0,14.0,0.286
+Nikolay Peskov,PER,4,review,2.0,8.0,0.25
+Normandy Format,ORG,4,review,2.0,19.0,0.105
+OSCE Special Monitoring Mission to Ukraine,ORG,4,review,3.0,25.0,0.12
+Oleksiy Zhuravko,PER,4,review,2.0,9.0,0.222
+Task Force on Accountability for Crimes Committed in Ukraine,ORG,4,reject,0.0,5.0,0.0
+Vira Hyrych,PER,4,review,1.0,6.0,0.167
+Yurii Lubkovych,PER,4,review,1.0,5.0,0.2
+15th Transport Aviation Brigade,ORG,3,review,5.0,17.0,0.294
+Alcatraz Battalion,ORG,3,review,1.0,4.0,0.25
+Andrey Aleksandrovich Medvedev,PER,3,review,2.0,8.0,0.25
+Anti-Maidan,ORG,3,reject,0.0,35.0,0.0
+Anti-War Committee of Russia,ORG,3,reject,0.0,10.0,0.0
+Berdiansk Partisan Army,ORG,3,review,2.0,9.0,0.222
+Borys Romanchenko,PER,3,review,2.0,9.0,0.222
+Committee of Bashkir Resistance,ORG,3,review,3.0,11.0,0.273
+Disinformation Governance Board,ORG,3,reject,0.0,14.0,0.0
+Fancy Bear,ORG,3,reject,3.0,55.0,0.055
+Free Donbas,ORG,3,reject,0.0,6.0,0.0
+Ivankiv Historical and Local History Museum,ORG,3,review,1.0,6.0,0.167
+Kuindzhi Art Museum,ORG,3,reject,0.0,11.0,0.0
+Mozart Group,ORG,3,reject,2.0,21.0,0.095
+People's Bayraktar,ORG,3,reject,1.0,13.0,0.077
+Radio Free Europe/Radio Liberty,ORG,3,reject,0.0,68.0,0.0
+Rustam Temirgaliev,PER,3,reject,0.0,8.0,0.0
+Serhiy Kunitsyn,PER,3,reject,1.0,26.0,0.038
+Stop the Wagons,ORG,3,reject,0.0,4.0,0.0
+Wayback Machine,ORG,3,reject,0.0,62.0,0.0
+60th Motor Rifle Brigade,ORG,2,review,1.0,6.0,0.167
+69th Covering Brigade,ORG,2,review,1.0,7.0,0.143
+Artem Datsyshyn,PER,2,review,1.0,5.0,0.2
+Busly liaciać,ORG,2,review,2.0,8.0,0.25
+Chernihiv Polytechnic National University,ORG,2,reject,1.0,13.0,0.077
+Chernihiv Stadium,LOC,2,reject,0.0,33.0,0.0
+Cyprus Confidential,ORG,2,reject,0.0,18.0,0.0
+Darya Lantratova,PER,2,review,1.0,9.0,0.111
+Elizaveta Glinka,PER,2,reject,1.0,26.0,0.038
+Free Buryatia Foundation,ORG,2,review,1.0,7.0,0.143
+Hetman Petro Sahaidachnyi National Ground Forces Academy,ORG,2,review,6.0,21.0,0.286
+Igor Kastyukevich,PER,2,reject,1.0,25.0,0.04
+Klivazh,LOC,2,review,1.0,6.0,0.167
+Kotelnich,LOC,2,reject,1.0,22.0,0.045
+Kuban Partisan Movement,ORG,2,review,5.0,18.0,0.278
+MT Orinda,PER,2,review,2.0,14.0,0.143
+Maryna Mirzaieva,PER,2,review,1.0,10.0,0.1
+Ministry of National Unity of Ukraine,ORG,2,review,1.0,9.0,0.111
+Oksana Shvets,PER,2,review,1.0,6.0,0.167
+Oleksandr Sukhenko,PER,2,review,2.0,7.0,0.286
+White Tights,ORG,2,review,2.0,7.0,0.286
+55th Guards Naval Infantry Division,ORG,1,review,3.0,18.0,0.167
+69th Guards Rifle Division,ORG,1,reject,1.0,31.0,0.032
+Antifascist Committee of Ukraine,ORG,1,reject,0.0,9.0,0.0
+Chernihiv Regional Art Museum,ORG,1,review,1.0,7.0,0.143
+Communist Party of the Donetsk People's Republic,ORG,1,reject,0.0,7.0,0.0
+Constitution of the Republic of Crimea,LOC,1,reject,0.0,2.0,0.0
+Council of Mothers and Wives,ORG,1,reject,0.0,3.0,0.0
+Crimea Platform,ORG,1,reject,2.0,34.0,0.059
+Davyd Zhvania,PER,1,reject,1.0,11.0,0.091
+Don Bacon,PER,1,reject,0.0,69.0,0.0
+European Deterrence Initiative,ORG,1,review,2.0,12.0,0.167
+Fyodor Berezin,PER,1,reject,1.0,17.0,0.059
+Igor Sergun,PER,1,review,3.0,24.0,0.125
+Izolyatsia prison,LOC,1,review,2.0,15.0,0.133
+Kateryna Polishchuk,PER,1,review,2.0,7.0,0.286
+Luhansk Economic Union,ORG,1,reject,0.0,24.0,0.0
+Media Center Ukraine,ORG,1,reject,2.0,31.0,0.065
+Meotyda National Nature Park,LOC,1,reject,0.0,5.0,0.0
+Multinational Engineer Battalion Tisa,ORG,1,review,2.0,8.0,0.25
+National Gene Bank of Plants of Ukraine,ORG,1,reject,0.0,2.0,0.0
+Nord Stream 2,LOC,1,reject,0.0,85.0,0.0
+Oleg Belaventsev,PER,1,reject,0.0,8.0,0.0
+Oleksandr Usyk,PER,1,reject,3.0,125.0,0.024
+Popov Manor House,LOC,1,review,3.0,13.0,0.231
+Putinism,PER,1,reject,1.0,89.0,0.011
+Putinversteher,ORG,1,reject,0.0,15.0,0.0
+Republic of Stakhanov,LOC,1,reject,0.0,4.0,0.0
+Russia 200,ORG,1,review,3.0,21.0,0.143
+Saving Ukrainian Cultural Heritage Online,ORG,1,reject,0.0,5.0,0.0
+True Russia,ORG,1,reject,0.0,7.0,0.0
+Turan Battalion,ORG,1,reject,0.0,3.0,0.0
+Ukrainian Freedom Orchestra,ORG,1,reject,0.0,11.0,0.0
+Viktor Suvorov,PER,1,reject,0.0,35.0,0.0
+Vladyslav Gorai,PER,1,reject,0.0,8.0,0.0
+Wagnergate,ORG,1,review,1.0,4.0,0.25
+Yermak-McFaul Expert Group on Russian Sanctions,ORG,1,reject,0.0,36.0,0.0
+Yevhen Hulevych,PER,1,review,3.0,14.0,0.214
+101 Tower (Kyiv),,0,review,3.0,15.0,0.2
+1st European Political Community Summit,,0,reject,0.0,11.0,0.0
+20 Days in Mariupol,,0,training_unrelated,,,
+2000 Meters to Andriivka,,0,review,2.0,14.0,0.143
+2014 Crimean status referendum,,0,reject,6.0,118.0,0.051
+2014 Donbas general elections,,0,review,2.0,19.0,0.105
+2014 Ukrainian presidential election,,0,reject,3.0,48.0,0.062
+2014 Wales NATO summit,,0,reject,2.0,26.0,0.077
+2015 Ukraine power grid hack,,0,review,3.0,13.0,0.231
+2017 Ukraine ransomware attacks,,0,review,6.0,21.0,0.286
+2018 Moscow–Constantinople schism,,0,reject,0.0,126.0,0.0
+2021 Russia–United States summit,,0,reject,1.0,23.0,0.043
+2021 Ukrainian coup attempt allegations,,0,review,4.0,14.0,0.286
+2022 Madrid NATO summit,,0,reject,0.0,17.0,0.0
+2022 North Caucasian protests,,0,reject,1.0,29.0,0.034
+2022 Russian Far East protests,,0,reject,0.0,5.0,0.0
+2022 Russian martial law,,0,review,3.0,11.0,0.273
+2022 Russo-Ukrainian Easter truce proposal,,0,reject,0.0,3.0,0.0
+2022 Siberian wildfires,,0,reject,0.0,5.0,0.0
+2023 Swedish anti-terrorism bill,,0,reject,0.0,3.0,0.0
+2023 United States federal budget,,0,reject,0.0,26.0,0.0
+2023 Vilnius NATO summit,,0,reject,1.0,13.0,0.077
+2023 visit by Kim Jong Un to Russia,,0,review,2.0,19.0,0.105
+2023 visit by Xi Jinping to Russia,,0,reject,1.0,13.0,0.077
+2024 visit by Vladimir Putin to North Korea,,0,reject,0.0,6.0,0.0
+2024 visits by Viktor Orbán to Russia and China,,0,reject,0.0,24.0,0.0
+2025 London Summit on Ukraine,,0,reject,1.0,18.0,0.056
+2025 Makhachkala clash,,0,reject,0.0,4.0,0.0
+2025 Russia–United States summit in Hungary,,0,review,2.0,10.0,0.2
+2025 Slovakia–Ukraine gas dispute,,0,reject,2.0,32.0,0.062
+2026 Druzhba pipeline dispute,,0,reject,6.0,71.0,0.085
+2026 Tuapse oil terminal attack,,0,review,5.0,18.0,0.278
+2nd European Political Community Summit,,0,reject,1.0,20.0,0.05
+"34th Assault Battalion ""Mad Pack""",,0,review,1.0,4.0,0.25
+3rd European Political Community Summit,,0,reject,0.0,18.0,0.0
+40th Separate Guards Naval Infantry Brigade,,0,review,5.0,19.0,0.263
+58th Munich Security Conference,,0,reject,0.0,11.0,0.0
+59th Munich Security Conference,,0,reject,0.0,12.0,0.0
+60th Munich Security Conference,,0,reject,0.0,18.0,0.0
+61st Munich Security Conference,,0,reject,0.0,13.0,0.0
+7th Separate Guards Motor Rifle Regiment (Russia),,0,review,4.0,17.0,0.235
+A Rising Fury,,0,reject,0.0,22.0,0.0
+Accession of Moldova to the European Union,,0,reject,0.0,43.0,0.0
+Adat People's Movement,,0,reject,0.0,9.0,0.0
+Aleksandr Matovnikov,,0,review,6.0,25.0,0.24
+Alerts.in.ua,,0,review,3.0,24.0,0.125
+Anglosaksy,,0,reject,0.0,6.0,0.0
+Anti-Russian sentiment,,0,reject,1.0,135.0,0.007
+Anti-Ukrainian sentiment,,0,reject,0.0,79.0,0.0
+Arctic Metagaz,,0,review,2.0,9.0,0.222
+Ark (organisation),,0,reject,0.0,11.0,0.0
+Art theft and looting by Russia during the invasion of Ukraine,,0,review,1.0,4.0,0.25
+Artpodgotovka,,0,reject,0.0,26.0,0.0
+Association of Azovstal Defenders' Families,,0,reject,0.0,8.0,0.0
+Atrocity crimes during the Russo-Ukrainian war,,0,review,1.0,8.0,0.125
+Autodrom Chayka,,0,reject,1.0,36.0,0.028
+Belarusian Hajun project,,0,reject,0.0,13.0,0.0
+Belarusian partisan movement (2020–present),,0,review,2.0,16.0,0.125
+Belarus–European Union border crisis,,0,reject,4.0,104.0,0.038
+Belarus–Russia relations,,0,review,5.0,32.0,0.156
+Belarus–Ukraine relations,,0,review,2.0,10.0,0.2
+Black Bridge (Russia),,0,review,1.0,4.0,0.25
+Black Cloud (Burning Man installation),,0,review,2.0,12.0,0.167
+Black Sea Fleet dispute,,0,review,4.0,31.0,0.129
+Block of Wikipedia in Russia,,0,reject,0.0,12.0,0.0
+Book of Remembrance for Those Who Fell for Ukraine,,0,review,3.0,13.0,0.231
+Borotba,,0,reject,0.0,14.0,0.0
+Bridge over Saint Volodymyr Descent,,0,review,5.0,43.0,0.116
+British–Polish–Ukrainian trilateral pact,,0,reject,0.0,25.0,0.0
+Building of the Chernihiv Regional Youth Center,,0,review,1.0,8.0,0.125
+CERT-UA,,0,review,1.0,6.0,0.167
+Canada–Ukraine authorization for emergency travel,,0,reject,0.0,5.0,0.0
+Casualties during the 2013–2014 Ukraine crisis,,0,review,1.0,4.0,0.25
+Cecil the Lion Had to Die,,0,reject,0.0,2.0,0.0
+Chernihiv Regional Historical Museum,,0,reject,0.0,9.0,0.0
+Chernobyl exclusion zone,,0,reject,5.0,113.0,0.044
+China's Position on the Political Settlement of the Ukrainian Crisis,,0,reject,0.0,23.0,0.0
+Civic Council (Armed Forces of Ukraine),,0,review,1.0,5.0,0.2
+Civil volunteer movement helping Ukrainian forces in the war in Donbas,,0,review,3.0,24.0,0.125
+"Commemorative Medal ""Participant of a Special Military Operation""",,0,review,1.0,5.0,0.2
+Confiscation of Russian central bank funds,,0,reject,3.0,35.0,0.086
+Congress of the Peoples of the North Caucasus,,0,reject,0.0,12.0,0.0
+"Consolidated Appropriations Act, 2022",,0,reject,0.0,10.0,0.0
+Council for Cooperation with Ukraine,,0,reject,0.0,5.0,0.0
+Crimean consensus,,0,reject,0.0,18.0,0.0
+Czech Republic First!,,0,reject,0.0,11.0,0.0
+Day of Resistance to Occupation of Crimea and Sevastopol,,0,reject,0.0,2.0,0.0
+Decolonization in Ukraine,,0,reject,0.0,9.0,0.0
+Decommunization in Ukraine,,0,reject,2.0,51.0,0.039
+Denis Kapustin (militant),,0,review,3.0,17.0,0.176
+Derussification in Ukraine,,0,reject,1.0,58.0,0.017
+"Desna, Chernihiv Oblast",,0,review,1.0,9.0,0.111
+Diplomatic expulsions during the Russo-Ukrainian war,,0,reject,0.0,22.0,0.0
+Dissolution of the Soviet Union,,0,reject,0.0,198.0,0.0
+Dmitry Petrov (anarchist),,0,reject,1.0,28.0,0.036
+Donetsk Republic (movement),,0,reject,0.0,9.0,0.0
+Dovzhansky (border checkpoint),,0,review,1.0,6.0,0.167
+ENS Anwar El Sadat,,0,review,1.0,9.0,0.111
+ENS Gamal Abdel Nasser,,0,reject,1.0,12.0,0.083
+Education in Ukraine,,0,reject,0.0,46.0,0.0
+Environmental impact of the Russian occupation of Crimea,,0,reject,0.0,11.0,0.0
+Executive Order 14071,,0,reject,0.0,3.0,0.0
+Fastiv I railway station,,0,review,1.0,8.0,0.125
+February 2025 Putin–Trump phone call,,0,review,5.0,23.0,0.217
+February 2025 United States–Russia meeting in Saudi Arabia,,0,review,3.0,18.0,0.167
+Flowers of Minefields,,0,reject,0.0,2.0,0.0
+Follow Me (2022 film),,0,reject,0.0,5.0,0.0
+Free Ingria,,0,reject,1.0,15.0,0.067
+Free Nations League,,0,reject,0.0,7.0,0.0
+Free Nations of Post-Russia Forum,,0,reject,0.0,39.0,0.0
+Freedom on Fire: Ukraine's Fight for Freedom,,0,reject,0.0,11.0,0.0
+Future for Ukraine Charity Foundation,,0,reject,1.0,25.0,0.04
+Georgia and the Russo-Ukrainian war,,0,review,4.0,16.0,0.25
+Get Lost (organisation),,0,review,3.0,19.0,0.158
+Grandpa in his bunker,,0,reject,0.0,7.0,0.0
+Great Construction,,0,reject,0.0,13.0,0.0
+Head of the Republic of Crimea,,0,review,3.0,22.0,0.136
+Hryhorii Skovoroda Literary Memorial Museum,,0,review,5.0,33.0,0.152
+Hydraulic warfare,,0,reject,1.0,14.0,0.071
+I'm Fine (Burning Man installation),,0,reject,0.0,8.0,0.0
+Intermarium,,0,reject,0.0,35.0,0.0
+International Criminal Court investigation in Ukraine,,0,reject,1.0,21.0,0.048
+International Sponsors of War,,0,reject,0.0,12.0,0.0
+International sanctions during the Russian invasion of Ukraine,,0,training_unrelated,,,
+International sanctions during the Russo-Ukrainian war,,0,reject,1.0,205.0,0.005
+International sporting sanctions during the Russian invasion of Ukraine,,0,reject,0.0,84.0,0.0
+Iron diplomacy,,0,review,1.0,5.0,0.2
+Ivanovo Severny air base,,0,review,2.0,10.0,0.2
+Joint investigation team,,0,reject,0.0,4.0,0.0
+June 2024 Ukraine peace summit,,0,reject,4.0,44.0,0.091
+Kamianka Sich,,0,reject,1.0,34.0,0.029
+Kharkiv Korolenko State Scientific Library,,0,reject,1.0,61.0,0.016
+Kharkiv Land Bank Building,,0,review,1.0,8.0,0.125
+Kharkiv Municipal Gallery,,0,reject,0.0,4.0,0.0
+Kharkiv National Kotlyarevsky University of Arts,,0,reject,0.0,31.0,0.0
+Kharkiv Philharmonic Society,,0,reject,1.0,31.0,0.032
+Kharkiv Public Library,,0,review,2.0,17.0,0.118
+Kharkiv State Academic Opera and Ballet Theatre named after Mykola Lysenko,,0,review,1.0,4.0,0.25
+Kharkiv State Academy of Culture,,0,reject,1.0,23.0,0.043
+Khuy voyne!,,0,reject,0.0,7.0,0.0
+Krymnash,,0,reject,0.0,7.0,0.0
+Kuna (cryptocurrency exchange),,0,reject,0.0,4.0,0.0
+Kursk campaign order of battle,,0,reject,0.0,1.0,0.0
+Legislative Assembly of Sevastopol,,0,reject,0.0,3.0,0.0
+List of companies that applied sanctions during the Russo-Ukrainian war,,0,reject,0.0,1.0,0.0
+List of cultural sites damaged during the Russo-Ukrainian war (2022–present),,0,reject,0.0,4.0,0.0
+List of films about the Russo-Ukrainian war,,0,reject,0.0,5.0,0.0
+List of heads of state and government who have visited Ukraine during the Russo-Ukrainian war (2022–present),,0,reject,0.0,1.0,0.0
+List of people and organizations sanctioned during the Russo-Ukrainian war,,0,reject,1.0,78.0,0.013
+List of signees of the 2022 open letter from Nobel laureates in support of Ukraine,,0,reject,0.0,6.0,0.0
+Lithuania and the Russo-Ukrainian war,,0,review,3.0,17.0,0.176
+Liveuamap,,0,review,1.0,4.0,0.25
+Lukashisms,,0,reject,0.0,9.0,0.0
+Lukianivska (Kyiv Metro),,0,reject,0.0,6.0,0.0
+MHP Standing Together,,0,reject,0.0,12.0,0.0
+MV Azburg,,0,review,1.0,5.0,0.2
+MV Helt,,0,review,1.0,4.0,0.25
+MV Namura Queen,,0,reject,0.0,3.0,0.0
+MV Zhibek Zholy,,0,review,1.0,5.0,0.2
+Malaysia's Negotiation Team for MH17 in Donetsk,,0,reject,5.0,52.0,0.096
+Mariupol Bull Figurine,,0,review,2.0,12.0,0.167
+Mariupol Museum of Local Lore,,0,reject,2.0,22.0,0.091
+Mariupol theatre,,0,review,2.0,17.0,0.118
+"Medal ""For the Return of Crimea""",,0,review,1.0,8.0,0.125
+Moldovan protests (2022–2023),,0,reject,2.0,56.0,0.036
+Murder of Pentecostals in Sloviansk,,0,review,5.0,20.0,0.25
+"Muslim Corps ""Caucasus""",,0,review,1.0,5.0,0.2
+My Undesirable Friends: Part I — Last Air in Moscow,,0,reject,0.0,13.0,0.0
+National Council of Bessarabia,,0,reject,0.0,4.0,0.0
+National Museum-Reserve of Ukrainian Military Achievements,,0,reject,1.0,13.0,0.077
+National Republican Army (Russia),,0,review,6.0,27.0,0.222
+National Socialism / White Power,,0,reject,0.0,9.0,0.0
+No to capitulation!,,0,review,1.0,4.0,0.25
+North Korean–Russian Treaty on Comprehensive Strategic Partnership,,0,review,1.0,9.0,0.111
+Novorossiya (confederation),,0,reject,1.0,15.0,0.067
+Oleksandr Aliyev,,0,reject,1.0,20.0,0.05
+Oleksandr Marchenko (politician),,0,review,2.0,7.0,0.286
+Oleksiy Vadaturskyy,,0,reject,1.0,18.0,0.056
+Olena Zelenska Foundation,,0,reject,0.0,4.0,0.0
+Omsk refinery,,0,reject,1.0,12.0,0.083
+On the Condemnation and Prohibition of Propaganda of Russian Imperial Policy in Ukraine and the Decolonization of Toponymy,,0,reject,1.0,12.0,0.083
+On the Historical Unity of Russians and Ukrainians,,0,review,5.0,25.0,0.2
+Operation Dragoon Ride,,0,reject,0.0,10.0,0.0
+Orange Revolution,,0,reject,1.0,53.0,0.019
+"Palace ""Ukraine""",,0,review,1.0,9.0,0.111
+Pete Reed (aid worker),,0,review,1.0,6.0,0.167
+Petro Zyma,,0,review,1.0,4.0,0.25
+Pokrovsk offensive order of battle,,0,reject,0.0,0.0,0.0
+Poland–Ukraine border crisis,,0,reject,1.0,21.0,0.048
+Political status of Crimea,,0,reject,3.0,38.0,0.079
+Porcelain War,,0,review,1.0,9.0,0.111
+Propaganda in Russia,,0,reject,1.0,38.0,0.026
+Proposed Russian annexation of South Ossetia,,0,reject,0.0,17.0,0.0
+Put Domoi (movement),,0,reject,0.0,5.0,0.0
+Putin. War,,0,reject,0.0,14.0,0.0
+R260 highway (Russia),,0,reject,0.0,3.0,0.0
+Raccoon of Kherson,,0,review,2.0,10.0,0.2
+Rail war in Belarus (2022–present),,0,review,1.0,8.0,0.125
+Rail war in Russia (2022–present),,0,review,5.0,27.0,0.185
+Reaction of Russian intelligentsia to the 2014 annexation of Crimea,,0,reject,1.0,30.0,0.033
+Readiness 2030,,0,reject,1.0,11.0,0.091
+Religion and the Russian invasion of Ukraine,,0,review,5.0,44.0,0.114
+Rescuer City,,0,reject,1.0,17.0,0.059
+Resistance Committee (Ukraine),,0,reject,1.0,17.0,0.059
+Rico Krieger,,0,review,2.0,16.0,0.125
+Rubikus.HelpUA,,0,reject,0.0,4.0,0.0
+Ruscism,,0,reject,2.0,55.0,0.036
+Ruslan Shostak Charitable Foundation,,0,review,1.0,6.0,0.167
+Russia's War Crimes House,,0,review,1.0,7.0,0.143
+Russian Asset Tracker,,0,reject,0.0,1.0,0.0
+Russian Democratic Society,,0,reject,0.0,5.0,0.0
+Russian armoured train Volga,,0,reject,0.0,4.0,0.0
+Russian cruiser Ochakov,,0,review,1.0,4.0,0.25
+Russian federal highways,,0,reject,1.0,96.0,0.01
+Russian landing ship Georgy Pobedonosets,,0,reject,0.0,6.0,0.0
+Russian landing ship Kaliningrad,,0,review,2.0,9.0,0.222
+Russian opposition to NATO enlargement,,0,reject,0.0,21.0,0.0
+Russian rescue ship Kommuna,,0,review,3.0,17.0,0.176
+Russian spies in the Russo-Ukrainian war,,0,reject,6.0,95.0,0.063
+Russian theft of Ukrainian grain,,0,reject,0.0,6.0,0.0
+Russian-occupied territories,,0,review,2.0,13.0,0.154
+Russians at War,,0,reject,3.0,69.0,0.043
+Russia–Ukraine gas disputes,,0,reject,0.0,70.0,0.0
+Russo-Ukrainian truce,,0,reject,0.0,0.0,0.0
+Sack of Baturyn,,0,reject,1.0,20.0,0.05
+Sandworm (hacker group),,0,review,3.0,28.0,0.107
+Scam call centers in Ukraine,,0,review,5.0,39.0,0.128
+Sea Specialized Port Nika-Tera,,0,reject,0.0,1.0,0.0
+Separate Operational Purpose Division,,0,reject,2.0,21.0,0.095
+Sergei Loznitsa,,0,reject,0.0,28.0,0.0
+Shalt Not Kill (Russia),,0,review,2.0,14.0,0.143
+Sig (tanker),,0,review,1.0,4.0,0.25
+Slava Ukraini! (song),,0,reject,0.0,4.0,0.0
+Slovo House,,0,reject,0.0,12.0,0.0
+Social Movement (Ukraine),,0,reject,0.0,29.0,0.0
+Sofia and Oleksandr Rusov Chernihiv Regional Universal Scientific Library,,0,reject,1.0,15.0,0.067
+Songs of Slow Burning Earth,,0,reject,0.0,5.0,0.0
+Soviet imagery during the Russo-Ukrainian war,,0,review,2.0,10.0,0.2
+Special military operation,,0,review,3.0,22.0,0.136
+Speeches by Volodymyr Zelenskyy during the Russian invasion of Ukraine,,0,review,3.0,21.0,0.143
+Stop Bloody Energy,,0,reject,0.0,6.0,0.0
+Superpower (film),,0,reject,0.0,3.0,0.0
+Surkov leaks,,0,review,4.0,16.0,0.25
+Surovikino penal colony hostage crisis,,0,review,1.0,7.0,0.143
+Suspicious Russia-related deaths since 2022,,0,reject,0.0,8.0,0.0
+Sweden–NATO relations,,0,reject,1.0,60.0,0.017
+Taiwan and the Russo-Ukrainian war,,0,reject,0.0,16.0,0.0
+The Insider (website),,0,reject,1.0,26.0,0.038
+The Other Russia of E. V. Limonov,,0,reject,0.0,9.0,0.0
+The Wall of Remembrance of the Fallen for Ukraine,,0,review,1.0,4.0,0.25
+Timeline of the war in Donbas,,0,reject,0.0,1.0,0.0
+Timestamp (film),,0,review,3.0,14.0,0.214
+To bomb Voronezh,,0,review,2.0,11.0,0.182
+Tom Brewer (politician),,0,reject,3.0,48.0,0.062
+Trypilska thermal power plant,,0,review,3.0,12.0,0.25
+Tryzub (organization),,0,reject,0.0,6.0,0.0
+Turn in the Wound,,0,reject,0.0,6.0,0.0
+U-24 (association),,0,reject,0.0,8.0,0.0
+Ukraine Salvation Committee,,0,reject,1.0,15.0,0.067
+Ukraine v. Russian Federation (2017),,0,reject,0.0,6.0,0.0
+Ukraine v. Russian Federation (2022),,0,review,4.0,15.0,0.267
+Ukraine's Peace Formula,,0,reject,2.0,26.0,0.077
+Ukrainian Artistic Front,,0,reject,0.0,7.0,0.0
+Ukrainian National Union (political party),,0,reject,1.0,11.0,0.091
+Ukrainian patrol vessel Sloviansk,,0,review,2.0,12.0,0.167
+Ukrainian patrol vessel Starobilsk,,0,review,1.0,9.0,0.111
+Ukrainian-African Renaissance,,0,reject,0.0,5.0,0.0
+Unfriendly countries list,,0,reject,0.0,25.0,0.0
+Union Resolve 2022,,0,reject,0.0,1.0,0.0
+United Nations General Assembly Resolution 68/262,,0,review,4.0,16.0,0.25
+United Nations General Assembly Resolution 73/194,,0,reject,0.0,2.0,0.0
+United Nations Security Council Resolution 2166,,0,reject,0.0,2.0,0.0
+United States International Programming to Ukraine and Neighboring Regions,,0,reject,1.0,18.0,0.056
+Unity Day (Ukraine),,0,review,1.0,4.0,0.25
+Universal jurisdiction investigations of war crimes in Ukraine,,0,reject,0.0,7.0,0.0
+Ural Airlines Flight 1383,,0,reject,0.0,10.0,0.0
+VN Karazin Kharkiv National University,,0,review,4.0,32.0,0.125
+Vatnik,,0,reject,1.0,17.0,0.059
+Vesna (Russia),,0,reject,0.0,23.0,0.0
+Viasat hack,,0,review,1.0,6.0,0.167
+Victory Plan for Ukraine,,0,review,4.0,15.0,0.267
+Viktor (2024 film),,0,reject,0.0,5.0,0.0
+Visuals (project),,0,reject,0.0,4.0,0.0
+Vitsche (organization),,0,reject,1.0,15.0,0.067
+Vladimir Putin speech on recognising the Donetsk and Luhansk people's republics,,0,review,2.0,20.0,0.1
+"Volodymyr Rybak (politician, born 1971)",,0,review,2.0,9.0,0.222
+Volodymyr Vakulenko,,0,review,2.0,13.0,0.154
+Volos Declaration,,0,reject,0.0,10.0,0.0
+Vorontsov Palace (Odesa),,0,reject,0.0,8.0,0.0
+Vulkan files leak,,0,review,4.0,21.0,0.19
+Vyacheslav Ponomarev (public figure),,0,reject,1.0,13.0,0.077
+Vyvozhuk,,0,reject,0.0,3.0,0.0
+War Fragments Museum,,0,review,1.0,5.0,0.2
+Where have you been for eight years?,,0,reject,1.0,11.0,0.091
+Whisky War,,0,reject,0.0,45.0,0.0
+White-blue-white flag,,0,review,2.0,12.0,0.167
+Wikipedia and the Russo-Ukrainian war,,0,reject,0.0,14.0,0.0
+Wilmer Puello-Mota,,0,reject,2.0,21.0,0.095
+Women in the war in Donbas,,0,review,6.0,33.0,0.182
+XI Corps (North Korea),,0,review,2.0,9.0,0.222
+Yale CELI List of Companies,,0,reject,0.0,8.0,0.0
+Yellow Ribbon (movement),,0,reject,3.0,31.0,0.097
+Yi (Cyrillic),,0,reject,0.0,7.0,0.0

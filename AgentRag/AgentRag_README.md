@@ -1,5 +1,11 @@
 # GeoRAG agent
 
+> **Just want to run it (any team)?** On Windows, double-click **`RUN_GEORAG.bat`** in the repo root.
+> The first run installs everything (a few minutes) and asks once for the OpenRouter key, which it
+> saves in `AgentRag/.env`; git ignores that file, so the key is never uploaded. To set the key by
+> hand instead, create `AgentRag/.env` with one line: `OPENROUTER_API_KEY=sk-or-v1-...`. The app
+> opens in the browser; keep the black window open while you use it.
+>
 > **Using the agent (UI team included): you need your own OpenRouter API key.**
 > Create one at https://openrouter.ai/keys. Pass it as `api_key=` to `query()`, or put it in
 > `AgentRag/.env` (a copy of `.env.example`). Never put it in `.env.example` or in any `.py`
@@ -263,23 +269,27 @@ llm_calls.py      every LLM call, with its model, tokens, cost and time
 agent.py          MODEL, get_llm() and the error classes
 eval/             the test harness: questions, runs, reports
 tests/            pytest
+launch.py         what RUN_GEORAG.bat runs: Python environment, key, graph check, starts the app
+ui_mvp/           a copy of the UI team's ui/ with the UI_TEAM_NOTES fixes, until ui/ has them
 ```
 
 ## Known limitations
 
-- **Data issues show through.** Some map points are wrong: "Where is Dnipro?" answers correctly
-  (a city in eastern Ukraine) but the map gets a 5 km stretch of river near Chernihiv (marked
-  `uncertain`). Kharkiv
-  Oblast sits inside Russia in the hierarchy, so region counts inherit it. Words from Ukrainian names
-  in brackets became places (`Україні`, near Maidan). Listed for the other teams in
-  GRAPH_TEAM_ISSUES.md; places with doubtful points carry `uncertain`.
+- **Data issues show through.** Wrong map points we could fix from the graph's own data are fixed
+  on load (Dnipro, Kharkiv Oblast's region, Donbas); places with no right point anywhere get no pin.
+  Words from Ukrainian names in brackets became places (`Україні`, near Maidan). Doubtful points
+  carry `uncertain`. Listed for the other teams in GRAPH_TEAM_ISSUES.md.
+- **15 big pages are missing from the corpus** (Russia, Crimea, Moscow, Odesa, ...): "Where is
+  Russia?" answers only "Russia is a country." The list and how to add them: MISSING_PAGES.md.
+- **A topic needs an area:** "Show me where drone attacks happened" asks the user to name a place or
+  select one on the map; it doesn't search the whole graph (P2-75).
 - **Nested places stack on the map:** Washington, the White House and the Oval Office are separate
   places at almost the same point. Clustering nearby pins helps.
 - **Big lists are big:** up to ~500 KB for a question that finds 1,652 places. That's the places
   (about 300 bytes each: number, name, point, data line, a few pointers), not text: the answer is a
   few sentences, and paragraphs are never included, only their pointers. Fine in-process.
-- **"Countries where both Russia and Ukraine are mentioned"** isn't understood as a country filter
-  yet; it returns every shared place (kept on purpose for now; DECISIONS_LOG P2-51).
+- **"Countries where both Russia and Ukraine are mentioned"** isn't always understood as a country
+  filter: some runs return every shared place (1,659 instead of about 149; DECISIONS_LOG ideas list).
 - **A bare "number 3" follow-up** gives that place, not the previous question's subject at it. Name
   both ("Zelenskyy in the White House") for that.
 - **English only.**
