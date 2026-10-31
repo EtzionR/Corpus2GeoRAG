@@ -1,0 +1,1772 @@
+{
+  "answer": "The Battle of Bakhmut was a major battle between the Russian Armed Forces and the Ukrainian Armed Forces for control of the city of Bakhmut, during the eastern front, a theatre of the Russo-Ukrainian war [L1]. It is regarded by some military analysts to be the bloodiest battle since World War II [L1]. A total of 75 places were found in connection with the battle, with the strongest few being Bakhmut [1], Soledar [2], Klishchiivka [3], and Orikhovo-Vasylivka [4]. These places are concentrated in the Donetsk region of Ukraine.",
+  "answer_plain": "The Battle of Bakhmut was a major battle between the Russian Armed Forces and the Ukrainian Armed Forces for control of the city of Bakhmut, during the eastern front, a theatre of the Russo-Ukrainian war. It is regarded by some military analysts to be the bloodiest battle since World War II. A total of 75 places were found in connection with the battle, with the strongest few being Bakhmut, Soledar, Klishchiivka, and Orikhovo-Vasylivka. These places are concentrated in the Donetsk region of Ukraine.",
+  "status": "answered",
+  "grounded": true,
+  "shape": "list",
+  "geo_locations": [
+    {
+      "number": 1,
+      "id": "Bakhmut",
+      "label": "Bakhmut",
+      "kind": "town",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0020994,
+          48.5894123
+        ]
+      },
+      "why": "71 matching paragraphs",
+      "sources": [
+        "TEXT_80440",
+        "TEXT_80441",
+        "TEXT_80442",
+        "TEXT_80443",
+        "TEXT_80444",
+        "TEXT_80445",
+        "TEXT_80446",
+        "TEXT_80447",
+        "TEXT_80448",
+        "TEXT_80449"
+      ]
+    },
+    {
+      "number": 2,
+      "id": "Soledar",
+      "label": "Soledar",
+      "kind": "town",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0671791,
+          48.6956698
+        ]
+      },
+      "why": "7 matching paragraphs",
+      "sources": [
+        "TEXT_80442",
+        "TEXT_80448",
+        "TEXT_80451",
+        "TEXT_80460",
+        "TEXT_80464",
+        "TEXT_80503",
+        "TEXT_80516"
+      ]
+    },
+    {
+      "number": 3,
+      "id": "Klishchiivka",
+      "label": "Klishchiivka",
+      "kind": "village",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9588768,
+          48.5276741
+        ]
+      },
+      "why": "4 matching paragraphs",
+      "sources": [
+        "TEXT_80462",
+        "TEXT_80486",
+        "TEXT_80487",
+        "TEXT_80494"
+      ]
+    },
+    {
+      "number": 4,
+      "id": "Orikhovo-Vasylivka",
+      "label": "Orikhovo-Vasylivka",
+      "kind": "village",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.88944,
+          48.6763
+        ]
+      },
+      "why": "4 matching paragraphs",
+      "sources": [
+        "TEXT_80484",
+        "TEXT_80486",
+        "TEXT_80487",
+        "TEXT_80488"
+      ]
+    },
+    {
+      "number": 5,
+      "id": "Donetsk People's Republic",
+      "label": "Donetsk People's Republic",
+      "kind": "amenity",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.8003465,
+          48.0089299
+        ]
+      },
+      "why": "3 matching paragraphs",
+      "uncertain": "geocoded as a amenity with importance 0.39",
+      "sources": [
+        "TEXT_80441",
+        "TEXT_80445",
+        "TEXT_80484"
+      ]
+    },
+    {
+      "number": 6,
+      "id": "Sloviansk",
+      "label": "Sloviansk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.6058241,
+          48.8522691
+        ]
+      },
+      "why": "3 matching paragraphs",
+      "sources": [
+        "TEXT_80459",
+        "TEXT_80496",
+        "TEXT_80526"
+      ]
+    },
+    {
+      "number": 7,
+      "id": "Lysychansk",
+      "label": "Lysychansk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.4285981,
+          48.917267
+        ]
+      },
+      "why": "3 matching paragraphs",
+      "sources": [
+        "TEXT_80446",
+        "TEXT_80447",
+        "TEXT_80448"
+      ]
+    },
+    {
+      "number": 8,
+      "id": "Opytne",
+      "label": "Opytne",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.7192788,
+          48.0965542
+        ]
+      },
+      "why": "3 matching paragraphs",
+      "sources": [
+        "TEXT_80454",
+        "TEXT_80456",
+        "TEXT_80462"
+      ]
+    },
+    {
+      "number": 9,
+      "id": "Bakhmutka",
+      "label": "Bakhmutka",
+      "kind": "river",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0130625,
+          48.5755332
+        ]
+      },
+      "why": "3 matching paragraphs",
+      "sources": [
+        "TEXT_80442",
+        "TEXT_80452",
+        "TEXT_80467"
+      ]
+    },
+    {
+      "number": 10,
+      "id": "Khromove",
+      "label": "Khromove",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9453103,
+          48.599054
+        ]
+      },
+      "why": "3 matching paragraphs",
+      "sources": [
+        "TEXT_80485",
+        "TEXT_80487",
+        "TEXT_80494"
+      ]
+    },
+    {
+      "number": 11,
+      "id": "T0504",
+      "label": "T0504",
+      "kind": "building",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.2180293,
+          51.3779005
+        ]
+      },
+      "why": "3 matching paragraphs",
+      "uncertain": "geocoded as a building with importance 0.00",
+      "sources": [
+        "TEXT_80443",
+        "TEXT_80483",
+        "TEXT_80496"
+      ]
+    },
+    {
+      "number": 12,
+      "id": "Kharkiv",
+      "label": "Kharkiv",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2310146,
+          49.9923181
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_80442",
+        "TEXT_80453"
+      ]
+    },
+    {
+      "number": 13,
+      "id": "Mariupol",
+      "label": "Mariupol",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.5499621,
+          47.0957648
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_80499",
+        "TEXT_80500"
+      ]
+    },
+    {
+      "number": 14,
+      "id": "Avdiivka",
+      "label": "Avdiivka",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.7466719,
+          48.1338824
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_80485",
+        "TEXT_80487"
+      ]
+    },
+    {
+      "number": 15,
+      "id": "Kramatorsk",
+      "label": "Kramatorsk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.5843812,
+          48.7389415
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_80496",
+        "TEXT_80526"
+      ]
+    },
+    {
+      "number": 16,
+      "id": "Volgograd",
+      "label": "Volgograd",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          44.5153353,
+          48.7081906
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_80500",
+        "TEXT_80501"
+      ]
+    },
+    {
+      "number": 17,
+      "id": "Popasna",
+      "label": "Popasna",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.3777033,
+          48.6322687
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_80441",
+        "TEXT_80447"
+      ]
+    },
+    {
+      "number": 18,
+      "id": "Siversk",
+      "label": "Siversk",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0902435,
+          48.8676267
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_80464",
+        "TEXT_80496"
+      ]
+    },
+    {
+      "number": 19,
+      "id": "Andriivka",
+      "label": "Andriivka",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.643724,
+          47.4688005
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_80456",
+        "TEXT_80494"
+      ]
+    },
+    {
+      "number": 20,
+      "id": "Ivanivske",
+      "label": "Ivanivske",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.924595,
+          48.574936
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_80486",
+        "TEXT_80487"
+      ]
+    },
+    {
+      "number": 21,
+      "id": "Kurdiumivka",
+      "label": "Kurdiumivka",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9568757,
+          48.4683008
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_80457",
+        "TEXT_80460"
+      ]
+    },
+    {
+      "number": 22,
+      "id": "Bila Hora",
+      "label": "Bila Hora",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.8556952,
+          48.486595
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_80487",
+        "TEXT_80488"
+      ]
+    },
+    {
+      "number": 23,
+      "id": "Berkhivka Reservoir",
+      "label": "Berkhivka Reservoir",
+      "kind": "reservoir",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9482475,
+          48.637313
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_80478",
+        "TEXT_80494"
+      ]
+    },
+    {
+      "number": 24,
+      "id": "Patrice Lumumba",
+      "label": "Patrice Lumumba",
+      "kind": "suburb",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.5195587,
+          -14.9220385
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_80451",
+        "TEXT_80454"
+      ]
+    },
+    {
+      "number": 25,
+      "id": "Verdun",
+      "label": "Verdun",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.3867277,
+          49.1589278
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_80500",
+        "TEXT_80501"
+      ]
+    },
+    {
+      "number": 26,
+      "id": "Kyiv",
+      "label": "Kyiv",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.5241361,
+          50.4500336
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80511"
+      ]
+    },
+    {
+      "number": 27,
+      "id": "Kherson",
+      "label": "Kherson",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          32.6143922,
+          46.6401295
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80442"
+      ]
+    },
+    {
+      "number": 28,
+      "id": "Luhansk",
+      "label": "Luhansk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.2973153,
+          48.5717084
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80446"
+      ]
+    },
+    {
+      "number": 29,
+      "id": "Zaporizhzhia",
+      "label": "Zaporizhzhia",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.1182867,
+          47.8507859
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80528"
+      ]
+    },
+    {
+      "number": 30,
+      "id": "Lyman",
+      "label": "Lyman",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.8168012,
+          48.9801314
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80446"
+      ]
+    },
+    {
+      "number": 31,
+      "id": "Sievierodonetsk",
+      "label": "Sievierodonetsk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.4936475,
+          48.9478698
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80448"
+      ]
+    },
+    {
+      "number": 32,
+      "id": "Kostiantynivka",
+      "label": "Kostiantynivka",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.6923755,
+          48.5348985
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80496"
+      ]
+    },
+    {
+      "number": 33,
+      "id": "White House",
+      "label": "White House",
+      "kind": "office",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.0365525,
+          38.8976387
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80510"
+      ]
+    },
+    {
+      "number": 34,
+      "id": "Zaitseve",
+      "label": "Zaitseve",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.02643,
+          48.40087
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80454"
+      ]
+    },
+    {
+      "number": 35,
+      "id": "Vuhledar",
+      "label": "Vuhledar",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.2460771,
+          47.7809924
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80465"
+      ]
+    },
+    {
+      "number": 36,
+      "id": "Berlin",
+      "label": "Berlin",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.3951309,
+          52.5173885
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80498"
+      ]
+    },
+    {
+      "number": 37,
+      "id": "Novoluhanske",
+      "label": "Novoluhanske",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.1734964,
+          48.4290318
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80448"
+      ]
+    },
+    {
+      "number": 38,
+      "id": "Dresden",
+      "label": "Dresden",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.7381437,
+          51.0493286
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80500"
+      ]
+    },
+    {
+      "number": 39,
+      "id": "Pokrovske",
+      "label": "Pokrovske",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2333808,
+          47.9808528
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80450"
+      ]
+    },
+    {
+      "number": 40,
+      "id": "Nizhyn",
+      "label": "Nizhyn",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.8806289,
+          51.0464747
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80529"
+      ]
+    },
+    {
+      "number": 41,
+      "id": "Zelenopillia",
+      "label": "Zelenopillia",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9632015,
+          48.4715849
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80456"
+      ]
+    },
+    {
+      "number": 42,
+      "id": "Yakovlivka",
+      "label": "Yakovlivka",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.961781,
+          46.862179
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80451"
+      ]
+    },
+    {
+      "number": 43,
+      "id": "Hiroshima",
+      "label": "Hiroshima",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.4517589,
+          34.3917241
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80502"
+      ]
+    },
+    {
+      "number": 44,
+      "id": "Paraskoviivka",
+      "label": "Paraskoviivka",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.4445154,
+          47.8681484
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80465"
+      ]
+    },
+    {
+      "number": 45,
+      "id": "E40",
+      "label": "E40",
+      "kind": "railway",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.5000733,
+          34.7157738
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80459"
+      ]
+    },
+    {
+      "number": 46,
+      "id": "Krasna Hora",
+      "label": "Krasna Hora",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0156184,
+          48.6626919
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80465"
+      ]
+    },
+    {
+      "number": 47,
+      "id": "Volga River",
+      "label": "Volga River",
+      "kind": "river",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -91.4143931,
+          42.7656044
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80501"
+      ]
+    },
+    {
+      "number": 48,
+      "id": "Vuhlehirska Power Station",
+      "label": "Vuhlehirska Power Station",
+      "kind": "industrial",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.1991099,
+          48.4664804
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80448"
+      ]
+    },
+    {
+      "number": 49,
+      "id": "Ozarianivka",
+      "label": "Ozarianivka",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9548643,
+          48.450343
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80456"
+      ]
+    },
+    {
+      "number": 50,
+      "id": "Bakhmutske",
+      "label": "Bakhmutske",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0935602,
+          48.6644807
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80462"
+      ]
+    },
+    {
+      "number": 51,
+      "id": "Pidhorodne",
+      "label": "Pidhorodne",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.1013002,
+          48.5681471
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80462"
+      ]
+    },
+    {
+      "number": 52,
+      "id": "Zaliznianske",
+      "label": "Zaliznianske",
+      "kind": "hamlet",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9465885,
+          48.701228
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80487"
+      ]
+    },
+    {
+      "number": 53,
+      "id": "M-03",
+      "label": "M-03",
+      "kind": "road",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -49.4187964,
+          -16.7623085
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "uncertain": "geocoded as a road with importance 0.05",
+      "sources": [
+        "TEXT_80459"
+      ]
+    },
+    {
+      "number": 54,
+      "id": "Predtechyne",
+      "label": "Predtechyne",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.8174189,
+          48.5248219
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80485"
+      ]
+    },
+    {
+      "number": 55,
+      "id": "Yuzivska",
+      "label": "Yuzivska",
+      "kind": "road",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.7611906,
+          48.5063583
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "uncertain": "geocoded as a road with importance 0.05",
+      "sources": [
+        "TEXT_80497"
+      ]
+    },
+    {
+      "number": 56,
+      "id": "Vershyna",
+      "label": "Vershyna",
+      "kind": "hamlet",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.1457986,
+          48.5129297
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80451"
+      ]
+    },
+    {
+      "number": 57,
+      "id": "Iwo Jima",
+      "label": "Iwo Jima",
+      "kind": "island",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.3205867,
+          24.7803301
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80506"
+      ]
+    },
+    {
+      "number": 58,
+      "id": "Kostiantynivka-Bakhmut",
+      "label": "Kostiantynivka-Bakhmut",
+      "kind": "road",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.7374506,
+          48.5222245
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "uncertain": "geocoded as a road with importance 0.05",
+      "sources": [
+        "TEXT_80447"
+      ]
+    },
+    {
+      "number": 59,
+      "id": "Ivanhrad",
+      "label": "Ivanhrad",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0262592,
+          48.5593711
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80454"
+      ]
+    },
+    {
+      "number": 60,
+      "id": "Dobroliubova",
+      "label": "Dobroliubova",
+      "kind": "road",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.5564779,
+          50.4094235
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "uncertain": "geocoded as a road with importance 0.28",
+      "sources": [
+        "TEXT_80460"
+      ]
+    },
+    {
+      "number": 61,
+      "id": "'s House",
+      "label": "'s House",
+      "kind": "farm",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2.435404,
+          54.4937918
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80470"
+      ]
+    },
+    {
+      "number": 62,
+      "id": "Litak",
+      "label": "Litak",
+      "kind": "hamlet",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          119.7904653,
+          -3.2754742
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80482"
+      ]
+    },
+    {
+      "number": 63,
+      "id": "Samolet",
+      "label": "Samolet",
+      "kind": "building",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.5848604,
+          55.7254399
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "uncertain": "geocoded as a building with importance 0.33",
+      "sources": [
+        "TEXT_80482"
+      ]
+    },
+    {
+      "number": 64,
+      "id": "Passchendaele",
+      "label": "Passchendaele",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0203891,
+          50.9003015
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80500"
+      ]
+    },
+    {
+      "number": 65,
+      "id": "Shiloh",
+      "label": "Shiloh",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -89.8973233,
+          38.5614383
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80506"
+      ]
+    },
+    {
+      "number": 66,
+      "id": "Donetsk",
+      "label": "Donetsk",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.7809825,
+          47.9212914
+        ]
+      },
+      "why": "3 matching paragraphs",
+      "sources": [
+        "TEXT_80446",
+        "TEXT_80463",
+        "TEXT_80469"
+      ]
+    },
+    {
+      "number": 67,
+      "id": "Donbas",
+      "label": "Donbas",
+      "kind": "region",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.3480151,
+          48.59687505
+        ]
+      },
+      "why": "3 matching paragraphs",
+      "sources": [
+        "TEXT_80446",
+        "TEXT_80458",
+        "TEXT_80496"
+      ]
+    },
+    {
+      "number": 68,
+      "id": "Luhansk Oblast",
+      "label": "Luhansk Oblast",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.9150477,
+          49.2724587
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80448"
+      ]
+    },
+    {
+      "number": 69,
+      "id": "Somme",
+      "label": "Somme",
+      "kind": "county",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.3738855,
+          49.9689482
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80500"
+      ]
+    },
+    {
+      "number": 70,
+      "id": "Ukraine",
+      "label": "Ukraine",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.2718321,
+          49.4871968
+        ]
+      },
+      "why": "29 matching paragraphs",
+      "sources": [
+        "TEXT_80442",
+        "TEXT_80443",
+        "TEXT_80445",
+        "TEXT_80446",
+        "TEXT_80449",
+        "TEXT_80451",
+        "TEXT_80454",
+        "TEXT_80456",
+        "TEXT_80457",
+        "TEXT_80458"
+      ]
+    },
+    {
+      "number": 71,
+      "id": "Russia",
+      "label": "Russia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          97.7453061,
+          64.6863136
+        ]
+      },
+      "why": "28 matching paragraphs",
+      "sources": [
+        "TEXT_80442",
+        "TEXT_80443",
+        "TEXT_80449",
+        "TEXT_80453",
+        "TEXT_80457",
+        "TEXT_80458",
+        "TEXT_80461",
+        "TEXT_80462",
+        "TEXT_80463",
+        "TEXT_80469"
+      ]
+    },
+    {
+      "number": 72,
+      "id": "US",
+      "label": "US",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -100.445882,
+          39.7837304
+        ]
+      },
+      "why": "3 matching paragraphs",
+      "sources": [
+        "TEXT_80510",
+        "TEXT_80511",
+        "TEXT_80512"
+      ]
+    },
+    {
+      "number": 73,
+      "id": "UK",
+      "label": "UK",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.2765753,
+          54.7023545
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_80454",
+        "TEXT_80467"
+      ]
+    },
+    {
+      "number": 74,
+      "id": "Europe",
+      "label": "Europe",
+      "kind": "continent",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.0,
+          51.0
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_80444",
+        "TEXT_80500"
+      ]
+    },
+    {
+      "number": 75,
+      "id": "Georgia",
+      "label": "Georgia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          43.8212482,
+          41.8441368
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80457"
+      ]
+    }
+  ],
+  "regions": [
+    {
+      "id": "Ukraine",
+      "place_type": "country",
+      "count": 51,
+      "places": [
+        26,
+        60,
+        66,
+        67,
+        68
+      ],
+      "children": [
+        {
+          "id": "Donetsk",
+          "place_type": "state",
+          "count": 35,
+          "places": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            13,
+            14,
+            15,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            30,
+            32,
+            34,
+            35,
+            37,
+            41,
+            44,
+            46,
+            48,
+            49,
+            50,
+            52,
+            54,
+            55,
+            56,
+            58,
+            59
+          ],
+          "children": []
+        },
+        {
+          "id": "Luhansk Oblast",
+          "place_type": "state",
+          "count": 4,
+          "places": [
+            7,
+            17,
+            28,
+            31
+          ],
+          "children": []
+        },
+        {
+          "id": "Dnipropetrovsk Oblast",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            39,
+            51
+          ],
+          "children": []
+        },
+        {
+          "id": "Kharkiv Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            12
+          ],
+          "children": []
+        },
+        {
+          "id": "Kherson Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            27
+          ],
+          "children": []
+        },
+        {
+          "id": "Zaporizhzhia Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            29
+          ],
+          "children": []
+        },
+        {
+          "id": "Chernihiv Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            40
+          ],
+          "children": []
+        },
+        {
+          "id": "Odesa Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            42
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "(no region in the graph)",
+      "count": 5,
+      "places": [
+        70,
+        71,
+        72,
+        73,
+        75
+      ],
+      "children": []
+    },
+    {
+      "id": "US",
+      "place_type": "country",
+      "count": 3,
+      "places": [
+        33
+      ],
+      "children": [
+        {
+          "id": "Iowa",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            47
+          ],
+          "children": []
+        },
+        {
+          "id": "Illinois",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            65
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "Germany",
+      "place_type": "country",
+      "count": 3,
+      "places": [
+        36,
+        38,
+        74
+      ],
+      "children": []
+    },
+    {
+      "id": "Japan",
+      "place_type": "country",
+      "count": 3,
+      "places": [
+        43,
+        45,
+        57
+      ],
+      "children": []
+    },
+    {
+      "id": "Russia",
+      "place_type": "country",
+      "count": 2,
+      "places": [
+        63
+      ],
+      "children": [
+        {
+          "id": "Volgograd Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            16
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "France",
+      "place_type": "country",
+      "count": 2,
+      "places": [
+        25,
+        69
+      ],
+      "children": []
+    },
+    {
+      "id": "Netherlands",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        11
+      ],
+      "children": []
+    },
+    {
+      "id": "Angola",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        24
+      ],
+      "children": []
+    },
+    {
+      "id": "Brazil",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        53
+      ],
+      "children": []
+    },
+    {
+      "id": "UK",
+      "place_type": "country",
+      "count": 1,
+      "places": [],
+      "children": [
+        {
+          "id": "England",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            61
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "Indonesia",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        62
+      ],
+      "children": []
+    },
+    {
+      "id": "Belgium",
+      "place_type": "country",
+      "count": 1,
+      "places": [],
+      "children": [
+        {
+          "id": "Flanders",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            64
+          ],
+          "children": []
+        }
+      ]
+    }
+  ],
+  "entities": [],
+  "citations": [
+    {
+      "id": "L1",
+      "pointer": "TEXT_80440",
+      "article": "Battle of Bakhmut",
+      "spans": []
+    }
+  ],
+  "sources": [
+    "TEXT_80440"
+  ],
+  "map": {
+    "bbox": [
+      37.87167,
+      48.51087,
+      38.08495,
+      48.71247
+    ],
+    "highlight": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "showing": "all",
+    "not_shown": 0
+  },
+  "follow_ups": [
+    "Which places are linked to the Battle of Bakhmut?",
+    "What happened in Soledar?"
+  ],
+  "did_you_mean": [],
+  "notes": [
+    "④ 75 places found (all go on the map); 10 described to the LLM",
+    "④ list answer: no corpus sentences by design; each place has a data line, and 'tell me about number N' gives the details"
+  ],
+  "meta": {
+    "question_type": "event_places",
+    "model": "google/gemini-2.5-flash",
+    "llm_calls": 2,
+    "cost_usd": 0.00178,
+    "seconds": 2.32
+  }
+}

@@ -1,6 +1,6 @@
 {
-  "answer": "Kyiv [1], also spelled Kiev, is the capital and most populous city of Ukraine [L1]. It is located in the north-central part of the country, straddling both banks of the Dnieper River [L1]. As of January 2022, its population was 2,952,301, making it the seventh-most populous city in Europe [L1].",
-  "answer_plain": "Kyiv, also spelled Kiev, is the capital and most populous city of Ukraine. It is located in the north-central part of the country, straddling both banks of the Dnieper River. As of January 2022, its population was 2,952,301, making it the seventh-most populous city in Europe.",
+  "answer": "Kyiv [1], also spelled Kiev, is the capital and most populous city of Ukraine, located in the north-central part of the country and straddling both banks of the Dnieper River [L1]. As of January 2022, its population was 2,952,301, making it the seventh-most populous city in Europe [L1]. Kyiv [1] is an important industrial, scientific, educational, and cultural center, home to high-tech industries, higher education institutions, and historical landmarks, and has an extensive public transport system, including the Kyiv Metro [L1].",
+  "answer_plain": "Kyiv, also spelled Kiev, is the capital and most populous city of Ukraine, located in the north-central part of the country and straddling both banks of the Dnieper River. As of January 2022, its population was 2,952,301, making it the seventh-most populous city in Europe. Kyiv is an important industrial, scientific, educational, and cultural center, home to high-tech industries, higher education institutions, and historical landmarks, and has an extensive public transport system, including the Kyiv Metro.",
   "status": "answered",
   "grounded": true,
   "shape": "fact",
@@ -785,9 +785,9 @@
           ]
         ]
       },
-      "why": "2180 matching paragraphs",
+      "why": "2490 matching paragraphs",
       "sources": [
-        "TEXT_50333"
+        "TEXT_84689"
       ]
     }
   ],
@@ -796,13 +796,13 @@
   "citations": [
     {
       "id": "L1",
-      "pointer": "TEXT_50333",
+      "pointer": "TEXT_84689",
       "article": "Kyiv",
       "spans": []
     }
   ],
   "sources": [
-    "TEXT_50333"
+    "TEXT_84689"
   ],
   "map": {
     "bbox": [
@@ -813,23 +813,24 @@
     ],
     "highlight": [
       1
-    ]
+    ],
+    "showing": "discussed",
+    "not_shown": 0
   },
   "follow_ups": [
-    "Tell me more about Kyiv's history.",
-    "What are some of Kyiv's historical landmarks?",
-    "What is the Kyiv Metro?"
+    "What happened in Kyiv?",
+    "Which places are linked to Kyiv Metro?"
   ],
   "did_you_mean": [],
   "notes": [
-    "③ Kyiv is inside: Ukraine.",
+    "③ Kyiv is inside:  Ukrain",
     "④ 1 places found (all go on the map); 1 described to the LLM"
   ],
   "meta": {
     "question_type": "place_lookup",
     "model": "google/gemini-2.5-flash",
     "llm_calls": 2,
-    "cost_usd": 0.000935,
-    "seconds": 2.35
+    "cost_usd": 0.001588,
+    "seconds": 2.06
   }
 }

@@ -1,6 +1,6 @@
 {
-  "answer": "Volodymyr Zelenskyy is the current President of Ukraine [1, S4, S13], having been elected in April and taking office in May 2019 [S12, S20]. Vladimir Putin is the President of Russia [2, L1, S22], a position he has held since 2012, and previously from 2000 to 2008 [L1]. He has been described as the de facto leader of Russia since 1999 [L1].",
-  "answer_plain": "Volodymyr Zelenskyy is the current President of Ukraine, having been elected in April and taking office in May 2019. Vladimir Putin is the President of Russia, a position he has held since 2012, and previously from 2000 to 2008. He has been described as the de facto leader of Russia since 1999.",
+  "answer": "Volodymyr Zelenskyy is the sixth president of Ukraine, serving since 2019 [L1, S5]. Vladimir Putin has served as President of Russia since 2012, and previously from 2000 to 2008 [L2, S8].",
+  "answer_plain": "Volodymyr Zelenskyy is the sixth president of Ukraine, serving since 2019. Vladimir Putin has served as President of Russia since 2012, and previously from 2000 to 2008.",
   "status": "answered",
   "grounded": true,
   "shape": "fact",
@@ -741,9 +741,9 @@
           ]
         ]
       },
-      "why": "13362 matching paragraphs",
+      "why": "15144 matching paragraphs",
       "sources": [
-        "TEXT_191"
+        "TEXT_189"
       ]
     },
     {
@@ -1396,10 +1396,8 @@
           ]
         ]
       },
-      "why": "10641 matching paragraphs",
-      "sources": [
-        "TEXT_347"
-      ]
+      "why": "11945 matching paragraphs",
+      "sources": []
     }
   ],
   "regions": [],
@@ -1408,19 +1406,49 @@
       "id": "Zelenskyy",
       "type": "PER",
       "role": "acts",
-      "records": 28
+      "records": 26
     },
     {
       "id": "Putin",
       "type": "PER",
       "role": "acts",
-      "records": 78
+      "records": 80
     },
     {
       "id": "Yanukovych",
       "type": "PER",
       "role": "acts",
-      "records": 15
+      "records": 16
+    },
+    {
+      "id": "Medvedev",
+      "type": "PER",
+      "role": "acts",
+      "records": 4
+    },
+    {
+      "id": "Petro Poroshenko",
+      "type": "PER",
+      "role": "acts",
+      "records": 13
+    },
+    {
+      "id": "Belousov",
+      "type": "PER",
+      "role": "acts",
+      "records": 4
+    },
+    {
+      "id": "Leonid Kuchma",
+      "type": "PER",
+      "role": "acts",
+      "records": 6
+    },
+    {
+      "id": "Pavel Grachev",
+      "type": "PER",
+      "role": "acts",
+      "records": 4
     },
     {
       "id": "Sergei Shoigu",
@@ -1429,22 +1457,22 @@
       "records": 2
     },
     {
-      "id": "Petro Poroshenko",
+      "id": "Kyslytsya",
       "type": "PER",
       "role": "acts",
-      "records": 12
+      "records": 3
     },
     {
-      "id": "Gerasimov",
+      "id": "Valery Gerasimov",
       "type": "PER",
       "role": "acts",
       "records": 2
     },
     {
-      "id": "Leonid Kuchma",
+      "id": "Oleksii Reznikov",
       "type": "PER",
       "role": "acts",
-      "records": 5
+      "records": 2
     },
     {
       "id": "Bortnikov",
@@ -1453,25 +1481,19 @@
       "records": 2
     },
     {
-      "id": "Pavel Grachev",
+      "id": "Rustem Umerov",
       "type": "PER",
       "role": "acts",
       "records": 2
     },
     {
-      "id": "Dmytro Kuleba",
+      "id": "Igor Sergeyev",
       "type": "PER",
       "role": "acts",
       "records": 2
     },
     {
-      "id": "Igor Rodionov",
-      "type": "PER",
-      "role": "acts",
-      "records": 2
-    },
-    {
-      "id": "Yulia Tymoshenko",
+      "id": "Stepan Poltorak",
       "type": "PER",
       "role": "acts",
       "records": 2
@@ -1489,37 +1511,13 @@
       "records": 1
     },
     {
+      "id": "Oleksandr Syrskyi",
+      "type": "PER",
+      "role": "acts",
+      "records": 1
+    },
+    {
       "id": "Lavrov",
-      "type": "PER",
-      "role": "acts",
-      "records": 1
-    },
-    {
-      "id": "Kyrylo Budanov",
-      "type": "PER",
-      "role": "acts",
-      "records": 1
-    },
-    {
-      "id": "Viktor Yushchenko",
-      "type": "PER",
-      "role": "acts",
-      "records": 1
-    },
-    {
-      "id": "Dmitry Medvedev",
-      "type": "PER",
-      "role": "acts",
-      "records": 1
-    },
-    {
-      "id": "Surovikin",
-      "type": "PER",
-      "role": "acts",
-      "records": 1
-    },
-    {
-      "id": "Yeltsin",
       "type": "PER",
       "role": "acts",
       "records": 1
@@ -1527,8 +1525,14 @@
   ],
   "citations": [
     {
-      "id": "S4",
-      "pointer": "TEXT_49770",
+      "id": "L1",
+      "pointer": "TEXT_49156",
+      "article": "Volodymyr Zelenskyy",
+      "spans": []
+    },
+    {
+      "id": "S5",
+      "pointer": "TEXT_83640",
       "article": "Dnipropetrovsk Oblast",
       "section": "Notable people from Dnipropetrovsk Oblast",
       "spans": [
@@ -1543,86 +1547,37 @@
       ]
     },
     {
-      "id": "S13",
-      "pointer": "TEXT_20261",
-      "article": "60th Munich Security Conference",
-      "section": "Attendees",
-      "spans": [
-        [
-          35,
-          42
-        ],
-        [
-          1,
-          20
-        ]
-      ]
-    },
-    {
-      "id": "S12",
-      "pointer": "TEXT_17163",
-      "article": "Russian information war against Ukraine",
-      "section": "Timeline",
-      "spans": [
-        [
-          55,
-          62
-        ],
-        [
-          10,
-          29
-        ]
-      ]
-    },
-    {
-      "id": "S20",
-      "pointer": "TEXT_44569",
-      "article": "Timeline of the war in Donbas (2019)",
-      "section": "May",
-      "spans": [
-        [
-          56,
-          63
-        ],
-        [
-          8,
-          27
-        ]
-      ]
-    },
-    {
-      "id": "L1",
-      "pointer": "TEXT_43239",
+      "id": "L2",
+      "pointer": "TEXT_34735",
       "article": "Vladimir Putin",
       "spans": []
     },
     {
-      "id": "S22",
-      "pointer": "TEXT_30129",
-      "article": "2024 visit by Vladimir Putin to North Korea",
+      "id": "S8",
+      "pointer": "TEXT_11302",
+      "article": "New generation warfare",
+      "section": "Background",
       "spans": [
         [
-          51,
-          57
+          37,
+          43
         ],
         [
-          18,
-          32
+          11,
+          25
         ]
       ]
     }
   ],
   "sources": [
-    "TEXT_49770",
-    "TEXT_20261",
-    "TEXT_17163",
-    "TEXT_44569",
-    "TEXT_43239",
-    "TEXT_30129"
+    "TEXT_49156",
+    "TEXT_83640",
+    "TEXT_34735",
+    "TEXT_11302"
   ],
   "map": {
     "bbox": [
-      -180.0,
+      6.35077,
       37.11237,
       180.0,
       86.14028
@@ -1630,24 +1585,25 @@
     "highlight": [
       1,
       2
-    ]
+    ],
+    "showing": "discussed",
+    "not_shown": 0
   },
   "follow_ups": [
-    "Tell me more about Volodymyr Zelenskyy's presidency.",
-    "Tell me more about Vladimir Putin's political career.",
-    "Who was the president of Ukraine before Volodymyr Zelenskyy?"
+    "Which places are linked to Zelenskyy?"
   ],
   "did_you_mean": [],
   "notes": [
     "① role question: president of Ukraine; president of Russia → Ukraine, Russia with LEADS (code rule)",
     "④ 2 places found (all go on the map); 0 described to the LLM",
-    "④ 169 more passages didn't fit the 600-word budget (available for a 'show more' page)"
+    "④ 187 more passages didn't fit the 600-word budget (available for a 'show more' page)",
+    "⑤ kept at most 2 passages per claim; dropped S26 S10"
   ],
   "meta": {
     "question_type": "relation",
     "model": "google/gemini-2.5-flash",
     "llm_calls": 2,
-    "cost_usd": 0.00215,
-    "seconds": 2.56
+    "cost_usd": 0.002071,
+    "seconds": 2.11
   }
 }
