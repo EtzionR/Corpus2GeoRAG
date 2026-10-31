@@ -94,6 +94,7 @@ class EvidencePack(BaseModel):
     entities: list[EntityRef] = Field(default_factory=list)
     passages: list[Passage] = Field(default_factory=list)
     amounts: Amounts = Field(default_factory=Amounts)
+    needs_area: bool = False               # a question about an area that has none: no place, no map selection
     notes: list[str] = Field(default_factory=list)
 
 
@@ -260,7 +261,8 @@ def build_evidence(plan: QueryPlan, ret: Retrieval, gi: GraphIndex,
                  uncertain=h.group.place.uncertain_reason if h.group.place and h.group.place.uncertain else None,
                  why=why_line(h))
         for h in ret.places],
-        entities=[EntityRef(id=h.group.id, type=h.group.type, records=h.records, role=h.role) for h in ret.entities])
+        entities=[EntityRef(id=h.group.id, type=h.group.type, records=h.records, role=h.role) for h in ret.entities],
+        needs_area=plan.type in ("area", "area_topic") and ret.area_used is None)
     items = _items(plan, ret, numbers, shape)
     all_items = _items(plan, ret, numbers, "explain")   # amounts are measured over everything found
 

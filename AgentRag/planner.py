@@ -65,6 +65,12 @@ DEFAULT_RADIUS_M = 1000   # P2-23: a map point with no distance given anywhere
 HISTORY_TURNS = 3         # P2-25: how many previous turns the LLM sees
 HISTORY_PLACES = 20       # places listed per previous turn; "number N" is still resolved from the full list
 _NOT_A_KEYWORD = re.compile(r"[\d\s.,°+\-\[\]]+")   # numbers and coordinates are not search words
+_WHERE_WORD = re.compile(r"\bwhere\b", re.I)
+_LIST_WORDS = re.compile(r"\b(?:all|every|list|locations?|places?|cities|towns|villages|sites|areas)\b", re.I)
+_TAKE_PLACE = re.compile(r"\b(?:take|takes|took|taking|taken)\s+place\b", re.I)   # "where did it take place?"
+# Words that name no topic: "What happened in Moscow?" searched Moscow's paragraphs for "happened" (P2-72)
+_GENERIC_KEYWORDS = {"happened", "happen", "happens", "happening", "event", "events", "news", "situation",
+                     "going on", "information", "details", "overview"}
 
 
 # --- The plan --------------------------------------------------------------------------------
@@ -196,7 +202,7 @@ Rules:
   "commander of", "in charge of" mean LEADS. Words like "connected", "associated", "linked",
   "related" or "mentioned" ask for no specific relation, so leave relations empty.
 - keywords: topic words to search the text for ("missile", "evacuation"). Never names, numbers or
-  coordinates.
+  coordinates, and never words that name no topic ("happened", "events", "situation", "news").
 - place_country / place_kinds: only when the question limits which places count ("Ukrainian cities",
   "towns in Belarus", "which countries").
 - refers_to_map: true only when the question is about the map selection ("here", "this area",
@@ -213,6 +219,7 @@ Examples:
   keywords missile, strike; relations ATTACKED; time_words "in 2024".
 - "Shelling in Kherson" (with a map selection somewhere else) -> type area_topic; entities Kherson (LOC);
   refers_to_map false; keywords shelling; relations ATTACKED.
+- "What happened in Kherson?" -> type about; entities Kherson (LOC); keywords empty (no topic is named).
 - "Which organizations are linked to both Belarus and Russia?" -> type common; entities Belarus (LOC),
   Russia (LOC); relations empty.
 - "Who is the prime minister of Poland?" -> type relation; entities Poland (LOC); relations LEADS.
@@ -320,7 +327,17 @@ def _finalize(draft: PlanDraft, question: str, area: Optional[Area], history: li
 
     entity_names = {e.name.lower() for e in entities} | {e.text.lower() for e in entities}
     keywords = [k.strip() for k in draft.keywords
-                if k.strip() and not _NOT_A_KEYWORD.fullmatch(k.strip()) and k.strip().lower() not in entity_names]
+                if k.strip() and not _NOT_A_KEYWORD.fullmatch(k.strip()) and k.strip().lower() not in entity_names
+                and k.strip().lower() not in _GENERIC_KEYWORDS]
+    if qtype == "area_topic" and not keywords and not relations:
+        # no topic left to search for: a question about the named place, or about the map selection
+        qtype = "about" if named_places and not use_map else "area"
+        notes.append(f"area_topic with no topic words: treated as {qtype}")
+    if (qtype == "event_places" and sum(e.kind == "EVENT" for e in entities) == 1
+            and _WHERE_WORD.search(question) and not _LIST_WORDS.search(_TAKE_PLACE.sub(" ", question))):
+        # "Show me where the battle of Bakhmut occurred" asks for one place, not the event's 75 (P2-74)
+        qtype = "place_lookup"
+        notes.append("where one event happened: answered as a place lookup (its main place), not a list")
 
     plan = QueryPlan(
         question=question, type=qtype, entities=entities, concepts=concepts, relations=relations,
@@ -395,6 +412,24 @@ def radius_from_text(question: str) -> Optional[float]:
     return value * 1000 if m.group(2).lower().startswith("k") else value
 
 
+_NUMBER_WORDS = ("one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|"
+                 "sixteen|seventeen|eighteen|nineteen|twenty")
+_ITEM_REFERENCE = re.compile(rf"\b(?:(?:location|place|pin|item|point|the)\s+)?(?:number|no\.?|#)\s*(?:\d+|{_NUMBER_WORDS})\b"
+                             rf"|\bthe\s+(?:first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)(?:\s+one)?\b",
+                             re.I)
+
+
+def question_for_answer(plan: "QueryPlan") -> str:
+    """The question as the write step should read it. "Tell me about number 4" means place 4 of the
+    PREVIOUS answer, but the new answer numbers its places from 1 again, so the writer would take [4]
+    of the new list. The reference is replaced by the place's name: "Tell me about Illich"."""
+    fu = plan.follow_up
+    if not (fu and fu.kind == "item" and fu.target_label):
+        return plan.question
+    rewritten, n = _ITEM_REFERENCE.subn(fu.target_label, plan.question, count=1)
+    return rewritten if n else f"{plan.question} (meaning {fu.target_label}, from the previous answer)"
+
+
 def _resolve_follow_up(kind, item, history, notes) -> FollowUp:
     follow_up = FollowUp(kind=kind, item_number=item)
     if not history:
@@ -428,6 +463,13 @@ def _is_description(name: str) -> bool:
     return any(w and w[0].islower() and w not in _CONNECTORS and not w.startswith("'s") for w in words)
 
 
+def _is_event_name(e: EntityMention) -> bool:
+    """Event titles have lower-case words ("Bucha massacre", "Wagner Group rebellion"); one the LLM marked as
+    an event that starts with a capital or a year is a name, not a description (P2-72)."""
+    first = e.name.split()[0].strip(".,;:()'\"") if e.name.split() else ""
+    return e.kind == "EVENT" and (first[:1].isupper() or first.isdigit())
+
+
 def _clean_entities(entities: list[EntityMention], question: str, notes: list[str]):
     """P2-27: names must come from the question. Returns (entities, concepts made from descriptions)."""
     q = _norm(question)
@@ -444,7 +486,7 @@ def _clean_entities(entities: list[EntityMention], question: str, notes: list[st
         elif len(group) > 1:   # one phrase turned into several names = the LLM's own list
             notes.append(f"dropped {names}: the LLM's expansion of {group[0].text!r}")
             concepts.append(Concept(text=group[0].text))
-        elif _is_description(group[0].name):
+        elif _is_description(group[0].name) and not _is_event_name(group[0]):
             notes.append(f"{group[0].text!r} is a description, not a name: moved to concepts")
             concepts.append(Concept(text=group[0].text))
         else:

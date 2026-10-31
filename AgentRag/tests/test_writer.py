@@ -79,6 +79,8 @@ def test_at_most_two_passages_per_claim(vr6_index):
 
 def test_strip_citations():
     assert strip_citations("Kyiv [5] is the capital [L1, S2].") == "Kyiv is the capital."
+    assert strip_citations("President since 2019 [L1], [S5], [S26]. Kyiv [1] and Lviv [2].") == \
+        "President since 2019. Kyiv and Lviv."
 
 
 def test_check_citations_tidies_spacing():
@@ -123,9 +125,19 @@ def test_a_failed_fact_answer_says_so(vr6_index):
 def test_follow_ups_are_capped(vr6_index):
     plan, pack = evidence_for(vr6_index, "place_lookup", ("Kyiv", "LOC"))
     answer = write(plan, pack, FakeWriter(WriteDraft(answer="Kyiv [1] is the capital [L1].",
-                                                     follow_ups=["Tell me about Kyiv [1].", "B?", " ", "What was the",
-                                                                 "C.", "D?"])))
-    assert answer.follow_ups == ["Tell me about Kyiv.", "B?", "C."]   # whole questions, no citation marks, at most 3
+                                                     follow_ups=["Tell me about Kyiv [1].", "Who attacked Kyiv?", " ",
+                                                                 "What was the", "What happened in Kyiv?",
+                                                                 "Kyiv again?"])))
+    # whole questions, no citation marks, at most 3
+    assert answer.follow_ups == ["Tell me about Kyiv.", "Who attacked Kyiv?", "What happened in Kyiv?"]
+
+
+def test_follow_ups_must_name_something_in_the_material(vr6_index):
+    plan, pack = evidence_for(vr6_index, "place_lookup", ("Kyiv", "LOC"))
+    answer = write(plan, pack, FakeWriter(WriteDraft(answer="Kyiv [1] is the capital [L1].", follow_ups=[
+        "What is the population of Kyiv?", "What is the capital of France?", "Tell me more about it."])))
+    assert answer.follow_ups == ["What is the population of Kyiv?"]   # the prompt discourages the kind; code checks names
+    assert any("name nothing in the material" in n for n in answer.notes)
 
 
 def test_grouped_citations_are_checked_id_by_id(vr6_index):
@@ -170,9 +182,9 @@ def test_a_plain_text_answer_is_used_and_still_checked(vr6_index):
 
 def test_json_written_as_text_is_read_as_the_structure(vr6_index):
     plan, pack = evidence_for(vr6_index, "place_lookup", ("Kyiv", "LOC"))
-    text = '```json\n{"answer": "Kyiv [1] is the capital [L1].", "places_discussed": [1], "follow_ups": ["More?"]}\n```'
+    text = '```json\n{"answer": "Kyiv [1] is the capital [L1].", "places_discussed": [1], "follow_ups": ["More on Kyiv?"]}\n```'
     answer = write(plan, pack, PlainTextWriter(text))
-    assert answer.text == "Kyiv [1] is the capital [L1]." and answer.follow_ups == ["More?"]
+    assert answer.text == "Kyiv [1] is the capital [L1]." and answer.follow_ups == ["More on Kyiv?"]
 
 
 def test_the_write_step_retries_once(vr6_index):

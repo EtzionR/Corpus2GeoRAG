@@ -114,6 +114,7 @@ def _place_lookup(plan, res, gi) -> Retrieval:
     for g in _groups(res):
         if not g.place:
             run.out.notes.append(f"{g.id} has no coordinates in the graph")
+            run.summary(gi, g.own_article, g.id)   # no pin, but its own article still says what it is (P2-72)
             continue
         chain = run.call("parents", lambda: T.parents(gi, g.place.from_name),
                          lambda c: " → ".join(c), place=g.place.from_name)
@@ -123,7 +124,11 @@ def _place_lookup(plan, res, gi) -> Retrieval:
             run.out.notes.append(f"{g.id}'s point is uncertain: {g.place.uncertain_reason}")
         run.summary(gi, g.own_article, g.id)
     if not run.out.places and _articles(res):
-        run.out.notes.append("the name is an event (an article), not a place: see event_places")
+        # "Where did the Battle of Bakhmut happen?": an event is an article, not a place, so its places
+        # answer it. The plan stays a place lookup, so the result shows the main place, not the list (P2-72).
+        out = _event_places(plan, res, gi)
+        out.notes.insert(0, "the name is an event (an article), not a place: answered from its places")
+        return out
     return run.out
 
 
@@ -303,6 +308,11 @@ def _drilldown(plan, gi, actor: Group, place: Group) -> Retrieval:
 def _about(plan, res, gi) -> Retrieval:
     run = _Run("about / relation: what the graph links to the entity (by relation, if one is asked)")
     targets = list({g.id: g for g in _groups(res) + _concept_groups(res)}.values())   # each group once
+    if not targets and _articles(res):
+        # "Tell me about the Siege of Mariupol": an event is an article, not a node (P2-69)
+        return _event_places(plan, res, gi)
+    for title in _articles(res):          # an event named next to a person or place: read its summary too
+        run.summary(gi, title, title)
     if not targets:
         run.out.notes.append("nothing resolved to look up")
         return run.out

@@ -125,24 +125,33 @@ result["shape"]       # "list" | "fact" | "drilldown" | "explain"
 for place in result["geo_locations"]:   # every place found, strongest first
     place["number"]   # the [n] in the answer
     place["role"]     # "primary" (the answer discusses it) or "context" (map only)
-    place["shape"]    # outline, only on primary places (at most 10 per answer, <= 300 points each)
+    place["shape"]    # outline, only on the places the question is about (at most 10, <= 300 points each)
     place["why"]      # one line, e.g. "ATTACKED in 12 records; 118 matching paragraphs"
     place["uncertain"]  # present when the point may be wrong: show it greyed or with a "?"
 
 result["regions"]     # lists only: [{"id": "Ukraine", "count": 50, "places": [...], "children": [...]}]
 result["citations"]   # one per [S2] / [L1] in the answer: {"id", "pointer", "article", "section", "spans"}
-result["map"]         # {"bbox": [west, south, east, north], "highlight": [numbers]}
-result["follow_ups"]  # up to 3 suggested questions, ready to send as typed
+result["map"]         # {"bbox": [west, south, east, north], "highlight": [numbers],
+                      #  "showing": "all" | "discussed", "not_shown": N}
+result["follow_ups"]  # up to 3 suggested questions, ready to send as typed; each names a place,
+                      # person or event from this answer, so the agent can answer it from the graph
 result["did_you_mean"]  # other entries the question's names could mean
 ```
 
+**Which places come back for the map.** The agent decides, per kind of answer: a list or an
+area question returns every place found (`map.showing: "all"`); any other answer (where a place
+is, who did what, one person at one place) returns only the places it talks about
+(`"discussed"`), and `map.not_shown` says how many more were found. So you can draw every entry of
+`geo_locations` as is. The numbers stay the ones the answer cites, so they may skip (2, 5, 9).
+
 Suggestions, all optional:
 
-- **Many places:** draw primary places as big highlighted markers (plus their outlines) and context
+- **Many places:** draw primary places as big highlighted markers and context
   places small, inside a `folium.plugins.MarkerCluster`. Clustering also untangles places that sit
   on the same spot (Washington, the White House and the Oval Office).
 - **Zoom:** `m.fit_bounds([[s, w], [n, e]])` with `w, s, e, n = result["map"]["bbox"]`.
-- **Outline:** `folium.GeoJson({"type": "Feature", "geometry": place["shape"], "properties": {}})`.
+- **Outline:** `folium.GeoJson({"type": "Feature", "geometry": place["shape"], "properties": {}})`; draw
+  every `shape` you get: the agent already sends only the ones worth drawing.
 - **Doubtful points:** `place["uncertain"]` says why the graph's point may be wrong ("geocoded as a
   river, but its own article describes a city or town"). Show those pins greyed or with a "?".
 - **Regions:** show `result["regions"]` as an expandable tree ("Ukraine 50 → Donetsk 36 …"); the
@@ -151,8 +160,8 @@ Suggestions, all optional:
 
 ## 8. Good to know
 
-- With the model we tested on (Gemini 2.5 Flash), a question takes 1–6 s. The app's default is a
-  free model: slower, rate-limited, and answers vary a little.
+- The agent uses Gemini 2.5 Flash: a question takes 1–6 s and about 0.15 cents, so your OpenRouter
+  key needs a little credit. Without credit it falls back to a free model: much slower.
 - A rate limit or network failure doesn't raise: you get `status: "llm_failed"` (or a short
   template answer for lists) with the places still filled in. Retrying usually works.
 - Errors that do raise are all `AgentError`: `InvalidRequestError` (bad argument),
