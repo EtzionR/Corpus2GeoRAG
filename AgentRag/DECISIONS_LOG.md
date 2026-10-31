@@ -1103,6 +1103,14 @@ by `role` / `map.highlight`; the UI draws every `shape` it gets, so that needs a
 the MVP, and nothing reads an outline back (follow-ups use number, id and label). No format change;
 answers get smaller.
 
+**P2-74. "Where did <event> happen" asks for one place** (owner's go, 2026-10-31). The P2-72 route
+answers a place lookup that names an event, but the LLM typed "Show me where the battle of Bakhmut
+occurred" as `event_places` 5 times out of 5, so the map got all 75 places. *Fix:* in `_finalize`,
+`event_places` with one event, the word "where" and no list word (all, every, list, locations,
+places, cities, ...; "take place" is no list word) becomes a place lookup. *Outcome:* Bakhmut 4 of 4
+runs (Bakhmut's pin and outline, zoomed in, 73 not shown), Siege of Mariupol, Bucha massacre,
+Battle of Avdiivka the same; "Show me all locations ... Battle of Bakhmut" stays the 75-place list.
+
 ### ④ Evidence pack
 
 **P2-15. Choosing the least text that answers.**
@@ -1185,3 +1193,4 @@ Things we chose not to do yet, kept here so we can pick them up if the results c
 | Entity lists ranked first by place relations put geocoding noise on top for some entities (Azov Brigade: "Treasure Island", "United States Government") | ③ Retrieve | Found in the unseen-questions check; needs the unification/geocoding fixes or a noise filter | 2026-10-21 |
 | Leaner results for very big lists (e.g. context places without `why`/`sources`, fetched on demand) | ⑥ Result | 500 KB for q10 is fine in-process; matters only behind an HTTP API (P2-59) | 2026-10-21 |
 | Ignore entities with non-Latin names (1,458, mostly words from native-language names in brackets, e.g. `Україні`) | Loading | Owner to decide; better fixed in NER (GRAPH_TEAM_ISSUES F2) | 2026-10-21 |
+| q10 ("Russia and Ukraine ... the same country") sometimes loses its country filter: 1,659 places instead of about 149 (2 of the last 3 runs) | ① Understand | Model variance; owner: record the answers for the MVP, fix in a later stage | 2026-10-31 |

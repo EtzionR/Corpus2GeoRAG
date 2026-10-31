@@ -65,6 +65,9 @@ DEFAULT_RADIUS_M = 1000   # P2-23: a map point with no distance given anywhere
 HISTORY_TURNS = 3         # P2-25: how many previous turns the LLM sees
 HISTORY_PLACES = 20       # places listed per previous turn; "number N" is still resolved from the full list
 _NOT_A_KEYWORD = re.compile(r"[\d\s.,°+\-\[\]]+")   # numbers and coordinates are not search words
+_WHERE_WORD = re.compile(r"\bwhere\b", re.I)
+_LIST_WORDS = re.compile(r"\b(?:all|every|list|locations?|places?|cities|towns|villages|sites|areas)\b", re.I)
+_TAKE_PLACE = re.compile(r"\b(?:take|takes|took|taking|taken)\s+place\b", re.I)   # "where did it take place?"
 # Words that name no topic: "What happened in Moscow?" searched Moscow's paragraphs for "happened" (P2-72)
 _GENERIC_KEYWORDS = {"happened", "happen", "happens", "happening", "event", "events", "news", "situation",
                      "going on", "information", "details", "overview"}
@@ -330,6 +333,11 @@ def _finalize(draft: PlanDraft, question: str, area: Optional[Area], history: li
         # no topic left to search for: a question about the named place, or about the map selection
         qtype = "about" if named_places and not use_map else "area"
         notes.append(f"area_topic with no topic words: treated as {qtype}")
+    if (qtype == "event_places" and sum(e.kind == "EVENT" for e in entities) == 1
+            and _WHERE_WORD.search(question) and not _LIST_WORDS.search(_TAKE_PLACE.sub(" ", question))):
+        # "Show me where the battle of Bakhmut occurred" asks for one place, not the event's 75 (P2-74)
+        qtype = "place_lookup"
+        notes.append("where one event happened: answered as a place lookup (its main place), not a list")
 
     plan = QueryPlan(
         question=question, type=qtype, entities=entities, concepts=concepts, relations=relations,

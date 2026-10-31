@@ -145,6 +145,25 @@ def test_a_real_topic_keeps_the_area_topic_type():
     assert plan.type == "area_topic" and plan.keywords == ["shelling"]
 
 
+@pytest.mark.parametrize("question, expected", [
+    ("Show me where the battle of Bakhmut occurred", "place_lookup"),
+    ("Where did the Battle of Bakhmut happen?", "place_lookup"),
+    ("Where did the Battle of Bakhmut take place?", "place_lookup"),                  # "place" here is no list
+    ("Show me all locations where the Battle of Bakhmut was fought", "event_places"),   # asks for the list
+    ("Which places were part of the Battle of Bakhmut?", "event_places"),               # no "where"
+])
+def test_where_one_event_happened_is_a_place_lookup(question, expected):
+    draft = PlanDraft(type="event_places",
+                      entities=[EntityMention(text="Battle of Bakhmut", name="Battle of Bakhmut", kind="EVENT")])
+    assert understand(question, llm=FakePlanner(draft)).type == expected
+
+
+def test_where_a_topic_happened_is_not_a_place_lookup():
+    draft = PlanDraft(type="event_places", keywords=["drone", "attack"],
+                      entities=[EntityMention(text="drone attacks", name="drone attacks", kind="EVENT")])
+    assert understand("Show me where drone attacks happened", llm=FakePlanner(draft)).type != "place_lookup"
+
+
 def test_the_map_selection_is_used_when_the_question_refers_to_it():
     draft = PlanDraft(type="area_topic", refers_to_map=True, keywords=["drone"], relations=["ATTACKED"])
     plan = understand("Drone attacks in this bounding box", area=DONBAS_BOX, llm=FakePlanner(draft))
