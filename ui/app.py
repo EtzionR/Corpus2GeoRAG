@@ -103,8 +103,14 @@ from geo_agent import (
     to_bounding_box,
 )
 
-# Ensure get_source_text and AgentError are safely resolved even across hot-reloads
+# Ensure get_source_text, API key persistence helpers, and AgentError are safely resolved even across hot-reloads
 get_source_text = getattr(geo_agent, "get_source_text", lambda pointer: None)
+get_agent_env_path = getattr(geo_agent, "get_agent_env_path", lambda: None)
+persist_openrouter_api_key = getattr(
+    geo_agent,
+    "persist_openrouter_api_key",
+    lambda api_key, update_dotenv=True, env_path=None: False,
+)
 AgentError = getattr(geo_agent, "AgentError", RuntimeError)
 
 def _is_drawing_corner_release(
@@ -181,7 +187,10 @@ def dispatch_geo_query(
     bounding_box: Optional[Tuple[Tuple[float, float], Tuple[float, float]]] = None
 ) -> Optional[AgentResponse]:
     """Execute query_geo_agent with error handling, session state persistence, telemetry, and logging."""
-    api_key = st.session_state.get("openrouter_api_key") or None
+    has_key_state = "openrouter_api_key" in st.session_state
+    raw_key = st.session_state.get("openrouter_api_key")
+    api_key = (raw_key.strip() if isinstance(raw_key, str) else raw_key) or None
+    force_mock = bool(has_key_state and not api_key)
     agent_turns = st.session_state.get("agent_turns", [])
     raw_request_payload = _build_raw_request_payload(
         text_prompt=text_prompt,
@@ -209,7 +218,8 @@ def dispatch_geo_query(
                 bounding_box=bounding_box,
                 chat_history=st.session_state.messages,
                 api_key=api_key,
-                agent_turns=agent_turns
+                agent_turns=agent_turns,
+                force_mock=force_mock,
             )
             latency_ms = round((time.perf_counter() - t_start) * 1000, 1)
 
@@ -368,6 +378,13 @@ def _highlight_text_spans(text: str, spans: Optional[List[Any]]) -> str:
 def _build_assistant_message(resp: AgentResponse) -> Dict[str, Any]:
     """Build a standardized assistant message dictionary for st.session_state.messages."""
     ans_plain = getattr(resp, "answer_plain", "") or resp.answer
+    raw_regions = getattr(resp, "regions", None)
+    if isinstance(raw_regions, list) and raw_regions:
+        regions_val: Any = list(raw_regions)
+    elif isinstance(raw_regions, dict):
+        regions_val = dict(raw_regions)
+    else:
+        regions_val = {}
     return {
         "role": "assistant",
         "content": resp.answer,
@@ -378,9 +395,11 @@ def _build_assistant_message(resp: AgentResponse) -> Dict[str, Any]:
         "status": getattr(resp, "status", "answered"),
         "is_live": bool(getattr(resp, "is_live_backend", False)),
         "follow_ups": list(getattr(resp, "follow_ups", []) or []),
-        "regions": dict(getattr(resp, "regions", {}) or {}),
+        "regions": regions_val,
         "did_you_mean": getattr(resp, "did_you_mean", None),
         "map_bbox": getattr(resp, "map_bbox", None),
+        "map_showing": getattr(resp, "map_showing", "all"),
+        "map_not_shown": int(getattr(resp, "map_not_shown", 0) or 0),
     }
 
 
@@ -1498,7 +1517,8 @@ class MapTrashBinHook(MacroElement):
                 });
             }
 
-            function triggerRemoval() {
+            function triggerRemoval(opts) {
+                opts = opts || {};
                 window._lastOpenPopupInfo = null;
                 try { map.closePopup(); } catch(e) {}
                 if (typeof window.hideMapTacticalHud === 'function') {
@@ -1506,10 +1526,20 @@ class MapTrashBinHook(MacroElement):
                 } else {
                     window._lastHudInfo = null;
                 }
+
+                var hadSelection = !!(
+                    window._instantTargetMarker ||
+                    window._lastKnownBboxBounds ||
+                    window._lastHudInfo ||
+                    (window.drawnItems && window.drawnItems.getLayers && window.drawnItems.getLayers().length > 0) ||
+                    (window.feature_group && window.feature_group[0] && window.feature_group[0].getLayers && window.feature_group[0].getLayers().length > 0)
+                );
+
                 clearPreviousSelectionInstantly();
 
-                // If user triggers trash can, also clear all feature groups on map
-                if (window.feature_group && window.feature_group.length > 0) {
+                // Only if user explicitly clicked trash can AND there was no active selection to clear,
+                // clear tactical overlay feature groups from the map canvas
+                if (opts.clearAllLayers && !hadSelection && window.feature_group && window.feature_group.length > 0) {
                     window.feature_group.forEach(function(fg) {
                         try {
                             if (typeof fg.clearLayers === 'function') fg.clearLayers();
@@ -1562,12 +1592,12 @@ class MapTrashBinHook(MacroElement):
                 if (trashBtn) {
                     e.preventDefault();
                     e.stopPropagation();
-                    triggerRemoval();
+                    triggerRemoval({ clearAllLayers: true });
                     return false;
                 }
                 var actBtn = e.target.closest(".leaflet-draw-actions a");
                 if (actBtn && actBtn.textContent && actBtn.textContent.toLowerCase().indexOf("clear all") !== -1) {
-                    triggerRemoval();
+                    triggerRemoval({ clearAllLayers: true });
                 }
             }, true);
 
@@ -2368,7 +2398,7 @@ st.markdown(f"""
     /* Chat Column (col1): Messages container expands to fill remaining window height */
     div[data-testid="column"]:first-child div[data-testid="stVerticalBlockBorderWrapper"] {{
         height: calc(100vh - 150px) !important;
-        min-height: 420px !important;
+        min-height: 260px !important;
     }}
 
     div[data-testid="column"]:first-child:has(.geo-docked-pill) div[data-testid="stVerticalBlockBorderWrapper"] {{
@@ -3036,10 +3066,27 @@ if "keep_points" not in st.session_state:
     # Whether to keep selected points after sending a chat prompt
     st.session_state.keep_points = False
 
+if "keep_previous_layers" not in st.session_state:
+    # Whether to accumulate pins/outlines from previous answers instead of replacing them
+    st.session_state.keep_previous_layers = False
+
 if "openrouter_api_key" not in st.session_state:
-    # Initial load from st.secrets or environment variable if available
+    # Initial load from st.secrets, environment variable, or AgentRag/.env if available
     import os
-    default_key = os.environ.get("OPENROUTER_API_KEY", "")
+    default_key = os.environ.get("OPENROUTER_API_KEY", "").strip()
+    if not default_key:
+        try:
+            _env_file = get_agent_env_path()
+            if _env_file is not None and _env_file.is_file():
+                for _ln in _env_file.read_text(encoding="utf-8-sig").splitlines():
+                    _k, _, _v = _ln.partition("=")
+                    if _k.strip() == "OPENROUTER_API_KEY":
+                        default_key = _v.strip().strip("'\"")
+                        if default_key:
+                            os.environ["OPENROUTER_API_KEY"] = default_key
+                        break
+        except Exception:
+            pass
     try:
         if "OPENROUTER_API_KEY" in st.secrets:
             default_key = st.secrets["OPENROUTER_API_KEY"]
@@ -3356,17 +3403,22 @@ with st.sidebar:
         "OpenRouter API Key:",
         type="password",
         value=st.session_state.get("openrouter_api_key", ""),
-        help="Enter your OpenRouter key (https://openrouter.ai/keys) to connect to the live backend agent. Leave blank for offline mock mode.",
+        help="Enter your OpenRouter key (https://openrouter.ai/keys) to connect to the live backend agent. Changes are automatically saved to AgentRag/.env for RUN_GEORAG.bat. Leave blank for offline mock mode.",
         key="openrouter_key_input"
     )
     if api_key_input != st.session_state.get("openrouter_api_key", ""):
-        st.session_state.openrouter_api_key = api_key_input
+        cleaned_key = api_key_input.strip()
+        st.session_state.openrouter_api_key = cleaned_key
+        st.session_state.api_key_env_synced = persist_openrouter_api_key(cleaned_key, update_dotenv=True)
         st.rerun()
 
     if st.session_state.get("openrouter_api_key"):
         st.markdown("<div class='geo-badge' style='background:rgba(0,229,255,0.18); color:#00e5ff;'>🟢 LIVE GEORAG AGENT</div>", unsafe_allow_html=True)
+        if get_agent_env_path() is not None:
+            st.caption("🔒 Key active & synced with `AgentRag/.env`")
     else:
         st.markdown("<div class='geo-badge' style='background:rgba(255,193,7,0.15); color:#ffc107;'>🟡 OFFLINE SIMULATION (MOCK)</div>", unsafe_allow_html=True)
+        st.caption("Paste an OpenRouter key (`sk-or-...`) above to enable live RAG.")
 
     st.markdown("---")
 
@@ -3391,6 +3443,12 @@ with st.sidebar:
         "Retain target pin after query",
         key="keep_points",
         help="Keep the active target pin or bounding box selected after sending a query (instead of clearing it)."
+    )
+
+    st.toggle(
+        "Keep previous answers' pins on map",
+        key="keep_previous_layers",
+        help="When off (default), each new answer replaces the previous answer's pins and outlines on the map."
     )
 
     rag_logs_count = len(st.session_state.get("rag_logs", []))
@@ -4915,17 +4973,35 @@ with col1:
     # Render conversational message history inside a dedicated scroll container with its own scrollbar
     # Stable container height prevents chat scroll area and input box from bouncing (AGENTS.md Rule 3.1)
     chat_container_height = 465
-    chat_container = st.container(height=chat_container_height)
+    chat_container = st.container(height=chat_container_height, autoscroll=False)
     with chat_container:
         for m_idx, msg in enumerate(st.session_state.messages):
             role = msg["role"]
+            if m_idx == 0 and role == "assistant" and not msg.get("is_live"):
+                # The welcome note: open on the first visit, folded to one line once a question is asked
+                with st.expander(
+                    "👋 Welcome: how to use the map and the chat",
+                    expanded=len(st.session_state.messages) == 1,
+                ):
+                    st.markdown(msg["content"])
+                continue
             is_user = (role == "user")
             avatar = t_cfg["user_avatar"] if is_user else t_cfg["ai_avatar"]
             role_tag = t_cfg["operator_tag"] if is_user else t_cfg["ai_tag"]
-            if role == "assistant" and msg.get("is_live"):
-                role_tag += " • [LIVE RAG]"
-                if msg.get("grounded") is False:
-                    role_tag += " • [LLM ONLY]"
+            if role == "assistant":
+                if msg.get("is_live"):
+                    role_tag += " • [LIVE RAG]"
+                    if msg.get("grounded") is False:
+                        role_tag += " • [LLM ONLY]"
+                else:
+                    role_tag += " • [MOCK ENGINE]"
+                msg_status = msg.get("status", "answered")
+                if msg_status == "no_data":
+                    role_tag += " • [NO DATA]"
+                elif msg_status == "out_of_scope":
+                    role_tag += " • [OUT OF SCOPE]"
+                elif msg_status == "llm_failed":
+                    role_tag += " • [LLM FAILED]"
 
             role_class = "chat-role-operator" if is_user else "chat-role-geoai"
             marker_class = "bubble-marker-operator" if is_user else "bubble-marker-geoai"
@@ -4936,6 +5012,10 @@ with col1:
                     st.markdown(msg.get("content_plain") or msg["content"])
                 else:
                     st.markdown(msg["content"])
+                if role == "assistant" and not msg.get("is_live"):
+                    st.caption("⚠️ *Example answer: no OpenRouter key set (Deterministic Mock Engine)*")
+                if role == "assistant" and int(msg.get("map_not_shown", 0) or 0) > 0:
+                    st.caption(f"📍 *{msg['map_not_shown']} additional context places found in the knowledge graph (showing discussed places on map).*")
 
                 # Source Evidence Inspection Drawer
                 msg_sources = msg.get("sources", [])
@@ -5016,15 +5096,56 @@ with col1:
                         st.markdown("".join(source_items_html), unsafe_allow_html=True)
 
                 # Upgrade 5: Regional Distribution Breakdown
-                msg_regions = msg.get("regions", {})
-                if role == "assistant" and msg_regions and isinstance(msg_regions, dict):
-                    with st.expander(f"🌍 Regional Distribution ({len(msg_regions)} regions)", expanded=False):
-                        for reg_name, count in sorted(msg_regions.items(), key=lambda x: str(x[0])):
-                            st.markdown(f"- **{reg_name}**: `{count}` places/events")
+                msg_regions = msg.get("regions")
+                if role == "assistant" and msg_regions:
+                    if isinstance(msg_regions, dict):
+                        with st.expander(f"🌍 Regional Distribution ({len(msg_regions)} regions)", expanded=False):
+                            for reg_name, count in sorted(msg_regions.items(), key=lambda x: str(x[0])):
+                                st.markdown(f"- **{reg_name}**: `{count}` places/events")
+                    elif isinstance(msg_regions, list):
+                        with st.expander(f"🌍 Regional Distribution ({len(msg_regions)} regions)", expanded=False):
+                            reg_lines = []
+                            for r_node in msg_regions:
+                                if not isinstance(r_node, dict):
+                                    continue
+                                r_id = r_node.get("id", "Unknown")
+                                r_cnt = r_node.get("count", 0)
+                                r_places = r_node.get("places") or []
+                                r_pins_str = (
+                                    f" *(pins: {', '.join(f'#{p}' for p in r_places[:8])}{'...' if len(r_places) > 8 else ''})*"
+                                    if r_places
+                                    else ""
+                                )
+                                reg_lines.append(f"- **{r_id}**: `{r_cnt}` places{r_pins_str}")
+                                for child in r_node.get("children") or []:
+                                    if isinstance(child, dict):
+                                        c_id = child.get("id", "Unknown")
+                                        c_cnt = child.get("count", 0)
+                                        c_places = child.get("places") or []
+                                        c_pins_str = (
+                                            f" *(pins: {', '.join(f'#{p}' for p in c_places[:6])}{'...' if len(c_places) > 6 else ''})*"
+                                            if c_places
+                                            else ""
+                                        )
+                                        reg_lines.append(f"  - **{c_id}**: `{c_cnt}` places{c_pins_str}")
+                            if reg_lines:
+                                st.markdown("\n".join(reg_lines))
 
                 # Upgrade 4: Follow-up Suggestions & Did-You-Mean
-                if role == "assistant" and msg.get("did_you_mean"):
-                    st.info(f"💡 *Did you mean:* **{msg['did_you_mean']}**?")
+                raw_dym = msg.get("did_you_mean")
+                if role == "assistant" and raw_dym:
+                    if isinstance(raw_dym, list):
+                        dym_parts = []
+                        for item in raw_dym:
+                            if isinstance(item, dict) and item.get("id"):
+                                i_type = f" ({item['type']})" if item.get("type") else ""
+                                dym_parts.append(f"**{item['id']}**{i_type}")
+                            elif item:
+                                dym_parts.append(f"**{item}**")
+                        if dym_parts:
+                            st.info(f"💡 *Did you mean:* {', '.join(dym_parts)}?")
+                    else:
+                        st.info(f"💡 *Did you mean:* **{raw_dym}**?")
 
                 msg_follow_ups = msg.get("follow_ups", [])
                 if role == "assistant" and msg_follow_ups and m_idx == len(st.session_state.messages) - 1:
@@ -5043,6 +5164,15 @@ with col1:
                                     "content": follow_q
                                 })
                                 st.rerun()
+
+        if st.session_state.pop("scroll_to_answer", False):
+            # A new answer opens at its start, not its end (the box no longer auto-scrolls to the bottom)
+            st.html(
+                "<script>setTimeout(() => {"
+                "const m = document.querySelectorAll('[data-testid=\"stChatMessage\"]');"
+                "if (m.length) m[m.length - 1].scrollIntoView({block: 'start'});}, 300);</script>",
+                unsafe_allow_javascript=True,
+            )
 
     # Option 1: Map Canvas Tactical HUD & Zero-Height Chat Action Triggers
     # The active target/AOI HUD and its [✕ Clear] and [🔍 Recon] actions live on the Leaflet Map Canvas (col2).
@@ -5143,9 +5273,13 @@ if st.session_state.get("pending_query"):
     st.session_state.pending_query = None
 
     if agent_resp:
-        # Append assistant response and extend visual map layers
+        # Append assistant response; replace previous answer's layers unless retention is enabled
         st.session_state.messages.append(_build_assistant_message(agent_resp))
-        st.session_state.map_layers.extend(agent_resp.layers)
+        st.session_state.scroll_to_answer = True
+        if st.session_state.get("keep_previous_layers", False):
+            st.session_state.map_layers.extend(agent_resp.layers)
+        else:
+            st.session_state.map_layers = list(agent_resp.layers)
         if pq.get("bounding_box"):
             st.session_state.answered_bbox = pq.get("bounding_box")
         if getattr(agent_resp, "map_bbox", None):

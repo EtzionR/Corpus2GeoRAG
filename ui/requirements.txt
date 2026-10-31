@@ -6,6 +6,7 @@
 # ==============================================================================
 
 streamlit>=1.30.0
+pandas<3                 # pandas 3 is blocked by Windows Smart App Control (UI_TEAM_NOTES 1)
 folium>=0.15.0
 streamlit-folium>=0.18.0
 streamlit-adjustable-columns>=0.2.0

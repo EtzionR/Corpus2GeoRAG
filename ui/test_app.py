@@ -992,6 +992,24 @@ class TestMapTrashBinTool:
         # 4. clearPreviousSelectionInstantly is called on click and draw:created
         assert "clearPreviousSelectionInstantly()" in script
 
+    def test_hud_clear_preserves_tactical_overlays(self):
+        """Verify that triggerRemoval when invoked by HUD Clear preserves tactical layers and only purges selection."""
+        import folium
+        from streamlit_folium import _get_map_string
+        import app
+
+        MapTrashBinHook = getattr(app, "MapTrashBinHook")
+        m = folium.Map()
+        MapTrashBinHook().add_to(m)
+        script = _get_map_string(m)
+
+        # 1. triggerRemoval accepts opts and checks hadSelection
+        assert "function triggerRemoval(opts)" in script
+        assert "var hadSelection" in script
+
+        # 2. Only clears all layers if opts.clearAllLayers is explicitly true AND there was no active selection
+        assert "if (opts.clearAllLayers && !hadSelection && window.feature_group && window.feature_group.length > 0)" in script
+
     def test_feature_group_separation_in_app(self):
         """Ensure app.py separates selection_fg and tactical_layers_fg in feature_group_to_add."""
         with open("app.py", "r", encoding="utf-8") as f:
@@ -2245,6 +2263,150 @@ class TestContextPinsStabilityAndNoLeak:
         assert len(st.session_state.map_layers) == 3
         ctx_layers_2 = [l for l in st.session_state.map_layers if l.color == "cadetblue" or (isinstance(l.data, dict) and l.data.get("role") == "context")]
         assert len(ctx_layers_2) == 2
+
+
+class TestAgentRagMvpContractAndApiKeyPersistence:
+    """Verifies AgentRag MVP contract fields, UI_TEAM_NOTES items, and in-app API key persistence."""
+
+    def test_requirements_includes_pandas_lt_3(self):
+        """UI_TEAM_NOTES 1: Ensure requirements.txt pins pandas<3 for Windows Smart App Control."""
+        with open("requirements.txt", "r", encoding="utf-8") as f:
+            req_text = f.read()
+        assert "pandas<3" in req_text
+
+    def test_regions_list_of_nodes_and_map_not_shown_parsed(self, monkeypatch):
+        """Verify geo_agent and _build_assistant_message preserve list[RegionNode], map_showing, and map_not_shown."""
+        import geo_agent
+        from app import _build_assistant_message
+
+        fake_raw = {
+            "answer": "Bakhmut [1] saw intense fighting.",
+            "answer_plain": "Bakhmut saw intense fighting.",
+            "status": "answered",
+            "grounded": True,
+            "shape": "fact",
+            "geo_locations": [
+                {
+                    "number": 1,
+                    "id": "Bakhmut",
+                    "label": "Bakhmut",
+                    "kind": "city",
+                    "role": "primary",
+                    "geometry": {"type": "Point", "coordinates": [38.000, 48.595]},
+                    "why": "75 matching paragraphs",
+                    "sources": ["TEXT_101"],
+                }
+            ],
+            "regions": [
+                {
+                    "id": "Ukraine",
+                    "place_type": "country",
+                    "count": 50,
+                    "places": [1],
+                    "children": [
+                        {"id": "Donetsk Oblast", "place_type": "state", "count": 36, "places": [1], "children": []}
+                    ],
+                }
+            ],
+            "map": {
+                "bbox": [37.8, 48.4, 38.2, 48.7],
+                "highlight": [1],
+                "showing": "discussed",
+                "not_shown": 73,
+            },
+            "did_you_mean": [{"id": "Battle of Bakhmut", "type": "EVENT"}],
+            "follow_ups": ["What happened in Soledar?"],
+            "citations": [],
+            "sources": ["TEXT_101"],
+        }
+
+        monkeypatch.setattr(geo_agent, "_BACKEND_AVAILABLE", True)
+        monkeypatch.setattr(geo_agent, "_backend_query", lambda **kw: fake_raw)
+
+        resp = geo_agent.query_geo_agent(text_prompt="Where did the battle of Bakhmut happen?", api_key="sk-or-test")
+        assert isinstance(resp.regions, list)
+        assert len(resp.regions) == 1
+        assert resp.regions[0]["id"] == "Ukraine"
+        assert resp.regions[0]["children"][0]["id"] == "Donetsk Oblast"
+        assert resp.map_showing == "discussed"
+        assert resp.map_not_shown == 73
+        assert isinstance(resp.did_you_mean, list)
+        assert resp.did_you_mean[0]["id"] == "Battle of Bakhmut"
+
+        msg = _build_assistant_message(resp)
+        assert isinstance(msg["regions"], list)
+        assert msg["regions"][0]["id"] == "Ukraine"
+        assert msg["map_showing"] == "discussed"
+        assert msg["map_not_shown"] == 73
+        assert msg["did_you_mean"] == [{"id": "Battle of Bakhmut", "type": "EVENT"}]
+
+    def test_ui_team_notes_items_in_app_code(self):
+        """Verify UI_TEAM_NOTES items (layer replacement, welcome fold-out, autoscroll=False, mock notice) in app.py."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            code = f.read()
+
+        # Note 3: Replace map_layers by default with optional keep_previous_layers toggle
+        assert "st.session_state.map_layers = list(agent_resp.layers)" in code
+        assert "Keep previous answers' pins on map" in code
+
+        # Note 6: Welcome message inside st.expander folded after first question
+        assert "👋 Welcome: how to use the map and the chat" in code
+        assert "expanded=len(st.session_state.messages) == 1" in code
+
+        # Note 7: autoscroll=False and scroll_to_answer
+        assert "st.container(height=chat_container_height, autoscroll=False)" in code
+        assert 'st.session_state.pop("scroll_to_answer", False)' in code
+        assert "st.session_state.scroll_to_answer = True" in code
+
+        # Note 8: Clear mock engine disclaimer when no API key is set
+        assert "Example answer: no OpenRouter key set (Deterministic Mock Engine)" in code
+
+    def test_persist_openrouter_api_key_updates_env_and_dotenv_file(self, tmp_path, monkeypatch):
+        """Verify persist_openrouter_api_key updates os.environ and writes/clears AgentRag/.env."""
+        import os
+        import geo_agent
+
+        env_file = tmp_path / ".env"
+        env_file.write_text("OTHER_SETTING=123\nOPENROUTER_API_KEY=sk-or-old-key\n", encoding="utf-8")
+
+        # 1. Update with a new key
+        saved = geo_agent.persist_openrouter_api_key("sk-or-v1-new-key-999", update_dotenv=True, env_path=env_file)
+        assert saved is True
+        assert os.environ.get("OPENROUTER_API_KEY") == "sk-or-v1-new-key-999"
+        content = env_file.read_text(encoding="utf-8")
+        assert "OTHER_SETTING=123" in content
+        assert "OPENROUTER_API_KEY=sk-or-v1-new-key-999" in content
+        assert "sk-or-old-key" not in content
+
+        # 2. Clear the key -> removes from os.environ and .env
+        cleared = geo_agent.persist_openrouter_api_key("", update_dotenv=True, env_path=env_file)
+        assert cleared is True
+        assert "OPENROUTER_API_KEY" not in os.environ
+        content_after = env_file.read_text(encoding="utf-8")
+        assert "OTHER_SETTING=123" in content_after
+        assert "OPENROUTER_API_KEY" not in content_after
+
+    def test_clearing_api_key_in_session_state_forces_mock_mode(self, monkeypatch):
+        """Verify that clearing openrouter_api_key in session_state routes to mock even if os.environ had a key."""
+        import streamlit as st
+        import app
+        import geo_agent
+
+        monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-env-key-should-be-ignored")
+        monkeypatch.setattr(geo_agent, "_BACKEND_AVAILABLE", True)
+
+        def fail_if_called(**kw):
+            raise AssertionError("Live backend should not be called when sidebar key is cleared!")
+
+        monkeypatch.setattr(geo_agent, "_backend_query", fail_if_called)
+
+        st.session_state.openrouter_api_key = ""
+        st.session_state.rag_logs = []
+        st.session_state.messages = []
+
+        resp = app.dispatch_geo_query(text_prompt="Test offline simulation mode")
+        assert resp is not None
+        assert resp.is_live_backend is False
 
 
 
