@@ -4,7 +4,9 @@
 > The first run installs everything (a few minutes) and asks once for the OpenRouter key, which it
 > saves in `AgentRag/.env`; git ignores that file, so the key is never uploaded. To set the key by
 > hand instead, create `AgentRag/.env` with one line: `OPENROUTER_API_KEY=` followed by the key. The app
-> opens in the browser; keep the black window open while you use it.
+> opens in the browser; keep the black window open while you use it. Clone the repo into a short
+> folder (for example `C:\GeoAi`): Windows limits paths to 260 characters, and some files in the
+> repo have 154-character paths.
 >
 > **Using the agent (UI team included): you need your own OpenRouter API key.**
 > Create one at https://openrouter.ai/keys. Pass it as `api_key=` to `query()`, or put it in
