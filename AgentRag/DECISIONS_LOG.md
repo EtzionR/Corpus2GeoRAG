@@ -1089,6 +1089,20 @@ pass ($0.017); "Show me Kyiv" now has a description instead of "no passages desc
 - **"Number N"** works for every place of the last answer (tested 3, 240 and 535 after the
   535-place list), and only for the places on the map after a non-list answer.
 
+**P2-73. Outlines only for the places the question is about** (owner's go, 2026-10-31). Every place
+the answer discussed got an outline (up to 10), and the map zoomed to fit them all: "What happened
+in Crimea?" outlined Russia and Ukraine too and zoomed to the whole world; "Tell me about number 2"
+after the Bakhmut list outlined 10 places, the UK among them. *Rule:* the outline and the zoom go to
+the places the question names (or the follow-up's place, or a place lookup's #1: the event's main
+place for "where did the battle of Bakhmut happen"); every other place keeps its pin. A list gets
+pins only (its places are equal; "Russia and Ukraine with the same country" would outline two
+countries); an area question outlines the named area it searched ("drone attacks in Kharkiv"),
+never a drawn selection, which the UI draws itself. A question about a person or an event names no
+place: pins only, zoom to the pins. *Considered:* sending every outline and letting the UI choose
+by `role` / `map.highlight`; the UI draws every `shape` it gets, so that needs a UI change before
+the MVP, and nothing reads an outline back (follow-ups use number, id and label). No format change;
+answers get smaller.
+
 ### ④ Evidence pack
 
 **P2-15. Choosing the least text that answers.**

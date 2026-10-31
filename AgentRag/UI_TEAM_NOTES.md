@@ -1,6 +1,6 @@
 # Notes for the UI team
 
-Found while running `ui/app.py` against the agent (2026-10-29, updated 2026-10-30). We changed
+Found while running `ui/app.py` against the agent (2026-10-29, updated 2026-10-31). We changed
 nothing in `ui/`; each item says what we saw and the change we suggest.
 
 ## 1. Blank page (no map, no chat box) on PCs with Smart App Control
@@ -23,14 +23,17 @@ pinned to its bottom.
 ## 3. Old answers' pins and polygons stay on the map (most important)
 
 After each answer the app *adds* the answer's layers to the map and never clears the previous ones
-(`st.session_state.map_layers.extend(agent_resp.layers)`, `app.py` ~line 2951). After a few questions
+(`st.session_state.map_layers.extend(agent_resp.layers)`, `app.py` ~line 2951, and the same in the
+three Recon Scan buttons, ~lines 1798, 1843, 2124). After a few questions
 "Where is Ukraine?" shows Ukraine plus every earlier answer's outlines. It also confuses follow-ups:
 "Tell me about number 4" always means place 4 of the **last** answer, but a pin numbered 4 from an
 earlier answer may still be on the map.
 
-**Suggested fix:** replace instead of extend for each new answer
-(`st.session_state.map_layers = list(agent_resp.layers)`), with an optional "keep previous answers
-on the map" toggle if you want the old behaviour.
+**Suggested fix:** replace instead of extend in all four places
+(`st.session_state.map_layers = list(agent_resp.layers)`, and `recon_response` / `recon_resp` in the
+Recon buttons), with an optional "keep previous answers on the map" toggle if you want the old
+behaviour. The answer's own layers include the current map selection, so that stays drawn. Tried on
+a local copy (no errors; each answer now shows only its own pins).
 
 ## 4. How many places an answer carries
 
@@ -40,7 +43,10 @@ on the map" toggle if you want the old behaviour.
 - `"discussed"`: other answers return the places the answer talks about, plus the place asked about.
   `map.not_shown` says how many more were found; a line such as "12 more places found" is enough.
 
-Outlines (`shape`) come with the main places only (up to 10). Nothing else in the format changed.
+Outlines (`shape`) come only with the places the question is about, and `map.bbox` zooms to them:
+"What happened in Crimea?" outlines Crimea, not Russia and Ukraine too; a list gets pins only; an
+area question gets the named area it searched ("drone attacks in Kharkiv": Kharkiv). Draw every
+`shape` you receive. Nothing else in the format changed.
 
 ## 5. Big lists
 
@@ -97,5 +103,6 @@ a local copy only (no errors). `st.components.v1.html` would work too but is dep
 - Donbas (a street in Skopje in the graph) now comes as a region: the outlines of Donetsk and Luhansk
   oblasts together (a `MultiPolygon` shape) with a point between them.
 - Some points are corrected from the graph's own data (Dnipro was on the river near Chernihiv).
+- Fewer outlines: only the places the question is about (item 4). Every place still has its pin.
 - The region grouping follows each place's own address: Kharkiv Oblast and Crimea under Ukraine,
   no longer under Russia.

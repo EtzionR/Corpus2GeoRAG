@@ -73,7 +73,7 @@ def test_a_list_answer_carries_every_place_and_the_regions(monkeypatch):
     result = query("Which places were part of the Battle of Bakhmut?")
     assert result["shape"] == "list" and [p["id"] for p in result["geo_locations"]] == ["Bakhmut", "Soledar"]
     assert [p["role"] for p in result["geo_locations"]] == ["primary", "context"]
-    assert "shape" not in result["geo_locations"][1]        # outlines only for places the answer discusses
+    assert not any("shape" in p for p in result["geo_locations"])     # a list gets pins only (P2-73)
     assert result["regions"][0]["id"] == "Ukraine" and result["regions"][0]["count"] == 2
 
 
@@ -114,6 +114,29 @@ def test_the_map_shows_only_the_discussed_places_unless_the_answer_is_a_list(mon
     result = query("Tell me about Zelenskyy")              # finds Ukraine, Kharkiv, Kyiv
     assert result["shape"] != "list" and [(p["number"], p["id"]) for p in result["geo_locations"]] == [(2, "Kharkiv")]
     assert result["map"]["showing"] == "discussed" and result["map"]["not_shown"] == 2
+
+
+def test_only_the_asked_place_is_outlined_and_zoomed_to(monkeypatch):
+    from graph_index import GraphIndex
+    G = build_vr6_graph()
+    G.nodes["Russia"]["geometry_wkt"] = "POLYGON ((27 41, 180 41, 180 82, 27 82, 27 41))"
+    monkeypatch.setattr(georag_agent, "_graph", GraphIndex(G))
+    install(monkeypatch, plan=PlanDraft(type="about", entities=[EntityMention(text="Ukraine", name="Ukraine", kind="LOC")]),
+            answer=WriteDraft(answer="Ukraine borders Russia [2] and Belarus [3].", places_discussed=[1, 2, 3]))
+    result = query("Tell me about Ukraine")
+    assert [(p["id"], "shape" in p) for p in result["geo_locations"]] == [
+        ("Ukraine", True), ("Russia", False), ("Belarus", False)]       # Russia and Belarus: pins only
+    w, s, e, n = result["map"]["bbox"]
+    assert 20 < w and e < 43 and 43 < s and n < 54                  # Ukraine, not Russia's 150 degrees
+
+
+def test_a_question_about_a_person_outlines_no_place(monkeypatch):
+    install(monkeypatch, plan=PlanDraft(type="about", entities=[
+        EntityMention(text="Zelenskyy", name="Zelenskyy", kind="PER")]),
+        answer=WriteDraft(answer="Zelenskyy visited Kharkiv.", places_discussed=[1, 2, 3]))
+    result = query("Tell me about Zelenskyy")              # finds Ukraine, Kharkiv, Kyiv
+    assert len(result["geo_locations"]) == 3 and not any("shape" in p for p in result["geo_locations"])
+    assert result["map"]["bbox"]                           # zooms to the pins
 
 
 def test_the_map_box_stays_inside_valid_coordinates():

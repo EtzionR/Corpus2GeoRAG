@@ -125,7 +125,7 @@ result["shape"]       # "list" | "fact" | "drilldown" | "explain"
 for place in result["geo_locations"]:   # every place found, strongest first
     place["number"]   # the [n] in the answer
     place["role"]     # "primary" (the answer discusses it) or "context" (map only)
-    place["shape"]    # outline, only on primary places (at most 10 per answer, <= 300 points each)
+    place["shape"]    # outline, only on the places the question is about (at most 10, <= 300 points each)
     place["why"]      # one line, e.g. "ATTACKED in 12 records; 118 matching paragraphs"
     place["uncertain"]  # present when the point may be wrong: show it greyed or with a "?"
 
@@ -146,11 +146,12 @@ is, who did what, one person at one place) returns only the places it talks abou
 
 Suggestions, all optional:
 
-- **Many places:** draw primary places as big highlighted markers (plus their outlines) and context
+- **Many places:** draw primary places as big highlighted markers and context
   places small, inside a `folium.plugins.MarkerCluster`. Clustering also untangles places that sit
   on the same spot (Washington, the White House and the Oval Office).
 - **Zoom:** `m.fit_bounds([[s, w], [n, e]])` with `w, s, e, n = result["map"]["bbox"]`.
-- **Outline:** `folium.GeoJson({"type": "Feature", "geometry": place["shape"], "properties": {}})`.
+- **Outline:** `folium.GeoJson({"type": "Feature", "geometry": place["shape"], "properties": {}})`; draw
+  every `shape` you get: the agent already sends only the ones worth drawing.
 - **Doubtful points:** `place["uncertain"]` says why the graph's point may be wrong ("geocoded as a
   river, but its own article describes a city or town"). Show those pins greyed or with a "?".
 - **Regions:** show `result["regions"]` as an expandable tree ("Ukraine 50 → Donetsk 36 …"); the

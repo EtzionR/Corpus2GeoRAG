@@ -180,7 +180,7 @@ Input rules (breaking one raises `InvalidRequestError` naming the field):
 | `entities` | People and organizations involved (id, `PER`/`ORG`, role relative to the question, record count). |
 | `citations` | One per `[S2]` / `[L1]` in the answer: `pointer`, `article`, `section`, and `spans` (character positions of the entities in that paragraph, for highlighting). |
 | `sources` | The pointers of everything the answer cites. |
-| `map` | `bbox` `[west, south, east, north]` to zoom to (around the places the answer discusses), and `highlight` (their numbers). |
+| `map` | `bbox` `[west, south, east, north]` to zoom to (around the places the question is about; with none, the places the answer discusses), and `highlight` (the discussed places' numbers). |
 | `follow_ups` | Up to 3 suggested next questions, ready to send as typed. |
 | `did_you_mean` | Other graph entries the question's names could have meant. |
 | `notes` | What each step noticed (prefixed ①–⑤), e.g. "Kyiv is inside: Ukraine", "the map point may be wrong". For debugging and transparency. |
@@ -195,7 +195,7 @@ Each entry of `geo_locations`:
 | `kind` | The geocoder's place type: `city`, `town`, `village`, `state` (an oblast), `country`, `road`, `building`… |
 | `role` | `primary`: the answer discusses it. `context`: found, for the map only. |
 | `geometry` | Always a GeoJSON Point. |
-| `shape` | The outline (Polygon / MultiPolygon / LineString), simplified to at most 300 points. Only for primary places, at most 10 per answer. |
+| `shape` | The outline (Polygon / MultiPolygon / LineString), simplified to at most 300 points. Only for the places the question is about ("What happened in Crimea?": Crimea, not Russia), at most 10 per answer; a list gets none, an area question only the named area it searched. |
 | `why` | One line of data on why it's there, e.g. "ATTACKED in 12 records; 118 matching paragraphs". |
 | `uncertain` | Present when the graph's point may be wrong, e.g. "geocoded as a road with importance 0.04", or "geocoded as a river, but its own article describes a city or town" (Dnipro). |
 | `sources` | Up to 10 paragraph pointers, best first. |

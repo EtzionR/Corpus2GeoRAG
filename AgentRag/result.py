@@ -1,13 +1,14 @@
 """⑥ Result: the JSON the UI receives. No LLM; everything comes from the graph and the earlier steps.
 
 Every place found goes in, numbered exactly as the answer cites it ([3] is place number 3), with its
-point, its data line and its paragraph pointers. The places the answer discusses ("primary") also get
-their outline - the graph's polygon or line, simplified so the map can draw it. The answer's
+point, its data line and its paragraph pointers. The places the question is about also get their
+outline - the graph's polygon or line, simplified so the map can draw it - and the map zooms to
+them (P2-73). The answer's
 citations ([S2], [L1]) come with their paragraph pointer, article and section; get_source_text()
 turns a pointer into the paragraph. The trust boundary from phase 1 holds: no coordinate or source
 here comes from the LLM.
 """
-from typing import Optional
+from typing import Optional, Sequence
 
 from evidence import EvidencePack
 from geo import bbox, parse_wkt, simplify
@@ -19,7 +20,7 @@ from retrieve import Retrieval
 from schema import (Alternative, CitationOut, EntityOut, Geometry, MapHint, Meta, PlaceOut, Result)
 from writer import Answer, strip_citations
 
-MAX_SHAPES = 10            # outlines for at most this many primary places
+MAX_SHAPES = 10            # outlines for at most this many places
 MAX_SHAPE_POINTS = 300     # points per outline, after simplification
 MAX_PLACE_SOURCES = 10     # paragraph pointers per place
 MAX_ENTITIES = 20
@@ -43,8 +44,9 @@ def _place_sources(gi: GraphIndex, hit) -> list[str]:
     return pointers
 
 
-def _map_hint(places: list[PlaceOut], highlight: list[int]) -> MapHint:
-    focus = [p for p in places if p.number in highlight] or places[:10]
+def _map_hint(places: list[PlaceOut], highlight: list[int], zoom_to: Sequence[int] = ()) -> MapHint:
+    """Zooms to the places the question is about; with none, to the places the answer discusses."""
+    focus = [p for p in places if p.number in (zoom_to or highlight)] or places[:10]
     if not focus:
         return MapHint(highlight=highlight)
     xs, ys = [], []
@@ -76,6 +78,20 @@ def build_result(plan: QueryPlan, res: Resolution, ret: Retrieval, pack: Evidenc
         {plan.follow_up.target_id} if plan.follow_up and plan.follow_up.target_id else set())
     primary += [n for n, h in enumerate(ret.places, 1) if h.group.id in asked and n not in primary]
 
+    # P2-73: only the places the question is about get an outline, and the map zooms to them; every
+    # other place keeps its pin. "What happened in Crimea?" outlined Russia and Ukraine too and zoomed
+    # out to the whole world. A list's places are all equal, so a list gets pins only; an area question
+    # outlines the named area it searched ("drone attacks in Kharkiv"), never a drawn one (the UI
+    # draws the selection itself).
+    if plan.type in ("area", "area_topic"):
+        area_from = (ret.area_used or {}).get("from")
+        about = [n for n, h in enumerate(ret.places, 1) if h.group.id == area_from]
+    elif answer.shape == "list":
+        about = []
+    else:
+        looked_up = primary[:1] if plan.type == "place_lookup" else []   # the place, or the event's main place
+        about = list(dict.fromkeys(looked_up + [n for n, h in enumerate(ret.places, 1) if h.group.id in asked]))
+
     places, shapes = [], 0
     for number, hit in enumerate(ret.places, 1):
         if not hit.group.place:
@@ -83,7 +99,7 @@ def build_result(plan: QueryPlan, res: Resolution, ret: Retrieval, pack: Evidenc
         ref = refs.get(number)
         is_primary = number in primary
         shape = None
-        if is_primary and shapes < MAX_SHAPES:
+        if number in about and shapes < MAX_SHAPES:
             shape = outline(gi, hit.group.place.from_name)
             shapes += shape is not None
         places.append(PlaceOut(
@@ -124,7 +140,7 @@ def build_result(plan: QueryPlan, res: Resolution, ret: Retrieval, pack: Evidenc
         geo_locations=places, regions=pack.regions,
         entities=[EntityOut(id=e.id, type=e.type, role=e.role, records=e.records) for e in pack.entities[:MAX_ENTITIES]],
         citations=citations, sources=list(dict.fromkeys(c.pointer for c in citations)),
-        map=_map_hint(places, [n for n in primary if n in {p.number for p in places}]).model_copy(
+        map=_map_hint(places, [n for n in primary if n in {p.number for p in places}], about).model_copy(
             update={"showing": "all" if show_all else "discussed", "not_shown": not_shown}),
         follow_ups=answer.follow_ups, did_you_mean=list(alternatives.values()), notes=notes,
         meta=Meta(question_type=plan.type, model=next((c.model for c in reversed(calls) if c.model), None),
