@@ -403,7 +403,7 @@ def query_geo_agent(
             layers.append(MapLayer(
                 name=f"Sector BBox [{min_lat:.3f}, {min_lng:.3f}]-[{max_lat:.3f}, {max_lng:.3f}]",
                 layer_type="polygon",
-                data={"coordinates": bbox_poly},
+                data={"coordinates": bbox_poly, "role": "query_bbox"},
                 color="cyan",
                 tooltip="Active Query Bounding Box",
                 popup=f"<b>Bounding Box Sector</b><br>SW: ({min_lat:.4f}°, {min_lng:.4f}°)<br>NE: ({max_lat:.4f}°, {max_lng:.4f}°)"
@@ -412,7 +412,7 @@ def query_geo_agent(
             layers.append(MapLayer(
                 name=f"Target Buffer ({selected_point[0]:.3f}, {selected_point[1]:.3f})",
                 layer_type="circle",
-                data={"lat": selected_point[0], "lng": selected_point[1], "radius": 5000},
+                data={"lat": selected_point[0], "lng": selected_point[1], "radius": 5000, "role": "target_buffer"},
                 color="cyan",
                 tooltip="Target Buffer (5km)",
                 popup=f"<b>Target Coordinate:</b> ({selected_point[0]:.4f}°, {selected_point[1]:.4f}°)"
@@ -528,7 +528,7 @@ def _query_mock_agent(
                 MapLayer(
                     name=f"Box Lower-Left ({lower_left[0]:.3f}, {lower_left[1]:.3f})",
                     layer_type="marker",
-                    data={"lat": lower_left[0], "lng": lower_left[1]},
+                    data={"lat": lower_left[0], "lng": lower_left[1], "role": "bbox_corner", "corner": "sw"},
                     color="red",
                     tooltip=f"Lower-Left (SW): {lower_left[0]:.4f}, {lower_left[1]:.4f}",
                     popup=(
@@ -541,7 +541,7 @@ def _query_mock_agent(
                 MapLayer(
                     name=f"Box Upper-Right ({upper_right[0]:.3f}, {upper_right[1]:.3f})",
                     layer_type="marker",
-                    data={"lat": upper_right[0], "lng": upper_right[1]},
+                    data={"lat": upper_right[0], "lng": upper_right[1], "role": "bbox_corner", "corner": "ne"},
                     color="red",
                     tooltip=f"Upper-Right (NE): {upper_right[0]:.4f}, {upper_right[1]:.4f}",
                     popup=(
@@ -554,7 +554,7 @@ def _query_mock_agent(
                 MapLayer(
                     name=f"Bounding Box Area [{lower_left[0]:.3f}, {lower_left[1]:.3f}]-[{upper_right[0]:.3f}, {upper_right[1]:.3f}]",
                     layer_type="polygon",
-                    data={"coordinates": bbox_coords},
+                    data={"coordinates": bbox_coords, "role": "query_bbox"},
                     color="orange",
                     tooltip=f"Bounding Box Area: {user_query[:25]}...",
                     popup=(
@@ -582,7 +582,7 @@ def _query_mock_agent(
                 MapLayer(
                     name=f"Box Lower-Left ({lower_left[0]:.3f}, {lower_left[1]:.3f})",
                     layer_type="marker",
-                    data={"lat": lower_left[0], "lng": lower_left[1]},
+                    data={"lat": lower_left[0], "lng": lower_left[1], "role": "bbox_corner", "corner": "sw"},
                     color="purple",
                     tooltip=f"Lower-Left (SW): {lower_left[0]:.4f}, {lower_left[1]:.4f}",
                     popup=(
@@ -594,7 +594,7 @@ def _query_mock_agent(
                 MapLayer(
                     name=f"Box Upper-Right ({upper_right[0]:.3f}, {upper_right[1]:.3f})",
                     layer_type="marker",
-                    data={"lat": upper_right[0], "lng": upper_right[1]},
+                    data={"lat": upper_right[0], "lng": upper_right[1], "role": "bbox_corner", "corner": "ne"},
                     color="purple",
                     tooltip=f"Upper-Right (NE): {upper_right[0]:.4f}, {upper_right[1]:.4f}",
                     popup=(
@@ -606,7 +606,7 @@ def _query_mock_agent(
                 MapLayer(
                     name=f"Bounding Box Area ({lower_left[0]:.3f}, {lower_left[1]:.3f})",
                     layer_type="polygon",
-                    data={"coordinates": bbox_coords},
+                    data={"coordinates": bbox_coords, "role": "query_bbox"},
                     color="purple",
                     tooltip="Bounding Box Reconnaissance Zone",
                     popup=(

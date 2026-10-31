@@ -542,24 +542,29 @@ def show_rag_log_dialog():
             st.session_state.rag_logs = []
             st.rerun()
 
-def clear_spatial_selection():
+def clear_spatial_selection(ignore_current_drawing: bool = True):
     """Clear all active spatial selections and reset drawing trackers to prevent rerun loops."""
     st.session_state.selected_points = []
     st.session_state.bounding_box = None
     st.session_state.answered_bbox = None
     st.session_state.active_point = None
+    st.session_state.active_tactical_scan = None
     st.session_state.selection_mode = "Point Selection"
     st.session_state.last_drawing_time = time.time()
     st.session_state.selection_clear_seq = st.session_state.get("selection_clear_seq", 0) + 1
-    if st.session_state.get("last_processed_drawing"):
-        st.session_state.ignored_drawing = st.session_state.get("last_processed_drawing")
-    _cur_map = st.session_state.get("geoai_tactical_map")
-    if isinstance(_cur_map, dict):
-        if _cur_map.get("last_active_drawing"):
-            st.session_state.ignored_drawing = _cur_map.get("last_active_drawing")
-        _lc = _cur_map.get("last_clicked")
-        if isinstance(_lc, dict) and "lat" in _lc and "lng" in _lc:
-            st.session_state.last_clicked = (round(_lc["lat"], 5), round(_lc["lng"], 5))
+    if ignore_current_drawing:
+        if st.session_state.get("last_processed_drawing"):
+            st.session_state.ignored_drawing = st.session_state.get("last_processed_drawing")
+        _cur_map = st.session_state.get("geoai_tactical_map")
+        if isinstance(_cur_map, dict):
+            if _cur_map.get("last_active_drawing"):
+                st.session_state.ignored_drawing = _cur_map.get("last_active_drawing")
+            _lc = _cur_map.get("last_clicked")
+            if isinstance(_lc, dict) and "lat" in _lc and "lng" in _lc:
+                st.session_state.last_clicked = (round(_lc["lat"], 5), round(_lc["lng"], 5))
+    else:
+        st.session_state.ignored_drawing = None
+        st.session_state.last_clicked = None
     st.session_state.last_processed_drawing = None
 
 
@@ -862,8 +867,9 @@ class MapTrashBinHook(MacroElement):
                 try {
                     if (!window.__GLOBAL_DATA__ || !window.Streamlit || typeof window.Streamlit.setComponentValue !== 'function') return;
                     var g = window.__GLOBAL_DATA__;
+                    var activeClick = g.lat_lng_clicked || g.last_object_clicked;
                     var c = {
-                        last_clicked: g.lat_lng_clicked,
+                        last_clicked: activeClick,
                         last_active_drawing: g.last_active_drawing,
                         all_drawings: g.all_drawings
                     };
@@ -910,11 +916,14 @@ class MapTrashBinHook(MacroElement):
 
             // Track drawing state to avoid placing single-click marker when drawing AOI rectangle
             map._isDrawing = false;
+            map._justDrew = false;
             map.on('draw:drawstart', function() {
                 map._isDrawing = true;
             });
             map.on('draw:drawstop', function() {
-                setTimeout(function() { map._isDrawing = false; }, 350);
+                map._isDrawing = false;
+                map._justDrew = true;
+                setTimeout(function() { map._justDrew = false; }, 800);
             });
 
             // Register active selection layers into drawnItems so Leaflet Draw recognizes them
@@ -975,14 +984,28 @@ class MapTrashBinHook(MacroElement):
                             }
                             map.removeLayer(selFg);
                         }
+                        for (var f = 2; f < window.feature_group.length; f += 2) {
+                            var extraSel = window.feature_group[f];
+                            if (extraSel) {
+                                if (typeof extraSel.clearLayers === 'function') extraSel.clearLayers();
+                                try { map.removeLayer(extraSel); } catch(errSel) {}
+                            }
+                        }
                     }
                 } catch(e) {}
 
                 // 4. Scan all layers on the map and immediately purge any prior target or bbox layers
-                var tacFg = (window.feature_group && window.feature_group.length > 1) ? window.feature_group[1] : null;
+                function isTacticalLayer(layer) {
+                    if (!window.feature_group) return false;
+                    for (var f = 1; f < window.feature_group.length; f += 2) {
+                        var tf = window.feature_group[f];
+                        if (tf && typeof tf.hasLayer === 'function' && tf.hasLayer(layer)) return true;
+                    }
+                    return false;
+                }
                 function isSelectionLayer(layer) {
                     if (!layer) return false;
-                    if (tacFg && typeof tacFg.hasLayer === 'function' && tacFg.hasLayer(layer)) {
+                    if (isTacticalLayer(layer)) {
                         return false;
                     }
                     if (layer._icon && typeof layer._icon.className === 'string') {
@@ -1056,6 +1079,7 @@ class MapTrashBinHook(MacroElement):
             // Server-to-Client Selection Synchronization Hook (invoked by SelectionSyncHook on selection_fg)
             window._onServerSelectionSync = function(state) {
                 state = state || {};
+                window._isLayerSyncing = true;
                 if (state.pinShape) {
                     setMapPinShape(state.pinShape);
                 }
@@ -1082,12 +1106,15 @@ class MapTrashBinHook(MacroElement):
                             action: 'clear'
                         }, '*');
                     } catch(err) {}
+                    window._isLayerSyncing = false;
                 } else {
                     if (typeof window.updateMapTacticalHud === 'function') {
                         if (state.bboxBounds) {
                             window.updateMapTacticalHud({ type: 'bbox', sw: state.bboxBounds[0], ne: state.bboxBounds[1] });
                         } else if (state.activePoint) {
                             window.updateMapTacticalHud({ type: 'point', lat: state.activePoint[0], lng: state.activePoint[1] });
+                        } else if (window._lastHudInfo) {
+                            window.updateMapTacticalHud(window._lastHudInfo);
                         }
                     } else if (state.bboxBounds) {
                         window._lastHudInfo = { type: 'bbox', sw: state.bboxBounds[0], ne: state.bboxBounds[1] };
@@ -1101,6 +1128,46 @@ class MapTrashBinHook(MacroElement):
                     } else {
                         window._isClientQuerying = false;
                         stopQueryingAnimation();
+                    }
+
+                    // Restore / maintain open popup for selected answered pin or marker
+                    var targetPoint = state.activePoint ? { lat: state.activePoint[0], lng: state.activePoint[1] } : window._lastOpenPopupInfo;
+                    if (targetPoint) {
+                        var targetLat = targetPoint.lat;
+                        var targetLng = targetPoint.lng;
+                        setTimeout(function() {
+                            try {
+                                window._reopeningPopup = true;
+                                var found = false;
+                                function checkMarker(m) {
+                                    if (found) return;
+                                    if (m instanceof L.Marker && m.getLatLng && m.getPopup) {
+                                        var ll = m.getLatLng();
+                                        var m_lat = Math.round(ll.lat * 100000) / 100000;
+                                        var m_lng = Math.round(ll.lng * 100000) / 100000;
+                                        var isReticle = m._icon && m._icon.className && m._icon.className.indexOf('geoai-pin--target') !== -1;
+                                        if (!isReticle && Math.abs(m_lat - targetLat) < 0.0001 && Math.abs(m_lng - targetLng) < 0.0001) {
+                                            m.openPopup();
+                                            found = true;
+                                        }
+                                    }
+                                }
+                                map.eachLayer(function(l) {
+                                    if (found) return;
+                                    checkMarker(l);
+                                    if (!found && l.eachLayer) {
+                                        l.eachLayer(checkMarker);
+                                    }
+                                });
+                            } catch(err) {} finally {
+                                setTimeout(function() {
+                                    window._reopeningPopup = false;
+                                    window._isLayerSyncing = false;
+                                }, 100);
+                            }
+                        }, 40);
+                    } else {
+                        setTimeout(function() { window._isLayerSyncing = false; }, 50);
                     }
                 }
                 setTimeout(updateTrashButtonState, 50);
@@ -1134,7 +1201,7 @@ class MapTrashBinHook(MacroElement):
 
             // 1. Instant client-side visual feedback on map canvas clicks (0ms latency)
             map.on('click', function(e) {
-                if (map._isDrawing) return;
+                if (map._isDrawing || map._justDrew) return;
                 if (e.originalEvent && (e.originalEvent._stopped || e.originalEvent.defaultPrevented)) return;
 
                 // Guard: Ignore clicks on existing markers, cluster icons, popups, or controls
@@ -1211,10 +1278,24 @@ class MapTrashBinHook(MacroElement):
                             lat: p_lat,
                             lng: p_lng
                         };
+                        window._lastHudInfo = { type: 'point', lat: p_lat, lng: p_lng };
+
+                        // Always immediately update Tactical HUD and parent docked pill with clicked pin coordinates
+                        if (typeof window.updateMapTacticalHud === 'function') {
+                            window.updateMapTacticalHud({ type: 'point', lat: p_lat, lng: p_lng });
+                        }
+                        try {
+                            window.parent.postMessage({
+                                type: 'GEOAI_SELECTION_EVENT',
+                                action: 'set_point',
+                                lat: p_lat,
+                                lng: p_lng
+                            }, '*');
+                        } catch(err) {}
 
                         // Check if this point is already the active target to prevent unnecessary reruns
                         var alreadyActive = false;
-                        if (window.__GLOBAL_DATA__ && window.__GLOBAL_DATA__.lat_lng_clicked) {
+                        if (window._instantTargetMarker && window.__GLOBAL_DATA__ && window.__GLOBAL_DATA__.lat_lng_clicked) {
                             var cur = window.__GLOBAL_DATA__.lat_lng_clicked;
                             if (Math.abs(cur.lat - p_lat) < 0.00001 && Math.abs(cur.lng - p_lng) < 0.00001) {
                                 alreadyActive = true;
@@ -1223,26 +1304,41 @@ class MapTrashBinHook(MacroElement):
 
                         if (!alreadyActive) {
                             clearPreviousSelectionInstantly();
-                            if (typeof window.updateMapTacticalHud === 'function') {
-                                window.updateMapTacticalHud({ type: 'point', lat: p_lat, lng: p_lng });
-                            } else {
-                                window._lastHudInfo = { type: 'point', lat: p_lat, lng: p_lng };
-                            }
-                            try {
-                                window.parent.postMessage({
-                                    type: 'GEOAI_SELECTION_EVENT',
-                                    action: 'set_point',
-                                    lat: p_lat,
-                                    lng: p_lng
-                                }, '*');
-                            } catch(err) {}
-
                             if (window.__GLOBAL_DATA__) {
                                 window.__GLOBAL_DATA__.lat_lng_clicked = latlng;
+                                window.__GLOBAL_DATA__.last_object_clicked = latlng;
+                                if (source && typeof source.toGeoJSON === 'function') {
+                                    window.__GLOBAL_DATA__.last_active_drawing = source.toGeoJSON();
+                                } else {
+                                    window.__GLOBAL_DATA__.last_active_drawing = {
+                                        type: "Feature",
+                                        geometry: {
+                                            type: "Point",
+                                            coordinates: [p_lng, p_lat]
+                                        },
+                                        properties: {
+                                            action: "select_point",
+                                            lat: p_lat,
+                                            lng: p_lng
+                                        }
+                                    };
+                                }
                             }
-                            if (source && typeof source.toGeoJSON === 'function' && window.__GLOBAL_DATA__) {
-                                window.__GLOBAL_DATA__.last_active_drawing = source.toGeoJSON();
+
+                            // Instantly render glowing reticle marker around the selected output pin (0ms latency)
+                            try {
+                                var reticleIcon = geoaiIcon({ role: 'target' });
+                                var reticleMarker = L.marker([p_lat, p_lng], { icon: reticleIcon, interactive: false });
+                                if (window.drawnItems) {
+                                    window.drawnItems.addLayer(reticleMarker);
+                                } else {
+                                    reticleMarker.addTo(map);
+                                }
+                                window._instantTargetMarker = reticleMarker;
+                            } catch(err) {
+                                console.warn("[GeoAI] Instant reticle marker error:", err);
                             }
+
                             try {
                                 if (typeof window.geoaiImmediateDispatch === 'function') {
                                     window.geoaiImmediateDispatch(map);
@@ -1256,35 +1352,18 @@ class MapTrashBinHook(MacroElement):
             });
 
             map.on('popupclose', function(e) {
-                if (!window._reopeningPopup) {
+                // If closing due to server layer re-mounting or popup reopening, preserve target so it reopens
+                if (!window._reopeningPopup && !window._isLayerSyncing) {
                     window._lastOpenPopupInfo = null;
                 }
+                // Do NOT hide the HUD or cancel selection if the user closed the info window
             });
-
-            if (window._lastOpenPopupInfo) {
-                var targetInfo = window._lastOpenPopupInfo;
-                window._lastOpenPopupInfo = null;
-                setTimeout(function() {
-                    try {
-                        window._reopeningPopup = true;
-                        map.eachLayer(function(l) {
-                            if (l instanceof L.Marker && l.getLatLng && l.getPopup) {
-                                var l_ll = l.getLatLng();
-                                var l_lat = Math.round(l_ll.lat * 100000) / 100000;
-                                var l_lng = Math.round(l_ll.lng * 100000) / 100000;
-                                if (Math.abs(l_lat - targetInfo.lat) < 0.0001 && Math.abs(l_lng - targetInfo.lng) < 0.0001) {
-                                    l.openPopup();
-                                }
-                            }
-                        });
-                    } catch(err) {} finally {
-                        setTimeout(function() { window._reopeningPopup = false; }, 100);
-                    }
-                }, 25);
-            }
 
             // 2. Instant client-side feedback when an AOI Rectangle is drawn
             map.on('draw:created', function(e) {
+                map._isDrawing = false;
+                map._justDrew = true;
+                setTimeout(function() { map._justDrew = false; }, 800);
                 if (e.layerType === 'rectangle') {
                     var rect = e.layer;
                     var bounds = rect.getBounds();
@@ -1370,6 +1449,7 @@ class MapTrashBinHook(MacroElement):
                         btn.classList.remove("leaflet-disabled");
                     }
                     if (window.__GLOBAL_DATA__) {
+                        window.__GLOBAL_DATA__.lat_lng_clicked = null;
                         window.__GLOBAL_DATA__.last_active_drawing = rect.toGeoJSON();
                         if (window.drawnItems && typeof window.drawnItems.toGeoJSON === 'function') {
                             window.__GLOBAL_DATA__.all_drawings = window.drawnItems.toGeoJSON().features;
@@ -1419,6 +1499,8 @@ class MapTrashBinHook(MacroElement):
             }
 
             function triggerRemoval() {
+                window._lastOpenPopupInfo = null;
+                try { map.closePopup(); } catch(e) {}
                 if (typeof window.hideMapTacticalHud === 'function') {
                     window.hideMapTacticalHud();
                 } else {
@@ -1592,23 +1674,45 @@ class MapTrashBinHook(MacroElement):
                     L.DomEvent.disableClickPropagation(container);
                     L.DomEvent.disableScrollPropagation(container);
 
-                    var clusterGroups = [];
+                    function getActiveClusterGroups() {
+                        var clusters = [];
+                        function inspectLayer(l) {
+                            if (!l) return;
+                            if (typeof L.MarkerClusterGroup !== 'undefined' && l instanceof L.MarkerClusterGroup) {
+                                if (clusters.indexOf(l) === -1) clusters.push(l);
+                                return;
+                            }
+                            if (l.eachLayer) {
+                                try { l.eachLayer(inspectLayer); } catch(err) {}
+                            }
+                        }
+                        map.eachLayer(inspectLayer);
+                        return clusters;
+                    }
 
                     function applyPinFilter() {
                         var showCtx = chkCtx.checked;
                         var showUnc = chkUnc.checked;
 
-                        // Toggle MarkerCluster groups for context pins
-                        for (var c = 0; c < clusterGroups.length; c++) {
-                            var cg = clusterGroups[c];
-                            if (!showCtx) {
-                                if (map.hasLayer(cg)) map.removeLayer(cg);
-                            } else {
-                                if (!map.hasLayer(cg)) map.addLayer(cg);
+                        // 1. Instant 0ms visual toggle on map container via CSS classes
+                        var containerEl = map.getContainer();
+                        if (containerEl) {
+                            containerEl.classList.toggle('geoai-hide-context-pins', !showCtx);
+                            containerEl.classList.toggle('geoai-hide-uncertain-pins', !showUnc);
+                        }
+
+                        // 2. Unspiderfy active clusters when context pins are hidden
+                        if (!showCtx) {
+                            var activeClusters = getActiveClusterGroups();
+                            for (var c = 0; c < activeClusters.length; c++) {
+                                var cg = activeClusters[c];
+                                if (cg && typeof cg.unspiderfy === 'function') {
+                                    try { cg.unspiderfy(); } catch(e) {}
+                                }
                             }
                         }
 
-                        // Toggle individual markers
+                        // 3. Toggle individual marker icon style and close popups for hidden pins
                         map.eachLayer(function(layer) {
                             if (layer instanceof L.Marker && layer._icon) {
                                 var cls = layer._icon.className || '';
@@ -1642,23 +1746,33 @@ class MapTrashBinHook(MacroElement):
                         var countUnc = 0;
                         var countTotal = 0;
 
-                        for (var c = 0; c < clusterGroups.length; c++) {
-                            countCtx += clusterGroups[c].getLayers().length;
+                        var activeClusters = getActiveClusterGroups();
+                        var clusteredMarkers = new Set();
+
+                        for (var c = 0; c < activeClusters.length; c++) {
+                            var cg = activeClusters[c];
+                            if (cg && typeof cg.getLayers === 'function') {
+                                var cLayers = cg.getLayers();
+                                countCtx += cLayers.length;
+                                for (var i = 0; i < cLayers.length; i++) {
+                                    clusteredMarkers.add(cLayers[i]);
+                                }
+                            }
                         }
 
                         map.eachLayer(function(layer) {
-                            if (typeof L.MarkerClusterGroup !== 'undefined' && layer instanceof L.MarkerClusterGroup) {
-                                if (clusterGroups.indexOf(layer) === -1) {
-                                    clusterGroups.push(layer);
-                                    countCtx += layer.getLayers().length;
-                                }
-                                return;
-                            }
                             if (layer instanceof L.Marker && layer._icon) {
+                                // Do not double-count markers that are already counted inside an active cluster group
+                                if (clusteredMarkers.has(layer)) return;
+
                                 var cls = layer._icon.className || '';
                                 if (cls.indexOf('geoai-pin--target') !== -1 || cls.indexOf('geoai-pin--corner') !== -1) return;
-                                if (cls.indexOf('geoai-pin--context') !== -1 || cls.indexOf('awesome-marker-icon-cadetblue') !== -1) countCtx++;
-                                else if (cls.indexOf('geoai-pin--uncertain') !== -1 || cls.indexOf('awesome-marker-icon-orange') !== -1) countUnc++;
+
+                                var isCtx = cls.indexOf('geoai-pin--context') !== -1 || cls.indexOf('awesome-marker-icon-cadetblue') !== -1;
+                                var isUnc = cls.indexOf('geoai-pin--uncertain') !== -1 || cls.indexOf('awesome-marker-icon-orange') !== -1;
+
+                                if (isCtx) countCtx++;
+                                else if (isUnc) countUnc++;
                                 else if (cls.indexOf('geoai-pin--') !== -1 || cls.indexOf('awesome-marker-icon-blue') !== -1) countTotal++;
                             }
                         });
@@ -1684,9 +1798,6 @@ class MapTrashBinHook(MacroElement):
                         syncAnsweredBboxInDrawnItems();
                     }, 300);
                     map.on('layeradd', function(e) {
-                        if (typeof L.MarkerClusterGroup !== 'undefined' && e.layer instanceof L.MarkerClusterGroup) {
-                            if (clusterGroups.indexOf(e.layer) === -1) clusterGroups.push(e.layer);
-                        }
                         if (e.layer && e.layer.options && typeof e.layer.options.className === 'string' && e.layer.options.className.indexOf('geoai-bbox--answered') !== -1) {
                             if (e.layer._path) {
                                 e.layer._path.style.pointerEvents = 'none';
@@ -2990,33 +3101,111 @@ if "selection_clear_seq" not in st.session_state:
     st.session_state.selection_clear_seq = 0
 
 # ==============================================================================
+# 2c. Early Query Ingestion & Queueing
+# ==============================================================================
+# Checks if a chat query or recon scan was submitted on this turn.
+# Ingesting the query BEFORE Section 2b map click processing ensures that historical
+# map clicks or drawing corner mouseup events are not misinterpreted as new clicks,
+# preventing active Bounding Box selections from being accidentally replaced with points.
+_incoming_chat = st.session_state.get("geoai_chat_input")
+_incoming_recon = bool(st.session_state.get("run_chat_recon"))
+_is_chat_submit = bool(
+    _incoming_chat
+    and isinstance(_incoming_chat, str)
+    and _incoming_chat.strip()
+    and _incoming_chat != st.session_state.get("last_processed_chat_input")
+)
+
+if not st.session_state.get("pending_query"):
+    _is_bbox = st.session_state.get("bounding_box") is not None
+    _active_pt = None if _is_bbox else (st.session_state.selected_points[0] if st.session_state.get("selected_points") else None)
+    _active_bbox = st.session_state.get("bounding_box") if _is_bbox else None
+
+    if _is_chat_submit:
+        st.session_state.last_processed_chat_input = _incoming_chat
+        st.session_state.pending_query = {
+            "text_prompt": _incoming_chat.strip(),
+            "selected_point": _active_pt,
+            "bounding_box": _active_bbox,
+        }
+    elif _incoming_recon:
+        st.session_state.pending_query = {
+            "text_prompt": None,
+            "selected_point": _active_pt,
+            "bounding_box": _active_bbox,
+            "is_recon": True,
+        }
+
+# ==============================================================================
 # 2b. Early Map Event Ingestion (Pre-render state synchronization)
 # ==============================================================================
 # Ingests map clicks, drawings, and deletions before the sidebar and chat mount,
 # ensuring all UI panels reflect the newest spatial selection on the initial rerun
 # without requiring a second st.rerun() cascade.
 def _peek_incoming_map_state() -> Optional[Dict[str, Any]]:
-    s = st.session_state.get("geoai_tactical_map")
-    if isinstance(s, dict) and ("last_clicked" in s or "last_active_drawing" in s or "all_drawings" in s):
-        return s
+    # 1. Inspect fresh incoming widget states directly from Streamlit's internal runner context.
+    # When a component calls setComponentValue(), Streamlit populates _new_widget_state
+    # with the incoming WebSocket payload BEFORE running the script, but SessionState.__getitem__
+    # will not expose it until register_widget() is called later during map rendering.
+    try:
+        from streamlit.runtime.state.session_state_proxy import get_session_state
+        ss = get_session_state()
+        raw_state = getattr(ss, "_state", None)
+        if raw_state is not None:
+            new_widgets = getattr(raw_state, "_new_widget_state", None)
+            if new_widgets is not None and hasattr(new_widgets, "states"):
+                for wid, item in new_widgets.states.items():
+                    val = getattr(item, "value", None)
+                    if val is not None and hasattr(val, "WhichOneof") and val.WhichOneof("value") == "json_value":
+                        try:
+                            parsed = json.loads(val.json_value)
+                            if isinstance(parsed, dict) and (
+                                "last_clicked" in parsed
+                                or "last_active_drawing" in parsed
+                                or "all_drawings" in parsed
+                                or "last_object_clicked" in parsed
+                            ):
+                                return parsed
+                        except Exception:
+                            pass
+                    elif isinstance(item, dict):
+                        if "last_clicked" in item or "last_active_drawing" in item or "all_drawings" in item or "last_object_clicked" in item:
+                            return item
+    except Exception:
+        pass
+
+    # 2. Prioritize 64-character hash keys directly from Streamlit session_state
     for k in list(st.session_state.keys()):
         if isinstance(k, str) and len(k) == 64:
             v = st.session_state.get(k)
-            if isinstance(v, dict) and ("last_clicked" in v or "last_active_drawing" in v or "all_drawings" in v):
+            if isinstance(v, dict) and ("last_clicked" in v or "last_active_drawing" in v or "all_drawings" in v or "last_object_clicked" in v):
                 return v
+
+    # 3. Fallback to static widget key
+    s = st.session_state.get("geoai_tactical_map")
+    if isinstance(s, dict) and ("last_clicked" in s or "last_active_drawing" in s or "all_drawings" in s or "last_object_clicked" in s):
+        return s
     return None
 
 _early_map_state = _peek_incoming_map_state()
-if _early_map_state and isinstance(_early_map_state, dict):
+if (
+    not st.session_state.get("pending_query")
+    and not _is_chat_submit
+    and not _incoming_recon
+    and _early_map_state
+    and isinstance(_early_map_state, dict)
+):
     _early_drawing = _early_map_state.get("last_active_drawing")
     _early_all_drawings = _early_map_state.get("all_drawings")
     _early_clicked = _early_map_state.get("last_clicked")
 
     # 1. Handle recon scan action or deletion / trash bin
+    _handled_drawing_action = False
     if _early_drawing:
         _props = _early_drawing.get("properties") or {}
         _geom = _early_drawing.get("geometry")
         if _props.get("action") == "recon" and _early_drawing != st.session_state.get("ignored_drawing"):
+            _handled_drawing_action = True
             st.session_state.ignored_drawing = _early_drawing
             _target_type = _props.get("targetType")
             if _target_type == "point":
@@ -3074,6 +3263,7 @@ if _early_map_state and isinstance(_early_map_state, dict):
                     "is_recon": True,
                 }
         elif (_props.get("action") == "delete" or (not _geom and _props.get("action") != "recon")) and _early_drawing != st.session_state.get("ignored_drawing"):
+            _handled_drawing_action = True
             st.session_state.ignored_drawing = _early_drawing
             _has_sel = bool(st.session_state.get("selected_points") or st.session_state.get("bounding_box"))
             clear_spatial_selection()
@@ -3081,8 +3271,9 @@ if _early_map_state and isinstance(_early_map_state, dict):
                 st.session_state.map_layers = []
             st.session_state.last_drawing_time = time.time()
 
-    elif (
-        not _early_clicked
+    if (
+        not _handled_drawing_action
+        and not _early_clicked
         and _early_all_drawings == []
         and st.session_state.get("selection_mode") == "Bounding Box"
         and st.session_state.get("bounding_box")
@@ -3095,7 +3286,12 @@ if _early_map_state and isinstance(_early_map_state, dict):
         st.session_state.last_drawing_time = time.time()
 
     # 2. Handle drawn rectangle or point
-    elif _early_drawing and _early_drawing != st.session_state.get("last_processed_drawing") and _early_drawing != st.session_state.get("ignored_drawing"):
+    elif (
+        not _handled_drawing_action
+        and _early_drawing
+        and _early_drawing != st.session_state.get("last_processed_drawing")
+        and _early_drawing != st.session_state.get("ignored_drawing")
+    ):
         _geom = _early_drawing.get("geometry") or {}
         _gtype = _geom.get("type")
         _coords = _geom.get("coordinates")
@@ -3111,6 +3307,7 @@ if _early_map_state and isinstance(_early_map_state, dict):
             st.session_state.bounding_box = (_ll, _ur)
             st.session_state.answered_bbox = None
             st.session_state.active_point = _ur
+            st.session_state.active_tactical_scan = None
             st.session_state.last_drawing_time = time.time()
             if _early_clicked:
                 st.session_state.last_clicked = (round(_early_clicked["lat"], 5), round(_early_clicked["lng"], 5))
@@ -3118,24 +3315,22 @@ if _early_map_state and isinstance(_early_map_state, dict):
             st.session_state.last_processed_drawing = _early_drawing
             st.session_state.ignored_drawing = None
             _pt = (round(float(_coords[1]), 5), round(float(_coords[0]), 5))
-            if st.session_state.selected_points != [_pt]:
+            if st.session_state.selected_points != [_pt] or st.session_state.get("bounding_box") is not None:
                 st.session_state.selection_mode = "Point Selection"
                 st.session_state.selected_points = [_pt]
                 st.session_state.bounding_box = None
                 st.session_state.answered_bbox = None
                 st.session_state.active_point = _pt
+                st.session_state.active_tactical_scan = None
                 st.session_state.last_drawing_time = time.time()
-            if _early_clicked:
-                st.session_state.last_clicked = _pt
+            st.session_state.last_clicked = _pt
 
     # 3. Handle map canvas click
-    elif _early_clicked and "lat" in _early_clicked and "lng" in _early_clicked:
+    elif not _handled_drawing_action and _early_clicked and "lat" in _early_clicked and "lng" in _early_clicked:
         _c_pt = (round(_early_clicked["lat"], 5), round(_early_clicked["lng"], 5))
-        _draw_delta = time.time() - st.session_state.get("last_drawing_time", 0.0)
         _is_corner = _is_drawing_corner_release(_c_pt, st.session_state.get("bounding_box"))
-        _is_recent_release = (_draw_delta < 0.35) and _is_corner
 
-        if _is_recent_release:
+        if _is_corner:
             st.session_state.last_clicked = _c_pt
         elif _c_pt != st.session_state.last_clicked:
             st.session_state.last_clicked = _c_pt
@@ -3145,42 +3340,7 @@ if _early_map_state and isinstance(_early_map_state, dict):
                 st.session_state.bounding_box = None
                 st.session_state.answered_bbox = None
                 st.session_state.active_point = _c_pt
-
-# ------------------------------------------------------------------------------
-# 2c. Early Query Ingestion & Queueing
-# ------------------------------------------------------------------------------
-# Checks if a chat query or recon scan was submitted on this turn.
-# Queuing pending_query BEFORE Section 4 (col2 map) renders ensures that
-# SelectionSyncHook and the bounding box feature group render with is_querying=True,
-# keeping the pulsing fill & sweeping scan line animation actively visible during
-# backend RAG dispatch without requiring redundant reruns or incurring latency.
-_incoming_chat = st.session_state.get("geoai_chat_input")
-_incoming_recon = bool(st.session_state.get("run_chat_recon"))
-
-if not st.session_state.get("pending_query"):
-    _is_bbox = st.session_state.get("bounding_box") is not None
-    _active_pt = None if _is_bbox else (st.session_state.selected_points[0] if st.session_state.get("selected_points") else None)
-    _active_bbox = st.session_state.get("bounding_box") if _is_bbox else None
-
-    if (
-        _incoming_chat
-        and isinstance(_incoming_chat, str)
-        and _incoming_chat.strip()
-        and _incoming_chat != st.session_state.get("last_processed_chat_input")
-    ):
-        st.session_state.last_processed_chat_input = _incoming_chat
-        st.session_state.pending_query = {
-            "text_prompt": _incoming_chat.strip(),
-            "selected_point": _active_pt,
-            "bounding_box": _active_bbox,
-        }
-    elif _incoming_recon:
-        st.session_state.pending_query = {
-            "text_prompt": None,
-            "selected_point": _active_pt,
-            "bounding_box": _active_bbox,
-            "is_recon": True,
-        }
+                st.session_state.active_tactical_scan = None
 
 # ==============================================================================
 # 3. Sidebar Utility Controls & Intelligence Dashboard
@@ -3764,6 +3924,7 @@ with col2:
                 height: 34px;
                 color: var(--geoai-selection);
                 filter: drop-shadow(0 0 4px rgba(0, 229, 255, 0.65));
+                pointer-events: none;
             }
             .geoai-reticle svg {
                 position: absolute;
@@ -3934,6 +4095,17 @@ with col2:
                 width: 44px;
                 height: 44px;
                 box-shadow: 0 0 0 7px rgba(0, 229, 255, 0.18), 0 0 16px rgba(0, 229, 255, 0.40);
+            }
+
+            /* Instant Client-Side Pin Filter Toggles */
+            .geoai-hide-context-pins .geoai-pin--context,
+            .geoai-hide-context-pins .awesome-marker-icon-cadetblue,
+            .geoai-hide-context-pins .geoai-cluster-wrap {
+                display: none !important;
+            }
+            .geoai-hide-uncertain-pins .geoai-pin--uncertain,
+            .geoai-hide-uncertain-pins .awesome-marker-icon-orange {
+                display: none !important;
             }
 
             /* Bounding Box States (Selected Marching Ants, Querying Pulse + Scanline, Answered Ultra-Transparent) */
@@ -4352,19 +4524,37 @@ with col2:
 
     elif st.session_state.get("selected_points"):
         s_lat, s_lng = st.session_state.selected_points[0]
-        popup_html = _popup_card(
-            title="★ TARGET POINT",
-            rows=[("LAT", f"{s_lat:.5f}°"), ("LNG", f"{s_lng:.5f}°")],
-            chip="ACTIVE TARGET",
-            footer=f"Protocol: {t_cfg['name']}",
-            token="selection",
+        # Existing query answer pins already display their own tactical icon and information popup.
+        # When an existing answer pin is clicked, render the glowing reticle marker WITHOUT the duplicate popup
+        # so the answer pin retains its rich metadata popup while displaying the reticle highlight.
+        is_existing_pin = any(
+            layer.layer_type == "marker"
+            and isinstance(layer.data, dict)
+            and abs(layer.data.get("lat", 0.0) - s_lat) < 0.0001
+            and abs(layer.data.get("lng", 0.0) - s_lng) < 0.0001
+            for layer in st.session_state.get("map_layers", [])
         )
-        folium.Marker(
-            location=[s_lat, s_lng],
-            tooltip=f"★ Target Point ({s_lat:.4f}°, {s_lng:.4f}°)",
-            popup=folium.Popup(popup_html, max_width=250, show=True),
-            icon=make_pin_icon(role="target")
-        ).add_to(selection_fg)
+        if is_existing_pin:
+            folium.Marker(
+                location=[s_lat, s_lng],
+                tooltip=f"★ Active Target ({s_lat:.4f}°, {s_lng:.4f}°)",
+                icon=make_pin_icon(role="target"),
+                interactive=False
+            ).add_to(selection_fg)
+        if not is_existing_pin:
+            popup_html = _popup_card(
+                title="★ TARGET POINT",
+                rows=[("LAT", f"{s_lat:.5f}°"), ("LNG", f"{s_lng:.5f}°")],
+                chip="ACTIVE TARGET",
+                footer=f"Protocol: {t_cfg['name']}",
+                token="selection",
+            )
+            folium.Marker(
+                location=[s_lat, s_lng],
+                tooltip=f"★ Target Point ({s_lat:.4f}°, {s_lng:.4f}°)",
+                popup=folium.Popup(popup_html, max_width=250, show=True),
+                icon=make_pin_icon(role="target")
+            ).add_to(selection_fg)
 
     # Attach SelectionSyncHook so every feature_group_to_add update purges stale client-side
     # preview layers (corner brackets, drawnItems, instant target markers) and syncs pin shape
@@ -4663,6 +4853,7 @@ with col2:
             st.session_state.bounding_box = (lower_left, upper_right)
             st.session_state.answered_bbox = None
             st.session_state.active_point = upper_right
+            st.session_state.active_tactical_scan = None
             # Mark drawing timestamp to absorb immediate mouseup canvas click
             st.session_state.last_drawing_time = time.time()
             if map_data and map_data.get("last_clicked"):
@@ -4676,14 +4867,17 @@ with col2:
             lat = round(float(coords[1]), 5)
             lng = round(float(coords[0]), 5)
             pt = (lat, lng)
+            needs_rerun = st.session_state.selected_points != [pt] or st.session_state.get("bounding_box") is not None
             st.session_state.selection_mode = "Point Selection"
             st.session_state.selected_points = [pt]
             st.session_state.bounding_box = None
             st.session_state.answered_bbox = None
             st.session_state.active_point = pt
+            st.session_state.active_tactical_scan = None
             st.session_state.last_drawing_time = time.time()
-            if map_data and map_data.get("last_clicked"):
-                st.session_state.last_clicked = pt
+            st.session_state.last_clicked = pt
+            if needs_rerun:
+                st.rerun()
 
     # --------------------------------------------------------------------------
     # 2. Click Interception (Selection ONLY - NO immediate backend call)
@@ -4693,12 +4887,10 @@ with col2:
     if not st.session_state.get("pending_query") and clicked_data and "lat" in clicked_data and "lng" in clicked_data:
         # Round coordinates to 5 decimal places (~1.1 meter precision)
         clicked_coord = (round(clicked_data["lat"], 5), round(clicked_data["lng"], 5))
-        draw_delta = time.time() - st.session_state.get("last_drawing_time", 0.0)
         is_corner = _is_drawing_corner_release(clicked_coord, st.session_state.get("bounding_box"))
-        is_recent_release = (draw_delta < 0.35) and is_corner
 
-        # If a drawing just completed and click is on a corner, sync last_clicked so the release click is suppressed
-        if is_recent_release:
+        # If click is on a corner of the active BBox, sync last_clicked so the release click is suppressed
+        if is_corner:
             st.session_state.last_clicked = clicked_coord
         elif clicked_coord != st.session_state.last_clicked:
             st.session_state.last_clicked = clicked_coord
@@ -4710,6 +4902,8 @@ with col2:
                 st.session_state.bounding_box = None
                 st.session_state.answered_bbox = None
                 st.session_state.active_point = clicked_coord
+                st.session_state.active_tactical_scan = None
+                st.rerun()
 
 
 # ------------------------------------------------------------------------------
