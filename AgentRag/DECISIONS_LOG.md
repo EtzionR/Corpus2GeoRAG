@@ -1071,6 +1071,24 @@ pass ($0.017); "Show me Kyiv" now has a description instead of "no passages desc
   with a capital or a year stays a name. *Outcome:* Bucha massacre 52 places, Kharkiv
   counteroffensive 132, Wagner Group rebellion 14 citations; the 10 questions unchanged.
 
+**Owner's UI testing, round 2 (2026-10-31).**
+
+- **"Where is Donbas" showed nothing** once its Skopje street point was removed. Its own article says
+  "the Donbas usually refers to Donetsk Oblast and Luhansk Oblast", so `COMPOSITE_PLACES` gives every
+  spelling (Donbas, Donbass, ...) the two oblast outlines together, a point between them and
+  Ukraine as parent (owner's go). One pin, one outline; the village Novyi Donbas keeps its own.
+- **"Show me where the battle of Bakhmut occurred" → no data.** Not the wording: the plan was right
+  (where + the event), but the place-lookup route only locates places and an event is an article.
+  *Fix:* a place lookup that names only an event is answered from the event's places; the plan stays
+  a place lookup, so the map shows the main place (Bakhmut, #1) and the places the answer names, not
+  the 74-place list (73 not shown).
+- **Inspect** (owner's question): the result carries paragraph pointers; the UI's Inspect button
+  calls `get_source_text()` on click, which reads the paragraph from the loaded graph. No LLM, no cost.
+- **UI side:** old pins stay on the map (UI_TEAM_NOTES 3, now marked most important: it confuses
+  "number N"); a long answer opens at its end (UI_TEAM_NOTES 7, tried on a local copy).
+- **"Number N"** works for every place of the last answer (tested 3, 240 and 535 after the
+  535-place list), and only for the places on the map after a non-list answer.
+
 ### ④ Evidence pack
 
 **P2-15. Choosing the least text that answers.**

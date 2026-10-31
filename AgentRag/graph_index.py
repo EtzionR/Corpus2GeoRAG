@@ -24,6 +24,8 @@ from typing import Optional
 import networkx as nx
 from pydantic import BaseModel
 
+from geo import parse_wkt
+
 logger = logging.getLogger(__name__)
 
 HERE = Path(__file__).resolve().parent
@@ -86,13 +88,19 @@ PLACE_FIXES = {
 # Found by listing the names in 15+ paragraphs geocoded with importance under 0.1. Applies to every
 # spelling in the group ("Soviet Union" is a shop in Romania, "The Soviet Union" a plaque).
 NO_POINT = {
-    "Donbas", "Donbass", "Eastern Ukraine", "Western Ukraine", "Central Ukraine",
+    "Eastern Ukraine", "Western Ukraine", "Central Ukraine",
     "Soviet Union", "USSR", "Russian Empire", "RSFSR", "Czechoslovakia", "East Germany", "West Germany",
     "Nazi Germany", "Ottoman Empire", "Lithuanian SSR", "Ukrainian People's Republic",
     "Chechen Republic of Ichkeria", "Nagorno-Karabakh", "Artsakh",
     "Western Military District", "Central Military District", "Moscow Military District", "Kyiv Military District",
     "Eastern Europe", "Central Asia", "Latin America", "Indo-Pacific", "Global South", "Union State",
     "Eastern Front", "Western Front", "Danube Delta", "Taman Peninsula", "Volhynia", "Russia-Ukraine", "SIZO-2",
+}
+# A region the graph has no outline for, made of the outlines of the places it consists of. Donbas was a
+# street in Skopje; its own article says "the Donbas usually refers to Donetsk Oblast and Luhansk Oblast".
+COMPOSITE_PLACES = {
+    "Donbas": ("Donetsk Oblast", "Luhansk Oblast"),
+    "Donbass": ("Donetsk Oblast", "Luhansk Oblast"),
 }
 GEO_FIELDS = ("latitude", "longitude", "place_type", "importance", "address", "geometry_wkt")
 
@@ -191,6 +199,20 @@ def apply_place_fixes(G: nx.Graph, fixes: dict[str, str] = PLACE_FIXES) -> list[
     return fixed
 
 
+def _multipolygon_wkt(wkts: list[Optional[str]]) -> Optional[str]:
+    """The polygons of several WKT outlines side by side, as one MULTIPOLYGON (no union is needed to draw them)."""
+    polygons = []
+    for shape in (parse_wkt(w) for w in wkts):
+        if shape and shape["type"] == "Polygon":
+            polygons.append(shape["coordinates"])
+        elif shape and shape["type"] == "MultiPolygon":
+            polygons += shape["coordinates"]
+    if not polygons:
+        return None
+    ring = lambda r: "(" + ", ".join(f"{x} {y}" for x, y in r) + ")"
+    return "MULTIPOLYGON (" + ", ".join("(" + ", ".join(ring(r) for r in p) + ")" for p in polygons) + ")"
+
+
 def address_country(address: Optional[str]) -> Optional[str]:
     """The last part of a geocoded address, which names the country ("Kharkiv, Kharkiv Oblast, Ukraine")."""
     parts = [p.strip() for p in (address or "").split(",") if p.strip() and not re.fullmatch(r"[\d\- ]+", p.strip())]
@@ -269,6 +291,7 @@ class GraphIndex:
                     self.by_word[w].add(n)
         self._build_articles()
         self._clear_wrong_spots(NO_POINT)
+        self.composites = self._apply_composites(COMPOSITE_PLACES)
         self._build_groups()
         self.no_point = self._clear_points(NO_POINT)
         self.index_seconds = round(time.time() - start, 1)
@@ -292,9 +315,9 @@ class GraphIndex:
         index.load_seconds = load_seconds
         index.path = str(path)
         logger.info("graph loaded from %s in %.1f s (%d nodes, %d edges); indexes in %.1f s; reference sections "
-                    "dropped: %s; points fixed: %s; parents fixed: %d; no point: %s", path, load_seconds,
-                    G.number_of_nodes(), G.number_of_edges(), index.index_seconds, index.dropped, index.place_fixes,
-                    index.parents_fixed, index.no_point)
+                    "dropped: %s; points fixed: %s; parents fixed: %d; no point: %s; composites: %s", path,
+                    load_seconds, G.number_of_nodes(), G.number_of_edges(), index.index_seconds, index.dropped,
+                    index.place_fixes, index.parents_fixed, index.no_point, index.composites)
         return index
 
     # --- articles (events live here: "Battle of Bakhmut" is an article, not a node) ----------
@@ -420,6 +443,26 @@ class GraphIndex:
             near = {x for m in variants if G.nodes[m].get("latitude") is not None for x in spots[_spot(G.nodes[m])]}
             for m in set(variants) | {x for x in near if _look_alike(normalize(x), key)}:
                 G.nodes[m].update(dict.fromkeys(GEO_FIELDS))
+
+    def _apply_composites(self, composites: dict[str, tuple[str, ...]]) -> list[str]:
+        """COMPOSITE_PLACES, before grouping: each spelling of the name gets the outlines of its parts together,
+        a point at their middle and the first part's parent. Returns the names done."""
+        G, done = self.G, []
+        for name, parts in composites.items():
+            located = [G.nodes[p] for p in parts if p in G and G.nodes[p].get("latitude") is not None]
+            if len(located) < len(parts):
+                continue
+            geo = dict(latitude=sum(d["latitude"] for d in located) / len(located),
+                       longitude=sum(d["longitude"] for d in located) / len(located), place_type="region",
+                       importance=max(d.get("importance") or 0 for d in located),
+                       address=f"{' and '.join(parts)}, {address_country(located[0].get('address'))}",
+                       geometry_wkt=_multipolygon_wkt([d.get("geometry_wkt") for d in located]))
+            for m in self.by_norm.get(normalize(name), []):
+                if G.nodes[m]["type"] == "LOC":
+                    G.nodes[m].update(geo)
+                    _set_inside_parent(G, m, _inside_parent(G, parts[0]), basis="composite")
+            done.append(name)
+        return done
 
     def _clear_points(self, names: set[str]) -> list[str]:
         """After grouping: remove the point of every spelling in the groups of `names` (NO_POINT, P2-72), e.g.

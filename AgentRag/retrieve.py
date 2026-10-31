@@ -124,7 +124,11 @@ def _place_lookup(plan, res, gi) -> Retrieval:
             run.out.notes.append(f"{g.id}'s point is uncertain: {g.place.uncertain_reason}")
         run.summary(gi, g.own_article, g.id)
     if not run.out.places and _articles(res):
-        run.out.notes.append("the name is an event (an article), not a place: see event_places")
+        # "Where did the Battle of Bakhmut happen?": an event is an article, not a place, so its places
+        # answer it. The plan stays a place lookup, so the result shows the main place, not the list (P2-72).
+        out = _event_places(plan, res, gi)
+        out.notes.insert(0, "the name is an event (an article), not a place: answered from its places")
+        return out
     return run.out
 
 

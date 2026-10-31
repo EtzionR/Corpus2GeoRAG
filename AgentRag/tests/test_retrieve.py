@@ -76,6 +76,12 @@ def test_place_lookup_returns_the_place_its_parents_and_its_summary(vr6_index):
     assert out.steps[0].tool == "parents"
 
 
+def test_where_an_event_happened_is_answered_from_its_places(vr6_index):
+    out = run(vr6_index, "place_lookup", ("Battle of Bakhmut", "EVENT"))
+    assert out.places and out.places[0].group.id == "Bakhmut"
+    assert out.notes[0] == "the name is an event (an article), not a place: answered from its places"
+
+
 def test_place_lookup_without_a_point_still_reads_its_own_article(vr6_index):
     vr6_index.articles["Novorossiya"] = vr6_index.articles["Kyiv"]          # give the ungeocoded place an article
     try:

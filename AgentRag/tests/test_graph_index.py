@@ -166,23 +166,47 @@ def test_a_name_with_no_right_point_gets_none_and_a_real_place_at_its_spot_keeps
     from conftest import build_vr6_graph
     from graph_index import GraphIndex
     G = build_vr6_graph()
-    village = dict(latitude=48.45, longitude=37.18, place_type="village", importance=0.38,
-                   address="Novyi Donbas, Donetsk Oblast, Ukraine", geometry_wkt="POINT (37.18 48.45)")
-    G.add_node("Donbass", type="LOC", **village)          # the region, geocoded as the village
-    G.add_node("Novyi Donbas", type="LOC", **village)
+    campus = dict(latitude=50.75, longitude=25.34, place_type="amenity", importance=0.38,
+                   address="Volyn National University, Lutsk, Ukraine", geometry_wkt="POINT (25.34 50.75)")
+    G.add_node("Eastern Ukraine", type="LOC", **campus)   # the region, geocoded as a university
+    G.add_node("Volyn National University", type="LOC", **campus)
     G.add_node("Soviet Union", type="LOC", latitude=44.56, longitude=27.36, place_type="amenity", importance=0.0,
                address="Soviet Union, Slobozia, Romania", geometry_wkt="POINT (27.36 44.56)")
     G.add_node("Soviet Union.", type="LOC", latitude=48.7, longitude=44.5, place_type="historic", importance=0.0,
                address="Memorial plaque, Volgograd, Russia", geometry_wkt="POINT (44.5 48.7)")
-    for i, name in enumerate(["Donbass", "Novyi Donbas", "Soviet Union", "Soviet Union."]):
+    for i, name in enumerate(["Eastern Ukraine", "Volyn National University", "Soviet Union", "Soviet Union."]):
         G.add_node(f"TEXT_{8300 + i}", type="TEXT", text_id=8300 + i, text=f"{name} is mentioned.", source="X",
                    index=i, title=None, sub_title=None)
         G.add_edge(name, f"TEXT_{8300 + i}", weight=1, relations={"IN_THE_TEXT": [{"start": 0, "end": len(name)}]})
     gi = GraphIndex(G)
-    assert gi.group("Donbass").place is None
-    assert gi.group("Novyi Donbas").place.place_type == "village"
-    assert gi.group_of["Novyi Donbas"] != gi.group_of["Donbass"]
+    assert gi.group("Eastern Ukraine").place is None
+    assert gi.group("Volyn National University").place.place_type == "amenity"
+    assert gi.group_of["Volyn National University"] != gi.group_of["Eastern Ukraine"]
     assert gi.group("Soviet Union").place is None and "Soviet Union." in gi.group("Soviet Union").names
+
+
+def test_a_composite_region_gets_its_parts_outlines_and_a_middle_point():
+    import graph_tools as T
+    from conftest import build_vr6_graph
+    from graph_index import GraphIndex
+    from result import outline
+    G = build_vr6_graph()
+    for name, lon, lat in [("Donetsk Oblast", 37.8, 47.9), ("Luhansk Oblast", 38.9, 49.3)]:
+        G.add_node(name, type="LOC", latitude=lat, longitude=lon, place_type="state", importance=0.67,
+                   address=f"{name}, Ukraine",
+                   geometry_wkt=f"POLYGON (({lon - 1} {lat - 1}, {lon + 1} {lat - 1}, {lon + 1} {lat + 1}, {lon - 1} {lat - 1}))")
+        G.add_edge(name, "Ukraine", weight=0.1, relations={"INSIDE": [{"subject": name, "basis": "geometry"}]})
+    G.add_node("Donbas", type="LOC", latitude=42.0, longitude=21.4, place_type="road", importance=0.04,
+               address="Donbas, Skopje, North Macedonia", geometry_wkt="POINT (21.4 42)")
+    G.add_node("TEXT_8400", type="TEXT", text_id=8400, text="Donbas is mentioned.", source="X", index=0,
+               title=None, sub_title=None)
+    G.add_edge("Donbas", "TEXT_8400", weight=1, relations={"IN_THE_TEXT": [{"start": 0, "end": 6}]})
+    gi = GraphIndex(G)
+    place = gi.group("Donbas").place
+    assert (place.place_type, round(place.lon, 2), round(place.lat, 2)) == ("region", 38.35, 48.6)
+    assert outline(gi, place.from_name)["type"] == "MultiPolygon"
+    assert len(outline(gi, place.from_name)["coordinates"]) == 2
+    assert T.parents(gi, "Donbas") == ["Donbas", "Ukraine"]
 
 
 def test_a_city_geocoded_as_a_river_is_flagged():

@@ -20,11 +20,13 @@ and there is no way to scroll to it. Workaround for now: zoom out (Ctrl + minus)
 **Suggested fix:** drop `overflow: hidden`, or let the chat column scroll on its own with the input
 pinned to its bottom.
 
-## 3. Old answers' polygons stay on the map
+## 3. Old answers' pins and polygons stay on the map (most important)
 
 After each answer the app *adds* the answer's layers to the map and never clears the previous ones
-(`st.session_state.map_layers.extend(agent_resp.layers)`, `app.py` ~line 2945). After a few questions
-"Where is Ukraine?" shows Ukraine plus every earlier answer's outlines.
+(`st.session_state.map_layers.extend(agent_resp.layers)`, `app.py` ~line 2951). After a few questions
+"Where is Ukraine?" shows Ukraine plus every earlier answer's outlines. It also confuses follow-ups:
+"Tell me about number 4" always means place 4 of the **last** answer, but a pin numbered 4 from an
+earlier answer may still be on the map.
 
 **Suggested fix:** replace instead of extend for each new answer
 (`st.session_state.map_layers = list(agent_resp.layers)`), with an optional "keep previous answers
@@ -63,11 +65,37 @@ a question is asked. In the message loop (`app.py` ~line 1904), at the top of th
 
 We tried it on a local copy only (Streamlit's AppTest: no errors, the chat box still there).
 
+## 7. A long answer opens at its end
+
+Streamlit scrolls a fixed-height container that holds chat messages to the bottom by default, so a
+long answer shows its last lines and the reader scrolls up to find the start. **Suggested:** turn
+that off and scroll to the start of the new answer once, when it arrives:
+
+```python
+    chat_container = st.container(height=chat_container_height, autoscroll=False)   # ~line 1902
+```
+
+after the message loop, inside `with chat_container:`
+
+```python
+        if st.session_state.pop("scroll_to_answer", False):
+            # A new answer opens at its start, not its end (the box no longer auto-scrolls to the bottom)
+            st.html(
+                "<script>setTimeout(() => {"
+                "const m = document.querySelectorAll('[data-testid=\"stChatMessage\"]');"
+                "if (m.length) m[m.length - 1].scrollIntoView({block: 'start'});}, 300);</script>",
+                unsafe_allow_javascript=True)
+```
+
+and where the answer is added (~line 2950), `st.session_state.scroll_to_answer = True`. Also tried on
+a local copy only (no errors). `st.components.v1.html` would work too but is deprecated.
+
 ## What changed on our side that you will see (no format change)
 
 - Some places now come **without a point** when the graph's point was wrong and the graph has no right
-  one (Donbas was a street in Skopje, "Soviet Union" a shop in Romania). They appear in the answer
-  text, not on the map.
+  one ("Soviet Union" was a shop in Romania). They appear in the answer text, not on the map.
+- Donbas (a street in Skopje in the graph) now comes as a region: the outlines of Donetsk and Luhansk
+  oblasts together (a `MultiPolygon` shape) with a point between them.
 - Some points are corrected from the graph's own data (Dnipro was on the river near Chernihiv).
 - The region grouping follows each place's own address: Kharkiv Oblast and Crimea under Ukraine,
   no longer under Russia.
