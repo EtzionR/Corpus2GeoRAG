@@ -3,7 +3,7 @@
 > **Just want to run it (any team)?** On Windows, double-click **`RUN_GEORAG.bat`** in the repo root.
 > The first run installs everything (a few minutes) and asks once for the OpenRouter key, which it
 > saves in `AgentRag/.env`; git ignores that file, so the key is never uploaded. To set the key by
-> hand instead, create `AgentRag/.env` with one line: `OPENROUTER_API_KEY=sk-or-v1-...`. The app
+> hand instead, create `AgentRag/.env` with one line: `OPENROUTER_API_KEY=` followed by the key. The app
 > opens in the browser; keep the black window open while you use it.
 >
 > **Using the agent (UI team included): you need your own OpenRouter API key.**
