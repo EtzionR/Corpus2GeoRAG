@@ -142,10 +142,10 @@ def test_trace_shows_the_resolve_step(tmp_path, monkeypatch, vr6_index):
     from resolver import resolve
     monkeypatch.setattr(harness, "RESULTS_DIR", tmp_path / "results")
     plan = understand("Where is Kiev?")                       # fast path
-    donbas = understand("Where is Donbas?")
+    street = understand("Where is Hrushevsky Street?")
     results = [{"id": qid, "text": p.question, "seconds": 0.1, "inputs": {},
                 "plan": p.model_dump(mode="json"), "resolve": resolve(p, vr6_index).model_dump(mode="json")}
-               for qid, p in [("a", plan), ("b", donbas)]]
+               for qid, p in [("a", plan), ("b", street)]]
     meta = {"stage": "understand+resolve", "model_requested": "x", "cost_cap_usd": 0.25, "started": "now",
             "graph": {"path": "g.json.gz", "load_seconds": 1, "index_seconds": 1, "nodes": 10, "groups": 5}}
     path = harness.write_report(results, meta, stage=meta["stage"], instructions={"understand": SYSTEM_PROMPT})

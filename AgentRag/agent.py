@@ -32,10 +32,10 @@ class LLMError(AgentError):
 # --- LLM setup -------------------------------------------------------------------------------
 
 # The model for every LLM call. Hardcoded on purpose: never read it from .env or the caller.
-# A strong free model, pinned so plans don't depend on which model the free router happens to pick
-# (DECISIONS_LOG P2-41); if it's busy or unavailable, OpenRouter falls back to the free router.
-# Moving to a paid model is a deliberate code change reviewed through a PR, not a local setting.
-MODEL = "nvidia/nemotron-3-ultra-550b-a55b:free"
+# Gemini 2.5 Flash (DECISIONS_LOG P2-68): 2-3 s an answer, about 0.15 cents a question; the free model
+# took 48 s through the UI. If it fails (e.g. a key with no credit), OpenRouter falls back to the free
+# router. Changing it is a deliberate code change reviewed through a PR, not a local setting.
+MODEL = "google/gemini-2.5-flash"
 FALLBACK_MODELS = ["openrouter/free"]
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 

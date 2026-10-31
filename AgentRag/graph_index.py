@@ -24,6 +24,8 @@ from typing import Optional
 import networkx as nx
 from pydantic import BaseModel
 
+from geo import parse_wkt
+
 logger = logging.getLogger(__name__)
 
 HERE = Path(__file__).resolve().parent
@@ -65,6 +67,43 @@ WATER_TYPES = {"river", "stream", "canal", "water", "lake", "reservoir"}
 _SETTLEMENT = re.compile(r"\b(?:is|was)\b[^.]{0,100}?\b(?:city|town|village|capital)\b", re.I)
 SURNAME_DOMINANCE = 0.8   # a bare surname joins a person's group only if that group has 80 % of its texts
 
+# P2-72: places the graph geocoded wrongly, each mapped to another node of the same graph that has the right
+# point. On load the name takes that node's point, outline, place type, address and INSIDE parent, so the
+# map, the region overview and the variant groups all use it. The graph file is not changed.
+PLACE_FIXES = {
+    "Dnipro": "Dnipro City",                     # the river near Chernihiv; the city is 300 km south-east
+    "Дніпро": "Dnipro City",
+    "Dnipro Oblast": "Dnipropetrovsk Oblast",    # the same river point
+    "Zaporizhzhia Oblast": "Zaporizhia Oblast",  # a village called Zaporizhzhia in Kherson Oblast
+    "Crimean Oblast": "Autonomous Republic of Crimea",   # a street in Kamianske; the Soviet oblast had the same land
+    "Belgorod Oblasts": "Belgorod Oblast",       # Belgorod-18, a locality
+    "Kursk Oblasts": "Kursk Oblast",             # a tract in Pskov Oblast
+    "Donetsk City": "Donetsk",                   # Donetsk Way in Sheffield
+    "U.K.": "United Kingdom",                    # a road in the Netherlands
+    "Hrushevskoho Street": "Mykhaila Hrushevskoho Street",   # the Kyiv street, not one in Brovary Raion
+    "Oval Office": "White House",                # a road in Alabama
+}
+# Names geocoded to a wrong spot with no right point anywhere in the graph: better no pin than a wrong one.
+# Mostly regions, former states and military districts matched to a shop, plaque or street of that name.
+# Found by listing the names in 15+ paragraphs geocoded with importance under 0.1. Applies to every
+# spelling in the group ("Soviet Union" is a shop in Romania, "The Soviet Union" a plaque).
+NO_POINT = {
+    "Eastern Ukraine", "Western Ukraine", "Central Ukraine",
+    "Soviet Union", "USSR", "Russian Empire", "RSFSR", "Czechoslovakia", "East Germany", "West Germany",
+    "Nazi Germany", "Ottoman Empire", "Lithuanian SSR", "Ukrainian People's Republic",
+    "Chechen Republic of Ichkeria", "Nagorno-Karabakh", "Artsakh",
+    "Western Military District", "Central Military District", "Moscow Military District", "Kyiv Military District",
+    "Eastern Europe", "Central Asia", "Latin America", "Indo-Pacific", "Global South", "Union State",
+    "Eastern Front", "Western Front", "Danube Delta", "Taman Peninsula", "Volhynia", "Russia-Ukraine", "SIZO-2",
+}
+# A region the graph has no outline for, made of the outlines of the places it consists of. Donbas was a
+# street in Skopje; its own article says "the Donbas usually refers to Donetsk Oblast and Luhansk Oblast".
+COMPOSITE_PLACES = {
+    "Donbas": ("Donetsk Oblast", "Luhansk Oblast"),
+    "Donbass": ("Donetsk Oblast", "Luhansk Oblast"),
+}
+GEO_FIELDS = ("latitude", "longitude", "place_type", "importance", "address", "geometry_wkt")
+
 
 def normalize(name: str) -> str:
     """Case, unicode spaces, quotes, dashes, stray punctuation, a leading 'the', UK/US spelling."""
@@ -85,6 +124,15 @@ def distinctive(ws: list[str]) -> list[str]:
 
 def similar(a: str, b: str) -> float:
     return SequenceMatcher(None, a, b).ratio()
+
+
+def _look_alike(a: str, b: str) -> bool:
+    """Two normalized names that share a distinctive word or are spelled almost alike."""
+    return bool(set(distinctive(words(a))) & set(distinctive(words(b)))) or bool(a and b and similar(a, b) >= 0.8)
+
+
+def _spot(d: dict) -> tuple:
+    return round(d["latitude"], 5), round(d["longitude"], 5), d.get("place_type")
 
 
 class Place(BaseModel):
@@ -137,6 +185,83 @@ def drop_reference_sections(G: nx.Graph) -> dict:
             "kept_for_hierarchy": len(containers)}
 
 
+def apply_place_fixes(G: nx.Graph, fixes: dict[str, str] = PLACE_FIXES) -> list[str]:
+    """Give each name in `fixes` the point and INSIDE parent of the node it maps to (P2-72). Returns the
+    names fixed; a name or source missing from this graph is skipped."""
+    fixed = []
+    for name, source in fixes.items():
+        if name not in G or source not in G or G.nodes[source].get("latitude") is None:
+            continue
+        for k in GEO_FIELDS:
+            G.nodes[name][k] = G.nodes[source].get(k)
+        _set_inside_parent(G, name, _inside_parent(G, source), basis="place fix")
+        fixed.append(name)
+    return fixed
+
+
+def _multipolygon_wkt(wkts: list[Optional[str]]) -> Optional[str]:
+    """The polygons of several WKT outlines side by side, as one MULTIPOLYGON (no union is needed to draw them)."""
+    polygons = []
+    for shape in (parse_wkt(w) for w in wkts):
+        if shape and shape["type"] == "Polygon":
+            polygons.append(shape["coordinates"])
+        elif shape and shape["type"] == "MultiPolygon":
+            polygons += shape["coordinates"]
+    if not polygons:
+        return None
+    ring = lambda r: "(" + ", ".join(f"{x} {y}" for x, y in r) + ")"
+    return "MULTIPOLYGON (" + ", ".join("(" + ", ".join(ring(r) for r in p) + ")" for p in polygons) + ")"
+
+
+def address_country(address: Optional[str]) -> Optional[str]:
+    """The last part of a geocoded address, which names the country ("Kharkiv, Kharkiv Oblast, Ukraine")."""
+    parts = [p.strip() for p in (address or "").split(",") if p.strip() and not re.fullmatch(r"[\d\- ]+", p.strip())]
+    return parts[-1] if parts else None
+
+
+def fix_cross_border_parents(G: nx.Graph) -> int:
+    """P2-72: an INSIDE parent in another country than the place itself, by the two geocoded addresses, is
+    replaced by the place's own country. The graph hangs places from landforms that cross borders
+    (Kharkiv Oblast -> Central Russian Upland -> Russia; Zakarpattia -> Eastern Carpathians -> Romania) and
+    Crimea from Russia's Southern Federal District, while their own addresses say Ukraine. The address is
+    taken as the truth. Returns how many links changed."""
+    changed = 0
+    for n, d in list(G.nodes(data=True)):
+        if d.get("type") != "LOC" or d.get("latitude") is None:
+            continue
+        parent = _inside_parent(G, n)
+        if parent is None:
+            continue
+        own, theirs = address_country(d.get("address")), address_country(G.nodes[parent].get("address"))
+        if own and theirs and own != theirs and own in G and G.nodes[own].get("place_type") == "country":
+            _set_inside_parent(G, n, None if own == n else own, basis="address country")
+            changed += 1
+    return changed
+
+
+def _inside_parent(G: nx.Graph, name: str) -> Optional[str]:
+    return next((m for m in G.neighbors(name)
+                 if any(r.get("subject") == name for r in G[name][m]["relations"].get("INSIDE", []))), None)
+
+
+def _set_inside_parent(G: nx.Graph, name: str, parent: Optional[str], basis: str) -> None:
+    """Replace the INSIDE parent of `name` (None: no parent)."""
+    for m in list(G.neighbors(name)):
+        rels = G[name][m]["relations"]
+        kept = [r for r in rels.get("INSIDE", []) if r.get("subject") != name]
+        if len(kept) < len(rels.get("INSIDE", [])):
+            if kept:
+                rels["INSIDE"] = kept
+            else:
+                del rels["INSIDE"]
+            if not rels:
+                G.remove_edge(name, m)
+    if parent and parent != name:
+        if not G.has_edge(name, parent):
+            G.add_edge(name, parent, weight=0.1, relations={})
+        G[name][parent]["relations"].setdefault("INSIDE", []).append({"subject": name, "basis": basis})
+
+
 def _contains_places(G: nx.Graph, name: str) -> bool:
     return any(r.get("subject") == other
                for other in G.neighbors(name)
@@ -149,6 +274,8 @@ class GraphIndex:
     def __init__(self, G: nx.Graph):
         start = time.time()
         self.dropped = drop_reference_sections(G)
+        self.place_fixes = apply_place_fixes(G)
+        self.parents_fixed = fix_cross_border_parents(G)
         self.G = G
         self.entities = [n for n, d in G.nodes(data=True) if d.get("type") != "TEXT"]
         self.text_ids: dict[str, list[int]] = {}
@@ -163,7 +290,10 @@ class GraphIndex:
                 for w in set(words(key)):
                     self.by_word[w].add(n)
         self._build_articles()
+        self._clear_wrong_spots(NO_POINT)
+        self.composites = self._apply_composites(COMPOSITE_PLACES)
         self._build_groups()
+        self.no_point = self._clear_points(NO_POINT)
         self.index_seconds = round(time.time() - start, 1)
         self.load_seconds: Optional[float] = None
 
@@ -185,8 +315,9 @@ class GraphIndex:
         index.load_seconds = load_seconds
         index.path = str(path)
         logger.info("graph loaded from %s in %.1f s (%d nodes, %d edges); indexes in %.1f s; reference sections "
-                    "dropped: %s", path, load_seconds, G.number_of_nodes(), G.number_of_edges(), index.index_seconds,
-                    index.dropped)
+                    "dropped: %s; points fixed: %s; parents fixed: %d; no point: %s; composites: %s", path,
+                    load_seconds, G.number_of_nodes(), G.number_of_edges(), index.index_seconds, index.dropped,
+                    index.place_fixes, index.parents_fixed, index.no_point, index.composites)
         return index
 
     # --- articles (events live here: "Battle of Bakhmut" is an article, not a node) ----------
@@ -231,15 +362,14 @@ class GraphIndex:
         #     the graph's SAME_AS also links "." to NATO and Wagner to Africa Corps
         for u, v, d in self.G.edges(data=True):
             if "SAME_AS" in d["relations"] and node[u]["type"] == node[v]["type"] != "TEXT":
-                nu, nv = normalize(u), normalize(v)
-                if set(distinctive(words(nu))) & set(distinctive(words(nv))) or (nu and nv and similar(nu, nv) >= 0.8):
+                if _look_alike(normalize(u), normalize(v)):
                     union(u, v)
         # (c) locations with identical coordinates and the same place type: Kyiv / Kiev / Kiyev
         spots = defaultdict(list)
         for n in self.entities:
             d = node[n]
             if d["type"] == "LOC" and d.get("latitude") is not None:
-                spots[(round(d["latitude"], 5), round(d["longitude"], 5), d.get("place_type"))].append(n)
+                spots[_spot(d)].append(n)
         for names in spots.values():
             for n in names[1:]:
                 union(names[0], n)
@@ -297,6 +427,55 @@ class GraphIndex:
             self.groups[gid] = names
             for m in names:
                 self.group_of[m] = gid
+
+    def _clear_wrong_spots(self, names: set[str]) -> None:
+        """NO_POINT, before grouping: clear each name, its spellings, and the names at the same wrong spot that
+        look like it (Kiev / Kyiv Military District). A real place that only shares the spot keeps its point
+        and stays out of the group: "Donbass" sits on the village Novyi Donbas."""
+        G = self.G
+        spots = defaultdict(list)
+        for n in self.entities:
+            if G.nodes[n]["type"] == "LOC" and G.nodes[n].get("latitude") is not None:
+                spots[_spot(G.nodes[n])].append(n)
+        for name in names:
+            key = normalize(name)
+            variants = [m for m in self.by_norm.get(key, []) if G.nodes[m]["type"] == "LOC"]
+            near = {x for m in variants if G.nodes[m].get("latitude") is not None for x in spots[_spot(G.nodes[m])]}
+            for m in set(variants) | {x for x in near if _look_alike(normalize(x), key)}:
+                G.nodes[m].update(dict.fromkeys(GEO_FIELDS))
+
+    def _apply_composites(self, composites: dict[str, tuple[str, ...]]) -> list[str]:
+        """COMPOSITE_PLACES, before grouping: each spelling of the name gets the outlines of its parts together,
+        a point at their middle and the first part's parent. Returns the names done."""
+        G, done = self.G, []
+        for name, parts in composites.items():
+            located = [G.nodes[p] for p in parts if p in G and G.nodes[p].get("latitude") is not None]
+            if len(located) < len(parts):
+                continue
+            geo = dict(latitude=sum(d["latitude"] for d in located) / len(located),
+                       longitude=sum(d["longitude"] for d in located) / len(located), place_type="region",
+                       importance=max(d.get("importance") or 0 for d in located),
+                       address=f"{' and '.join(parts)}, {address_country(located[0].get('address'))}",
+                       geometry_wkt=_multipolygon_wkt([d.get("geometry_wkt") for d in located]))
+            for m in self.by_norm.get(normalize(name), []):
+                if G.nodes[m]["type"] == "LOC":
+                    G.nodes[m].update(geo)
+                    _set_inside_parent(G, m, _inside_parent(G, parts[0]), basis="composite")
+            done.append(name)
+        return done
+
+    def _clear_points(self, names: set[str]) -> list[str]:
+        """After grouping: remove the point of every spelling in the groups of `names` (NO_POINT, P2-72), e.g.
+        "The Soviet Union", a plaque elsewhere. Returns the group ids."""
+        cleared = []
+        for name in sorted(names):
+            gid = self.group_of.get(name)
+            if gid is None or gid in cleared:
+                continue
+            for m in self.groups[gid]:
+                self.G.nodes[m].update(dict.fromkeys(GEO_FIELDS))
+            cleared.append(gid)
+        return cleared
 
     # --- groups -----------------------------------------------------------------------------
 

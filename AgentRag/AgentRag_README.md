@@ -1,5 +1,13 @@
 # GeoRAG agent
 
+> **Just want to run it (any team)?** On Windows, double-click **`RUN_GEORAG.bat`** in the repo root.
+> The first run installs everything (a few minutes) and asks once for the OpenRouter key, which it
+> saves in `AgentRag/.env`; git ignores that file, so the key is never uploaded. To set the key by
+> hand instead, create `AgentRag/.env` with one line: `OPENROUTER_API_KEY=` followed by the key. The app
+> opens in the browser; keep the black window open while you use it. Clone the repo into a short
+> folder (for example `C:\GeoAi`): Windows limits paths to 260 characters, and some files in the
+> repo have 154-character paths.
+>
 > **Using the agent (UI team included): you need your own OpenRouter API key.**
 > Create one at https://openrouter.ai/keys. Pass it as `api_key=` to `query()`, or put it in
 > `AgentRag/.env` (a copy of `.env.example`). Never put it in `.env.example` or in any `.py`
@@ -141,8 +149,9 @@ ten questions on Gemini 2.5 Flash cost about $0.02.
 
 **On the model:** `MODEL` is a hardcoded constant in `agent.py`, never read from `.env` or from the
 caller. This is intentional: changing it is a deliberate, reviewed code change, not a per-person
-setting. Today it's a free model (`nvidia/nemotron-3-ultra-550b-a55b:free`), with OpenRouter's free
-router as backup when it's busy, so answers can vary a little between runs.
+setting. Today it's Gemini 2.5 Flash (`google/gemini-2.5-flash`): 2–3 s an answer and about 0.15
+cents a question, so your OpenRouter key needs a little credit (a few dollars lasts thousands of
+questions). Without credit, OpenRouter falls back to its free router: slower, and answers vary.
 
 ## Interface
 
@@ -179,7 +188,7 @@ Input rules (breaking one raises `InvalidRequestError` naming the field):
 | `entities` | People and organizations involved (id, `PER`/`ORG`, role relative to the question, record count). |
 | `citations` | One per `[S2]` / `[L1]` in the answer: `pointer`, `article`, `section`, and `spans` (character positions of the entities in that paragraph, for highlighting). |
 | `sources` | The pointers of everything the answer cites. |
-| `map` | `bbox` `[west, south, east, north]` to zoom to (around the places the answer discusses), and `highlight` (their numbers). |
+| `map` | `bbox` `[west, south, east, north]` to zoom to (around the places the question is about; with none, the places the answer discusses), and `highlight` (the discussed places' numbers). |
 | `follow_ups` | Up to 3 suggested next questions, ready to send as typed. |
 | `did_you_mean` | Other graph entries the question's names could have meant. |
 | `notes` | What each step noticed (prefixed ①–⑤), e.g. "Kyiv is inside: Ukraine", "the map point may be wrong". For debugging and transparency. |
@@ -194,7 +203,7 @@ Each entry of `geo_locations`:
 | `kind` | The geocoder's place type: `city`, `town`, `village`, `state` (an oblast), `country`, `road`, `building`… |
 | `role` | `primary`: the answer discusses it. `context`: found, for the map only. |
 | `geometry` | Always a GeoJSON Point. |
-| `shape` | The outline (Polygon / MultiPolygon / LineString), simplified to at most 300 points. Only for primary places, at most 10 per answer. |
+| `shape` | The outline (Polygon / MultiPolygon / LineString), simplified to at most 300 points. Only for the places the question is about ("What happened in Crimea?": Crimea, not Russia), at most 10 per answer; a list gets none, an area question only the named area it searched. |
 | `why` | One line of data on why it's there, e.g. "ATTACKED in 12 records; 118 matching paragraphs". |
 | `uncertain` | Present when the graph's point may be wrong, e.g. "geocoded as a road with importance 0.04", or "geocoded as a river, but its own article describes a city or town" (Dnipro). |
 | `sources` | Up to 10 paragraph pointers, best first. |
@@ -262,23 +271,27 @@ llm_calls.py      every LLM call, with its model, tokens, cost and time
 agent.py          MODEL, get_llm() and the error classes
 eval/             the test harness: questions, runs, reports
 tests/            pytest
+launch.py         what RUN_GEORAG.bat runs: Python environment, key, graph check, starts the app
+ui_mvp/           a copy of the UI team's ui/ with the UI_TEAM_NOTES fixes, until ui/ has them
 ```
 
 ## Known limitations
 
-- **Data issues show through.** Some map points are wrong: "Where is Dnipro?" answers correctly
-  (a city in eastern Ukraine) but the map gets a 5 km stretch of river near Chernihiv (marked
-  `uncertain`). Kharkiv
-  Oblast sits inside Russia in the hierarchy, so region counts inherit it. Words from Ukrainian names
-  in brackets became places (`Україні`, near Maidan). Listed for the other teams in
-  GRAPH_TEAM_ISSUES.md; places with doubtful points carry `uncertain`.
+- **Data issues show through.** Wrong map points we could fix from the graph's own data are fixed
+  on load (Dnipro, Kharkiv Oblast's region, Donbas); places with no right point anywhere get no pin.
+  Words from Ukrainian names in brackets became places (`Україні`, near Maidan). Doubtful points
+  carry `uncertain`. Listed for the other teams in GRAPH_TEAM_ISSUES.md.
+- **15 big pages are missing from the corpus** (Russia, Crimea, Moscow, Odesa, ...): "Where is
+  Russia?" answers only "Russia is a country." The list and how to add them: MISSING_PAGES.md.
+- **A topic needs an area:** "Show me where drone attacks happened" asks the user to name a place or
+  select one on the map; it doesn't search the whole graph (P2-75).
 - **Nested places stack on the map:** Washington, the White House and the Oval Office are separate
   places at almost the same point. Clustering nearby pins helps.
 - **Big lists are big:** up to ~500 KB for a question that finds 1,652 places. That's the places
   (about 300 bytes each: number, name, point, data line, a few pointers), not text: the answer is a
   few sentences, and paragraphs are never included, only their pointers. Fine in-process.
-- **"Countries where both Russia and Ukraine are mentioned"** isn't understood as a country filter
-  yet; it returns every shared place (kept on purpose for now; DECISIONS_LOG P2-51).
+- **"Countries where both Russia and Ukraine are mentioned"** isn't always understood as a country
+  filter: some runs return every shared place (1,659 instead of about 149; DECISIONS_LOG ideas list).
 - **A bare "number 3" follow-up** gives that place, not the previous question's subject at it. Name
   both ("Zelenskyy in the White House") for that.
 - **English only.**
