@@ -1,0 +1,11 @@
+Original model: flair/ner-english-large
+Fine-tuned checkpoint: C:\Users\idosc\Corpus2GeoRAG\ApplyNER\NER_output\model_evaluation\fine_tuning\flert_5label\FlertDate\best-model.pt
+Validation paragraphs: 173
+
+Original four-label micro F1: 79.64%
+Fine-tuned four-label micro F1: 82.43%
+Change: +2.79 percentage points
+Entity types with lower F1: PER
+
+Fine-tuned DATE F1: 84.58%
+Fine-tuned five-label micro F1: 82.68%

@@ -34,7 +34,7 @@ import agent  # noqa: E402
 import harness  # noqa: E402
 import pipeline  # noqa: E402
 from evidence import render_for_llm  # noqa: E402
-from planner import SYSTEM_PROMPT, Area, summarize_history  # noqa: E402
+from planner import SYSTEM_PROMPT, Area, question_for_answer, summarize_history  # noqa: E402
 from resolver import PICK_PROMPT  # noqa: E402
 from writer import NO_DATA_PROMPT, WRITE_PROMPT  # noqa: E402
 
@@ -109,7 +109,7 @@ def run_flow(args) -> None:
                     r[key] = out[key].model_dump(mode="json", exclude_none=True)
             if "evidence" in out:
                 r["evidence"] = {**out["evidence"].model_dump(mode="json", exclude_none=True),
-                                 "llm_text": render_for_llm(out["evidence"], plan.question)}
+                                 "llm_text": render_for_llm(out["evidence"], question_for_answer(plan))}
         except harness.CostCapExceeded as e:
             meta["stopped_early"] = f"before {q['id']}: {e}"
             print(f"STOPPED: {e}")

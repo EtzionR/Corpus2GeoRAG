@@ -81,7 +81,7 @@ class PlaceOut(BaseModel):
     kind: str                           # place type: town, city, state (oblast), country, road, ...
     role: Literal["primary", "context"] # primary = discussed in the answer; context = found, on the map only
     geometry: Geometry                  # a Point, [lon, lat]
-    shape: Optional[Geometry] = None    # the outline (simplified), for primary places
+    shape: Optional[Geometry] = None    # the outline (simplified), for the places the question is about
     why: str = ""                       # one line of data: why it's in the result
     uncertain: Optional[str] = None     # the graph's point may be wrong, and why
     sources: list[str] = Field(default_factory=list)   # paragraph pointers, best first
@@ -103,8 +103,10 @@ class CitationOut(BaseModel):
 
 
 class MapHint(BaseModel):
-    bbox: Optional[list[float]] = None  # [west, south, east, north] to zoom to
+    bbox: Optional[list[float]] = None  # [west, south, east, north] to zoom to: the asked places, else the discussed
     highlight: list[int] = Field(default_factory=list)   # place numbers the answer discusses
+    showing: Literal["all", "discussed"] = "all"         # which places geo_locations holds (P2-65)
+    not_shown: int = 0                  # places found but left off the map (e.g. a drill-down's context)
 
 
 class Alternative(BaseModel):

@@ -1,0 +1,321 @@
+{
+  "answer": "Volodymyr Zelenskyy [L1] has had several interactions at the White House [1]. On December 21, 2023, during a meeting with President Biden at the White House, Biden confirmed that the United States would send a Patriot battery to Ukraine [S23]. Biden also announced a new aid package to Ukraine valued at $200 million during a December 2023 meeting with Zelenskyy at the White House [S11]. In February 2022, Zelenskyy responded to the White House's warnings of an \"imminent\" Russian invasion by asserting that there was \"too much information about a deep, full-scale invasion from Russia\" in the information space [S10]. In 2025, Zelenskyy met with President Trump at the White House on February 28 [S2, S14] and again on August 18 [S3]. The February 28, 2025, meeting was described as highly contentious [S14], with significant tension arising between Zelenskyy, Trump, and Vice President Vance during a press brief in the Oval Office [S20]. Vance told Zelenskyy that it was \"disrespectful\" to \"litigate this in front of the American media\" [S22]. The planned lunch, discussions, and signing of a potential minerals deal were all canceled, and Zelenskyy was asked to leave the White House [S4, S21]. Following this meeting, the U.S. suspended all military aid and intelligence to Ukraine [S7, S12]. White House press secretary Karoline Leavitt described Zelenskyy as \"rude\" and \"antagonistic\" [S15].",
+  "answer_plain": "Volodymyr Zelenskyy has had several interactions at the White House. On December 21, 2023, during a meeting with President Biden at the White House, Biden confirmed that the United States would send a Patriot battery to Ukraine. Biden also announced a new aid package to Ukraine valued at $200 million during a December 2023 meeting with Zelenskyy at the White House. In February 2022, Zelenskyy responded to the White House's warnings of an \"imminent\" Russian invasion by asserting that there was \"too much information about a deep, full-scale invasion from Russia\" in the information space. In 2025, Zelenskyy met with President Trump at the White House on February 28 and again on August 18. The February 28, 2025, meeting was described as highly contentious, with significant tension arising between Zelenskyy, Trump, and Vice President Vance during a press brief in the Oval Office. Vance told Zelenskyy that it was \"disrespectful\" to \"litigate this in front of the American media\". The planned lunch, discussions, and signing of a potential minerals deal were all canceled, and Zelenskyy was asked to leave the White House. Following this meeting, the U.S. suspended all military aid and intelligence to Ukraine. White House press secretary Karoline Leavitt described Zelenskyy as \"rude\" and \"antagonistic\".",
+  "status": "answered",
+  "grounded": true,
+  "shape": "drilldown",
+  "geo_locations": [
+    {
+      "number": 1,
+      "id": "White House",
+      "label": "White House",
+      "kind": "office",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.0365525,
+          38.8976387
+        ]
+      },
+      "shape": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -77.03685,
+              38.8978
+            ],
+            [
+              -77.03625,
+              38.89756
+            ],
+            [
+              -77.03625,
+              38.8978
+            ],
+            [
+              -77.03685,
+              38.8978
+            ]
+          ]
+        ]
+      },
+      "why": "STATED_ABOUT in 2 records, VISITED in 12 records, OPPOSES in 1 record; mentioned together in 31 records; 46 matching paragraphs",
+      "sources": [
+        "TEXT_2122",
+        "TEXT_1411",
+        "TEXT_15438",
+        "TEXT_49270",
+        "TEXT_15488",
+        "TEXT_15479",
+        "TEXT_3370",
+        "TEXT_40988",
+        "TEXT_4329",
+        "TEXT_6889"
+      ]
+    }
+  ],
+  "regions": [],
+  "entities": [
+    {
+      "id": "Zelenskyy",
+      "type": "PER",
+      "records": 46
+    }
+  ],
+  "citations": [
+    {
+      "id": "L1",
+      "pointer": "TEXT_49156",
+      "article": "Volodymyr Zelenskyy",
+      "spans": []
+    },
+    {
+      "id": "S23",
+      "pointer": "TEXT_62483",
+      "article": "MIM-104 Patriot",
+      "section": "Operational history",
+      "spans": [
+        [
+          1100,
+          1111
+        ],
+        [
+          1061,
+          1070
+        ]
+      ]
+    },
+    {
+      "id": "S11",
+      "pointer": "TEXT_17414",
+      "article": "Timeline of the Russo-Ukrainian war (1 December 2023 – 31 March 2024)",
+      "section": "December 2023",
+      "spans": [
+        [
+          72,
+          83
+        ],
+        [
+          17,
+          26
+        ]
+      ]
+    },
+    {
+      "id": "S10",
+      "pointer": "TEXT_6889",
+      "article": "Reactions to the 2021–2022 Russo-Ukrainian crisis",
+      "section": "Ukraine",
+      "spans": [
+        [
+          667,
+          678
+        ],
+        [
+          719,
+          728
+        ]
+      ]
+    },
+    {
+      "id": "S2",
+      "pointer": "TEXT_1411",
+      "article": "Peace negotiations in the Russo-Ukrainian war (2022–present)",
+      "section": "2025: developments during the second Trump presidency",
+      "spans": [
+        [
+          42,
+          53
+        ],
+        [
+          0,
+          9
+        ]
+      ]
+    },
+    {
+      "id": "S14",
+      "pointer": "TEXT_15469",
+      "article": "2025 Trump–Zelenskyy Oval Office meeting",
+      "spans": [
+        [
+          152,
+          171
+        ],
+        [
+          202,
+          213
+        ]
+      ]
+    },
+    {
+      "id": "S3",
+      "pointer": "TEXT_15438",
+      "article": "2025 Russia–United States summit",
+      "section": "Aftermath",
+      "spans": [
+        [
+          44,
+          55
+        ],
+        [
+          27,
+          36
+        ]
+      ]
+    },
+    {
+      "id": "S20",
+      "pointer": "TEXT_1411",
+      "article": "Peace negotiations in the Russo-Ukrainian war (2022–present)",
+      "section": "2025: developments during the second Trump presidency",
+      "spans": [
+        [
+          504,
+          515
+        ],
+        [
+          545,
+          554
+        ]
+      ]
+    },
+    {
+      "id": "S22",
+      "pointer": "TEXT_15483",
+      "article": "2025 Trump–Zelenskyy Oval Office meeting",
+      "section": "Meeting",
+      "spans": [
+        [
+          231,
+          242
+        ],
+        [
+          169,
+          178
+        ]
+      ]
+    },
+    {
+      "id": "S4",
+      "pointer": "TEXT_49270",
+      "article": "Volodymyr Zelenskyy",
+      "section": "Presidency (2019–present)",
+      "spans": [
+        [
+          403,
+          414
+        ],
+        [
+          372,
+          381
+        ]
+      ]
+    },
+    {
+      "id": "S21",
+      "pointer": "TEXT_1411",
+      "article": "Peace negotiations in the Russo-Ukrainian war (2022–present)",
+      "section": "2025: developments during the second Trump presidency",
+      "spans": [
+        [
+          985,
+          996
+        ],
+        [
+          1042,
+          1051
+        ]
+      ]
+    },
+    {
+      "id": "S7",
+      "pointer": "TEXT_3370",
+      "article": "Starlink in the Russo-Ukrainian war",
+      "section": "US Government involvement",
+      "spans": [
+        [
+          665,
+          676
+        ],
+        [
+          648,
+          657
+        ]
+      ]
+    },
+    {
+      "id": "S12",
+      "pointer": "TEXT_4800",
+      "article": "United States and the Russo-Ukrainian war",
+      "spans": [
+        [
+          467,
+          478
+        ],
+        [
+          450,
+          459
+        ]
+      ]
+    },
+    {
+      "id": "S15",
+      "pointer": "TEXT_15507",
+      "article": "2025 Trump–Zelenskyy Oval Office meeting",
+      "section": "Reactions",
+      "spans": [
+        [
+          768,
+          779
+        ],
+        [
+          807,
+          816
+        ]
+      ]
+    }
+  ],
+  "sources": [
+    "TEXT_49156",
+    "TEXT_62483",
+    "TEXT_17414",
+    "TEXT_6889",
+    "TEXT_1411",
+    "TEXT_15469",
+    "TEXT_15438",
+    "TEXT_15483",
+    "TEXT_49270",
+    "TEXT_3370",
+    "TEXT_4800",
+    "TEXT_15507"
+  ],
+  "map": {
+    "bbox": [
+      -77.04685,
+      38.88756,
+      -77.02625,
+      38.9078
+    ],
+    "highlight": [
+      1
+    ],
+    "showing": "discussed",
+    "not_shown": 0
+  },
+  "follow_ups": [],
+  "did_you_mean": [],
+  "notes": [
+    "④ 1 places found (all go on the map); 0 described to the LLM",
+    "④ 19 more passages didn't fit the 800-word budget (available for a 'show more' page)"
+  ],
+  "meta": {
+    "question_type": "about",
+    "model": "google/gemini-2.5-flash",
+    "llm_calls": 2,
+    "cost_usd": 0.002253,
+    "seconds": 3.19
+  }
+}

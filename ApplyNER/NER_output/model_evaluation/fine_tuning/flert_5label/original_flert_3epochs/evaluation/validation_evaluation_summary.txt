@@ -1,0 +1,28 @@
+FLERT 3-Epoch Fine-Tuning Evaluation
+Model: best-model.pt
+Validation paragraphs: 173
+
+Five-label micro F1: 0.8199
+Four-label micro F1: 0.8080
+
+FIVE-LABEL REPORT
+              precision    recall  f1-score  support
+PER            0.854545  0.903846  0.878505     52.0
+ORG            0.773438  0.811475  0.792000    244.0
+LOC            0.889460  0.898701  0.894057    385.0
+MISC           0.721190  0.749035  0.734848    259.0
+DATE           0.742424  0.867257  0.800000    113.0
+micro avg      0.801998  0.838557  0.819870   1053.0
+macro avg      0.796211  0.846063  0.819882   1053.0
+weighted avg   0.803684  0.838557  0.820387   1053.0
+
+FOUR-LABEL REPORT
+              precision    recall  f1-score  support
+PER            0.854545  0.903846  0.878505     52.0
+ORG            0.773438  0.811475  0.792000    244.0
+LOC            0.889460  0.898701  0.894057    385.0
+MISC           0.721190  0.749035  0.734848    259.0
+DATE           0.000000  0.000000  0.000000      0.0
+micro avg      0.782652  0.835106  0.808029    940.0
+macro avg      0.647727  0.672612  0.659882    940.0
+weighted avg   0.811048  0.835106  0.822838    940.0

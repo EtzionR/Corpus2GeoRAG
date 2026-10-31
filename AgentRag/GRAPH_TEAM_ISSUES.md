@@ -149,3 +149,29 @@ skipping bracketed native-language names, or linking them to the English name (S
 citation titles. Dropping reference sections (F1) removed it and cut every Russian region off from
 Russia, until we kept such containers. *What would help:* INSIDE pointing at the main node
 (`Russia`), which has the text.
+
+## G. Core place pages are rejected by the corpus selector (data collection; affects the final graph)
+
+The graph on main (Oct 24) has no article for **Kyiv, Dnipro, Kharkiv, Russia, Ukraine, Crimea or
+Volodymyr Zelenskyy**. Traced back through the pipeline (read-only, old versions from git):
+
+| Stage | Articles | Kyiv, Dnipro, Russia, Crimea | Ukraine, Kharkiv | Zelenskyy |
+|---|---|---|---|---|
+| NER output Oct 16 → first Vr6 graph (Oct 19) | 1,909 | yes | yes | no |
+| Corpus after the selector (Oct 18) → NER Oct 24 → graph on main | 1,602 | no | no | no |
+| Corpus now (BFS expansion, Oct 26) → NER Oct 27 | 2,081 | **no** | yes | yes |
+
+*Cause:* the selector scores a page by the share of its paragraphs about the war and rejects broad
+pages (`summaries/ukraine_war_final/zones.csv`: Kyiv 3 of 197 paragraphs related, rejected by both
+models; Russia 2 of 147; Crimea 2 of 105). That's right for noise, but these are the places users
+ask about, and the agent answers "where is / tell me about" from a place's own article: with today's
+graph "Show me Kyiv" finds nothing specific and "Where is Dnipro?" answers "a river" (B1).
+
+*Rejected pages the graph mentions most:* Russia (9,369 paragraphs), United States (2,407), Crimea
+(1,760), Kyiv (1,658), NATO (1,092), Moscow (1,018), United Kingdom, Odesa, Belarus, Zaporizhzhia,
+Soviet Union, Germany, Poland, Europe, Kursk Oblast, Donald Trump, Kremlin, European Union, China,
+Belgorod Oblast, Kursk, Dnipropetrovsk Oblast, Sumy Oblast, France, Belgorod; plus Dnipro.
+
+*What would help:* keep the new corpus (it adds 760 war articles, Zelenskyy among them), and
+force-include a short list of anchor pages like these, even if only their opening section (the
+agent uses the opening paragraph). It has to happen before the final NER and graph runs.

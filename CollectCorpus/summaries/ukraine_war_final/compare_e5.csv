@@ -1,0 +1,346 @@
+﻿only_in,title,origin,paragraphs,gemma_score,gemma_related,gemma_zone,e5_score,e5_related,e5_zone
+gemma,Peace negotiations in the Russo-Ukrainian war,corpus,1.0,1.0,1.0,accept,0.0,0.0,reject
+gemma,GIS Arta,corpus,1.0,1.0,1.0,accept,0.0,0.0,reject
+gemma,3rd International Infantry Battalion,corpus,2.0,1.0,2.0,accept,0.0,0.0,reject
+gemma,Romanian Battlegroup Getica,corpus,4.0,1.0,4.0,accept,0.0,0.0,reject
+gemma,244th Artillery Brigade,bfs_new,2.0,1.0,2.0,accept,0.0,0.0,reject
+gemma,Zoloti Vorota Company (Ukraine),bfs_new,2.0,1.0,2.0,accept,0.0,0.0,reject
+gemma,Chief of the General Staff (Russia),bfs_new,1.0,1.0,1.0,accept,0.0,0.0,reject
+gemma,126th Machine Gun Artillery Division,bfs_new,17.0,0.824,14.0,accept,0.118,2.0,review
+gemma,28th Separate Motor Rifle Brigade,bfs_new,4.0,0.75,3.0,accept,0.25,1.0,review
+gemma,Chief of the General Staff (Ukraine),bfs_new,4.0,0.75,3.0,accept,0.25,1.0,review
+gemma,Commander-in-Chief of the Russian Ground Forces,bfs_new,4.0,0.75,3.0,accept,0.25,1.0,review
+gemma,Vitaliy Bunechko,corpus,3.0,0.667,2.0,accept,0.0,0.0,reject
+gemma,Sibir Battalion,corpus,3.0,0.667,2.0,accept,0.0,0.0,reject
+gemma,Sich Battalion,bfs_new,9.0,0.667,6.0,accept,0.222,2.0,review
+gemma,Starobesheve settlement hromada,bfs_new,3.0,0.667,2.0,accept,0.0,0.0,reject
+gemma,5th Guards Tank Brigade,bfs_new,14.0,0.643,9.0,accept,0.286,4.0,review
+gemma,Alexander Kolmakov,bfs_new,11.0,0.636,7.0,accept,0.091,1.0,reject
+gemma,120th Guards Naval Infantry Division,bfs_new,16.0,0.625,10.0,accept,0.25,4.0,review
+gemma,Commander of the Russian Airborne Forces,bfs_new,7.0,0.571,4.0,accept,0.286,2.0,review
+gemma,Aleksandr Vitko,corpus,9.0,0.556,5.0,accept,0.0,0.0,reject
+gemma,"Medal ""For Military Service to Ukraine""",bfs_new,20.0,0.55,11.0,accept,0.1,2.0,review
+gemma,List of self-proclaimed republics in Ukraine,corpus,2.0,0.5,1.0,accept,0.0,0.0,reject
+gemma,Russian armoured train Amur,corpus,4.0,0.5,2.0,accept,0.0,0.0,reject
+gemma,2022 virtual extraordinary NATO summit,corpus,2.0,0.5,1.0,accept,0.0,0.0,reject
+gemma,26th Rocket Brigade,bfs_new,4.0,0.5,2.0,accept,0.25,1.0,review
+gemma,473rd District Training Centre,bfs_new,4.0,0.5,2.0,accept,0.25,1.0,review
+gemma,1st Guards Mixed Aviation Division,bfs_new,6.0,0.5,3.0,accept,0.167,1.0,review
+gemma,Yenakiieve urban hromada,bfs_new,4.0,0.5,2.0,accept,0.25,1.0,review
+gemma,Avdiivka urban hromada,bfs_new,4.0,0.5,2.0,accept,0.25,1.0,review
+gemma,Chystiakove urban hromada,bfs_new,2.0,0.5,1.0,accept,0.0,0.0,reject
+gemma,Vuhlehirsk urban hromada,bfs_new,2.0,0.5,1.0,accept,0.0,0.0,reject
+gemma,Shakhtarsk urban hromada,bfs_new,2.0,0.5,1.0,accept,0.0,0.0,reject
+gemma,Amvrosiivka urban hromada,bfs_new,2.0,0.5,1.0,accept,0.0,0.0,reject
+gemma,Khartsyzk urban hromada,bfs_new,2.0,0.5,1.0,accept,0.0,0.0,reject
+gemma,Ondatra-class landing craft,bfs_new,6.0,0.5,3.0,accept,0.167,1.0,review
+gemma,Military ranks of Ukraine,bfs_new,29.0,0.448,13.0,accept,0.207,6.0,review
+gemma,IRIS Sahand (2012),bfs_new,9.0,0.444,4.0,accept,0.222,2.0,review
+gemma,SIZO-2,corpus,25.0,0.44,11.0,accept,0.08,2.0,reject
+gemma,15th Guards Motor Rifle Regiment,bfs_new,7.0,0.429,3.0,accept,0.143,1.0,review
+gemma,Vladimir Boldyrev,bfs_new,7.0,0.429,3.0,accept,0.143,1.0,review
+gemma,272nd Motor Rifle Regiment,bfs_new,7.0,0.429,3.0,accept,0.286,2.0,review
+gemma,State Border of Ukraine,bfs_new,19.0,0.421,8.0,accept,0.263,5.0,review
+gemma,German Taurus leak,bfs_seen,17.0,0.412,7.0,accept,0.294,5.0,review
+gemma,1st Tank Division (Soviet Union),bfs_new,27.0,0.407,11.0,accept,0.037,1.0,reject
+gemma,Declaration of Independence of the Republic of Crimea,bfs_seen,5.0,0.4,2.0,accept,0.0,0.0,reject
+gemma,Restrictions on transit to Kaliningrad Oblast,bfs_seen,10.0,0.4,4.0,accept,0.1,1.0,review
+gemma,Vadym Filashkin,bfs_seen,5.0,0.4,2.0,accept,0.2,1.0,review
+gemma,288th Guards Artillery Brigade,bfs_new,5.0,0.4,2.0,accept,0.2,1.0,review
+gemma,11 December 2013 Euromaidan assault,bfs_new,10.0,0.4,4.0,accept,0.1,1.0,review
+gemma,13th Guards Tank Regiment,bfs_new,10.0,0.4,4.0,accept,0.2,2.0,review
+gemma,34th Motor Rifle Division,bfs_new,5.0,0.4,2.0,accept,0.2,1.0,review
+gemma,Alexey Maslov,bfs_new,10.0,0.4,4.0,accept,0.1,1.0,review
+gemma,2022 DDoS attacks on Romania,bfs_seen,13.0,0.385,5.0,accept,0.154,2.0,review
+gemma,Municipal initiative for charging Vladimir Putin of high treason,bfs_seen,13.0,0.385,5.0,accept,0.231,3.0,review
+gemma,Reserve of the Supreme High Command,bfs_new,13.0,0.385,5.0,accept,0.154,2.0,review
+gemma,392nd District Training Centre,bfs_new,16.0,0.375,6.0,accept,0.188,3.0,review
+gemma,Ilovaisk,bfs_new,8.0,0.375,3.0,accept,0.25,2.0,review
+gemma,Bakhmut Raion,bfs_new,8.0,0.375,3.0,accept,0.25,2.0,review
+gemma,2017 St. Petersburg raid,bfs_new,8.0,0.375,3.0,accept,0.125,1.0,review
+gemma,State Transport Special Service,bfs_new,35.0,0.371,13.0,accept,0.171,6.0,review
+gemma,5th Guards Cavalry Division,bfs_new,35.0,0.371,13.0,accept,0.057,2.0,reject
+gemma,Multiple rocket launcher,bfs_new,19.0,0.368,7.0,accept,0.211,4.0,review
+gemma,36th Guards Combined Arms Army,bfs_new,19.0,0.368,7.0,accept,0.263,5.0,review
+gemma,Pavel Prigozhin,corpus,11.0,0.364,4.0,accept,0.091,1.0,reject
+gemma,Tyotkino,bfs_new,11.0,0.364,4.0,accept,0.273,3.0,review
+gemma,Hirske,bfs_new,11.0,0.364,4.0,accept,0.273,3.0,review
+gemma,Internal Troops of Ukraine,bfs_new,28.0,0.357,10.0,accept,0.214,6.0,review
+gemma,Hybrid warfare,bfs_new,37.0,0.351,13.0,accept,0.108,4.0,review
+gemma,20th Guards Combined Arms Army,bfs_new,23.0,0.348,8.0,accept,0.174,4.0,review
+gemma,November Chuvash Rebellion,corpus,3.0,0.333,1.0,accept,0.0,0.0,reject
+gemma,City of Mary (song),corpus,3.0,0.333,1.0,accept,0.0,0.0,reject
+gemma,Konstantin Pikalov,corpus,3.0,0.333,1.0,accept,0.0,0.0,reject
+gemma,Andrei Troshev,corpus,12.0,0.333,4.0,accept,0.083,1.0,reject
+gemma,2022 Moscow Victory Day Parade,bfs_seen,15.0,0.333,5.0,accept,0.267,4.0,review
+gemma,2023 Moscow Victory Day Parade,bfs_seen,6.0,0.333,2.0,accept,0.0,0.0,reject
+gemma,Signmyrocket.com,bfs_seen,3.0,0.333,1.0,accept,0.0,0.0,reject
+gemma,Without you (post),bfs_new,12.0,0.333,4.0,accept,0.25,3.0,review
+gemma,Russian Tank Troops,bfs_new,36.0,0.333,12.0,accept,0.056,2.0,reject
+gemma,51st Guards Artillery Brigade,bfs_new,12.0,0.333,4.0,accept,0.25,3.0,review
+gemma,St Mary's battalion,bfs_new,12.0,0.333,4.0,accept,0.167,2.0,review
+gemma,Airstrike,bfs_new,12.0,0.333,4.0,accept,0.25,3.0,review
+gemma,Vuhlehirsk,bfs_new,9.0,0.333,3.0,accept,0.222,2.0,review
+gemma,Maximilian Andronnikov,bfs_new,6.0,0.333,2.0,accept,0.167,1.0,review
+gemma,START II,bfs_new,12.0,0.333,4.0,accept,0.083,1.0,reject
+gemma,Siversk urban hromada,bfs_new,3.0,0.333,1.0,accept,0.0,0.0,reject
+gemma,Michael Kofman,bfs_new,6.0,0.333,2.0,accept,0.167,1.0,review
+gemma,Volnovakha urban hromada,bfs_new,3.0,0.333,1.0,accept,0.0,0.0,reject
+gemma,Illinivka rural hromada,bfs_new,3.0,0.333,1.0,accept,0.0,0.0,reject
+gemma,Staromlynivka rural hromada,bfs_new,3.0,0.333,1.0,accept,0.0,0.0,reject
+gemma,Khlibodarivka rural hromada,bfs_new,3.0,0.333,1.0,accept,0.0,0.0,reject
+gemma,Manhush settlement hromada,bfs_new,3.0,0.333,1.0,accept,0.0,0.0,reject
+gemma,Commander-in-Chief of the Russian Navy,bfs_new,3.0,0.333,1.0,accept,0.0,0.0,reject
+gemma,Apti Alaudinov,bfs_new,18.0,0.333,6.0,accept,0.222,4.0,review
+gemma,41st Guards Combined Arms Army,bfs_new,28.0,0.321,9.0,accept,0.179,5.0,review
+gemma,Siversk,bfs_new,25.0,0.32,8.0,accept,0.24,6.0,review
+gemma,1st Rifle Division (Soviet Union),bfs_new,22.0,0.318,7.0,accept,0.0,0.0,reject
+gemma,August 2025 White House multilateral meeting on Ukraine,corpus,19.0,0.316,6.0,accept,0.053,1.0,reject
+gemma,Vadym Khlupianets,corpus,13.0,0.308,4.0,accept,0.077,1.0,reject
+gemma,"I need ammunition, not a ride",bfs_new,13.0,0.308,4.0,accept,0.231,3.0,review
+gemma,161st Mechanized Brigade,bfs_new,23.0,0.304,7.0,accept,0.174,4.0,review
+gemma,Mortar (weapon),bfs_new,40.0,0.3,12.0,accept,0.0,0.0,reject
+gemma,Group of Soviet Forces in Germany,bfs_new,48.0,0.292,14.0,accept,0.0,0.0,reject
+gemma,Shaun Pinner,corpus,7.0,0.286,2.0,accept,0.0,0.0,reject
+gemma,10th Guards Uralsko-Lvovskaya Tank Division,bfs_new,28.0,0.286,8.0,accept,0.107,3.0,review
+gemma,Glide bomb,bfs_new,32.0,0.281,9.0,accept,0.156,5.0,review
+gemma,Hryfon (special unit),bfs_new,25.0,0.28,7.0,accept,0.16,4.0,review
+gemma,Starobilsk,bfs_new,25.0,0.28,7.0,accept,0.2,5.0,review
+gemma,100 mm anti-tank gun T-12,bfs_new,25.0,0.28,7.0,accept,0.2,5.0,review
+gemma,National Security and Defence Council of Ukraine,bfs_new,29.0,0.276,8.0,accept,0.207,6.0,review
+gemma,8th Guards Cavalry Division,bfs_new,27.0,0.259,7.0,accept,0.0,0.0,reject
+gemma,Hero of the Russian Federation,bfs_new,31.0,0.258,8.0,accept,0.194,6.0,review
+gemma,59th Guards Motor Rifle Division,bfs_new,35.0,0.257,9.0,accept,0.086,3.0,reject
+gemma,Surface-to-air missile,bfs_new,43.0,0.256,11.0,accept,0.14,6.0,review
+gemma,Art theft and looting by Russia during the invasion of Ukraine,corpus,4.0,0.25,1.0,accept,0.0,0.0,reject
+gemma,United Nations General Assembly Resolution 68/262,corpus,16.0,0.25,4.0,accept,0.0,0.0,reject
+gemma,The Wall of Remembrance of the Fallen for Ukraine,corpus,4.0,0.25,1.0,accept,0.0,0.0,reject
+gemma,E.N.O.T. Corp.,corpus,8.0,0.25,2.0,accept,0.0,0.0,reject
+gemma,Nikolay Peskov,corpus,8.0,0.25,2.0,accept,0.0,0.0,reject
+gemma,Busification,bfs_seen,32.0,0.25,8.0,accept,0.188,6.0,review
+gemma,Hostomel,bfs_new,32.0,0.25,8.0,accept,0.188,6.0,review
+gemma,72nd Guards Joint Training Centre,bfs_new,32.0,0.25,8.0,accept,0.062,2.0,reject
+gemma,Demolition of monuments to Alexander Pushkin in Ukraine,corpus,54.0,0.241,13.0,accept,0.019,1.0,reject
+gemma,Killnet,corpus,17.0,0.235,4.0,accept,0.059,1.0,reject
+gemma,752nd Guards Motor Rifle Regiment,bfs_new,103.0,0.233,24.0,accept,0.058,6.0,reject
+gemma,Corvette,bfs_new,139.0,0.223,31.0,accept,0.05,7.0,review
+gemma,February 2025 Putin–Trump phone call,corpus,23.0,0.217,5.0,accept,0.0,0.0,reject
+gemma,Brigade,bfs_new,51.0,0.216,11.0,accept,0.0,0.0,reject
+gemma,Timestamp (film),corpus,14.0,0.214,3.0,accept,0.071,1.0,reject
+gemma,Arms industry of Russia,bfs_new,49.0,0.204,10.0,accept,0.102,5.0,review
+gemma,"Commemorative Medal ""Participant of a Special Military Operation""",corpus,5.0,0.2,1.0,accept,0.0,0.0,reject
+gemma,Civic Council (Armed Forces of Ukraine),corpus,5.0,0.2,1.0,accept,0.0,0.0,reject
+gemma,Community of Railway Workers of Belarus,corpus,5.0,0.2,1.0,accept,0.0,0.0,reject
+gemma,2025 Russia–United States summit in Hungary,corpus,10.0,0.2,2.0,accept,0.0,0.0,reject
+gemma,MV Zhibek Zholy,corpus,5.0,0.2,1.0,accept,0.0,0.0,reject
+gemma,Russian shadow fleet,bfs_seen,51.0,0.196,10.0,accept,0.118,6.0,review
+gemma,Nadiya Savchenko,bfs_new,41.0,0.195,8.0,accept,0.073,3.0,reject
+gemma,Russian 102nd Military Base,bfs_new,41.0,0.195,8.0,accept,0.146,6.0,review
+gemma,Law enforcement in Ukraine,bfs_new,109.0,0.193,21.0,accept,0.092,10.0,review
+gemma,"Yampil, Donetsk Oblast",bfs_new,38.0,0.184,7.0,accept,0.132,5.0,review
+gemma,Leonid Pasechnik,corpus,11.0,0.182,2.0,accept,0.091,1.0,reject
+gemma,201st Guards Military Base,bfs_new,44.0,0.182,8.0,accept,0.114,5.0,review
+gemma,2026 Iran war,bfs_new,153.0,0.176,27.0,accept,0.059,9.0,review
+gemma,2014 Hrushevsky Street protests,bfs_new,74.0,0.176,13.0,accept,0.081,6.0,reject
+gemma,90th Guards Tank Division (1985–1997),bfs_new,41.0,0.171,7.0,accept,0.049,2.0,reject
+gemma,European Deterrence Initiative,corpus,12.0,0.167,2.0,accept,0.0,0.0,reject
+gemma,February 2025 United States–Russia meeting in Saudi Arabia,corpus,18.0,0.167,3.0,accept,0.0,0.0,reject
+gemma,Ivankiv Historical and Local History Museum,corpus,6.0,0.167,1.0,accept,0.0,0.0,reject
+gemma,Yevhen Yenin,corpus,12.0,0.167,2.0,accept,0.083,1.0,reject
+gemma,Alexander Bortnikov,corpus,30.0,0.167,5.0,accept,0.067,2.0,reject
+gemma,Ruslan Shostak Charitable Foundation,corpus,6.0,0.167,1.0,accept,0.0,0.0,reject
+gemma,White-blue-white flag,corpus,12.0,0.167,2.0,accept,0.0,0.0,reject
+gemma,Mariupol Bull Figurine,corpus,12.0,0.167,2.0,accept,0.083,1.0,reject
+gemma,Air assault,bfs_new,48.0,0.167,8.0,accept,0.042,2.0,reject
+gemma,Oblasts of Ukraine,corpus,43.0,0.163,7.0,accept,0.0,0.0,reject
+gemma,Cyberwarfare,bfs_new,148.0,0.155,23.0,accept,0.081,12.0,review
+gemma,M113 armored personnel carrier,bfs_new,85.0,0.153,13.0,accept,0.082,7.0,review
+gemma,GRU (Russian Federation),bfs_new,112.0,0.152,17.0,accept,0.098,11.0,review
+gemma,Aerial reconnaissance,bfs_new,46.0,0.152,7.0,accept,0.065,3.0,reject
+gemma,Death and funeral of Alexei Navalny,bfs_new,113.0,0.15,17.0,accept,0.018,2.0,reject
+gemma,Sergiy Kyslytsya,bfs_seen,67.0,0.149,10.0,accept,0.06,4.0,reject
+gemma,Minister of Defence (Russia),bfs_new,48.0,0.146,7.0,accept,0.125,6.0,review
+gemma,Free Buryatia Foundation,corpus,7.0,0.143,1.0,accept,0.0,0.0,reject
+gemma,Russia 200,corpus,21.0,0.143,3.0,accept,0.095,2.0,reject
+gemma,Shalt Not Kill (Russia),corpus,14.0,0.143,2.0,accept,0.071,1.0,reject
+gemma,Chernihiv Regional Art Museum,corpus,7.0,0.143,1.0,accept,0.0,0.0,reject
+gemma,Arman Soldin,corpus,14.0,0.143,2.0,accept,0.071,1.0,reject
+gemma,Frigate,bfs_new,203.0,0.143,29.0,accept,0.034,7.0,review
+gemma,Sarah Ashton-Cirillo,corpus,36.0,0.139,5.0,accept,0.056,2.0,reject
+gemma,Head of the Republic of Crimea,corpus,22.0,0.136,3.0,accept,0.0,0.0,reject
+gemma,Timur Ivanov,corpus,22.0,0.136,3.0,accept,0.091,2.0,reject
+gemma,Timeline of the Euromaidan,bfs_new,118.0,0.136,16.0,accept,0.068,8.0,review
+gemma,White phosphorus munition,bfs_new,54.0,0.13,7.0,accept,0.0,0.0,reject
+gemma,Poltava Oblast,corpus,31.0,0.129,4.0,accept,0.032,1.0,reject
+gemma,Korean People's Army,bfs_new,63.0,0.127,8.0,accept,0.063,4.0,reject
+gemma,Civil volunteer movement helping Ukrainian forces in the war in Donbas,corpus,24.0,0.125,3.0,accept,0.083,2.0,reject
+gemma,CyberBerkut,corpus,24.0,0.125,3.0,accept,0.042,1.0,reject
+gemma,VN Karazin Kharkiv National University,corpus,32.0,0.125,4.0,accept,0.062,2.0,reject
+gemma,Igor Sergun,corpus,24.0,0.125,3.0,accept,0.042,1.0,reject
+gemma,Rico Krieger,corpus,16.0,0.125,2.0,accept,0.0,0.0,reject
+gemma,CAESAR self-propelled howitzer,bfs_new,56.0,0.125,7.0,accept,0.089,5.0,reject
+gemma,Battalion,bfs_new,57.0,0.123,7.0,accept,0.018,1.0,reject
+gemma,Foreign relations of Russia,bfs_new,83.0,0.12,10.0,accept,0.072,6.0,reject
+gemma,Dmitry Medvedev,bfs_seen,160.0,0.119,19.0,accept,0.075,12.0,review
+gemma,Finbar Cafferkey,corpus,17.0,0.118,2.0,accept,0.059,1.0,reject
+gemma,Domestic responses to the Euromaidan,bfs_new,127.0,0.118,15.0,accept,0.071,9.0,review
+gemma,2025 Trump–Zelenskyy Oval Office meeting,corpus,98.0,0.112,11.0,accept,0.01,1.0,reject
+gemma,M1 Abrams,bfs_new,223.0,0.112,25.0,accept,0.063,14.0,review
+gemma,Fighter aircraft,bfs_new,117.0,0.111,13.0,accept,0.026,3.0,reject
+gemma,Nuclear weapon,bfs_new,103.0,0.107,11.0,accept,0.049,5.0,reject
+gemma,Normandy Format,corpus,19.0,0.105,2.0,accept,0.053,1.0,reject
+gemma,2014 Donbas general elections,corpus,19.0,0.105,2.0,accept,0.053,1.0,reject
+gemma,Lviv Oblast,corpus,38.0,0.105,4.0,accept,0.0,0.0,reject
+gemma,Ukraine–Commonwealth of Independent States relations,bfs_new,76.0,0.105,8.0,accept,0.053,4.0,reject
+gemma,Leopard 2,bfs_new,224.0,0.103,23.0,accept,0.071,16.0,review
+gemma,Lloyd Austin,bfs_new,138.0,0.101,14.0,accept,0.051,7.0,review
+gemma,Vladimir Putin speech on recognising the Donetsk and Luhansk people's republics,corpus,20.0,0.1,2.0,accept,0.05,1.0,reject
+gemma,Lyubov Panchenko,corpus,10.0,0.1,1.0,accept,0.0,0.0,reject
+gemma,Royal Air Force,bfs_new,130.0,0.1,13.0,accept,0.069,9.0,review
+gemma,Yellow Ribbon (movement),corpus,31.0,0.097,3.0,accept,0.065,2.0,reject
+gemma,June 2024 Ukraine peace summit,corpus,44.0,0.091,4.0,accept,0.023,1.0,reject
+gemma,Confiscation of Russian central bank funds,corpus,35.0,0.086,3.0,accept,0.029,1.0,reject
+gemma,Political status of Crimea,corpus,38.0,0.079,3.0,accept,0.053,2.0,reject
+gemma,2014 Ukrainian presidential election,corpus,48.0,0.062,3.0,accept,0.021,1.0,reject
+gemma,Tom Brewer (politician),corpus,48.0,0.062,3.0,accept,0.042,2.0,reject
+gemma,Sumy,corpus,62.0,0.048,3.0,accept,0.032,2.0,reject
+gemma,Alexander Lukashenko,corpus,138.0,0.029,4.0,accept,0.014,2.0,reject
+gemma,Oleksandr Usyk,corpus,125.0,0.024,3.0,accept,0.008,1.0,reject
+e5,Henichesk,bfs_new,17.0,0.294,5.0,review,0.353,6.0,accept
+e5,Serhiy Haidai,bfs_seen,7.0,0.286,2.0,review,0.429,3.0,accept
+e5,Hola Prystan,bfs_new,14.0,0.286,4.0,review,0.357,5.0,accept
+e5,Vladlen Tatarsky,bfs_new,14.0,0.286,4.0,review,0.429,6.0,accept
+e5,Social media in the Russo-Ukrainian war,bfs_seen,15.0,0.267,4.0,review,0.4,6.0,accept
+e5,DeepStateMap.Live,bfs_seen,19.0,0.263,5.0,review,0.474,9.0,accept
+e5,Aleksey Mozgovoy,bfs_seen,16.0,0.25,4.0,review,0.312,5.0,accept
+e5,Igor Plotnitsky,bfs_seen,16.0,0.25,4.0,review,0.312,5.0,accept
+e5,Donuzlav,bfs_new,12.0,0.25,3.0,review,0.333,4.0,accept
+e5,Khartsyzk,bfs_new,8.0,0.25,2.0,review,0.375,3.0,accept
+e5,Vasylivka,bfs_new,12.0,0.25,3.0,review,0.333,4.0,accept
+e5,1 December 2013 Euromaidan protests,bfs_new,16.0,0.25,4.0,review,0.312,5.0,accept
+e5,"Hranitne, Volnovakha Raion",bfs_new,4.0,0.25,1.0,review,0.5,2.0,accept
+e5,2022 Russian Air Force Ilyushin Il-76 crash,bfs_new,9.0,0.222,2.0,review,0.333,3.0,accept
+e5,Lyptsi,bfs_new,9.0,0.222,2.0,review,0.333,3.0,accept
+e5,Mil Mi-2,bfs_new,27.0,0.222,6.0,review,0.296,8.0,accept
+e5,Andriy Yusov,bfs_new,9.0,0.222,2.0,review,0.333,3.0,accept
+e5,2017 Saint Petersburg Metro bombing,bfs_new,23.0,0.217,5.0,review,0.391,9.0,accept
+e5,Novohrodivka,bfs_new,19.0,0.211,4.0,review,0.368,7.0,accept
+e5,2023 Presidential Address to the Federal Assembly,bfs_seen,5.0,0.2,1.0,review,0.4,2.0,accept
+e5,2026 Chernobyl exclusion zone wildfires,bfs_seen,5.0,0.2,1.0,review,0.8,4.0,accept
+e5,Denys Davydov,bfs_seen,5.0,0.2,1.0,review,0.6,3.0,accept
+e5,Crimean Autonomous Soviet Socialist Republic (1991–1992),bfs_new,5.0,0.2,1.0,review,0.4,2.0,accept
+e5,29th Guards Rocket Division,bfs_new,10.0,0.2,2.0,review,0.3,3.0,accept
+e5,Konstantin Ivashchenko,bfs_new,5.0,0.2,1.0,review,0.4,2.0,accept
+e5,Baltic Leader,bfs_new,5.0,0.2,1.0,review,0.4,2.0,accept
+e5,Submarine incident off Kildin Island,bfs_new,5.0,0.2,1.0,review,0.4,2.0,accept
+e5,Kapustin Yar,bfs_new,25.0,0.2,5.0,review,0.36,9.0,accept
+e5,Order for Courage,bfs_new,32.0,0.188,6.0,review,0.281,9.0,accept
+e5,Ukraine bioweapons conspiracy theory,bfs_seen,34.0,0.176,6.0,review,0.265,9.0,accept
+e5,Orc (slang),bfs_seen,6.0,0.167,1.0,review,0.5,3.0,accept
+e5,Pavlo Kyrylenko,bfs_seen,6.0,0.167,1.0,review,0.333,2.0,accept
+e5,Svatove,bfs_new,12.0,0.167,2.0,review,0.333,4.0,accept
+e5,Militarnyi,bfs_new,6.0,0.167,1.0,review,0.333,2.0,accept
+e5,6th Guards Kiev-Berlin Mechanised Brigade,bfs_new,6.0,0.167,1.0,review,0.333,2.0,accept
+e5,1st Guards Composite Aviation Division,bfs_new,18.0,0.167,3.0,review,0.444,8.0,accept
+e5,Governor of Luhansk Oblast,bfs_new,6.0,0.167,1.0,review,0.333,2.0,accept
+e5,Vanguard of Red Youth,bfs_new,6.0,0.167,1.0,review,0.333,2.0,accept
+e5,Lutuhyne,bfs_new,6.0,0.167,1.0,review,0.333,2.0,accept
+e5,Rustem Umerov,bfs_seen,39.0,0.154,6.0,review,0.179,7.0,accept
+e5,Snizhne,bfs_new,14.0,0.143,2.0,review,0.357,5.0,accept
+e5,Main Operational Directorate of the General Staff of the Russian Armed Forces,bfs_new,14.0,0.143,2.0,review,0.429,6.0,accept
+e5,Oryx (website),bfs_new,7.0,0.143,1.0,review,0.571,4.0,accept
+e5,Flakpanzer Gepard,bfs_new,37.0,0.135,5.0,review,0.189,7.0,accept
+e5,Honorary weapons of Russia,bfs_new,46.0,0.13,6.0,review,0.239,11.0,accept
+e5,Islamic State – Caucasus Province,bfs_new,23.0,0.13,3.0,review,0.478,11.0,accept
+e5,2022 Urengoy–Pomary–Uzhhorod pipeline explosion,bfs_seen,9.0,0.111,1.0,review,0.333,3.0,accept
+e5,Bayraktar (song),bfs_seen,9.0,0.111,1.0,review,0.444,4.0,accept
+e5,Chernobyl Nuclear Power Plant,bfs_new,39.0,0.103,4.0,review,0.231,9.0,accept
+e5,Poland's response to the Russian invasion of Ukraine,bfs_seen,49.0,0.102,5.0,review,0.163,8.0,accept
+e5,Environmental impact of the Russo-Ukrainian war,bfs_seen,60.0,0.1,6.0,review,0.267,16.0,accept
+e5,Outline of Ukraine,bfs_new,50.0,0.1,5.0,review,0.28,14.0,accept
+e5,Arsen Avakov,bfs_seen,103.0,0.097,10.0,review,0.107,11.0,accept
+e5,Debaltseve,bfs_new,52.0,0.096,5.0,reject,0.154,8.0,accept
+e5,2015 Kharkiv bombing,bfs_new,21.0,0.095,2.0,reject,0.476,10.0,accept
+e5,Vitaly Ganchev,corpus,11.0,0.091,1.0,reject,0.182,2.0,accept
+e5,Ilyushin Il-76,bfs_new,171.0,0.088,15.0,review,0.193,33.0,accept
+e5,Omsk refinery,corpus,12.0,0.083,1.0,reject,0.167,2.0,accept
+e5,ENS Gamal Abdel Nasser,corpus,12.0,0.083,1.0,reject,0.333,4.0,accept
+e5,Transport in Ukraine,bfs_new,60.0,0.083,5.0,reject,0.117,7.0,accept
+e5,Second Chechen War,bfs_new,98.0,0.082,8.0,review,0.194,19.0,accept
+e5,Jake Sullivan,bfs_new,62.0,0.081,5.0,reject,0.113,7.0,accept
+e5,Aleksey Dyumin,corpus,25.0,0.08,2.0,reject,0.16,4.0,accept
+e5,Ukraine's Peace Formula,corpus,26.0,0.077,2.0,reject,0.154,4.0,accept
+e5,People's Bayraktar,corpus,13.0,0.077,1.0,reject,0.231,3.0,accept
+e5,National Museum-Reserve of Ukrainian Military Achievements,corpus,13.0,0.077,1.0,reject,0.154,2.0,accept
+e5,Vyacheslav Ponomarev (public figure),corpus,13.0,0.077,1.0,reject,0.231,3.0,accept
+e5,Starlink,bfs_new,212.0,0.075,16.0,review,0.118,25.0,accept
+e5,Aviation Division,bfs_new,181.0,0.072,13.0,review,0.21,38.0,accept
+e5,Arabat Spit,corpus,14.0,0.071,1.0,reject,0.143,2.0,accept
+e5,New START,bfs_seen,70.0,0.071,5.0,reject,0.114,8.0,accept
+e5,First Chechen War,bfs_new,57.0,0.07,4.0,reject,0.14,8.0,accept
+e5,War in Abkhazia (1992–1993),bfs_new,115.0,0.07,8.0,review,0.139,16.0,accept
+e5,Kerch Strait,corpus,29.0,0.069,2.0,reject,0.241,7.0,accept
+e5,Novorossiya (confederation),corpus,15.0,0.067,1.0,reject,0.133,2.0,accept
+e5,Ukraine Salvation Committee,corpus,15.0,0.067,1.0,reject,0.133,2.0,accept
+e5,Donetsk Oblast,corpus,30.0,0.067,2.0,reject,0.133,4.0,accept
+e5,Chystiakove,corpus,17.0,0.059,1.0,reject,0.118,2.0,accept
+e5,Antonov An-26,bfs_new,196.0,0.056,11.0,review,0.138,27.0,accept
+e5,Ukrainian Choice,corpus,19.0,0.053,1.0,reject,0.105,2.0,accept
+e5,Institute for the Study of War,corpus,19.0,0.053,1.0,reject,0.105,2.0,accept
+e5,BTR-60,bfs_new,186.0,0.048,9.0,review,0.167,31.0,accept
+e5,Kharkiv Oblast,corpus,45.0,0.044,2.0,reject,0.111,5.0,accept
+e5,GLONASS,bfs_new,70.0,0.043,3.0,reject,0.257,18.0,accept
+e5,AK-74,bfs_new,72.0,0.042,3.0,reject,0.222,16.0,accept
+e5,The Insider (website),corpus,26.0,0.038,1.0,reject,0.192,5.0,accept
+e5,PK machine gun,bfs_new,79.0,0.038,3.0,reject,0.215,17.0,accept
+e5,Ruscism,corpus,55.0,0.036,2.0,reject,0.055,3.0,accept
+e5,Sergey Naryshkin,corpus,34.0,0.029,1.0,reject,0.088,3.0,accept
+e5,Autodrom Chayka,corpus,36.0,0.028,1.0,reject,0.083,3.0,accept
+e5,AKM,bfs_new,76.0,0.026,2.0,reject,0.132,10.0,accept
+e5,Odesa,corpus,151.0,0.013,2.0,reject,0.02,3.0,accept
+e5,Internet Research Agency,corpus,176.0,0.011,2.0,reject,0.017,3.0,accept
+e5,International sanctions during the Russo-Ukrainian war,corpus,205.0,0.005,1.0,reject,0.015,3.0,accept
+e5,2022 Russo-Ukrainian Easter truce proposal,corpus,3.0,0.0,0.0,reject,0.333,1.0,accept
+e5,List of cultural sites damaged during the Russo-Ukrainian war (2022–present),corpus,4.0,0.0,0.0,reject,0.25,1.0,accept
+e5,I'm Fine (Burning Man installation),corpus,8.0,0.0,0.0,reject,0.125,1.0,accept
+e5,Volos Declaration,corpus,10.0,0.0,0.0,reject,0.1,1.0,accept
+e5,U-24 (association),corpus,8.0,0.0,0.0,reject,0.125,1.0,accept
+e5,Russian armoured train Volga,corpus,4.0,0.0,0.0,reject,0.5,2.0,accept
+e5,List of films about the Russo-Ukrainian war,corpus,5.0,0.0,0.0,reject,0.2,1.0,accept
+e5,Union Resolve 2022,corpus,1.0,0.0,0.0,reject,1.0,1.0,accept
+e5,Kursk campaign order of battle,corpus,1.0,0.0,0.0,reject,1.0,1.0,accept
+e5,Russian theft of Ukrainian grain,corpus,6.0,0.0,0.0,reject,0.167,1.0,accept
+e5,Task Force on Accountability for Crimes Committed in Ukraine,corpus,5.0,0.0,0.0,reject,0.2,1.0,accept
+e5,Krymnash,corpus,7.0,0.0,0.0,reject,0.286,2.0,accept
+e5,Timeline of the war in Donbas,corpus,1.0,0.0,0.0,reject,1.0,1.0,accept
+e5,Meotyda National Nature Park,corpus,5.0,0.0,0.0,reject,0.2,1.0,accept
+e5,Putin. War,corpus,14.0,0.0,0.0,reject,0.143,2.0,accept
+e5,The Other Russia of E. V. Limonov,corpus,9.0,0.0,0.0,reject,0.222,2.0,accept
+e5,HACKEN,corpus,7.0,0.0,0.0,reject,0.143,1.0,accept
+e5,2025 Makhachkala clash,corpus,4.0,0.0,0.0,reject,0.25,1.0,accept
+e5,National Gene Bank of Plants of Ukraine,corpus,2.0,0.0,0.0,reject,0.5,1.0,accept
+e5,National Socialism / White Power,corpus,9.0,0.0,0.0,reject,0.111,1.0,accept
+e5,Alexander Lentsov,corpus,5.0,0.0,0.0,reject,0.2,1.0,accept
+e5,Yevhen Zhylin,corpus,6.0,0.0,0.0,reject,0.167,1.0,accept
+e5,List of signees of the 2022 open letter from Nobel laureates in support of Ukraine,corpus,6.0,0.0,0.0,reject,0.167,1.0,accept
+e5,Anti-Ukrainian sentiment,corpus,79.0,0.0,0.0,reject,0.051,4.0,accept
+e5,Follow Me (2022 film),corpus,5.0,0.0,0.0,reject,0.4,2.0,accept
+e5,Turan Battalion,corpus,3.0,0.0,0.0,reject,0.333,1.0,accept
+e5,Ural Airlines Flight 1383,corpus,10.0,0.0,0.0,reject,0.2,2.0,accept
+e5,Vadym Boychenko,corpus,8.0,0.0,0.0,reject,0.25,2.0,accept
+e5,Illia Ponomarenko,bfs_seen,5.0,0.0,0.0,reject,0.4,2.0,accept
+e5,Metropolis of Crimea,bfs_new,2.0,0.0,0.0,reject,0.5,1.0,accept
+e5,Tavrida Highway,bfs_new,3.0,0.0,0.0,reject,0.333,1.0,accept
+e5,Military Unit Number,bfs_new,2.0,0.0,0.0,reject,0.5,1.0,accept
+e5,Interbrigades,bfs_new,3.0,0.0,0.0,reject,0.333,1.0,accept
+e5,270th Motor Rifle Division,bfs_new,4.0,0.0,0.0,reject,0.5,2.0,accept
+e5,Grigory Lovtsov,bfs_new,5.0,0.0,0.0,reject,0.4,2.0,accept
+e5,Humanitarian corridor,bfs_new,7.0,0.0,0.0,reject,0.429,3.0,accept
+e5,BTR (vehicle),bfs_new,11.0,0.0,0.0,reject,0.545,6.0,accept
+e5,Krasnaya Zvezda,bfs_new,4.0,0.0,0.0,reject,0.5,2.0,accept
+e5,Dobropillia urban hromada,bfs_new,3.0,0.0,0.0,reject,0.333,1.0,accept
+e5,Sloviansk urban hromada,bfs_new,3.0,0.0,0.0,reject,0.333,1.0,accept
+e5,Kalchyk rural hromada,bfs_new,3.0,0.0,0.0,reject,0.333,1.0,accept
+e5,Yasynuvata urban hromada,bfs_new,2.0,0.0,0.0,reject,0.5,1.0,accept
+e5,Guerrilla phase of the Second Chechen War,bfs_new,1.0,0.0,0.0,reject,1.0,1.0,accept
+e5,Kizlyar church shooting,bfs_new,6.0,0.0,0.0,reject,0.5,3.0,accept

@@ -1,0 +1,10 @@
+Starting model: flair/ner-english-large
+Maximum epochs: 20
+Completed epochs: 12
+Stopped early: True
+Best epoch: 7
+Best validation five-label micro F1: 81.9778%
+Patience before epoch 15: 5
+Patience from epoch 15: 2
+Best checkpoint: C:\Users\idosc\Corpus2GeoRAG\ApplyNER\NER_output\model_evaluation\fine_tuning\flert_5label\FlertDate\best-model.pt
+Final checkpoint: C:\Users\idosc\Corpus2GeoRAG\ApplyNER\NER_output\model_evaluation\fine_tuning\flert_5label\FlertDate\final-model.pt

@@ -936,6 +936,205 @@ town in its own article."
 | q15 Kyiv | fact | 1 | 1 | the city's summary |
 | z2 Zelenskyy in the White House | drilldown | 1 | 8 | dated visits, 2022 to 2025 |
 
+---
+
+## Final stage: the MVP (from 2026-10-29)
+
+**The rebuilt graph on main** (graph team, on the new NER output; not yet the final graph). Loads
+with no code change: 87,065 nodes (was 120,019), 47,398 paragraphs (was 64,301), relations for 34,427
+paragraphs (a full build, not a check-mode one), load + indexes 6.5 s (was 14). Reference sections
+dropped: 3,613 paragraphs, 733 entities (9 kept for the hierarchy). **Lost:** the articles for Kyiv,
+Dnipro, Kharkiv, Russia, Ukraine, Crimea and Volodymyr Zelenskyy, so "Show me Kyiv" now has no
+summary and "Where is Dnipro?" answers "a river" (GRAPH_TEAM_ISSUES G). Dnipro is no longer flagged
+uncertain, because the flag needs the city's article (P2-64).
+
+**Owner's notes after using the agent (2026-10-29):**
+
+**P2-65. Which places go on the map** (decided). *Owner:* "a deep dive should show only the place
+we dive into; the map shouldn't get convoluted for every type of question." *Decision:* a list
+answer or an area question returns every place found; every other answer (where is, who did what,
+drill-down, a question about something) returns only the places it discusses, plus the places the
+question asks about even if the answer forgets their number. `map.showing` ("all" / "discussed")
+and `map.not_shown` say so. The numbers stay the ones the answer cites. *Why in `geo_locations`
+and not a flag:* the UI draws every entry already, so it works without a UI change, and "number N"
+follow-ups refer to what the user saw. *Outcome:* "Tell me more about Mariupol" went from 552 pins
+to the places its answer names.
+
+**P2-66. "Number 4" answered about place 5** (bug, fixed). *Owner:* "asking about location number
+four gives one away, like five." *Cause:* step ① found the right place (number 4 = Illich), but every
+answer numbers its places from 1 again; in the follow-up Illich was [1] and Ukraine [4], and the
+writer, still reading "location number 4" in the question, took [4] of the new list. *Fix:* the
+writer reads the question with the reference replaced by the place's name ("Tell me about Illich"),
+`planner.question_for_answer`. A number the previous answer doesn't have gets a plain reply without
+an LLM call ("The previous answer has no place number 4"). *Outcome:* "number 4" and "number four"
+both answered about Illich.
+
+**P2-67. Suggested follow-ups must be answerable** (decided). *Owner:* "follow-up questions aren't
+answered correctly; they came from the text we found, so maybe attach a pointer." *Found:* they
+didn't all come from the text: "What is the capital of Ukraine?", "What is the population of
+Kyiv?" (no Kyiv article any more) were the model's own ideas, and the graph has nothing to answer
+them. *Decision:* the prompt asks for follow-ups that name a place, person, organization or event
+from the material, in forms our routes answer ("Tell me about X", "Which places are linked to X?",
+"Who attacked X?", "What happened in X?", "X in Y"); code drops any that names nothing in the
+material. The name is the pointer: the next question resolves it to the same graph entry. *Outcome:*
+"What happened in Azovstal?", "Which places are linked to the 36th Separate Marine Brigade?".
+
+**P2-68. The app runs on Gemini 2.5 Flash** (decided 2026-10-29, owner). `MODEL =
+"google/gemini-2.5-flash"`, the free router still behind it. Through the UI: 48 s on the free model,
+2–3 s on Flash (first question 9.7 s with the graph load), 0.17 cents a question. Each person's
+OpenRouter key now needs a little credit.
+
+**The missing articles, traced** (2026-10-29). Not a graph or NER fault: the data team's selector
+(Oct 18) rejects broad pages by their share of war paragraphs (Kyiv 3 of 197). The first Vr6 graph
+was built on NER from before it (1,909 articles, Kyiv included); today's graph on the selected corpus
+(1,602); the newest corpus (2,081, BFS expansion) brings back Ukraine, Kharkiv and Zelenskyy but not
+Kyiv, Dnipro, Russia or Crimea. *Recommendation:* keep the new corpus and force-include anchor pages
+(GRAPH_TEAM_ISSUES G), rather than go back to the old one.
+
+**The UI wouldn't render on the owner's PC** (2026-10-29): no map, no chat box. *Cause:* Windows
+Smart App Control blocks a compiled file of pandas 3.1 ("An Application Control policy has blocked
+this file"); Streamlit imports pandas to draw the page, so the script stopped. Not the UI's code.
+*Fix, in our environment only:* `pandas<3` (2.3.3 is allowed). *For the UI team:* pin `pandas<3` in
+`ui/requirements.txt`, or anyone with Smart App Control on hits the same blank page.
+
+**Owner's UI testing, round 1 (2026-10-29).** Replayed through `ui/geo_agent.py` with the same chat
+history the app sends; history turned out not to matter, the question kind did:
+
+- **P2-69. "Tell me about <event>" found nothing** ("No data from the graph"). The about route looked
+  only for people, organizations and places; an event is an article. *Fix:* an about question that
+  names only an event uses the event's article (its places, summary and passages); an event named next
+  to a person or place adds its summary. *Outcome:* "Tell me about the Siege of Mariupol" → answered
+  from the article, 22 places.
+- **P2-70. A topic with no place or map had no route** ("Where were drone attacks?" → no data;
+  "Show me drone attacks" typed `other`). *Fix:* a corpus-wide topic search, places mentioned in any
+  paragraph that mentions the topic, ranked by those paragraphs; `other` with keywords and no names
+  goes there. *Outcome:* 1,486 places, Kyiv, Moscow, Belgorod, Odesa first.
+  **Reverted (owner, 2026-10-29):** too big a change for the final stage; it swept every paragraph
+  in the graph for the word, and the owner wants answers from the graph's structure.
+- **No follow-ups:** a consequence of the two above; no-data answers carry none.
+- **P2-71. Extra polygons:** the UI adds each answer's layers to the map and never clears them
+  (UI_TEAM_NOTES.md). On our side, a non-list answer now outlines only the place it is about, named
+  in `map.focus`, so the UI can show the rest behind a toggle. **Reverted (owner, 2026-10-29):** what
+  to show by default is the UI's job; the agent returns the places and a hint.
+- **Owner's rule from here on:** in the final stage, diagnose and propose; implement only after the
+  owner's go.
+
+**The UI, end to end** (2026-10-29). The UI team's app (`ui/app.py`, from main) runs against the
+agent unchanged: answer, 52 map layers and follow-ups for the Siege of Mariupol. On the app's free
+model the answer took 48 s, against 2–3 s on Gemini 2.5 Flash.
+
+**The final graph (2026-10-30, eb2c6be).** Corpus v3 (2,285 pages), NER of 03d6943, Vr6 notebook
+unchanged: 149,085 nodes after the reference drop (83,008 paragraphs, 2,285 articles), 812k edges,
+same format, so nothing in our code had to change. 1.4 GB in memory, about 11 s to load and index.
+Ukraine, Kyiv, Kharkiv, Donetsk, Luhansk, Zaporizhzhia, Dnipro and Zelenskyy have their own articles
+again (242 of the 548 dropped articles are back); Russia, Crimea, Moscow, Odesa and most oblasts are
+still out (the selector rejects them: 0–2 military paragraphs each). 180 tests and the 10 questions
+pass ($0.017); "Show me Kyiv" now has a description instead of "no passages describing Kyiv".
+
+**P2-72. Fixes found on the final graph** (owner's go, 2026-10-30):
+
+- **"What happened in Moscow?" answered "no data"** although Moscow is in 1,411 paragraphs. The
+  question went to the LLM planner (not the fast path), which typed it `area_topic` with the keyword
+  "happened", so the retrieve step searched Moscow's paragraphs for that word. *Fix:* the prompt says
+  words like "happened", "events", "situation" are no topic (one example added), and a code check
+  drops such words; an `area_topic` left with no topic becomes `about` (a named place) or `area` (the
+  map selection). *Outcome:* 22 citations; "What happened in Dnipro / Bakhmut in 2023?" answered too.
+- **Dnipro on the river near Chernihiv**, 300 km off, though its own article now says "city". The
+  graph has the right point under another node, "Dnipro City" (city, with outline). *Fix:*
+  `PLACE_FIXES` in `graph_index.py`: on load, a wrongly geocoded name takes the point, outline, place
+  type, address and INSIDE parent of the node that has it right; the graph file is not changed.
+  Dnipro, Дніпро → Dnipro City; Dnipro Oblast → Dnipropetrovsk Oblast. *Outcome:* the pin is on the
+  city, no "uncertain" warning, the region is Dnipropetrovsk Oblast, and Yekaterinoslav / Dnepr /
+  Dnepropetrovsk now join Dnipro's group (same point).
+- **More wrong points, same fix** (owner: "if we can't fix the location, we don't show a wrong
+  point"). Listed by names in 15+ paragraphs geocoded with importance under 0.1 (the "uncertain" flag
+  missed some: "Soviet Union" is typed `historic`). Eight more take a right node's point
+  (Zaporizhzhia Oblast was a village in Kherson Oblast; Oval Office a road in Alabama → White House).
+  36 have no right point anywhere in the graph, mostly regions, former states and military
+  districts matched to a shop, plaque or street (Donbas: a street in Skopje); `NO_POINT` clears them
+  for every spelling, before grouping too, so a real place at the same spot keeps its own point
+  ("Donbass" sat on the village Novyi Donbas). A place lookup with no point still gets its own
+  article's lead: "Where is Donbas?" is answered, with no pin.
+- **The hierarchy follows the addresses** (owner: "take the graph as the truth"). 173 INSIDE links
+  join two places whose addresses name different countries, mostly through landforms that cross
+  borders: Kharkiv Oblast → Central Russian Upland → Russia (about 300 places), Zakarpattia → Eastern
+  Carpathians → Romania, Crimea → Southern Federal District → Russia (about 240), St Petersburg →
+  a bay → Estonia. *Fix:* such a parent is replaced by the place's own address country, when that is
+  a country node: 146 links; the 28 left name a sea or a non-country. Crimea's addresses say
+  Ukraine, so it sits under Ukraine. "What happened in Crimea?" still tells the 2014 annexation and
+  the 2022 advance from occupied Crimea; that comes from the text, not the hierarchy.
+- **Event titles with lower-case words were thrown away.** "Show me all locations connected to the
+  Kharkiv counteroffensive" → no data, though the article has 96 paragraphs: the P2-27 rule calls a
+  name with a lower-case word a description ("Russian generals"), and so also "Bucha massacre",
+  "Wagner Group rebellion". The user's own typing never mattered: the rule reads the LLM's spelling
+  ("where is ukraine" → Ukraine). *Fix (owner's go):* a name the LLM marks as an event that starts
+  with a capital or a year stays a name. *Outcome:* Bucha massacre 52 places, Kharkiv
+  counteroffensive 132, Wagner Group rebellion 14 citations; the 10 questions unchanged.
+
+**Owner's UI testing, round 2 (2026-10-31).**
+
+- **"Where is Donbas" showed nothing** once its Skopje street point was removed. Its own article says
+  "the Donbas usually refers to Donetsk Oblast and Luhansk Oblast", so `COMPOSITE_PLACES` gives every
+  spelling (Donbas, Donbass, ...) the two oblast outlines together, a point between them and
+  Ukraine as parent (owner's go). One pin, one outline; the village Novyi Donbas keeps its own.
+- **"Show me where the battle of Bakhmut occurred" → no data.** Not the wording: the plan was right
+  (where + the event), but the place-lookup route only locates places and an event is an article.
+  *Fix:* a place lookup that names only an event is answered from the event's places; the plan stays
+  a place lookup, so the map shows the main place (Bakhmut, #1) and the places the answer names, not
+  the 74-place list (73 not shown).
+- **Inspect** (owner's question): the result carries paragraph pointers; the UI's Inspect button
+  calls `get_source_text()` on click, which reads the paragraph from the loaded graph. No LLM, no cost.
+- **UI side:** old pins stay on the map (UI_TEAM_NOTES 3, now marked most important: it confuses
+  "number N"); a long answer opens at its end (UI_TEAM_NOTES 7, tried on a local copy).
+- **"Number N"** works for every place of the last answer (tested 3, 240 and 535 after the
+  535-place list), and only for the places on the map after a non-list answer.
+
+**P2-73. Outlines only for the places the question is about** (owner's go, 2026-10-31). Every place
+the answer discussed got an outline (up to 10), and the map zoomed to fit them all: "What happened
+in Crimea?" outlined Russia and Ukraine too and zoomed to the whole world; "Tell me about number 2"
+after the Bakhmut list outlined 10 places, the UK among them. *Rule:* the outline and the zoom go to
+the places the question names (or the follow-up's place, or a place lookup's #1: the event's main
+place for "where did the battle of Bakhmut happen"); every other place keeps its pin. A list gets
+pins only (its places are equal; "Russia and Ukraine with the same country" would outline two
+countries); an area question outlines the named area it searched ("drone attacks in Kharkiv"),
+never a drawn selection, which the UI draws itself. A question about a person or an event names no
+place: pins only, zoom to the pins. *Considered:* sending every outline and letting the UI choose
+by `role` / `map.highlight`; the UI draws every `shape` it gets, so that needs a UI change before
+the MVP, and nothing reads an outline back (follow-ups use number, id and label). No format change;
+answers get smaller.
+
+**P2-74. "Where did <event> happen" asks for one place** (owner's go, 2026-10-31). The P2-72 route
+answers a place lookup that names an event, but the LLM typed "Show me where the battle of Bakhmut
+occurred" as `event_places` 5 times out of 5, so the map got all 75 places. *Fix:* in `_finalize`,
+`event_places` with one event, the word "where" and no list word (all, every, list, locations,
+places, cities, ...; "take place" is no list word) becomes a place lookup. *Outcome:* Bakhmut 4 of 4
+runs (Bakhmut's pin and outline, zoomed in, 73 not shown), Siege of Mariupol, Bucha massacre,
+Battle of Avdiivka the same; "Show me all locations ... Battle of Bakhmut" stays the 75-place list.
+
+**P2-75. A topic with no area asks for one** (owner's go, 2026-10-31). "Show me where drone attacks
+happened" names no place and nothing was selected, so the topic search had no area and the answer
+was "No data". *Considered:* searching the whole graph's text (measured: 4,300 of 83,008 paragraphs,
+1,758 places, 1.2 s; owner: after the MVP), and a default box around the war area (hides a choice
+from the user, leaves out Moscow and the Black Sea, and with the per-place search costs about the
+same as the whole graph). *Chosen (owner: the better of asking and a default box):* ask. An `area`
+or `area_topic` plan with no area gets a fixed reply without the second LLM call: "There is no area
+to search ... Draw a box or pick a point on the map and ask again, or name a place (for example
+"drone attack in Kharkiv")." A named place with no point (Eastern Ukraine) gets the same.
+
+**P2-76. Russia zooms to Russia.** Its outline crosses the 180th meridian (Chukotka), so the zoom
+box spanned every longitude: "Where is Russia?" and q11 showed the whole world. *Fix:* for an
+outline more than 180° wide, only its parts on the side of the place's point count: Russia
+11°E-180°, the US 180°W-53°W (the Aleutians west of the line left out).
+
+**Also (2026-10-31):** `answer_plain` kept the commas between citation marks ("since 2019,,."); a run
+of marks now goes with its commas. **The launcher** (owner: for all teams, in the repo root):
+`RUN_GEORAG.bat` finds Python 3.10+, and `AgentRag/launch.py` sets up `AgentRag/venv` once, installs
+the packages (with `pandas<3`), asks once for the key (hidden, saved in the git-ignored
+`AgentRag/.env`), checks the graph and opens the app. It runs `AgentRag/ui_mvp/`, a copy of `ui/`
+with the UI_TEAM_NOTES fixes, until the UI team's own `ui/` has them (owner's idea; the UI team
+pushes its final version to `ui/`, then the copy goes). Not an .exe: Smart App Control blocks
+unsigned programs, and the graph alone is 42 MB.
+
 ### ④ Evidence pack
 
 **P2-15. Choosing the least text that answers.**
@@ -1013,8 +1212,9 @@ Things we chose not to do yet, kept here so we can pick them up if the results c
 | "Tell me about number 3" drill-down: carry the previous question's subject (e.g. Zelenskyy) into the follow-up | ① / ③ | Works today when the follow-up names both; a bare number gives only the place | 2026-10-21 |
 | For a concept, also look at organizations connected to the LLM's candidates (e.g. reach General Staff from Russian Armed Forces / Ministry of Defence) | ③ Retrieve | q11's success shouldn't depend on the LLM naming the right organization (Part 2 results) | 2026-10-20 |
 | Collapse nested places in a list (Oval Office → White House → Washington) into one line with the inner ones under it | ③ / ⑥ | They're different places with their own text (P2-57); the UI can cluster pins first | 2026-10-21 |
-| Fix the place itself when its map point disagrees with its own article (Dnipro: a river near Chernihiv; the article says "city"), e.g. by using the article's coordinates | ② / ⑥ | For later (owner); the graph team is asked to fix it (B1). Meanwhile flagged as uncertain (P2-64) | 2026-10-21 |
+| Fix the place itself when its map point disagrees with its own article (Dnipro: a river near Chernihiv; the article says "city"), e.g. by using the article's coordinates | ② / ⑥ | **Done 2026-10-30 (P2-72)**, from the graph's own "Dnipro City" point, not the article | 2026-10-21 |
 | "Battle of Avdiivka" with no year resolves to the 2017 battle, not 2023–2024; check that the other is offered in `did_you_mean`, and whether the newest should win | ② Resolve | Found in the unseen-questions check (P2-55 update) | 2026-10-21 |
 | Entity lists ranked first by place relations put geocoding noise on top for some entities (Azov Brigade: "Treasure Island", "United States Government") | ③ Retrieve | Found in the unseen-questions check; needs the unification/geocoding fixes or a noise filter | 2026-10-21 |
 | Leaner results for very big lists (e.g. context places without `why`/`sources`, fetched on demand) | ⑥ Result | 500 KB for q10 is fine in-process; matters only behind an HTTP API (P2-59) | 2026-10-21 |
 | Ignore entities with non-Latin names (1,458, mostly words from native-language names in brackets, e.g. `Україні`) | Loading | Owner to decide; better fixed in NER (GRAPH_TEAM_ISSUES F2) | 2026-10-21 |
+| q10 ("Russia and Ukraine ... the same country") sometimes loses its country filter: 1,659 places instead of about 149 (2 of the last 3 runs) | ① Understand | Model variance; owner: record the answers for the MVP, fix in a later stage | 2026-10-31 |
