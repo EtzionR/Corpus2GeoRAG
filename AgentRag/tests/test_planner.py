@@ -116,6 +116,24 @@ def test_what_is_here_becomes_an_area_question():
     assert plan.type == "area" and (plan.radius_m, plan.radius_source) == (DEFAULT_RADIUS_M, "default")
 
 
+@pytest.mark.parametrize("question", ["What happened in this area?", "Tell me about this area"])
+def test_an_about_question_on_the_map_selection_becomes_an_area_question(question):
+    plan = understand(question, area=DONBAS_BOX, llm=FakePlanner(PlanDraft(type="about", refers_to_map=True)))
+    assert plan.type == "area" and plan.area is not None
+
+
+def test_an_about_question_with_a_topic_on_the_map_selection_searches_the_topic():
+    draft = PlanDraft(type="about", refers_to_map=True, keywords=["drone"])
+    plan = understand("Tell me about drones in this area", area=DONBAS_BOX, llm=FakePlanner(draft))
+    assert plan.type == "area_topic" and plan.keywords == ["drone"] and plan.area is not None
+
+
+def test_an_about_question_naming_a_place_ignores_the_selection():
+    draft = PlanDraft(type="about", entities=[EntityMention(text="Kharkiv", name="Kharkiv", kind="LOC")])
+    plan = understand("Tell me about Kharkiv", area=DONBAS_BOX, llm=FakePlanner(draft))
+    assert plan.type == "about" and plan.area is None
+
+
 def test_numbers_coordinates_and_names_are_not_keywords():
     draft = PlanDraft(type="area", refers_to_map=True, keywords=["30.5234,50.4501", "500", "drone", "Kyiv", "drone"],
                       entities=[EntityMention(text="Kyiv", name="Kyiv", kind="LOC")])

@@ -1135,6 +1135,19 @@ with the UI_TEAM_NOTES fixes, until the UI team's own `ui/` has them (owner's id
 pushes its final version to `ui/`, then the copy goes). Not an .exe: Smart App Control blocks
 unsigned programs, and the graph alone is 42 MB.
 
+**Also (2026-11-01):** the UI team's PR #33 applied the UI_TEAM_NOTES fixes to their `ui/`, so the
+launcher runs `ui/` and `AgentRag/ui_mvp/` is deleted.
+
+**P2-77. A question about the selection that names nothing searches the selection** (owner's go,
+2026-11-01). Found running the UI team's new UI: with a box around Kharkiv, "What happened in this
+area?" and "Tell me about this area" answered "No data", while "What happened here?" worked. The
+model typed them `about`, with `refers_to_map` true and nothing named, and `about` looks up a named
+subject. "What is here?" (typed `place_lookup`) was already turned into `area`. *Fix:* the same for
+`about`: with the selection in use and no entity or concept, it becomes `area`, or `area_topic` when
+it has topic words ("Tell me about drone attacks in this area"). A named place still wins ("Tell me
+about Kharkiv" with a box stays `about` Kharkiv). Checked live: 70 places for both questions, 7 for
+the drone one; the focus and project14 sets give the same results as before.
+
 ### ④ Evidence pack
 
 **P2-15. Choosing the least text that answers.**
