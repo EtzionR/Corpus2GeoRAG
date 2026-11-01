@@ -5,8 +5,8 @@ Russia–Ukraine war), compressed with gzip. It links people, organizations and 
 relation can be traced back to the exact words in a source text.
 
 * **Format:** NetworkX *node-link* JSON, undirected graph: `{"directed": false, "multigraph": false, "graph": {}, "nodes": [...], "links": [...]}`.
-* **Size:** 155,124 nodes — 88,120 texts and 67,004 entities (19,771 PER, 32,226 ORG, 15,007 LOC) — and 819,102 edges.
-* **File:** `knowledge_graph.json.gz`, 42 MB (gzip, lossless; the JSON inside is 268 MB). Python reads it directly (section 1);
+* **Size:** 154,486 nodes — 88,120 texts and 66,366 entities (19,740 PER, 31,723 ORG, 14,903 LOC) — and 798,102 edges.
+* **File:** `knowledge_graph.json.gz`, 42 MB (gzip, lossless; the JSON inside is 262 MB). Python reads it directly (section 1);
   to look inside by hand, decompress it with 7-Zip.
 
 ---
@@ -103,7 +103,7 @@ are not in the same sentence, one record per text).
 | `source_start`, `source_end` | position of the **source** entity in that text: `text[source_start:source_end]` is its name |
 | `target_start`, `target_end` | position of the **target** entity in that text |
 | `subject` | the entity the relation reads from, i.e. who acts: here *Lobau* DIED_IN the cemetery. `null` = symmetric relation |
-| `confidence` | the classifier's score (0–1); `null` = the pair was not classified (see below) |
+| `confidence` | the classifier's score (0–1); `0.77` = the record was changed by the relation fixes (see below); `null` = the pair was not classified (see below) |
 
 * An edge can hold several relations and many records: `Russia – Ukraine` may have `ATTACKED`, `NEGOTIATED_WITH` and
   `CO_OCCURS_WITH`, each with its own list of records from different texts.
@@ -119,6 +119,22 @@ are not in the same sentence, one record per text).
 small model (`von`) from the sentence. Otherwise, and for items of one comma list (`Horlivka, Mariupol, Yenakiieve`), the
 relation is `CO_OCCURS_WITH` with `confidence: null`. A classification below 0.4 confidence is also stored as
 `CO_OCCURS_WITH` (with its confidence).
+
+**Relation fixes.** After the graph is built, five fixes run on its records (the "Relation Fixes" section of the notebook):
+
+1. **Junk names:** names that are NER mistakes (`.`, `Armed Forces of`, `Army` alone) leave the graph. Names made only of
+   numbers stay.
+2. **Lists:** items of a list (`A, B and C`) become `CO_OCCURS_WITH`.
+3. **Landmarks and sources:** `X, south of Y` between two places, and `according to X`, become `CO_OCCURS_WITH`.
+4. **Patterns von missed:** `Place, Region` inside our polygons becomes `PART_OF`, `mayor of X, Name` becomes `LEADS`,
+   `Long Name (LN)` or the same name in another script becomes `SAME_AS`, `was born / was killed in` becomes `BORN_IN` /
+   `DIED_IN`, `Unit (Place)` becomes `BASED_IN`.
+5. **Second model:** a text-checking model ([DeBERTa-v3-large-mnli-fever-anli-ling-wanli](https://huggingface.co/MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli))
+   reads each remaining relation with its sentence. A relation it scores below 0.5 becomes `CO_OCCURS_WITH`.
+
+Every record a fix changes gets `confidence: 0.77`; records that pass keep von's score. von's own scores can also be 0.77, so
+`relation_fixes.parquet` is what tells them apart: it lists each change with the name of the fix, and keeps the second model's
+scores, so later runs only score new relations (same logic as `von_results.parquet`).
 
 ### 3.2 Entity → text — `IN_THE_TEXT`
 
@@ -237,10 +253,17 @@ inside_area = [n for n, d in G.nodes(data=True)
 
 ## 6. Things to know
 
-* **Classifier accuracy:** text relations other than `CO_OCCURS_WITH` are right about 60–65 % of the time (measured on
-  hand-labelled pairs). Use `confidence` to filter, and the positions to show or check the source sentence.
+* **Relation accuracy:** text relations other than `CO_OCCURS_WITH` are right about 72 % of the time (±6), and all records
+  from a sentence, `CO_OCCURS_WITH` included, about 77 % (±4). Before the fixes these were 51 % and 63 %. Measured on 600
+  new cases checked one by one by Claude, not yet by a person. Use the positions to show or check the source sentence.
+* **Filtering by `confidence`:** von's score says little about whether a relation is right. Estimates for all relations at
+  `confidence` ≥ 0.4: about 100,000 at 72 %; ≥ 0.6: about 53,000 at 80 %; ≥ 0.7: about 38,000 at 80 %. Above 0.77 the fixed
+  records drop out and accuracy falls (≥ 0.8: about 23,000 at 72 %).
 * **Same entity, several names:** spellings are not unified yet (`Kyiv`, `Kiyev`, `Kiev` are separate nodes). A colleague
   is working on entity unification; until then, `SAME_AS` relations and identical coordinates hint at duplicates.
 * **NER noise:** some entity names are fragments (`'s Republic`, `92`, ` HR`); they have few connections and low weights.
+  The relation fixes remove the clear mistakes; names made only of numbers stay, because some are real units.
+* **Previous version:** the graph before the relation fixes is kept at the git tag `graph-before-relation-fixes`:
+  `git show graph-before-relation-fixes:Graph_n_Geocoding/knowledge_graph.json.gz > knowledge_graph_old.json.gz`.
 * **Geocoding mistakes:** some names matched the wrong place (e.g. `Donbas` → a street in Skopje, `place_type: road`).
   `place_type` and `importance` help to spot them.
