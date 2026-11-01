@@ -657,6 +657,153 @@ class MapTrashBinHook(MacroElement):
             window._scanOverlay = window._scanOverlay || null;
             window._lastClearSeq = window._lastClearSeq || 0;
 
+            // Apply matching cyan headers to adjustable_columns iframe from parent document
+            var RESIZER_THEME_CSS = `
+                html, body {
+                    background: transparent !important;
+                    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
+                    overflow: hidden !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                }
+                #root { min-height: 0 !important; height: 100% !important; }
+                .column-indicator {
+                    background: rgba(13, 23, 38, 0.92) !important;
+                    border-left: 3px solid #00e5ff !important;
+                    border-top: 1px solid rgba(0, 229, 255, 0.35) !important;
+                    border-right: 1px solid rgba(0, 229, 255, 0.35) !important;
+                    border-bottom: 1px solid rgba(0, 229, 255, 0.35) !important;
+                    border-radius: 4px !important;
+                    box-shadow: 0 0 10px rgba(0, 229, 255, 0.15) !important;
+                    transition: background 0.15s ease !important;
+                    box-sizing: border-box !important;
+                }
+                .column-indicator:hover {
+                    background: rgba(0, 229, 255, 0.18) !important;
+                    border-color: #00e5ff !important;
+                    box-shadow: 0 0 14px rgba(0, 229, 255, 0.45) !important;
+                }
+                .column-indicator,
+                .column-indicator > div,
+                .column-indicator div,
+                .column-indicator span {
+                    color: #00e5ff !important;
+                    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
+                    font-size: 13px !important;
+                    font-weight: 700 !important;
+                    letter-spacing: 0.07em !important;
+                    text-transform: uppercase !important;
+                    opacity: 1 !important;
+                    text-shadow: 0 0 10px rgba(0, 229, 255, 0.8) !important;
+                }
+                .column-indicator:hover > div,
+                .column-indicator:hover div {
+                    color: #ffffff !important;
+                    text-shadow: 0 0 14px #00e5ff !important;
+                }
+                .resize-handle {
+                    background: rgba(0, 229, 255, 0.4) !important;
+                    border-radius: 2px !important;
+                    transition: background 0.2s ease, box-shadow 0.2s ease !important;
+                }
+                .resize-handle:hover {
+                    background: #00e5ff !important;
+                    box-shadow: 0 0 10px #00e5ff !important;
+                }
+            `;
+
+            function applyResizerThemeToDoc(doc) {
+                if (!doc || (!doc.head && !doc.body)) return;
+                var styleEl = doc.getElementById('geoai-resizer-hud-theme');
+                if (!styleEl) {
+                    styleEl = doc.createElement('style');
+                    styleEl.id = 'geoai-resizer-hud-theme';
+                    (doc.head || doc.body).appendChild(styleEl);
+                }
+                if (styleEl.textContent !== RESIZER_THEME_CSS) {
+                    styleEl.textContent = RESIZER_THEME_CSS;
+                }
+
+                var inds = doc.querySelectorAll('.column-indicator');
+                for (var k = 0; k < inds.length; k++) {
+                    inds[k].style.setProperty('background', 'rgba(13, 23, 38, 0.92)', 'important');
+                    inds[k].style.setProperty('border-left', '3px solid #00e5ff', 'important');
+                    inds[k].style.setProperty('border-top', '1px solid rgba(0, 229, 255, 0.35)', 'important');
+                    inds[k].style.setProperty('border-right', '1px solid rgba(0, 229, 255, 0.35)', 'important');
+                    inds[k].style.setProperty('border-bottom', '1px solid rgba(0, 229, 255, 0.35)', 'important');
+                    var txt = inds[k].querySelector('div');
+                    if (txt) {
+                        txt.style.setProperty('color', '#00e5ff', 'important');
+                        txt.style.setProperty('font-size', '13px', 'important');
+                        txt.style.setProperty('font-weight', '700', 'important');
+                        txt.style.setProperty('letter-spacing', '0.07em', 'important');
+                        txt.style.setProperty('opacity', '1', 'important');
+                        txt.style.setProperty('text-shadow', '0 0 10px rgba(0, 229, 255, 0.8)', 'important');
+                    }
+                }
+
+                if (!doc._geoaiResizerObs && window.MutationObserver) {
+                    doc._geoaiResizerObs = new MutationObserver(function() {
+                        var styleCheck = doc.getElementById('geoai-resizer-hud-theme');
+                        if (!styleCheck) {
+                            styleCheck = doc.createElement('style');
+                            styleCheck.id = 'geoai-resizer-hud-theme';
+                            (doc.head || doc.body).appendChild(styleCheck);
+                            styleCheck.textContent = RESIZER_THEME_CSS;
+                        }
+                        var subInds = doc.querySelectorAll('.column-indicator');
+                        for (var j = 0; j < subInds.length; j++) {
+                            subInds[j].style.setProperty('background', 'rgba(13, 23, 38, 0.92)', 'important');
+                            subInds[j].style.setProperty('border-left', '3px solid #00e5ff', 'important');
+                            var subTxt = subInds[j].querySelector('div');
+                            if (subTxt) {
+                                subTxt.style.setProperty('color', '#00e5ff', 'important');
+                                subTxt.style.setProperty('font-size', '13px', 'important');
+                                subTxt.style.setProperty('font-weight', '700', 'important');
+                                subTxt.style.setProperty('opacity', '1', 'important');
+                                subTxt.style.setProperty('text-shadow', '0 0 10px rgba(0, 229, 255, 0.8)', 'important');
+                            }
+                        }
+                    });
+                    doc._geoaiResizerObs.observe(doc.body || doc.documentElement, { childList: true, subtree: true });
+                }
+            }
+
+            function syncAllResizerIframes() {
+                try {
+                    var pDoc = window.parent.document;
+                    if (!pDoc) return;
+                    var iframes = pDoc.querySelectorAll('iframe');
+                    for (var i = 0; i < iframes.length; i++) {
+                        if ((iframes[i].title || '').indexOf('adjustable_columns') !== -1) {
+                            var doc = iframes[i].contentDocument || (iframes[i].contentWindow && iframes[i].contentWindow.document);
+                            applyResizerThemeToDoc(doc);
+                        }
+                    }
+                } catch(e) {}
+            }
+
+            syncAllResizerIframes();
+            var _syncTimer = setInterval(syncAllResizerIframes, 150);
+            setTimeout(function() { clearInterval(_syncTimer); }, 3000);
+
+            try {
+                var pWin = window.parent;
+                if (pWin && !pWin._geoaiResizerListenerAttached) {
+                    pWin._geoaiResizerListenerAttached = true;
+                    pWin.addEventListener('mouseup', function() {
+                        setTimeout(syncAllResizerIframes, 30);
+                        setTimeout(syncAllResizerIframes, 150);
+                    });
+                    pWin.addEventListener('mousemove', function(e) {
+                        if (e.buttons === 1) {
+                            syncAllResizerIframes();
+                        }
+                    });
+                    pWin.addEventListener('resize', syncAllResizerIframes);
+                }
+            } catch(e) {}
+
             // ------------------------------------------------------------------
             // Client-side Tactical HUD DivIcon Factory (0ms instant previews)
             // ------------------------------------------------------------------
@@ -2318,7 +2465,7 @@ st.markdown(f"""
     div[data-testid="stMainBlockContainer"],
     .main .block-container {{
         min-height: 100vh !important;
-        padding-top: 2.2rem !important;
+        padding-top: 1.4rem !important;
         padding-bottom: 0.3rem !important;
         padding-left: 0.75rem !important;
         padding-right: 0.75rem !important;
@@ -2331,11 +2478,28 @@ st.markdown(f"""
     /* Header & Side Ribbon (Sidebar Toggle Controls) */
     header[data-testid="stHeader"] {{
         background: transparent !important;
-        height: 2.2rem !important;
-        min-height: 2.2rem !important;
+        height: 1.4rem !important;
+        min-height: 1.4rem !important;
         z-index: 100 !important;
         display: flex !important;
         align-items: center !important;
+    }}
+
+    /* Ghost row killer: collapse invisible style, script, empty, and trigger containers */
+    div[data-testid="stElementContainer"]:has(style),
+    div[data-testid="stElementContainer"]:has(script),
+    div[data-testid="stElementContainer"]:has(div[data-testid="stEmpty"]),
+    div[data-testid="stElementContainer"]:empty,
+    .element-container:has(style),
+    .element-container:has(script),
+    .element-container:empty,
+    div[data-testid="stElementContainer"]:has(img[style*="display:none"]),
+    div[data-testid="stElementContainer"]:has(img[style*="display: none"]) {{
+        display: none !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }}
 
     /* Restore and style the side ribbon (sidebar collapsed control) */
@@ -2367,14 +2531,35 @@ st.markdown(f"""
         display: none !important;
     }}
 
+    /* Reduce vertical gap between header resizer bar and workspace columns */
+    div[data-testid="stMainBlockContainer"] > div[data-testid="stVerticalBlock"] {{
+        gap: 0.4rem !important;
+    }}
+
     /* Compact resizer handles iframe from adjustable_columns */
-    iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"] {{
-        height: 38px !important;
-        min-height: 38px !important;
-        max-height: 38px !important;
-        margin-top: 2px !important;
-        margin-bottom: 4px !important;
+    iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"],
+    iframe[title*="adjustable_columns"] {{
+        height: 42px !important;
+        min-height: 42px !important;
+        max-height: 42px !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
         border-radius: 4px !important;
+        border: none !important;
+        background: transparent !important;
+        display: block !important;
+    }}
+
+    .st-key-resizer_main_workspace_cols,
+    div[data-testid="stElementContainer"]:has(iframe[title*="adjustable_columns"]),
+    div[data-testid="stElementContainer"]:has(iframe[title*="adjustable_columns"]) > div {{
+        height: 42px !important;
+        min-height: 42px !important;
+        max-height: 42px !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
     }}
 
     /* =========================================================================
@@ -2385,17 +2570,34 @@ st.markdown(f"""
 
     /* Map Column (col2): Stretches automatically to fill the exact window height */
     iframe[title="st_folium.st_folium"],
+    iframe[title="streamlit_folium.st_folium"],
+    iframe[title*="folium"],
     div[data-testid="stCustomComponentV1"]:has(iframe[title*="folium"]),
+    div[data-testid="stElementContainer"]:has(iframe[title*="folium"]),
+    div[data-testid="stElementContainer"]:has(iframe[title*="folium"]) > div,
     div[data-testid="column"]:last-child div[data-testid="stCustomComponentV1"],
-    div[data-testid="column"]:last-child iframe {{
+    div[data-testid="column"]:last-child iframe,
+    div[data-testid="stMainBlockContainer"] div[data-testid="stColumn"]:last-child iframe {{
         height: calc(100vh - 90px) !important;
         min-height: 480px !important;
+        max-height: calc(100vh - 90px) !important;
         width: 100% !important;
         border: none !important;
         border-radius: 4px !important;
+        display: block !important;
     }}
 
-    /* Chat Column (col1): Messages container expands to fill remaining window height */
+    /* Chat Column (col1): Flex column matching exact Map height so Chat + Input align flush at bottom */
+    div[data-testid="stMainBlockContainer"] div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:first-child > div[data-testid="stVerticalBlock"] {{
+        height: calc(100vh - 90px) !important;
+        min-height: 480px !important;
+        max-height: calc(100vh - 90px) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        gap: 0.45rem !important;
+    }}
+
     div[data-testid="column"]:first-child div[data-testid="stVerticalBlockBorderWrapper"] {{
         height: calc(100vh - 150px) !important;
         min-height: 260px !important;
@@ -2411,6 +2613,33 @@ st.markdown(f"""
         overflow-y: auto !important;
         overflow-x: hidden !important;
         padding-right: 6px !important;
+    }}
+
+    /* Streamlit 1.58+ Chat Container auto-flex expansion inside col1 */
+    div[data-testid="stMainBlockContainer"] div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:first-child div[data-testid="stLayoutWrapper"]:has(> div[data-testid="stVerticalBlock"][height]) {{
+        flex: 1 1 0px !important;
+        height: auto !important;
+        min-height: 260px !important;
+        max-height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
+    }}
+
+    div[data-testid="stMainBlockContainer"] div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:first-child div[data-testid="stVerticalBlock"][height] {{
+        flex: 1 1 0px !important;
+        height: 100% !important;
+        min-height: 260px !important;
+        max-height: 100% !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        padding-right: 6px !important;
+    }}
+
+    .st-key-geoai_chat_input {{
+        flex: 0 0 auto !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
     }}
 
     /* Independent vertical scrolling for sidebar controls */
@@ -3536,11 +3765,166 @@ with st.sidebar:
 # ==============================================================================
 # Tactical labels for the column indicator boxes
 col_labels = [
-    "💬 Intel Console",
-    "🗺️ Geospatial Theater of Operations"
+    "Intel Console",
+    "Geospatial Theater of Operations"
 ]
 # Split screen using streamlit_adjustable_columns with a 1 : 1.5 ratio and fixed key
 col1, col2 = adjustable_columns([1, 1.5], labels=col_labels, key="main_workspace_cols")
+
+# Apply matching glowing cyan color and 13px font to column header labels in adjustable_columns iframe
+st.html(
+    """<script>
+(function() {
+    var HUD_CSS = `
+        html, body {
+            background: transparent !important;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
+            overflow: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        #root { min-height: 0 !important; height: 100% !important; }
+        .column-indicator {
+            background: rgba(13, 23, 38, 0.92) !important;
+            border-left: 3px solid #00e5ff !important;
+            border-top: 1px solid rgba(0, 229, 255, 0.35) !important;
+            border-right: 1px solid rgba(0, 229, 255, 0.35) !important;
+            border-bottom: 1px solid rgba(0, 229, 255, 0.35) !important;
+            border-radius: 4px !important;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.15) !important;
+            transition: background 0.15s ease !important;
+            box-sizing: border-box !important;
+        }
+        .column-indicator:hover {
+            background: rgba(0, 229, 255, 0.18) !important;
+            border-color: #00e5ff !important;
+            box-shadow: 0 0 14px rgba(0, 229, 255, 0.45) !important;
+        }
+        .column-indicator,
+        .column-indicator > div,
+        .column-indicator div,
+        .column-indicator span {
+            color: #00e5ff !important;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
+            font-size: 13px !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.07em !important;
+            text-transform: uppercase !important;
+            opacity: 1 !important;
+            text-shadow: 0 0 10px rgba(0, 229, 255, 0.8) !important;
+        }
+        .column-indicator:hover > div,
+        .column-indicator:hover div {
+            color: #ffffff !important;
+            text-shadow: 0 0 14px #00e5ff !important;
+        }
+        .resize-handle {
+            background: rgba(0, 229, 255, 0.4) !important;
+            border-radius: 2px !important;
+            transition: background 0.2s ease, box-shadow 0.2s ease !important;
+        }
+        .resize-handle:hover {
+            background: #00e5ff !important;
+            box-shadow: 0 0 10px #00e5ff !important;
+        }
+    `;
+
+    function applyToDoc(doc) {
+        if (!doc || (!doc.head && !doc.body)) return;
+        var s = doc.getElementById('geoai-resizer-hud-theme');
+        if (!s) {
+            s = doc.createElement('style');
+            s.id = 'geoai-resizer-hud-theme';
+            (doc.head || doc.body).appendChild(s);
+        }
+        if (s.textContent !== HUD_CSS) {
+            s.textContent = HUD_CSS;
+        }
+
+        var inds = doc.querySelectorAll('.column-indicator');
+        for (var k = 0; k < inds.length; k++) {
+            inds[k].style.setProperty('background', 'rgba(13, 23, 38, 0.92)', 'important');
+            inds[k].style.setProperty('border-left', '3px solid #00e5ff', 'important');
+            inds[k].style.setProperty('border-top', '1px solid rgba(0, 229, 255, 0.35)', 'important');
+            inds[k].style.setProperty('border-right', '1px solid rgba(0, 229, 255, 0.35)', 'important');
+            inds[k].style.setProperty('border-bottom', '1px solid rgba(0, 229, 255, 0.35)', 'important');
+            var txt = inds[k].querySelector('div');
+            if (txt) {
+                txt.style.setProperty('color', '#00e5ff', 'important');
+                txt.style.setProperty('font-size', '13px', 'important');
+                txt.style.setProperty('font-weight', '700', 'important');
+                txt.style.setProperty('letter-spacing', '0.07em', 'important');
+                txt.style.setProperty('opacity', '1', 'important');
+                txt.style.setProperty('text-shadow', '0 0 10px rgba(0, 229, 255, 0.8)', 'important');
+            }
+        }
+
+        if (!doc._geoaiResizerObs && window.MutationObserver) {
+            doc._geoaiResizerObs = new MutationObserver(function() {
+                var sCheck = doc.getElementById('geoai-resizer-hud-theme');
+                if (!sCheck) {
+                    sCheck = doc.createElement('style');
+                    sCheck.id = 'geoai-resizer-hud-theme';
+                    (doc.head || doc.body).appendChild(sCheck);
+                    sCheck.textContent = HUD_CSS;
+                }
+                var subInds = doc.querySelectorAll('.column-indicator');
+                for (var j = 0; j < subInds.length; j++) {
+                    subInds[j].style.setProperty('background', 'rgba(13, 23, 38, 0.92)', 'important');
+                    subInds[j].style.setProperty('border-left', '3px solid #00e5ff', 'important');
+                    var subTxt = subInds[j].querySelector('div');
+                    if (subTxt) {
+                        subTxt.style.setProperty('color', '#00e5ff', 'important');
+                        subTxt.style.setProperty('font-size', '13px', 'important');
+                        subTxt.style.setProperty('font-weight', '700', 'important');
+                        subTxt.style.setProperty('letter-spacing', '0.07em', 'important');
+                        subTxt.style.setProperty('opacity', '1', 'important');
+                        subTxt.style.setProperty('text-shadow', '0 0 10px rgba(0, 229, 255, 0.8)', 'important');
+                    }
+                }
+            });
+            doc._geoaiResizerObs.observe(doc.body || doc.documentElement, { childList: true, subtree: true });
+        }
+    }
+
+    function applyAllHeaders() {
+        try {
+            var iframes = document.querySelectorAll('iframe');
+            for (var i = 0; i < iframes.length; i++) {
+                if ((iframes[i].title || '').indexOf('adjustable_columns') !== -1) {
+                    var doc = iframes[i].contentDocument || (iframes[i].contentWindow && iframes[i].contentWindow.document);
+                    applyToDoc(doc);
+                }
+            }
+        } catch(e) {}
+    }
+
+    applyAllHeaders();
+    var _timer = setInterval(applyAllHeaders, 100);
+    setTimeout(function() { clearInterval(_timer); }, 3000);
+
+    if (!window._geoaiCyanHeadersObs && window.MutationObserver) {
+        window._geoaiCyanHeadersObs = new MutationObserver(applyAllHeaders);
+        window._geoaiCyanHeadersObs.observe(document.body, { childList: true, subtree: true });
+    }
+
+    if (!window._geoaiDragListenerAttached) {
+        window._geoaiDragListenerAttached = true;
+        window.addEventListener('mouseup', function() {
+            setTimeout(applyAllHeaders, 30);
+            setTimeout(applyAllHeaders, 150);
+        });
+        window.addEventListener('mousemove', function(e) {
+            if (e.buttons === 1) {
+                applyAllHeaders();
+            }
+        });
+        window.addEventListener('resize', applyAllHeaders);
+    }
+})();
+</script>""",
+    unsafe_allow_javascript=True,
+)
 
 
 # ------------------------------------------------------------------------------
@@ -3574,6 +3958,14 @@ with col2:
     m.get_root().header.add_child(
         folium.Element(
             """<style>
+            html, body, #root, #map_div, .leaflet-container {
+                height: 100vh !important;
+                min-height: 100% !important;
+                max-height: 100vh !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: hidden !important;
+            }
             .leaflet-control-attribution { display: none !important; }
             .voyager-dark-tiles { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%) !important; }
 
