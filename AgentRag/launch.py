@@ -4,8 +4,7 @@ graph and the OpenRouter key, then starts the map app and opens it in the browse
     python AgentRag/launch.py        # any Python 3.10+; it switches to AgentRag/venv by itself
 
 The key is asked once and kept in AgentRag/.env, which git ignores, so it is never uploaded and never
-printed. The app is our copy of the UI with the UI_TEAM_NOTES fixes (AgentRag/ui_mvp) until the UI
-team's own ui/ has them; delete ui_mvp and this runs ui/ instead.
+printed. The app is the UI team's ui/.
 """
 import getpass
 import os
@@ -25,7 +24,7 @@ VENV_PYTHON = VENV / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
 ENV_FILE = AGENT / ".env"
 KEY_NAME = "OPENROUTER_API_KEY"
 GRAPH = ROOT / "Graph_n_Geocoding" / "knowledge_graph.json.gz"
-APP_DIR = next(d for d in (AGENT / "ui_mvp", ROOT / "ui") if (d / "app.py").is_file())
+APP_DIR = ROOT / "ui"
 
 
 def in_venv() -> bool:
