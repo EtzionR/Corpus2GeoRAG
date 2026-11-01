@@ -3,15 +3,11 @@
 Found while running `ui/app.py` against the agent (2026-10-29, updated 2026-10-31). We changed
 nothing in `ui/`; each item says what we saw and the change we suggest.
 
-## For now: the launcher runs a copy of the UI with these fixes
+## Done: your ui/ has the fixes (2026-11-01)
 
-`RUN_GEORAG.bat` in the repo root (double-click; it installs everything and asks once for the key)
-runs **`AgentRag/ui_mvp/`**, a copy of `ui/` with items 1, 3, 6 and 7 applied, so every team tests,
-and the MVP shows, the fixed version. The UI is yours, so **please apply the items to your own
-`ui/` and push your final version there**; then tell us and we delete `AgentRag/ui_mvp/`, and the
-launcher runs `ui/` by itself. `git diff --no-index ui/app.py AgentRag/ui_mvp/app.py` shows our
-changes. Besides those: `pandas<3` in its `requirements.txt`, and `geo_agent.py` also looks for the
-agent in its parent folder (one line).
+Your PR #33 applied items 1, 3, 6, 7 and 8 to `ui/`. `RUN_GEORAG.bat` in the repo root now runs your
+`ui/`, and our temporary copy (`AgentRag/ui_mvp/`) is deleted. Thank you. The items below stay as a
+record. Checked against the agent: places, outlines, zoom, lists and the "no area" reply come through.
 
 ## 1. Blank page (no map, no chat box) on PCs with Smart App Control
 
@@ -127,5 +123,7 @@ another way.
 - Russia and the US no longer zoom out to the whole world (their outlines cross the 180th meridian).
 - `answer_plain` (shown when citations are switched off) no longer keeps the commas between
   citation marks ("since 2019,,." is now "since 2019.").
+- A question about the map selection that names nothing ("What happened in this area?", "Tell me
+  about this area") now answers from the selection; it answered "No data" before.
 - The region grouping follows each place's own address: Kharkiv Oblast and Crimea under Ukraine,
   no longer under Russia.

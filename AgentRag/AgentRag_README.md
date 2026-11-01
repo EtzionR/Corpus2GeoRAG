@@ -271,8 +271,7 @@ llm_calls.py      every LLM call, with its model, tokens, cost and time
 agent.py          MODEL, get_llm() and the error classes
 eval/             the test harness: questions, runs, reports
 tests/            pytest
-launch.py         what RUN_GEORAG.bat runs: Python environment, key, graph check, starts the app
-ui_mvp/           a copy of the UI team's ui/ with the UI_TEAM_NOTES fixes, until ui/ has them
+launch.py         what RUN_GEORAG.bat runs: Python environment, key, graph check, starts ui/
 ```
 
 ## Known limitations

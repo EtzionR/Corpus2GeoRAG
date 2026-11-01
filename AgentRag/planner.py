@@ -329,6 +329,10 @@ def _finalize(draft: PlanDraft, question: str, area: Optional[Area], history: li
     keywords = [k.strip() for k in draft.keywords
                 if k.strip() and not _NOT_A_KEYWORD.fullmatch(k.strip()) and k.strip().lower() not in entity_names
                 and k.strip().lower() not in _GENERIC_KEYWORDS]
+    if use_map and qtype == "about" and not entities and not concepts:
+        # "What happened in this area?" names nothing to look up: the selection is what it asks about (P2-77)
+        qtype = "area_topic" if keywords or relations else "area"
+        notes.append(f"about the map selection, with nothing named: treated as {qtype}")
     if qtype == "area_topic" and not keywords and not relations:
         # no topic left to search for: a question about the named place, or about the map selection
         qtype = "about" if named_places and not use_map else "area"
