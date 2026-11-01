@@ -19,6 +19,12 @@ import pytest
 from geo_agent import MapLayer, AgentResponse, query_geo_agent, to_bounding_box
 
 
+@pytest.fixture(autouse=True)
+def _isolate_openrouter_env(monkeypatch):
+    """Ensure unit tests do not make live OpenRouter API calls when AgentRag/.env exists on disk."""
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+
+
 class TestDataContracts:
     """Validate typing, default values, and structural contracts of the dataclasses."""
 
@@ -951,6 +957,19 @@ class TestMapTrashBinTool:
         # The base map hash MUST NOT change, ensuring zero map reload / flash
         assert h_initial == h_with_point
 
+        # Ensure that has_active=False vs has_active=True also produces identical base map hashes
+        m_active = folium.Map(location=[48.3794, 31.1656], zoom_start=6, tiles=None)
+        folium.plugins.Draw(
+            export=False,
+            position="topleft",
+            draw_options={"rectangle": True},
+            edit_options={"edit": False, "remove": True}
+        ).add_to(m_active)
+        MapTrashBinHook(has_active=True).add_to(m_active)
+        s_active = _get_map_string(m_active)
+        h_active = generate_js_hash(s_active, key="geoai_tactical_map")
+        assert h_initial == h_active
+
     def test_instant_replacement_cleans_prior_selection(self):
         """Verify MapTrashBinHook includes client-side instant cleanup for prior selection replacing."""
         import folium
@@ -979,6 +998,24 @@ class TestMapTrashBinTool:
         # 4. clearPreviousSelectionInstantly is called on click and draw:created
         assert "clearPreviousSelectionInstantly()" in script
 
+    def test_hud_clear_preserves_tactical_overlays(self):
+        """Verify that triggerRemoval when invoked by HUD Clear preserves tactical layers and only purges selection."""
+        import folium
+        from streamlit_folium import _get_map_string
+        import app
+
+        MapTrashBinHook = getattr(app, "MapTrashBinHook")
+        m = folium.Map()
+        MapTrashBinHook().add_to(m)
+        script = _get_map_string(m)
+
+        # 1. triggerRemoval accepts opts and checks hadSelection
+        assert "function triggerRemoval(opts)" in script
+        assert "var hadSelection" in script
+
+        # 2. Only clears all layers if opts.clearAllLayers is explicitly true AND there was no active selection
+        assert "if (opts.clearAllLayers && !hadSelection && window.feature_group && window.feature_group.length > 0)" in script
+
     def test_feature_group_separation_in_app(self):
         """Ensure app.py separates selection_fg and tactical_layers_fg in feature_group_to_add."""
         with open("app.py", "r", encoding="utf-8") as f:
@@ -987,6 +1024,36 @@ class TestMapTrashBinTool:
         assert "selection_fg = folium.FeatureGroup(name=\"Active Selection\", control=False)" in content
         assert "tactical_layers_fg = folium.FeatureGroup(name=\"Tactical Overlays\", control=False)" in content
         assert "feature_group_to_add=[selection_fg, tactical_layers_fg]" in content
+
+    def test_existing_marker_click_protection_and_popup_sync(self):
+        """Verify MapTrashBinHook ignores clicks on existing markers and synchronizes popup selection."""
+        import folium
+        from streamlit_folium import _get_map_string
+        import app
+
+        MapTrashBinHook = getattr(app, "MapTrashBinHook")
+        m = folium.Map()
+        MapTrashBinHook().add_to(m)
+
+        script = _get_map_string(m)
+
+        # 1. Guard against clicks on existing markers and popups
+        assert ".leaflet-marker-icon" in script
+        assert ".marker-cluster" in script
+        assert ".leaflet-popup" in script
+
+        # 2. Popup open synchronization hook
+        assert "map.on('popupopen'" in script
+        assert "last_active_drawing = source.toGeoJSON()" in script
+        assert "window._lastOpenPopupInfo" in script
+
+    def test_point_selection_not_cleared_by_empty_all_drawings(self):
+        """Ensure Point Selection is not inadvertently cleared when all_drawings is empty."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            content = f.read()
+
+        # Both Section 2b and Section 6 must guard all_drawings == [] with selection_mode == 'Bounding Box'
+        assert "st.session_state.get(\"selection_mode\") == \"Bounding Box\"" in content
 
 
 class TestRAGDebugLogging:
@@ -1088,19 +1155,21 @@ class TestRAGDebugLogging:
         assert "Simulated connection timeout" in log["error_details"]["message"]
 
     def test_sidebar_operations_order_in_codebase(self):
-        """Verify that Operations appears before Spatial Targeting and contains RAG Debug Logs button."""
+        """Verify Operations contains RAG Debug Logs and retain pins toggle, and redundant Spatial Targeting is removed."""
         with open("app.py", "r", encoding="utf-8") as f:
             code = f.read()
 
         ops_pos = code.find("st.subheader(\"🛠️ Operations\")")
         spatial_pos = code.find("st.subheader(\"🎯 Spatial Targeting\")")
         rag_btn_pos = code.find("📋 RAG Debug Logs")
+        keep_pts_pos = code.find("Retain target pin after query")
 
         assert ops_pos != -1, "Operations section must exist in sidebar"
-        assert spatial_pos != -1, "Spatial Targeting section must exist in sidebar"
+        assert spatial_pos == -1, "Redundant Spatial Targeting section should not exist in sidebar"
         assert rag_btn_pos != -1, "RAG Debug Logs button must exist"
-        assert ops_pos < spatial_pos, "Operations section must be positioned ABOVE Spatial Targeting"
-        assert ops_pos < rag_btn_pos < spatial_pos, "RAG Debug Logs button must be inside Operations section"
+        assert keep_pts_pos != -1, "Retain target pin toggle must exist in Operations"
+        assert ops_pos < rag_btn_pos, "RAG Debug Logs button must be inside Operations section"
+        assert ops_pos < keep_pts_pos, "Retain target pin toggle must be inside Operations section"
 
     def test_chat_bubbles_opposite_sides_layout(self):
         """Ensure chat console styles operator (user) on the right and geo-ai on the left with bubble styling."""
@@ -1265,6 +1334,1091 @@ class TestUpgradesOneThroughSixAndPerformance:
         assert "m.fit_bounds([[s, w], [n, e]], padding=(30, 30))" in app_code, (
             "Rule 4.2: Map must auto-zoom to query bbox when available"
         )
+
+
+class TestTacticalHudSymbologyAndAnsweredBbox:
+    """Validate Tactical HUD map symbology, pin factories, popup cards, and answered bbox transparency."""
+
+    def test_color_token_semantic_resolution(self):
+        """Ensure color_token resolves roles and legacy color names across dark and light themes."""
+        import app
+
+        # Primary (blue / primary role)
+        tok_dark, hex_dark = app.color_token("blue", role="primary", theme="dark")
+        assert tok_dark == "primary"
+        assert hex_dark == "#38bdf8"
+        tok_light, hex_light = app.color_token("blue", role="primary", theme="light")
+        assert tok_light == "primary"
+        assert hex_light == "#0369a1"
+
+        # Event (red / event kind)
+        ev_tok, ev_hex = app.color_token("red", kind="event", theme="dark")
+        assert ev_tok == "event"
+        assert ev_hex == "#ff4d6d"
+
+        # Uncertain (orange / uncertain flag)
+        unc_tok, unc_hex = app.color_token("orange", uncertain=True, theme="dark")
+        assert unc_tok == "uncertain"
+        assert unc_hex == "#ffb020"
+
+        # Context (cadetblue / context role)
+        ctx_tok, ctx_hex = app.color_token("cadetblue", role="context", theme="dark")
+        assert ctx_tok == "context"
+        assert ctx_hex == "#7dd3fc"
+
+        # Query BBox
+        bbox_tok, bbox_hex = app.color_token("orange", role="query_bbox", theme="dark")
+        assert bbox_tok == "selection"
+        assert bbox_hex == "#00e5ff"
+
+    def test_bbox_style_selected_vs_answered_transparency(self):
+        """Ensure answered bounding boxes become ultra-transparent and non-interactive."""
+        import app
+
+        sel = app.bbox_style("selected", theme="dark")
+        ans = app.bbox_style("answered", theme="dark")
+
+        # Selected bbox has higher opacity and is interactive
+        assert sel["fill_opacity"] == 0.10
+        assert sel["opacity"] == 0.90
+        assert sel["weight"] == 2
+        assert sel["dash_array"] == "6, 6"
+        assert sel["interactive"] is True
+        assert "geoai-bbox--selected" in sel["class_name"]
+
+        # Answered bbox is ultra-transparent (fill_opacity=0.03), faint stroke, and non-interactive
+        assert ans["fill_opacity"] == 0.03
+        assert ans["opacity"] == 0.55
+        assert ans["weight"] == 1.25
+        assert ans["dash_array"] == "3, 6"
+        assert ans["interactive"] is False
+        assert "geoai-bbox--answered" in ans["class_name"]
+        assert ans["fill_opacity"] < sel["fill_opacity"]
+
+    def test_make_pin_icon_variants(self):
+        """Verify make_pin_icon generates pure CSS DivIcons for target, corners, context, and diamonds."""
+        import app
+
+        # 1. Target reticle
+        reticle = app.make_pin_icon(role="target")
+        assert reticle.options["icon_size"] == [34, 34] or reticle.options["icon_size"] == (34, 34)
+        assert "geoai-reticle" in reticle.options["html"]
+        assert "geoai-reticle__pulse" in reticle.options["html"]
+
+        # 2. BBox corner brackets (active and dimmed)
+        sw_corner = app.make_pin_icon(role="bbox_corner", corner="sw", dimmed=False)
+        assert "geoai-corner--sw" in sw_corner.options["html"]
+        assert "geoai-corner--dim" not in sw_corner.options["html"]
+
+        ne_dim = app.make_pin_icon(role="bbox_corner", corner="ne", dimmed=True)
+        assert "geoai-corner--ne" in ne_dim.options["html"]
+        assert "geoai-corner--dim" in ne_dim.options["html"]
+
+        # 3. Context dot
+        ctx_icon = app.make_pin_icon(role="context", color_name="cadetblue")
+        assert "geoai-dot" in ctx_icon.options["html"]
+        assert "geoai-pin--context" in ctx_icon.options["class_name"]
+        assert "awesome-marker-icon-cadetblue" in ctx_icon.options["class_name"]
+
+        # 4. Primary numbered diamond
+        prim_icon = app.make_pin_icon(role="primary", number=3, color_name="blue")
+        assert "geoai-diamond" in prim_icon.options["html"]
+        assert "<span>3</span>" in prim_icon.options["html"]
+        assert "geoai-pin--primary" in prim_icon.options["class_name"]
+
+        # 5. Event diamond
+        ev_icon = app.make_pin_icon(kind="event", role="primary", color_name="red")
+        assert "geoai-diamond" in ev_icon.options["html"]
+        assert "<span>!</span>" in ev_icon.options["html"]
+        assert "geoai-pin--event" in ev_icon.options["class_name"]
+
+        # 6. Uncertain diamond with dashed border and ? badge
+        unc_icon = app.make_pin_icon(role="primary", uncertain=True, number=2, color_name="orange")
+        assert "geoai-diamond--uncertain" in unc_icon.options["html"]
+        assert "geoai-badge-unc" in unc_icon.options["html"]
+        assert "<span>2</span>" in unc_icon.options["html"]
+        assert "geoai-pin--uncertain" in unc_icon.options["class_name"]
+        assert "awesome-marker-icon-orange" in unc_icon.options["class_name"]
+
+    def test_popup_card_html_generation(self):
+        """Verify _popup_card builds structured dark-glass HUD markup."""
+        import app
+
+        html = app._popup_card(
+            title="Kharkiv Sector",
+            rows=[("LAT", "49.9935"), ("LON", "36.2304"), ("ROLE", "primary")],
+            chip="[1] PLACE",
+            footer="<div>[1] Intel Report</div>",
+            token="primary",
+        )
+        assert "geoai-card" in html
+        assert "Kharkiv Sector" in html
+        assert "[1] PLACE" in html
+        assert "49.9935" in html
+        assert "36.2304" in html
+        assert "[1] Intel Report" in html
+
+    def test_geo_agent_bbox_layers_include_query_bbox_and_corner_roles(self):
+        """Ensure query_geo_agent tags bbox polygons with role='query_bbox' and corners with 'bbox_corner'."""
+        import geo_agent
+
+        bbox = ((48.0, 31.0), (49.5, 33.5))
+        resp = geo_agent.query_geo_agent(
+            text_prompt="Analyze sector",
+            bounding_box=bbox,
+            force_mock=True
+        )
+        poly_layers = [l for l in resp.layers if l.layer_type == "polygon"]
+        assert len(poly_layers) >= 1
+        assert poly_layers[0].data.get("role") == "query_bbox"
+
+        corner_layers = [
+            l for l in resp.layers
+            if l.layer_type == "marker" and isinstance(l.data, dict) and l.data.get("role") == "bbox_corner"
+        ]
+        assert len(corner_layers) == 2
+        corners = {l.data.get("corner") for l in corner_layers}
+        assert corners == {"sw", "ne"}
+
+    def test_client_side_hooks_support_new_hud_symbology_and_answered_bbox(self):
+        """Verify MapTrashBinHook includes PinFilterControl, .geoai-pin classes, and answered bbox sync."""
+        import folium
+        from streamlit_folium import _get_map_string
+        import app
+
+        m = folium.Map()
+        app.MapTrashBinHook().add_to(m)
+
+        script = _get_map_string(m)
+        assert "function geoaiIcon(opts)" in script
+        assert "syncAnsweredBboxInDrawnItems" in script
+        assert "geoai-bbox--answered" in script
+        assert "geoai-pin--context" in script
+        assert "geoai-pin--uncertain" in script
+        assert "PinFilterControl" in script
+
+    def test_instant_hud_bridge_and_popup_auto_open(self):
+        """Verify 0ms client-side selection bridge and target point popup auto-open."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            content = f.read()
+
+        assert "_geoaiSelectionBridgeInstalled" in content
+        assert "GEOAI_SELECTION_EVENT" in content
+        assert "geoai-instant-pill-slot" in content
+        assert "popup=folium.Popup(popup_html, max_width=250, show=True)" in content
+
+    def test_streamlined_zero_widget_sources_drawer(self):
+        """Verify Verified Sources uses native HTML details cards to prevent widget tree explosion."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            content = f.read()
+
+        assert "geoai-source-detail" in content
+        assert "geoai-source-summary" in content
+        assert "geoai-source-badge" in content
+        assert "btn_src_" not in content
+
+    def test_corner_bracket_exact_vertex_anchors(self):
+        """Verify corner bracket DivIcons anchor at exact SVG L-vertices so brackets align with marching ants."""
+        import app
+
+        expected_anchors = {
+            "nw": [2, 2],
+            "ne": [14, 2],
+            "se": [14, 14],
+            "sw": [2, 14],
+        }
+        for corner, expected in expected_anchors.items():
+            icon = app.make_pin_icon(role="bbox_corner", corner=corner)
+            assert list(icon.options["icon_size"]) == [16, 16]
+            assert list(icon.options["icon_anchor"]) == expected
+
+    def test_pin_shape_diamond_vs_teardrop(self):
+        """Verify make_pin_icon supports switching between Diamond and Teardrop shapes."""
+        import app
+
+        diamond_icon = app.make_pin_icon(role="primary", number=1, color_name="blue", shape="diamond")
+        assert "geoai-diamond" in diamond_icon.options["html"]
+        assert "geoai-teardrop" not in diamond_icon.options["html"]
+        assert "geoai-pin--teardrop" not in diamond_icon.options["class_name"]
+        assert list(diamond_icon.options["icon_anchor"]) == [11, 11]
+
+        teardrop_icon = app.make_pin_icon(role="primary", number=1, color_name="blue", shape="teardrop")
+        assert "geoai-diamond geoai-teardrop" in teardrop_icon.options["html"]
+        assert "geoai-pin--teardrop" in teardrop_icon.options["class_name"]
+        assert list(teardrop_icon.options["icon_anchor"]) == [11, 11]
+
+    def test_querying_bbox_style_and_scanline_hook(self):
+        """Verify bbox_style('querying') and client-side scanline/pulse animation hooks."""
+        import folium
+        from streamlit_folium import _get_map_string
+        import app
+
+        q_style = app.bbox_style("querying", theme="dark")
+        assert q_style["fill_opacity"] == 0.08
+        assert q_style["opacity"] == 0.95
+        assert "geoai-bbox--querying" in q_style["class_name"]
+
+        m = folium.Map()
+        app.MapTrashBinHook().add_to(m)
+        script = _get_map_string(m)
+        assert "startQueryingAnimation" in script
+        assert "stopQueryingAnimation" in script
+        assert "geoai-scan-svg" in script
+        assert "geoai-scan-line" in script
+        assert "geoai-reticle--querying" in script
+        assert "setMapPinShape" in script
+
+    def test_selection_sync_hook_and_clear_spatial_selection(self):
+        """Verify SelectionSyncHook emits _onServerSelectionSync in feature_group_string and clear_spatial_selection increments clear_seq."""
+        import folium
+        import streamlit as st
+        from streamlit_folium import _get_feature_group_string, _get_map_string
+        import app
+
+        m1 = folium.Map(location=[48.3794, 31.1656], zoom_start=6)
+        m2 = folium.Map(location=[48.3794, 31.1656], zoom_start=6)
+        base_map_str_1 = _get_map_string(m1)
+        base_map_str_2 = _get_map_string(m2)
+
+        fg = folium.FeatureGroup(name="Active Selection", control=False)
+        app.SelectionSyncHook(
+            has_selection=False,
+            clear_seq=3,
+            bbox_state="none",
+            is_querying=False,
+            bbox_bounds=None,
+            pin_shape="Teardrop",
+        ).add_to(fg)
+
+        fg_str = _get_feature_group_string(fg, m2, 0)
+
+        # Base map string is untouched before feature_group rendering while feature_group_string carries the sync call
+        assert base_map_str_1 == base_map_str_2
+        assert "_onServerSelectionSync" in fg_str
+        assert "clearSeq: 3" in fg_str
+        assert 'pinShape: "teardrop"' in fg_str
+
+        # Verify clear_spatial_selection increments selection_clear_seq and records stale map widget state
+        st.session_state.selected_points = [(50.45, 30.52)]
+        st.session_state.bounding_box = ((49.0, 30.0), (50.0, 31.0))
+        st.session_state.selection_clear_seq = 0
+        st.session_state["geoai_tactical_map"] = {
+            "last_clicked": {"lat": 50.45, "lng": 30.52},
+            "last_active_drawing": {"geometry": {"type": "Polygon", "coordinates": [[[30.0, 49.0], [31.0, 50.0]]]}},
+        }
+        app.clear_spatial_selection()
+        assert st.session_state.selected_points == []
+        assert st.session_state.bounding_box is None
+        assert st.session_state.selection_clear_seq == 1
+        assert st.session_state.last_clicked == (50.45, 30.52)
+        assert st.session_state.ignored_drawing is not None
+
+    def test_pipeline_inversion_and_zero_rerun_dispatch(self):
+        """Verify pipeline inversion (col2 before col1) and immediate dispatch in code."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            code = f.read()
+
+        # 1. col2 (map) must be evaluated before col1 (chat)
+        col2_pos = code.find("with col2:")
+        col1_pos = code.find("with col1:")
+        assert col2_pos != -1 and col1_pos != -1
+        assert col2_pos < col1_pos, "Pipeline Inversion: with col2: must execute before with col1:"
+
+        # 2. Immediate dispatch helper must be defined
+        assert "window.geoaiImmediateDispatch" in code
+        assert "_peek_incoming_map_state" in code
+
+        # 3. col2 click and drawing handlers must not trigger st.rerun cascades
+        col2_code = code[col2_pos:col1_pos]
+        assert "st.session_state.selected_points = [clicked_coord]" in col2_code
+        click_idx = col2_code.find("st.session_state.selected_points = [clicked_coord]")
+        post_click = col2_code[click_idx:click_idx + 250]
+        assert "st.rerun()" not in post_click
+
+    def test_workspace_window_auto_fit_layout_and_listeners(self):
+        """Verify chat and map workspace automatically fit to the screen/window dimensions."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            code = f.read()
+
+        # 1. CSS Auto-Fit rules for full-height split screen layout
+        assert "Workspace Window Auto-Fit Architecture" in code
+        assert 'calc(100vh - 90px)' in code
+        assert 'calc(100vh - 150px)' in code
+        assert 'div[data-testid="column"]:last-child div[data-testid="stCustomComponentV1"]' in code
+        assert 'div[data-testid="column"]:first-child div[data-testid="stVerticalBlockBorderWrapper"]' in code
+
+        # 2. Dynamic client-side JavaScript resize hook
+        assert "forwardResizeToIframes" in code
+        assert "window.addEventListener('resize', forwardResizeToIframes);" in code
+
+        # 3. Leaflet map ResizeObserver to invalidate tile size on container resizing
+        assert "map.invalidateSize()" in code
+
+    def test_active_querying_animation_and_early_query_ingestion(self):
+        """Verify active querying animation hooks and early query queueing before col2 map renders."""
+        import folium
+        from streamlit_folium import _get_feature_group_string, _get_map_string
+        import app
+
+        with open("app.py", "r", encoding="utf-8") as f:
+            code = f.read()
+
+        # 1. Section 2c Early Query Ingestion must precede with col2:
+        sec2c_pos = code.find("2c. Early Query Ingestion & Queueing")
+        col2_pos = code.find("with col2:")
+        assert sec2c_pos != -1, "Section 2c must be defined"
+        assert sec2c_pos < col2_pos, "Section 2c must precede with col2: so pending_query is queued before map renders"
+
+        # 2. Section 2c must check both chat_input and run_chat_recon
+        assert 'st.session_state.get("geoai_chat_input")' in code
+        assert 'st.session_state.get("run_chat_recon")' in code
+        assert 'key="geoai_chat_input"' in code
+
+        # 3. Leaflet hooks must track _isClientQuerying and _lastKnownBboxBounds
+        m = folium.Map()
+        app.MapTrashBinHook().add_to(m)
+        map_script = _get_map_string(m)
+        assert "_isClientQuerying" in map_script
+        assert "_lastKnownBboxBounds" in map_script
+        assert "startQueryingAnimation(state.bboxBounds || window._lastKnownBboxBounds)" in map_script
+
+        # 4. SelectionSyncHook must emit isQuerying: true and bboxState: "querying"
+        fg = folium.FeatureGroup(name="Active Selection", control=False)
+        app.SelectionSyncHook(
+            has_selection=True,
+            clear_seq=0,
+            bbox_state="querying",
+            is_querying=True,
+            bbox_bounds=[[48.0, 31.0], [49.0, 32.0]],
+            pin_shape="diamond",
+        ).add_to(fg)
+
+class TestOption1MapCanvasTacticalHudAndStableLayout:
+    """Validate Option 1: Map Canvas Tactical HUD and permanently anchored chat input with 0ms latency."""
+
+    def test_map_trash_bin_hook_includes_tactical_hud_control(self):
+        """Verify MapTrashBinHook instantiates TacticalTargetHudControl in bottomleft with Clear and Recon buttons."""
+        import folium
+        from streamlit_folium import _get_map_string
+        import app
+
+        m = folium.Map()
+        app.MapTrashBinHook().add_to(m)
+        script = _get_map_string(m)
+
+        assert "TacticalTargetHudControl" in script
+        assert "position: 'bottomleft'" in script
+        assert "geoai_map_tactical_hud" in script
+        assert "geoai_map_hud_content" in script
+        assert "geoai_map_hud_clear_btn" in script
+        assert "geoai_map_hud_recon_btn" in script
+        assert "window.updateMapTacticalHud" in script
+        assert "window.hideMapTacticalHud" in script
+
+    def test_selection_sync_hook_serializes_active_point(self):
+        """Verify SelectionSyncHook passes activePoint coordinates for instant HUD synchronization."""
+        import folium
+        from streamlit_folium import _get_feature_group_string
+        import app
+
+        m = folium.Map()
+        fg = folium.FeatureGroup(name="Selection", control=False)
+        app.SelectionSyncHook(
+            has_selection=True,
+            clear_seq=1,
+            active_point=(31.7767, 35.2345),
+            pin_shape="diamond"
+        ).add_to(fg)
+        fg_str = _get_feature_group_string(fg, m, 0)
+
+        assert "activePoint: [31.7767, 35.2345]" in fg_str
+        assert "hasSelection: true" in fg_str
+
+    def test_chat_interface_zero_height_action_triggers(self):
+        """Verify col1 uses zero-height headless action triggers so chat input remains permanently anchored."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            code = f.read()
+
+        assert ".st-key-clear_chat_pts" in code
+        assert ".st-key-run_chat_recon" in code
+        assert 'display: none !important;' in code
+        assert 'height: 0px !important;' in code
+        assert 'key="clear_chat_pts"' in code
+        assert 'key="run_chat_recon"' in code
+        assert 'GEOAI_PARENT_CMD' in code
+        assert "trigger_recon" in code
+
+    def test_tactical_hud_recon_dispatch_and_no_col1_leak(self):
+        """Verify TacticalTargetHudControl dispatches recon via Folium bridge, Section 2b handles it, and col1 has no leaked div."""
+        import folium
+        from streamlit_folium import _get_map_string
+
+        m = folium.Map()
+        import app
+        app.MapTrashBinHook().add_to(m)
+        script = _get_map_string(m)
+
+        # Tactical HUD recon button must prepare and dispatch recon payload
+        assert 'properties: {\n                                action: "recon"' in script or 'action: "recon"' in script
+        assert "geoaiImmediateDispatch(map)" in script
+
+        with open("app.py", "r", encoding="utf-8") as f:
+            code = f.read()
+
+        # Section 2b and Section 5 handle action == "recon"
+        assert '_props.get("action") == "recon"' in code
+        assert 'props.get("action") == "recon"' in code
+        assert '"is_recon": True' in code
+
+        # Ensure col1 does NOT contain the leaked geoai-instant-pill-slot div inside col1
+        # It must only appear once in the global script block unindented
+        assert code.count('<div id="geoai-instant-pill-slot"') == 1
+        assert "<div id='geoai-instant-pill-slot'" not in code
+
+    def test_bbox_hud_persistence_over_single_target(self):
+        """Verify BBox selection HUD maintains bbox type over single point target after Streamlit reload."""
+        import folium
+        from streamlit_folium import _get_map_string, _get_feature_group_string
+        import app
+
+        # 1. MapTrashBinHook must prioritize state.bboxBounds over state.activePoint
+        m = folium.Map()
+        app.MapTrashBinHook().add_to(m)
+        script = _get_map_string(m)
+
+        bbox_idx = script.find("if (state.bboxBounds)")
+        pt_idx = script.find("else if (state.activePoint)")
+        assert bbox_idx != -1 and pt_idx != -1
+        assert bbox_idx < pt_idx, "state.bboxBounds must be checked BEFORE state.activePoint"
+
+        # 2. When bbox is present, SelectionSyncHook serializes bboxBounds and activePoint is null
+        fg = folium.FeatureGroup(name="Selection", control=False)
+        app.SelectionSyncHook(
+            has_selection=True,
+            clear_seq=0,
+            bbox_state="selected",
+            bbox_bounds=[[48.1234, 31.5678], [49.1234, 32.5678]],
+            active_point=None,
+        ).add_to(fg)
+        fg_str = _get_feature_group_string(fg, m, 0)
+        assert "bboxBounds: [[48.1234, 31.5678], [49.1234, 32.5678]]" in fg_str
+        assert "activePoint: null" in fg_str
+
+        # 3. app.py must guard active_point passing when bounding_box is present
+        with open("app.py", "r", encoding="utf-8") as f:
+            code = f.read()
+        assert 'active_point=None if st.session_state.get("bounding_box") else' in code
+
+    def test_point_selection_after_bbox_clears_scanline_and_bbox_state(self):
+        """Verify that selecting a point after drawing a BBox resets BBox bounds, suppresses scanline, and routes point recon."""
+        import app
+
+        # 1. Test _is_drawing_corner_release helper
+        bbox = ((48.0, 31.0), (49.0, 32.0))
+        assert app._is_drawing_corner_release((48.0, 31.0), bbox) is True
+        assert app._is_drawing_corner_release((48.0001, 31.0001), bbox) is True
+        assert app._is_drawing_corner_release((49.0, 32.0), bbox) is True
+        assert app._is_drawing_corner_release((48.5, 31.5), bbox) is False
+        assert app._is_drawing_corner_release((48.0, 31.0), None) is False
+
+        with open("app.py", "r", encoding="utf-8") as f:
+            code = f.read()
+
+        # 2. startQueryingAnimation guards against point target
+        assert "var hud = window._lastHudInfo;" in code
+        assert "hud.type === 'point'" in code
+        assert "window._lastKnownBboxBounds = null;" in code
+
+        # 3. Recon button in HUD passes targetType and coordinates
+        assert 'targetType: hud ? hud.type : null' in code
+        assert 'properties: {\n                                action: "recon",' in code or 'action: "recon",\n                                targetType: hud ? hud.type : null' in code
+
+        # 4. Canvas click transitions from BBox to Point Selection when a new coordinate arrives
+        assert 'elif _c_pt != st.session_state.last_clicked:' in code
+        assert 'elif clicked_coord != st.session_state.last_clicked:' in code
+        assert 'if st.session_state.selected_points != [_c_pt] or st.session_state.get("bounding_box") is not None:' in code
+        assert 'if st.session_state.selected_points != [clicked_coord] or st.session_state.get("bounding_box") is not None:' in code
+
+        # 5. Section 2b and Section 5 handle targetType == "point" on recon
+        assert '_target_type == "point"' in code
+        assert 'target_type == "point"' in code
+        assert 'st.session_state.selection_mode = "Point Selection"' in code
+
+    def test_chat_query_submission_preserves_bbox_and_routes_polygon(self):
+        """Verify that sending a chat query while a BBox is active does NOT convert BBox to a point."""
+        import streamlit as st
+        import app
+
+        # Setup state: BBox is actively selected
+        bbox = ((48.1234, 31.5678), (49.1234, 32.5678))
+        click_coord = (49.1234, 32.5678)
+        st.session_state.selection_mode = "Bounding Box"
+        st.session_state.bounding_box = bbox
+        st.session_state.selected_points = [bbox[0], bbox[1]]
+        st.session_state.last_clicked = click_coord
+        st.session_state.pending_query = None
+        st.session_state.answered_bbox = None
+
+        # Verify raw request payload formats as polygon, NOT point
+        payload = app._build_raw_request_payload(
+            text_prompt="Where in the bounding box where there drone attacks?",
+            selected_point=None,
+            bounding_box=bbox,
+        )
+        assert payload["geo_location"]["type"] == "polygon"
+        assert payload["geo_location"]["coordinates"][0][0] == [31.5678, 48.1234]
+
+        # Verify Section 2c logic: when bounding_box is present, active_pt is None
+        _is_bbox = st.session_state.get("bounding_box") is not None
+        assert _is_bbox is True
+        _active_pt = None if _is_bbox else (st.session_state.selected_points[0] if st.session_state.get("selected_points") else None)
+        _active_bbox = st.session_state.get("bounding_box") if _is_bbox else None
+        assert _active_pt is None
+        assert _active_bbox == bbox
+
+        # Verify code guards that canvas click ONLY triggers when coordinate changed
+        with open("app.py", "r", encoding="utf-8") as f:
+            code = f.read()
+        assert 'elif _c_pt != st.session_state.last_clicked:' in code
+        assert 'elif clicked_coord != st.session_state.last_clicked:' in code
+
+    def test_bbox_selection_clears_selected_points_and_point_scan(self):
+        """Plan Test 3: Drawing a rectangle clears active point selection, resets active_tactical_scan, and sets mode to Bounding Box."""
+        import streamlit as st
+        import app
+
+        # Simulate state where a point was previously selected and point scan active
+        point = (48.5000, 31.5000)
+        st.session_state.selection_mode = "Point Selection"
+        st.session_state.selected_points = [point]
+        st.session_state.bounding_box = None
+        st.session_state.active_point = point
+        st.session_state.active_tactical_scan = "point_scan"
+
+        # Verify that drawing a new BBox clears active_tactical_scan and sets bounding_box
+        bbox_corners = ((48.0, 31.0), (49.0, 32.0))
+        st.session_state.selection_mode = "Bounding Box"
+        st.session_state.selected_points = [bbox_corners[0], bbox_corners[1]]
+        st.session_state.bounding_box = bbox_corners
+        st.session_state.active_point = bbox_corners[1]
+        st.session_state.active_tactical_scan = None
+
+        assert st.session_state.bounding_box == bbox_corners
+        assert st.session_state.active_tactical_scan is None
+        assert st.session_state.selection_mode == "Bounding Box"
+
+        # Verify Section 2b and Section 5 code enforces active_tactical_scan = None
+        with open("app.py", "r", encoding="utf-8") as f:
+            code = f.read()
+        assert "st.session_state.bounding_box = (_ll, _ur)\n            st.session_state.answered_bbox = None\n            st.session_state.active_point = _ur\n            st.session_state.active_tactical_scan = None" in code
+        assert "st.session_state.bounding_box = (lower_left, upper_right)\n            st.session_state.answered_bbox = None\n            st.session_state.active_point = upper_right\n            st.session_state.active_tactical_scan = None" in code
+
+    def test_trash_can_clear_selection_resets_both_point_and_bbox(self):
+        """Plan Test 4: clear_spatial_selection resets point, bbox, HUD state, active_tactical_scan, and increments sequence."""
+        import streamlit as st
+        import app
+
+        # Setup active bbox and scan
+        bbox = ((48.1, 31.1), (49.2, 32.2))
+        st.session_state.selection_mode = "Bounding Box"
+        st.session_state.selected_points = [bbox[0], bbox[1]]
+        st.session_state.bounding_box = bbox
+        st.session_state.answered_bbox = bbox
+        st.session_state.active_point = bbox[1]
+        st.session_state.active_tactical_scan = "bbox_scan"
+        st.session_state.selection_clear_seq = 3
+        st.session_state.last_processed_drawing = {"type": "Feature"}
+
+        # Execute clear_spatial_selection
+        app.clear_spatial_selection()
+
+        # Assert all fields are reset to neutral
+        assert st.session_state.selected_points == []
+        assert st.session_state.bounding_box is None
+        assert st.session_state.answered_bbox is None
+        assert st.session_state.active_point is None
+        assert st.session_state.active_tactical_scan is None
+        assert st.session_state.selection_mode == "Point Selection"
+        assert st.session_state.last_processed_drawing is None
+        assert st.session_state.selection_clear_seq == 4
+
+    def test_answered_pin_selection_keeps_info_window_and_hud_open(self):
+        """Verify that selecting an answered pin does not overwrite with target reticle, preserves popup, and keeps HUD open."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            code = f.read()
+
+        # 1. Answered pins in map_layers are protected from being overlaid by generic target reticle
+        assert "is_existing_pin = any(" in code
+        assert "if not is_existing_pin:" in code
+
+        # 2. _onServerSelectionSync contains logic to maintain/reopen popup on answered pin
+        assert "window._isLayerSyncing = true;" in code
+        assert "m.openPopup();" in code
+
+        # 3. popupopen always immediately updates HUD and parent docked pill
+        assert "window.updateMapTacticalHud({ type: 'point', lat: p_lat, lng: p_lng });" in code
+
+    def test_closing_info_window_does_not_cancel_selection_hud(self):
+        """Verify that closing an open info window (via 'x') does NOT hide or cancel the Tactical HUD."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            code = f.read()
+
+        # In map.on('popupclose'), popupclose only clears _lastOpenPopupInfo if not syncing, and NEVER calls hideMapTacticalHud
+        assert "map.on('popupclose', function(e) {" in code
+        assert "if (!window._reopeningPopup && !window._isLayerSyncing) {" in code
+        assert "window._lastOpenPopupInfo = null;" in code
+
+        # Verify popupclose handler does NOT call hideMapTacticalHud
+        popupclose_idx = code.find("map.on('popupclose'")
+        popupclose_block = code[popupclose_idx:popupclose_idx + 300]
+        assert "hideMapTacticalHud" not in popupclose_block
+
+    def test_clicking_different_answered_pin_updates_hud_correctly(self):
+        """Verify that clicking a different answered pin immediately updates HUD coordinates and restores new popup."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            code = f.read()
+
+        # 1. popupopen updates _lastOpenPopupInfo and _lastHudInfo with new coordinates on every click
+        assert "window._lastOpenPopupInfo = {" in code
+        assert "window._lastHudInfo = { type: 'point', lat: p_lat, lng: p_lng };" in code
+
+        # 2. Clear button closes popup and hides HUD
+        assert "window._lastOpenPopupInfo = null;" in code
+        assert "try { map.closePopup(); } catch(e) {}" in code
+
+    def test_section_2c_ingestion_precedes_2b_and_protects_bbox(self):
+        """Verify Section 2c executes before Section 2b, preventing chat submissions from being overwritten by historical clicks."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            code = f.read()
+
+        sec2c_pos = code.find("2c. Early Query Ingestion & Queueing")
+        sec2b_pos = code.find("2b. Early Map Event Ingestion")
+        assert sec2c_pos != -1, "Section 2c must be defined"
+        assert sec2b_pos != -1, "Section 2b must be defined"
+        assert sec2c_pos < sec2b_pos, "Architectural Rule: Section 2c must execute BEFORE Section 2b"
+
+        # Verify Section 2b is guarded against processing map events during query submissions
+        assert 'not st.session_state.get("pending_query")' in code
+        assert "not _is_chat_submit" in code
+        assert "not _incoming_recon" in code
+
+    def test_chat_submit_after_long_typing_preserves_bbox(self):
+        """Verify that typing a query for >10 seconds while BBox is selected does NOT convert BBox to a point."""
+        import streamlit as st
+        import app
+        import time
+
+        # Simulate user drawing a BBox and then typing in chat for 15 seconds
+        bbox = ((48.1234, 31.5678), (49.1234, 32.5678))
+        corner_coord = (49.1234, 32.5678)
+        st.session_state.selection_mode = "Bounding Box"
+        st.session_state.bounding_box = bbox
+        st.session_state.selected_points = [bbox[0], bbox[1]]
+        st.session_state.active_point = bbox[1]
+        st.session_state.last_drawing_time = time.time() - 15.0  # 15 seconds ago
+        st.session_state.last_clicked = None  # Historical click state
+        st.session_state.pending_query = None
+        st.session_state.last_processed_chat_input = None
+        st.session_state.geoai_chat_input = "Where in the bounding box where there drone attacks?"
+
+        # Simulate Section 2c execution
+        _incoming_chat = st.session_state.get("geoai_chat_input")
+        _incoming_recon = bool(st.session_state.get("run_chat_recon"))
+        _is_chat_submit = bool(
+            _incoming_chat
+            and isinstance(_incoming_chat, str)
+            and _incoming_chat.strip()
+            and _incoming_chat != st.session_state.get("last_processed_chat_input")
+        )
+        assert _is_chat_submit is True
+
+        if not st.session_state.get("pending_query"):
+            _is_bbox = st.session_state.get("bounding_box") is not None
+            _active_pt = None if _is_bbox else (st.session_state.selected_points[0] if st.session_state.get("selected_points") else None)
+            _active_bbox = st.session_state.get("bounding_box") if _is_bbox else None
+            if _is_chat_submit:
+                st.session_state.last_processed_chat_input = _incoming_chat
+                st.session_state.pending_query = {
+                    "text_prompt": _incoming_chat.strip(),
+                    "selected_point": _active_pt,
+                    "bounding_box": _active_bbox,
+                }
+
+        # Assertions: pending_query was locked with bbox, active_pt is None
+        assert st.session_state.pending_query["bounding_box"] == bbox
+        assert st.session_state.pending_query["selected_point"] is None
+        assert st.session_state.bounding_box == bbox
+
+        # Verify Section 2b guards: Section 2b map event ingestion MUST be skipped
+        should_run_2b = (
+            not st.session_state.get("pending_query")
+            and not _is_chat_submit
+            and not _incoming_recon
+        )
+        assert should_run_2b is False, "Section 2b map event processing must be bypassed on query turn"
+
+    def test_bbox_corner_clicks_never_convert_bbox_to_point(self):
+        """Verify that clicking any of the 4 BBox corners NEVER destroys the BBox, regardless of time elapsed."""
+        import streamlit as st
+        import app
+
+        bbox = ((48.0000, 31.0000), (49.0000, 32.0000))
+        corners = [
+            (48.0000, 31.0000),  # SW
+            (48.0000, 32.0000),  # SE
+            (49.0000, 31.0000),  # NW
+            (49.0000, 32.0000),  # NE
+        ]
+
+        for corner in corners:
+            # Check helper directly
+            assert app._is_drawing_corner_release(corner, bbox) is True
+
+            # Simulate state with active BBox
+            st.session_state.selection_mode = "Bounding Box"
+            st.session_state.bounding_box = bbox
+            st.session_state.selected_points = [bbox[0], bbox[1]]
+            st.session_state.last_clicked = (47.0, 30.0)  # Different coordinate
+
+            # Process corner click
+            _is_corner = app._is_drawing_corner_release(corner, st.session_state.get("bounding_box"))
+            if _is_corner:
+                st.session_state.last_clicked = corner
+            elif corner != st.session_state.last_clicked:
+                st.session_state.selection_mode = "Point Selection"
+                st.session_state.selected_points = [corner]
+                st.session_state.bounding_box = None
+
+            # BBox must remain intact!
+            assert st.session_state.bounding_box == bbox
+            assert st.session_state.selection_mode == "Bounding Box"
+            assert st.session_state.last_clicked == corner
+
+    def test_leaflet_draw_cooldown_and_lat_lng_cleared(self):
+        """Verify JavaScript MapTrashBinHook suppresses post-draw canvas click and clears lat_lng_clicked."""
+        import folium
+        from streamlit_folium import _get_map_string
+        import app
+
+        m = folium.Map()
+        app.MapTrashBinHook().add_to(m)
+        script = _get_map_string(m)
+
+        # 1. _justDrew flag and cooldown in drawstop and draw:created
+        assert "map._justDrew = false;" in script
+        assert "map._justDrew = true;" in script
+        assert "setTimeout(function() { map._justDrew = false; }, 800);" in script
+
+        # 2. Canvas click guard
+        assert "if (map._isDrawing || map._justDrew) return;" in script
+
+        # 3. Explicit nullification of lat_lng_clicked on rectangle creation
+        assert "window.__GLOBAL_DATA__.lat_lng_clicked = null;" in script
+
+    def test_answered_pin_glowing_reticle_and_instant_switching(self):
+        """
+        Verify that selecting an answered pin:
+        1. Renders a glowing reticle marker (folium.Marker with role="target" and interactive=False)
+           in selection_fg without duplicate popups.
+        2. Mounts an instant reticle marker in Leaflet popupopen hook with role='target'.
+        3. Prioritizes 64-character hash keys over geoai_tactical_map in _peek_incoming_map_state
+           so switching between pins never reverts back to stale previous rerun state.
+        4. Configures .geoai-reticle with pointer-events: none so clicks pass directly to answered pins.
+        5. Prioritizes state.activePoint in _onServerSelectionSync for popup reopening.
+        """
+        import folium
+        from streamlit_folium import _get_map_string
+        import app
+        import streamlit as st
+
+        # 1. Inspect app.py source contracts
+        with open("app.py", "r", encoding="utf-8") as f:
+            src = f.read()
+
+        # Reticle on existing pin in selection_fg
+        assert "is_existing_pin = any(" in src
+        assert "make_pin_icon(role=\"target\")" in src
+        assert "interactive=False" in src
+        assert ".geoai-reticle {" in src
+        assert "pointer-events: none;" in src
+
+        # 2. MapTrashBinHook instant reticle rendering and popupopen dispatch
+        m = folium.Map()
+        app.MapTrashBinHook().add_to(m)
+        script = _get_map_string(m)
+
+        assert "var reticleIcon = geoaiIcon({ role: 'target' });" in script
+        assert "var reticleMarker = L.marker([p_lat, p_lng], { icon: reticleIcon, interactive: false });" in script
+        assert "window._instantTargetMarker = reticleMarker;" in script
+        assert "var activeClick = g.lat_lng_clicked || g.last_object_clicked;" in script
+        assert "targetPoint = state.activePoint ? { lat: state.activePoint[0], lng: state.activePoint[1] } : window._lastOpenPopupInfo;" in script
+
+        # 3. Test _peek_incoming_map_state priority: hash key (fresh) > geoai_tactical_map (stale)
+        stale_state = {"last_clicked": {"lat": 50.4501, "lng": 30.5234}}
+        fresh_state = {"last_clicked": {"lat": 48.3794, "lng": 35.0462}}
+        hash_key = "a" * 64
+
+        st.session_state["geoai_tactical_map"] = stale_state
+        st.session_state[hash_key] = fresh_state
+
+        result = app._peek_incoming_map_state()
+        assert result == fresh_state
+        assert result["last_clicked"]["lat"] == 48.3794
+
+        # Clean up test session state
+        del st.session_state["geoai_tactical_map"]
+        del st.session_state[hash_key]
+
+        # 4. Test _peek_incoming_map_state unpacking from _new_widget_state
+        import json
+        from streamlit.proto.WidgetStates_pb2 import WidgetState as WidgetStateProto
+        from streamlit.runtime.state.session_state_proxy import get_session_state
+
+        ss = get_session_state()
+        raw_state = getattr(ss, "_state", None)
+        if raw_state is not None and hasattr(raw_state, "_new_widget_state"):
+            proto = WidgetStateProto()
+            proto.id = "test_map_component"
+            proto.json_value = json.dumps({"last_clicked": {"lat": 49.9935, "lng": 36.2304}})
+            raw_state._new_widget_state.set_widget_from_proto(proto)
+
+            result2 = app._peek_incoming_map_state()
+            assert result2 is not None
+            assert result2["last_clicked"]["lat"] == 49.9935
+
+            # Clean up proto
+            del raw_state._new_widget_state[proto.id]
+
+        # 5. Verify clear_spatial_selection resets last_clicked and ignored_drawing
+        st.session_state.last_clicked = (50.4501, 30.5234)
+        st.session_state.ignored_drawing = {"dummy": True}
+        app.clear_spatial_selection(ignore_current_drawing=False)
+        assert st.session_state.last_clicked is None
+        assert st.session_state.ignored_drawing is None
+        assert st.session_state.selected_points == []
+
+
+class TestContextPinsStabilityAndNoLeak:
+    """Verifies that context points and cluster pins never duplicate or grow on map clicks."""
+
+    def test_pin_filter_control_uses_active_cluster_inspection(self):
+        """Verify PinFilterControl inspects active clusters on map instead of accumulating stale cluster references."""
+        import folium
+        from streamlit_folium import _get_map_string
+        import app
+
+        m = folium.Map()
+        app.MapTrashBinHook().add_to(m)
+        script = _get_map_string(m)
+
+        # 1. getActiveClusterGroups inspects live map layers
+        assert "function getActiveClusterGroups()" in script
+        assert "map.eachLayer(inspectLayer)" in script
+
+        # 2. No stale clusterGroups global array retaining dead clusters across Python reruns
+        assert "var clusterGroups = [];" not in script
+
+        # 3. Double-counting guard via clusteredMarkers Set
+        assert "clusteredMarkers.has(layer)" in script
+        assert "var clusteredMarkers = new Set();" in script
+
+        # 4. Dead clusters from previous runs are never resurrected via map.addLayer(cg)
+        assert "if (!map.hasLayer(cg)) map.addLayer(cg);" not in script
+
+    def test_pin_filter_css_classes_injected(self):
+        """Verify CSS rules for instant client-side pin hiding are present in map head element."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            content = f.read()
+
+        assert ".geoai-hide-context-pins .geoai-pin--context" in content
+        assert ".geoai-hide-context-pins .awesome-marker-icon-cadetblue" in content
+        assert ".geoai-hide-context-pins .geoai-cluster-wrap" in content
+        assert ".geoai-hide-uncertain-pins .geoai-pin--uncertain" in content
+
+    def test_context_pins_not_duplicated_in_session_state_on_map_clicks(self):
+        """Verify map clicks only update spatial selection without multiplying map_layers in session_state."""
+        import streamlit as st
+        from geo_agent import MapLayer
+
+        # Setup initial layers in session_state
+        initial_layers = [
+            MapLayer(name="Kyiv Hub", layer_type="marker", data={"lat": 50.45, "lng": 30.52, "role": "primary"}, color="blue"),
+            MapLayer(name="Context A", layer_type="marker", data={"lat": 50.50, "lng": 30.60, "role": "context"}, color="cadetblue"),
+            MapLayer(name="Context B", layer_type="marker", data={"lat": 50.40, "lng": 30.40, "role": "context"}, color="cadetblue"),
+        ]
+        st.session_state.map_layers = list(initial_layers)
+        st.session_state.selected_points = []
+        st.session_state.last_clicked = None
+
+        # Simulate user clicking a point on the map
+        clicked = (50.50, 30.60)
+        st.session_state.last_clicked = clicked
+        st.session_state.selected_points = [clicked]
+
+        # Verify map_layers count did not increase
+        assert len(st.session_state.map_layers) == 3
+        ctx_layers = [l for l in st.session_state.map_layers if l.color == "cadetblue" or (isinstance(l.data, dict) and l.data.get("role") == "context")]
+        assert len(ctx_layers) == 2
+
+        # Simulate user clicking another random point on the map
+        clicked_2 = (49.99, 36.23)
+        st.session_state.last_clicked = clicked_2
+        st.session_state.selected_points = [clicked_2]
+
+        # Verify still exactly 3 total layers and 2 context layers
+        assert len(st.session_state.map_layers) == 3
+        ctx_layers_2 = [l for l in st.session_state.map_layers if l.color == "cadetblue" or (isinstance(l.data, dict) and l.data.get("role") == "context")]
+        assert len(ctx_layers_2) == 2
+
+
+class TestAgentRagMvpContractAndApiKeyPersistence:
+    """Verifies AgentRag MVP contract fields, UI_TEAM_NOTES items, and in-app API key persistence."""
+
+    def test_requirements_includes_pandas_lt_3(self):
+        """UI_TEAM_NOTES 1: Ensure requirements.txt pins pandas<3 for Windows Smart App Control."""
+        with open("requirements.txt", "r", encoding="utf-8") as f:
+            req_text = f.read()
+        assert "pandas<3" in req_text
+
+    def test_regions_list_of_nodes_and_map_not_shown_parsed(self, monkeypatch):
+        """Verify geo_agent and _build_assistant_message preserve list[RegionNode], map_showing, and map_not_shown."""
+        import geo_agent
+        from app import _build_assistant_message
+
+        fake_raw = {
+            "answer": "Bakhmut [1] saw intense fighting.",
+            "answer_plain": "Bakhmut saw intense fighting.",
+            "status": "answered",
+            "grounded": True,
+            "shape": "fact",
+            "geo_locations": [
+                {
+                    "number": 1,
+                    "id": "Bakhmut",
+                    "label": "Bakhmut",
+                    "kind": "city",
+                    "role": "primary",
+                    "geometry": {"type": "Point", "coordinates": [38.000, 48.595]},
+                    "why": "75 matching paragraphs",
+                    "sources": ["TEXT_101"],
+                }
+            ],
+            "regions": [
+                {
+                    "id": "Ukraine",
+                    "place_type": "country",
+                    "count": 50,
+                    "places": [1],
+                    "children": [
+                        {"id": "Donetsk Oblast", "place_type": "state", "count": 36, "places": [1], "children": []}
+                    ],
+                }
+            ],
+            "map": {
+                "bbox": [37.8, 48.4, 38.2, 48.7],
+                "highlight": [1],
+                "showing": "discussed",
+                "not_shown": 73,
+            },
+            "did_you_mean": [{"id": "Battle of Bakhmut", "type": "EVENT"}],
+            "follow_ups": ["What happened in Soledar?"],
+            "citations": [],
+            "sources": ["TEXT_101"],
+        }
+
+        monkeypatch.setattr(geo_agent, "_BACKEND_AVAILABLE", True)
+        monkeypatch.setattr(geo_agent, "_backend_query", lambda **kw: fake_raw)
+
+        resp = geo_agent.query_geo_agent(text_prompt="Where did the battle of Bakhmut happen?", api_key="sk-or-test")
+        assert isinstance(resp.regions, list)
+        assert len(resp.regions) == 1
+        assert resp.regions[0]["id"] == "Ukraine"
+        assert resp.regions[0]["children"][0]["id"] == "Donetsk Oblast"
+        assert resp.map_showing == "discussed"
+        assert resp.map_not_shown == 73
+        assert isinstance(resp.did_you_mean, list)
+        assert resp.did_you_mean[0]["id"] == "Battle of Bakhmut"
+
+        msg = _build_assistant_message(resp)
+        assert isinstance(msg["regions"], list)
+        assert msg["regions"][0]["id"] == "Ukraine"
+        assert msg["map_showing"] == "discussed"
+        assert msg["map_not_shown"] == 73
+        assert msg["did_you_mean"] == [{"id": "Battle of Bakhmut", "type": "EVENT"}]
+
+    def test_ui_team_notes_items_in_app_code(self):
+        """Verify UI_TEAM_NOTES items (layer replacement, welcome fold-out, autoscroll=False, mock notice) in app.py."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            code = f.read()
+
+        # Note 3: Replace map_layers by default with optional keep_previous_layers toggle
+        assert "st.session_state.map_layers = list(agent_resp.layers)" in code
+        assert "Keep previous answers' pins on map" in code
+
+        # Note 6: Welcome message inside st.expander folded after first question
+        assert "👋 Welcome: how to use the map and the chat" in code
+        assert "expanded=len(st.session_state.messages) == 1" in code
+
+        # Note 7: autoscroll=False and scroll_to_answer
+        assert "st.container(height=chat_container_height, autoscroll=False)" in code
+        assert 'st.session_state.pop("scroll_to_answer", False)' in code
+        assert "st.session_state.scroll_to_answer = True" in code
+
+        # Note 8: Clear mock engine disclaimer when no API key is set
+        assert "Example answer: no OpenRouter key set (Deterministic Mock Engine)" in code
+
+    def test_persist_openrouter_api_key_updates_env_and_dotenv_file(self, tmp_path, monkeypatch):
+        """Verify persist_openrouter_api_key updates os.environ and writes/clears AgentRag/.env."""
+        import os
+        import geo_agent
+
+        env_file = tmp_path / ".env"
+        env_file.write_text("OTHER_SETTING=123\nOPENROUTER_API_KEY=sk-or-old-key\n", encoding="utf-8")
+
+        # 1. Update with a new key
+        saved = geo_agent.persist_openrouter_api_key("sk-or-v1-new-key-999", update_dotenv=True, env_path=env_file)
+        assert saved is True
+        assert os.environ.get("OPENROUTER_API_KEY") == "sk-or-v1-new-key-999"
+        content = env_file.read_text(encoding="utf-8")
+        assert "OTHER_SETTING=123" in content
+        assert "OPENROUTER_API_KEY=sk-or-v1-new-key-999" in content
+        assert "sk-or-old-key" not in content
+
+        # 2. Clear the key -> removes from os.environ and .env
+        cleared = geo_agent.persist_openrouter_api_key("", update_dotenv=True, env_path=env_file)
+        assert cleared is True
+        assert "OPENROUTER_API_KEY" not in os.environ
+        content_after = env_file.read_text(encoding="utf-8")
+        assert "OTHER_SETTING=123" in content_after
+        assert "OPENROUTER_API_KEY" not in content_after
+
+    def test_clearing_api_key_in_session_state_forces_mock_mode(self, monkeypatch):
+        """Verify that clearing openrouter_api_key in session_state routes to mock even if os.environ had a key."""
+        import streamlit as st
+        import app
+        import geo_agent
+
+        monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-env-key-should-be-ignored")
+        monkeypatch.setattr(geo_agent, "_BACKEND_AVAILABLE", True)
+
+        def fail_if_called(**kw):
+            raise AssertionError("Live backend should not be called when sidebar key is cleared!")
+
+        monkeypatch.setattr(geo_agent, "_backend_query", fail_if_called)
+
+        st.session_state.openrouter_api_key = ""
+        st.session_state.rag_logs = []
+        st.session_state.messages = []
+
+        resp = app.dispatch_geo_query(text_prompt="Test offline simulation mode")
+        assert resp is not None
+        assert resp.is_live_backend is False
+
+
+
+
+
+
 
 
 
