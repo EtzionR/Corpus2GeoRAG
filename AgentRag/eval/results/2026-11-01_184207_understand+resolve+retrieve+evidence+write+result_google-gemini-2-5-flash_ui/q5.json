@@ -1,0 +1,1705 @@
+{
+  "answer": "Many Ukrainian cities are connected to Russian military operations. 41 places were found, with the strongest few being Kyiv [1], Kharkiv [2], and Kherson [3]. These cities are concentrated in Ukraine, particularly in the Donetsk, Luhansk, Zaporizhzhia, and Kherson Oblasts.",
+  "answer_plain": "Many Ukrainian cities are connected to Russian military operations. 41 places were found, with the strongest few being Kyiv, Kharkiv, and Kherson. These cities are concentrated in Ukraine, particularly in the Donetsk, Luhansk, Zaporizhzhia, and Kherson Oblasts.",
+  "status": "answered",
+  "grounded": true,
+  "shape": "list",
+  "geo_locations": [
+    {
+      "number": 1,
+      "id": "Kyiv",
+      "label": "Kyiv",
+      "kind": "city",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.5241361,
+          50.4500336
+        ]
+      },
+      "why": "8 matching paragraphs",
+      "sources": [
+        "TEXT_1341",
+        "TEXT_1501",
+        "TEXT_4137",
+        "TEXT_4627",
+        "TEXT_6806",
+        "TEXT_11966",
+        "TEXT_37497",
+        "TEXT_51266"
+      ]
+    },
+    {
+      "number": 2,
+      "id": "Kharkiv",
+      "label": "Kharkiv",
+      "kind": "city",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2310146,
+          49.9923181
+        ]
+      },
+      "why": "3 matching paragraphs",
+      "sources": [
+        "TEXT_2391",
+        "TEXT_2392",
+        "TEXT_6806"
+      ]
+    },
+    {
+      "number": 3,
+      "id": "Kherson",
+      "label": "Kherson",
+      "kind": "city",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          32.6143922,
+          46.6401295
+        ]
+      },
+      "why": "3 matching paragraphs",
+      "sources": [
+        "TEXT_6806",
+        "TEXT_25923",
+        "TEXT_36737"
+      ]
+    },
+    {
+      "number": 4,
+      "id": "Luhansk",
+      "label": "Luhansk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.2973153,
+          48.5717084
+        ]
+      },
+      "why": "3 matching paragraphs",
+      "sources": [
+        "TEXT_1341",
+        "TEXT_85080",
+        "TEXT_87313"
+      ]
+    },
+    {
+      "number": 5,
+      "id": "Mariupol",
+      "label": "Mariupol",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.5499621,
+          47.0957648
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_11966",
+        "TEXT_44825"
+      ]
+    },
+    {
+      "number": 6,
+      "id": "Donetsk People's Republic",
+      "label": "Donetsk People's Republic",
+      "kind": "amenity",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.8003465,
+          48.0089299
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "uncertain": "geocoded as a amenity with importance 0.39",
+      "sources": [
+        "TEXT_10849",
+        "TEXT_40004"
+      ]
+    },
+    {
+      "number": 7,
+      "id": "Dnieper",
+      "label": "Dnieper",
+      "kind": "river",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.8243039,
+          51.9191343
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_25923",
+        "TEXT_36737"
+      ]
+    },
+    {
+      "number": 8,
+      "id": "Pokrovske",
+      "label": "Pokrovske",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2333808,
+          47.9808528
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_36737",
+        "TEXT_74743"
+      ]
+    },
+    {
+      "number": 9,
+      "id": "Sevastopol",
+      "label": "Sevastopol",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.5220842,
+          44.6054434
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_27464"
+      ]
+    },
+    {
+      "number": 10,
+      "id": "Zaporizhzhia",
+      "label": "Zaporizhzhia",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.1182867,
+          47.8507859
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_36857"
+      ]
+    },
+    {
+      "number": 11,
+      "id": "Avdiivka",
+      "label": "Avdiivka",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.7466719,
+          48.1338824
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_636"
+      ]
+    },
+    {
+      "number": 12,
+      "id": "Sloviansk",
+      "label": "Sloviansk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.6058241,
+          48.8522691
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_36584"
+      ]
+    },
+    {
+      "number": 13,
+      "id": "Sumy",
+      "label": "Sumy",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.8027723,
+          50.9119775
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_10193"
+      ]
+    },
+    {
+      "number": 14,
+      "id": "Horlivka",
+      "label": "Horlivka",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0027664,
+          48.3058686
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_36584"
+      ]
+    },
+    {
+      "number": 15,
+      "id": "Zaporizhzhia Nuclear Power Plant",
+      "label": "Zaporizhzhia Nuclear Power Plant",
+      "kind": "industrial",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.5894872,
+          47.5125684
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_33865"
+      ]
+    },
+    {
+      "number": 16,
+      "id": "Chernobyl",
+      "label": "Chernobyl",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.2195609,
+          51.2705477
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_20849"
+      ]
+    },
+    {
+      "number": 17,
+      "id": "Nova Kakhovka",
+      "label": "Nova Kakhovka",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.3566678,
+          46.7583404
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_36737"
+      ]
+    },
+    {
+      "number": 18,
+      "id": "Tokmak",
+      "label": "Tokmak",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.7092206,
+          47.2550191
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_25923"
+      ]
+    },
+    {
+      "number": 19,
+      "id": "Robotyne",
+      "label": "Robotyne",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.826069,
+          47.443081
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_25923"
+      ]
+    },
+    {
+      "number": 20,
+      "id": "Konotop",
+      "label": "Konotop",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.206675,
+          51.2397495
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_10193"
+      ]
+    },
+    {
+      "number": 21,
+      "id": "Shakhtarsk",
+      "label": "Shakhtarsk",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.4459474,
+          48.0550423
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_636"
+      ]
+    },
+    {
+      "number": 22,
+      "id": "Kakhovka",
+      "label": "Kakhovka",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.4817825,
+          46.8054626
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_8592"
+      ]
+    },
+    {
+      "number": 23,
+      "id": "Ochakiv",
+      "label": "Ochakiv",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.5452994,
+          46.6145957
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_74743"
+      ]
+    },
+    {
+      "number": 24,
+      "id": "Novodonetske",
+      "label": "Novodonetske",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.9819183,
+          48.6342604
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_36857"
+      ]
+    },
+    {
+      "number": 25,
+      "id": "Raion",
+      "label": "Raion",
+      "kind": "district",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.4427785,
+          49.534387
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_636"
+      ]
+    },
+    {
+      "number": 26,
+      "id": "Borivske",
+      "label": "Borivske",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.5605812,
+          48.8709944
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80626"
+      ]
+    },
+    {
+      "number": 27,
+      "id": "Massandra",
+      "label": "Massandra",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.1886781,
+          44.5087776
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_10849"
+      ]
+    },
+    {
+      "number": 28,
+      "id": "Sirotine",
+      "label": "Sirotine",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.5116782,
+          48.9155633
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80626"
+      ]
+    },
+    {
+      "number": 29,
+      "id": "Voronove",
+      "label": "Voronove",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.5730617,
+          48.8977028
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_80626"
+      ]
+    },
+    {
+      "number": 30,
+      "id": "Hrushuvakha",
+      "label": "Hrushuvakha",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.9128978,
+          49.1165405
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_2392"
+      ]
+    },
+    {
+      "number": 31,
+      "id": "Donetsk",
+      "label": "Donetsk",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.7809825,
+          47.9212914
+        ]
+      },
+      "why": "8 matching paragraphs",
+      "sources": [
+        "TEXT_636",
+        "TEXT_1341",
+        "TEXT_37497",
+        "TEXT_87313",
+        "TEXT_2391",
+        "TEXT_2392",
+        "TEXT_21829",
+        "TEXT_36857"
+      ]
+    },
+    {
+      "number": 32,
+      "id": "Crimea",
+      "label": "Crimea",
+      "kind": "peninsula",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.2008188,
+          45.2835044
+        ]
+      },
+      "why": "7 matching paragraphs",
+      "sources": [
+        "TEXT_1341",
+        "TEXT_3978",
+        "TEXT_6880",
+        "TEXT_25923",
+        "TEXT_27464",
+        "TEXT_38766",
+        "TEXT_82068"
+      ]
+    },
+    {
+      "number": 33,
+      "id": "Donbas",
+      "label": "Donbas",
+      "kind": "region",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.3480151,
+          48.59687505
+        ]
+      },
+      "why": "6 matching paragraphs",
+      "sources": [
+        "TEXT_2392",
+        "TEXT_5281",
+        "TEXT_6806",
+        "TEXT_6880",
+        "TEXT_38766",
+        "TEXT_43332"
+      ]
+    },
+    {
+      "number": 34,
+      "id": "Kharkiv Oblast",
+      "label": "Kharkiv Oblast",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.3788957,
+          49.8299582
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_2392"
+      ]
+    },
+    {
+      "number": 35,
+      "id": "Zaporizhzhia Oblast",
+      "label": "Zaporizhzhia Oblast",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.922969,
+          47.4165079
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_25923"
+      ]
+    },
+    {
+      "number": 36,
+      "id": "Luhansk Oblast",
+      "label": "Luhansk Oblast",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.9150477,
+          49.2724587
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_21829"
+      ]
+    },
+    {
+      "number": 37,
+      "id": "Kherson Oblast",
+      "label": "Kherson Oblast",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.4079326,
+          46.5421715
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_74743"
+      ]
+    },
+    {
+      "number": 38,
+      "id": "Kinburn Peninsula",
+      "label": "Kinburn Peninsula",
+      "kind": "peninsula",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.7752487,
+          46.5036975
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_36737"
+      ]
+    },
+    {
+      "number": 39,
+      "id": "Ukraine",
+      "label": "Ukraine",
+      "kind": "country",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.2718321,
+          49.4871968
+        ]
+      },
+      "shape": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              22.13706,
+              48.4188
+            ],
+            [
+              22.59034,
+              48.10761
+            ],
+            [
+              22.82417,
+              48.11754
+            ],
+            [
+              22.89567,
+              47.95417
+            ],
+            [
+              23.16684,
+              48.11999
+            ],
+            [
+              23.49361,
+              47.96782
+            ],
+            [
+              24.57045,
+              47.96883
+            ],
+            [
+              24.88315,
+              47.72437
+            ],
+            [
+              25.31113,
+              47.91429
+            ],
+            [
+              26.18437,
+              47.99466
+            ],
+            [
+              26.68263,
+              48.35557
+            ],
+            [
+              26.81736,
+              48.29524
+            ],
+            [
+              26.77527,
+              48.41842
+            ],
+            [
+              27.28621,
+              48.37156
+            ],
+            [
+              27.59663,
+              48.49145
+            ],
+            [
+              28.0904,
+              48.23414
+            ],
+            [
+              28.35475,
+              48.24557
+            ],
+            [
+              28.30587,
+              48.14031
+            ],
+            [
+              28.42837,
+              48.17239
+            ],
+            [
+              28.49084,
+              48.06584
+            ],
+            [
+              28.57735,
+              48.18245
+            ],
+            [
+              28.83349,
+              48.12881
+            ],
+            [
+              28.92585,
+              47.96014
+            ],
+            [
+              29.17532,
+              47.99378
+            ],
+            [
+              29.28127,
+              47.88843
+            ],
+            [
+              29.15756,
+              47.45923
+            ],
+            [
+              29.31749,
+              47.4492
+            ],
+            [
+              29.42705,
+              47.29215
+            ],
+            [
+              29.57406,
+              47.37047
+            ],
+            [
+              29.55741,
+              46.95809
+            ],
+            [
+              29.96852,
+              46.83217
+            ],
+            [
+              29.87597,
+              46.54671
+            ],
+            [
+              30.16371,
+              46.41353
+            ],
+            [
+              29.89114,
+              46.35239
+            ],
+            [
+              29.74129,
+              46.47298
+            ],
+            [
+              29.60335,
+              46.35367
+            ],
+            [
+              29.35128,
+              46.5042
+            ],
+            [
+              29.24071,
+              46.37618
+            ],
+            [
+              29.23583,
+              46.55829
+            ],
+            [
+              28.98135,
+              46.48905
+            ],
+            [
+              29.00555,
+              46.04935
+            ],
+            [
+              28.51984,
+              45.73696
+            ],
+            [
+              28.51519,
+              45.49988
+            ],
+            [
+              28.24797,
+              45.50747
+            ],
+            [
+              28.34196,
+              45.32502
+            ],
+            [
+              28.71389,
+              45.22363
+            ],
+            [
+              28.79618,
+              45.33473
+            ],
+            [
+              28.94188,
+              45.2805
+            ],
+            [
+              29.42973,
+              45.44258
+            ],
+            [
+              29.65093,
+              45.33962
+            ],
+            [
+              29.69064,
+              45.19172
+            ],
+            [
+              30.34678,
+              45.08035
+            ],
+            [
+              30.46842,
+              45.33283
+            ],
+            [
+              30.06634,
+              45.50587
+            ],
+            [
+              30.90689,
+              46.11437
+            ],
+            [
+              31.04744,
+              46.37686
+            ],
+            [
+              31.23727,
+              46.40318
+            ],
+            [
+              31.26544,
+              46.21763
+            ],
+            [
+              31.44174,
+              46.08298
+            ],
+            [
+              32.7727,
+              45.82664
+            ],
+            [
+              32.29741,
+              45.57493
+            ],
+            [
+              32.20337,
+              45.42481
+            ],
+            [
+              32.25239,
+              45.25037
+            ],
+            [
+              33.29519,
+              44.94052
+            ],
+            [
+              33.10018,
+              44.63148
+            ],
+            [
+              33.13717,
+              44.46798
+            ],
+            [
+              33.51241,
+              44.24391
+            ],
+            [
+              33.97132,
+              44.18542
+            ],
+            [
+              34.28882,
+              44.25399
+            ],
+            [
+              34.73576,
+              44.5848
+            ],
+            [
+              35.17741,
+              44.59733
+            ],
+            [
+              35.63225,
+              44.84912
+            ],
+            [
+              36.23608,
+              44.82009
+            ],
+            [
+              36.58671,
+              44.91932
+            ],
+            [
+              36.53049,
+              45.1992
+            ],
+            [
+              36.6635,
+              45.35994
+            ],
+            [
+              36.66845,
+              45.62662
+            ],
+            [
+              35.78522,
+              45.64332
+            ],
+            [
+              35.57475,
+              45.48953
+            ],
+            [
+              35.15097,
+              45.93152
+            ],
+            [
+              35.84442,
+              46.41
+            ],
+            [
+              36.17528,
+              46.30742
+            ],
+            [
+              36.49878,
+              46.52815
+            ],
+            [
+              36.82913,
+              46.46575
+            ],
+            [
+              37.09789,
+              46.68987
+            ],
+            [
+              38.14086,
+              46.861
+            ],
+            [
+              38.33812,
+              46.98075
+            ],
+            [
+              38.22825,
+              47.12259
+            ],
+            [
+              38.33372,
+              47.26949
+            ],
+            [
+              38.22097,
+              47.30542
+            ],
+            [
+              38.28501,
+              47.54425
+            ],
+            [
+              38.77261,
+              47.68508
+            ],
+            [
+              38.84305,
+              47.86544
+            ],
+            [
+              39.73849,
+              47.82791
+            ],
+            [
+              39.77648,
+              48.03986
+            ],
+            [
+              40.0207,
+              48.25365
+            ],
+            [
+              39.84081,
+              48.30966
+            ],
+            [
+              39.94671,
+              48.35413
+            ],
+            [
+              39.84977,
+              48.5687
+            ],
+            [
+              39.6607,
+              48.60943
+            ],
+            [
+              39.80001,
+              48.84264
+            ],
+            [
+              40.07984,
+              48.86995
+            ],
+            [
+              39.82701,
+              48.88642
+            ],
+            [
+              39.67226,
+              49.04051
+            ],
+            [
+              39.93781,
+              49.05637
+            ],
+            [
+              40.22781,
+              49.26051
+            ],
+            [
+              40.02962,
+              49.45409
+            ],
+            [
+              40.13546,
+              49.61709
+            ],
+            [
+              39.80641,
+              49.55813
+            ],
+            [
+              39.17992,
+              49.88872
+            ],
+            [
+              38.93024,
+              49.79691
+            ],
+            [
+              38.68709,
+              50.0071
+            ],
+            [
+              38.4888,
+              49.96374
+            ],
+            [
+              38.31315,
+              50.08845
+            ],
+            [
+              38.03294,
+              49.90039
+            ],
+            [
+              37.64031,
+              50.17604
+            ],
+            [
+              37.4904,
+              50.45739
+            ],
+            [
+              36.64795,
+              50.21766
+            ],
+            [
+              36.06826,
+              50.45111
+            ],
+            [
+              35.62649,
+              50.35198
+            ],
+            [
+              35.39046,
+              50.58001
+            ],
+            [
+              35.49619,
+              50.67887
+            ],
+            [
+              35.32576,
+              50.94683
+            ],
+            [
+              35.40888,
+              51.04339
+            ],
+            [
+              35.14762,
+              51.08264
+            ],
+            [
+              35.15027,
+              51.22342
+            ],
+            [
+              34.23048,
+              51.2651
+            ],
+            [
+              34.33866,
+              51.35608
+            ],
+            [
+              34.22094,
+              51.41702
+            ],
+            [
+              34.30759,
+              51.51942
+            ],
+            [
+              34.08036,
+              51.66628
+            ],
+            [
+              34.4386,
+              51.75838
+            ],
+            [
+              34.09674,
+              52.00485
+            ],
+            [
+              34.05283,
+              52.20139
+            ],
+            [
+              33.82424,
+              52.3641
+            ],
+            [
+              33.19253,
+              52.37975
+            ],
+            [
+              32.90197,
+              52.24529
+            ],
+            [
+              32.3766,
+              52.33757
+            ],
+            [
+              32.3679,
+              52.1465
+            ],
+            [
+              32.09616,
+              52.03361
+            ],
+            [
+              31.43198,
+              52.1434
+            ],
+            [
+              31.253,
+              52.04223
+            ],
+            [
+              30.94971,
+              52.08968
+            ],
+            [
+              30.5186,
+              51.67115
+            ],
+            [
+              30.6557,
+              51.37618
+            ],
+            [
+              30.53862,
+              51.26269
+            ],
+            [
+              30.18017,
+              51.51252
+            ],
+            [
+              29.79733,
+              51.44171
+            ],
+            [
+              29.71673,
+              51.52994
+            ],
+            [
+              29.3262,
+              51.37767
+            ],
+            [
+              29.11754,
+              51.66164
+            ],
+            [
+              28.81963,
+              51.55882
+            ],
+            [
+              28.75293,
+              51.41456
+            ],
+            [
+              28.6479,
+              51.57269
+            ],
+            [
+              28.35245,
+              51.53997
+            ],
+            [
+              28.25938,
+              51.68114
+            ],
+            [
+              28.04942,
+              51.56675
+            ],
+            [
+              27.86579,
+              51.62885
+            ],
+            [
+              27.7591,
+              51.47406
+            ],
+            [
+              27.66881,
+              51.51784
+            ],
+            [
+              27.7276,
+              51.60461
+            ],
+            [
+              27.24036,
+              51.60181
+            ],
+            [
+              27.20235,
+              51.77327
+            ],
+            [
+              25.77707,
+              51.94986
+            ],
+            [
+              24.38746,
+              51.88188
+            ],
+            [
+              23.99651,
+              51.58009
+            ],
+            [
+              23.67841,
+              51.65306
+            ],
+            [
+              23.64841,
+              51.28742
+            ],
+            [
+              24.14574,
+              50.86901
+            ],
+            [
+              23.95745,
+              50.79453
+            ],
+            [
+              24.07533,
+              50.7136
+            ],
+            [
+              24.07011,
+              50.50339
+            ],
+            [
+              23.28008,
+              50.10054
+            ],
+            [
+              22.64082,
+              49.52999
+            ],
+            [
+              22.74685,
+              49.3599
+            ],
+            [
+              22.70756,
+              49.17436
+            ],
+            [
+              22.89159,
+              49.00785
+            ],
+            [
+              22.55324,
+              49.07948
+            ],
+            [
+              22.13706,
+              48.4188
+            ]
+          ]
+        ]
+      },
+      "why": "68 matching paragraphs",
+      "sources": [
+        "TEXT_413",
+        "TEXT_985",
+        "TEXT_1001",
+        "TEXT_1050",
+        "TEXT_1233",
+        "TEXT_1282",
+        "TEXT_1341",
+        "TEXT_1945",
+        "TEXT_2392",
+        "TEXT_3311"
+      ]
+    },
+    {
+      "number": 40,
+      "id": "Kerch Strait",
+      "label": "Kerch Strait",
+      "kind": "strait",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.5492396,
+          45.2810409
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_6880"
+      ]
+    },
+    {
+      "number": 41,
+      "id": "Dnieper–Bug",
+      "label": "Dnieper–Bug",
+      "kind": "bay",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.9334328,
+          46.730658
+        ]
+      },
+      "why": "1 matching paragraphs",
+      "sources": [
+        "TEXT_36737"
+      ]
+    }
+  ],
+  "regions": [
+    {
+      "id": "Ukraine",
+      "place_type": "country",
+      "count": 39,
+      "places": [
+        1,
+        31,
+        33,
+        34,
+        35,
+        36,
+        37,
+        40
+      ],
+      "children": [
+        {
+          "id": "Donetsk",
+          "place_type": "state",
+          "count": 7,
+          "places": [
+            5,
+            6,
+            11,
+            12,
+            14,
+            21,
+            24
+          ],
+          "children": []
+        },
+        {
+          "id": "Luhansk Oblast",
+          "place_type": "state",
+          "count": 4,
+          "places": [
+            4,
+            26,
+            28,
+            29
+          ],
+          "children": []
+        },
+        {
+          "id": "Zaporizhzhia Oblast",
+          "place_type": "state",
+          "count": 4,
+          "places": [
+            10,
+            15,
+            18,
+            19
+          ],
+          "children": []
+        },
+        {
+          "id": "Kherson Oblast",
+          "place_type": "state",
+          "count": 3,
+          "places": [
+            3,
+            17,
+            22
+          ],
+          "children": []
+        },
+        {
+          "id": "Autonomous Republic of Crimea",
+          "place_type": "state",
+          "count": 3,
+          "places": [
+            9,
+            27,
+            32
+          ],
+          "children": []
+        },
+        {
+          "id": "Mykolaiv Oblast",
+          "place_type": "state",
+          "count": 3,
+          "places": [
+            23,
+            38,
+            41
+          ],
+          "children": []
+        },
+        {
+          "id": "Kharkiv Oblast",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            2,
+            30
+          ],
+          "children": []
+        },
+        {
+          "id": "Sumy Oblast",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            13,
+            20
+          ],
+          "children": []
+        },
+        {
+          "id": "Dnipropetrovsk Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            8
+          ],
+          "children": []
+        },
+        {
+          "id": "Kyiv Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            16
+          ],
+          "children": []
+        },
+        {
+          "id": "Ternopil Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            25
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "Belarus",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        7
+      ],
+      "children": []
+    },
+    {
+      "id": "(no region in the graph)",
+      "count": 1,
+      "places": [
+        39
+      ],
+      "children": []
+    }
+  ],
+  "entities": [],
+  "citations": [],
+  "sources": [],
+  "map": {
+    "bbox": [
+      20.32799,
+      43.36599,
+      42.03688,
+      53.19918
+    ],
+    "highlight": [
+      1,
+      2,
+      3,
+      39
+    ],
+    "showing": "all",
+    "not_shown": 0
+  },
+  "follow_ups": [
+    "What happened in Kharkiv?",
+    "Which places are linked to Kherson?"
+  ],
+  "did_you_mean": [],
+  "notes": [
+    "④ 41 places found (all go on the map); 10 described to the LLM",
+    "④ list answer: no corpus sentences by design; each place has a data line, and 'tell me about number N' gives the details"
+  ],
+  "meta": {
+    "question_type": "area_topic",
+    "model": "google/gemini-2.5-flash",
+    "llm_calls": 2,
+    "cost_usd": 0.001559,
+    "seconds": 3.77
+  }
+}

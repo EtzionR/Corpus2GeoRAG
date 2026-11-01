@@ -1,0 +1,3925 @@
+{
+  "answer": "Russia and Ukraine are both mentioned in connection with 149 countries. The strongest few are the US [1], Belarus [2], the UK [3], Germany [4], and Poland [5]. These countries are geographically diverse, with several in Europe.",
+  "answer_plain": "Russia and Ukraine are both mentioned in connection with 149 countries. The strongest few are the US, Belarus, the UK, Germany, and Poland. These countries are geographically diverse, with several in Europe.",
+  "status": "answered",
+  "grounded": true,
+  "shape": "list",
+  "geo_locations": [
+    {
+      "number": 1,
+      "id": "US",
+      "label": "US",
+      "kind": "country",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -100.445882,
+          39.7837304
+        ]
+      },
+      "why": "3703 matching paragraphs",
+      "sources": [
+        "TEXT_4315",
+        "TEXT_4411",
+        "TEXT_15494",
+        "TEXT_15496",
+        "TEXT_15510",
+        "TEXT_15773",
+        "TEXT_27412",
+        "TEXT_39485",
+        "TEXT_39801",
+        "TEXT_40166"
+      ]
+    },
+    {
+      "number": 2,
+      "id": "Belarus",
+      "label": "Belarus",
+      "kind": "country",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.6971358,
+          53.4250605
+        ]
+      },
+      "why": "820 matching paragraphs",
+      "sources": [
+        "TEXT_189",
+        "TEXT_278",
+        "TEXT_347",
+        "TEXT_403",
+        "TEXT_412",
+        "TEXT_423",
+        "TEXT_485",
+        "TEXT_493",
+        "TEXT_497",
+        "TEXT_499"
+      ]
+    },
+    {
+      "number": 3,
+      "id": "UK",
+      "label": "UK",
+      "kind": "country",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.2765753,
+          54.7023545
+        ]
+      },
+      "why": "722 matching paragraphs",
+      "sources": [
+        "TEXT_43",
+        "TEXT_137",
+        "TEXT_961",
+        "TEXT_2430",
+        "TEXT_2796",
+        "TEXT_2977",
+        "TEXT_2988",
+        "TEXT_3273",
+        "TEXT_3276",
+        "TEXT_3966"
+      ]
+    },
+    {
+      "number": 4,
+      "id": "Germany",
+      "label": "Germany",
+      "kind": "country",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.4478313,
+          51.1638175
+        ]
+      },
+      "why": "479 matching paragraphs",
+      "sources": [
+        "TEXT_120",
+        "TEXT_11924",
+        "TEXT_40377",
+        "TEXT_40396",
+        "TEXT_40404",
+        "TEXT_49219",
+        "TEXT_71193",
+        "TEXT_145",
+        "TEXT_150",
+        "TEXT_191"
+      ]
+    },
+    {
+      "number": 5,
+      "id": "Poland",
+      "label": "Poland",
+      "kind": "country",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.134422,
+          52.215933
+        ]
+      },
+      "why": "500 matching paragraphs",
+      "sources": [
+        "TEXT_120",
+        "TEXT_207",
+        "TEXT_39860",
+        "TEXT_44603",
+        "TEXT_150",
+        "TEXT_189",
+        "TEXT_257",
+        "TEXT_438",
+        "TEXT_456",
+        "TEXT_946"
+      ]
+    },
+    {
+      "number": 6,
+      "id": "China",
+      "label": "China",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.9237067,
+          34.5412252
+        ]
+      },
+      "why": "505 matching paragraphs",
+      "sources": [
+        "TEXT_149",
+        "TEXT_485",
+        "TEXT_1077",
+        "TEXT_1097",
+        "TEXT_1314",
+        "TEXT_1372",
+        "TEXT_1375",
+        "TEXT_1376",
+        "TEXT_1377",
+        "TEXT_1379"
+      ]
+    },
+    {
+      "number": 7,
+      "id": "France",
+      "label": "France",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.8883335,
+          46.603354
+        ]
+      },
+      "why": "315 matching paragraphs",
+      "sources": [
+        "TEXT_120",
+        "TEXT_11924",
+        "TEXT_35570",
+        "TEXT_35772",
+        "TEXT_39959",
+        "TEXT_40396",
+        "TEXT_40404",
+        "TEXT_49219",
+        "TEXT_75835",
+        "TEXT_83861"
+      ]
+    },
+    {
+      "number": 8,
+      "id": "Georgia",
+      "label": "Georgia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          43.8212482,
+          41.8441368
+        ]
+      },
+      "why": "373 matching paragraphs",
+      "sources": [
+        "TEXT_351",
+        "TEXT_2923",
+        "TEXT_2924",
+        "TEXT_5133",
+        "TEXT_6721",
+        "TEXT_6927",
+        "TEXT_7016",
+        "TEXT_7961",
+        "TEXT_10684",
+        "TEXT_10779"
+      ]
+    },
+    {
+      "number": 9,
+      "id": "Turkey",
+      "label": "Turkey",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.2316631,
+          39.294076
+        ]
+      },
+      "why": "284 matching paragraphs",
+      "sources": [
+        "TEXT_47726",
+        "TEXT_423",
+        "TEXT_436",
+        "TEXT_885",
+        "TEXT_914",
+        "TEXT_946",
+        "TEXT_962",
+        "TEXT_1312",
+        "TEXT_1333",
+        "TEXT_1347"
+      ]
+    },
+    {
+      "number": 10,
+      "id": "Iran",
+      "label": "Iran",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          54.5643516,
+          32.6475314
+        ]
+      },
+      "why": "340 matching paragraphs",
+      "sources": [
+        "TEXT_465",
+        "TEXT_485",
+        "TEXT_903",
+        "TEXT_1077",
+        "TEXT_1097",
+        "TEXT_3282",
+        "TEXT_3806",
+        "TEXT_3815",
+        "TEXT_3816",
+        "TEXT_3822"
+      ]
+    },
+    {
+      "number": 11,
+      "id": "North Korea",
+      "label": "North Korea",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.0870417,
+          40.3736611
+        ]
+      },
+      "why": "254 matching paragraphs",
+      "sources": [
+        "TEXT_4589",
+        "TEXT_24067",
+        "TEXT_39084",
+        "TEXT_65262",
+        "TEXT_71187",
+        "TEXT_81730",
+        "TEXT_466",
+        "TEXT_16244",
+        "TEXT_85585",
+        "TEXT_418"
+      ]
+    },
+    {
+      "number": 12,
+      "id": "Moldova",
+      "label": "Moldova",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.5670941,
+          47.2879608
+        ]
+      },
+      "why": "250 matching paragraphs",
+      "sources": [
+        "TEXT_31903",
+        "TEXT_85602",
+        "TEXT_146",
+        "TEXT_189",
+        "TEXT_278",
+        "TEXT_474",
+        "TEXT_1906",
+        "TEXT_6778",
+        "TEXT_6847",
+        "TEXT_7016"
+      ]
+    },
+    {
+      "number": 13,
+      "id": "Syria",
+      "label": "Syria",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.0494106,
+          34.6401861
+        ]
+      },
+      "why": "409 matching paragraphs",
+      "sources": [
+        "TEXT_143",
+        "TEXT_497",
+        "TEXT_1581",
+        "TEXT_1612",
+        "TEXT_2708",
+        "TEXT_3159",
+        "TEXT_3809",
+        "TEXT_3859",
+        "TEXT_3866",
+        "TEXT_4625"
+      ]
+    },
+    {
+      "number": 14,
+      "id": "Lithuania",
+      "label": "Lithuania",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.7499997,
+          55.3500003
+        ]
+      },
+      "why": "166 matching paragraphs",
+      "sources": [
+        "TEXT_150",
+        "TEXT_485",
+        "TEXT_4335",
+        "TEXT_4967",
+        "TEXT_6793",
+        "TEXT_6932",
+        "TEXT_7988",
+        "TEXT_8368",
+        "TEXT_8723",
+        "TEXT_10626"
+      ]
+    },
+    {
+      "number": 15,
+      "id": "Romania",
+      "label": "Romania",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.6859225,
+          45.9852129
+        ]
+      },
+      "why": "209 matching paragraphs",
+      "sources": [
+        "TEXT_189",
+        "TEXT_1105",
+        "TEXT_4439",
+        "TEXT_4490",
+        "TEXT_6169",
+        "TEXT_6793",
+        "TEXT_6856",
+        "TEXT_6895",
+        "TEXT_6944",
+        "TEXT_6948"
+      ]
+    },
+    {
+      "number": 16,
+      "id": "Hungary",
+      "label": "Hungary",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.5060937,
+          47.1817585
+        ]
+      },
+      "why": "192 matching paragraphs",
+      "sources": [
+        "TEXT_189",
+        "TEXT_257",
+        "TEXT_914",
+        "TEXT_1595",
+        "TEXT_1895",
+        "TEXT_3837",
+        "TEXT_4370",
+        "TEXT_4378",
+        "TEXT_4386",
+        "TEXT_4395"
+      ]
+    },
+    {
+      "number": 17,
+      "id": "Finland",
+      "label": "Finland",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.9209164,
+          63.2467777
+        ]
+      },
+      "why": "134 matching paragraphs",
+      "sources": [
+        "TEXT_459",
+        "TEXT_10605",
+        "TEXT_38703",
+        "TEXT_39892",
+        "TEXT_47758",
+        "TEXT_48859",
+        "TEXT_1637",
+        "TEXT_1663",
+        "TEXT_1752",
+        "TEXT_1890"
+      ]
+    },
+    {
+      "number": 18,
+      "id": "Estonia",
+      "label": "Estonia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.3319078,
+          58.7523778
+        ]
+      },
+      "why": "130 matching paragraphs",
+      "sources": [
+        "TEXT_485",
+        "TEXT_898",
+        "TEXT_1637",
+        "TEXT_1663",
+        "TEXT_1784",
+        "TEXT_4066",
+        "TEXT_4612",
+        "TEXT_7988",
+        "TEXT_8368",
+        "TEXT_10604"
+      ]
+    },
+    {
+      "number": 19,
+      "id": "Israel",
+      "label": "Israel",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.8594762,
+          30.8124247
+        ]
+      },
+      "why": "149 matching paragraphs",
+      "sources": [
+        "TEXT_1787",
+        "TEXT_2391",
+        "TEXT_4534",
+        "TEXT_4550",
+        "TEXT_4810",
+        "TEXT_6772",
+        "TEXT_6811",
+        "TEXT_6999",
+        "TEXT_10270",
+        "TEXT_10902"
+      ]
+    },
+    {
+      "number": 20,
+      "id": "Sweden",
+      "label": "Sweden",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.5208584,
+          59.6749712
+        ]
+      },
+      "why": "141 matching paragraphs",
+      "sources": [
+        "TEXT_1515",
+        "TEXT_1613",
+        "TEXT_1637",
+        "TEXT_1644",
+        "TEXT_1652",
+        "TEXT_2878",
+        "TEXT_3837",
+        "TEXT_4470",
+        "TEXT_6707",
+        "TEXT_6927"
+      ]
+    },
+    {
+      "number": 21,
+      "id": "Iraq",
+      "label": "Iraq",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          44.1749775,
+          33.0955793
+        ]
+      },
+      "why": "119 matching paragraphs",
+      "sources": [
+        "TEXT_1105",
+        "TEXT_1949",
+        "TEXT_4533",
+        "TEXT_7166",
+        "TEXT_7169",
+        "TEXT_10031",
+        "TEXT_14277",
+        "TEXT_14599",
+        "TEXT_15773",
+        "TEXT_20548"
+      ]
+    },
+    {
+      "number": 22,
+      "id": "India",
+      "label": "India",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.6677428,
+          22.3511148
+        ]
+      },
+      "why": "220 matching paragraphs",
+      "sources": [
+        "TEXT_27980",
+        "TEXT_898",
+        "TEXT_914",
+        "TEXT_1048",
+        "TEXT_1084",
+        "TEXT_1372",
+        "TEXT_1377",
+        "TEXT_1431",
+        "TEXT_1610",
+        "TEXT_2422"
+      ]
+    },
+    {
+      "number": 23,
+      "id": "Japan",
+      "label": "Japan",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.2394179,
+          36.5748441
+        ]
+      },
+      "why": "110 matching paragraphs",
+      "sources": [
+        "TEXT_137",
+        "TEXT_1901",
+        "TEXT_2991",
+        "TEXT_4227",
+        "TEXT_4281",
+        "TEXT_4845",
+        "TEXT_6772",
+        "TEXT_10515",
+        "TEXT_10804",
+        "TEXT_10902"
+      ]
+    },
+    {
+      "number": 24,
+      "id": "Kazakhstan",
+      "label": "Kazakhstan",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          66.7780818,
+          48.1012954
+        ]
+      },
+      "why": "149 matching paragraphs",
+      "sources": [
+        "TEXT_85",
+        "TEXT_20282",
+        "TEXT_36013",
+        "TEXT_39585",
+        "TEXT_52706",
+        "TEXT_53279",
+        "TEXT_55188",
+        "TEXT_61737",
+        "TEXT_64669",
+        "TEXT_69534"
+      ]
+    },
+    {
+      "number": 25,
+      "id": "Canada",
+      "label": "Canada",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -107.991707,
+          61.0666922
+        ]
+      },
+      "why": "173 matching paragraphs",
+      "sources": [
+        "TEXT_150",
+        "TEXT_154",
+        "TEXT_485",
+        "TEXT_961",
+        "TEXT_1242",
+        "TEXT_2417",
+        "TEXT_4015",
+        "TEXT_4848",
+        "TEXT_5202",
+        "TEXT_6971"
+      ]
+    },
+    {
+      "number": 26,
+      "id": "Latvia",
+      "label": "Latvia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.7537645,
+          56.8406494
+        ]
+      },
+      "why": "105 matching paragraphs",
+      "sources": [
+        "TEXT_485",
+        "TEXT_7988",
+        "TEXT_8368",
+        "TEXT_8460",
+        "TEXT_11571",
+        "TEXT_17905",
+        "TEXT_26022",
+        "TEXT_36020",
+        "TEXT_39810",
+        "TEXT_39852"
+      ]
+    },
+    {
+      "number": 27,
+      "id": "Netherlands",
+      "label": "Netherlands",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.6343227,
+          52.2434979
+        ]
+      },
+      "why": "136 matching paragraphs",
+      "sources": [
+        "TEXT_625",
+        "TEXT_626",
+        "TEXT_2923",
+        "TEXT_3837",
+        "TEXT_8396",
+        "TEXT_11559",
+        "TEXT_11564",
+        "TEXT_11620",
+        "TEXT_11621",
+        "TEXT_11696"
+      ]
+    },
+    {
+      "number": 28,
+      "id": "Australia",
+      "label": "Australia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.755,
+          -24.7761086
+        ]
+      },
+      "why": "118 matching paragraphs",
+      "sources": [
+        "TEXT_625",
+        "TEXT_626",
+        "TEXT_961",
+        "TEXT_2416",
+        "TEXT_6772",
+        "TEXT_6975",
+        "TEXT_7011",
+        "TEXT_10589",
+        "TEXT_10902",
+        "TEXT_11540"
+      ]
+    },
+    {
+      "number": 29,
+      "id": "South Korea",
+      "label": "South Korea",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.6961188,
+          36.638392
+        ]
+      },
+      "why": "86 matching paragraphs",
+      "sources": [
+        "TEXT_81724",
+        "TEXT_63158",
+        "TEXT_418",
+        "TEXT_904",
+        "TEXT_906",
+        "TEXT_908",
+        "TEXT_1228",
+        "TEXT_3280",
+        "TEXT_4596",
+        "TEXT_5824"
+      ]
+    },
+    {
+      "number": 30,
+      "id": "Afghanistan",
+      "label": "Afghanistan",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          66.2385139,
+          33.7680065
+        ]
+      },
+      "why": "93 matching paragraphs",
+      "sources": [
+        "TEXT_490",
+        "TEXT_2457",
+        "TEXT_6788",
+        "TEXT_6906",
+        "TEXT_10901",
+        "TEXT_11081",
+        "TEXT_12775",
+        "TEXT_14599",
+        "TEXT_15773",
+        "TEXT_21920"
+      ]
+    },
+    {
+      "number": 31,
+      "id": "United Arab Emirates",
+      "label": "United Arab Emirates",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          53.9994829,
+          24.0002488
+        ]
+      },
+      "why": "70 matching paragraphs",
+      "sources": [
+        "TEXT_495",
+        "TEXT_1922",
+        "TEXT_3243",
+        "TEXT_4625",
+        "TEXT_5252",
+        "TEXT_15381",
+        "TEXT_16148",
+        "TEXT_17609",
+        "TEXT_20842",
+        "TEXT_24319"
+      ]
+    },
+    {
+      "number": 32,
+      "id": "Czech Republic",
+      "label": "Czech Republic",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          15.3381061,
+          49.7439047
+        ]
+      },
+      "why": "94 matching paragraphs",
+      "sources": [
+        "TEXT_257",
+        "TEXT_946",
+        "TEXT_4439",
+        "TEXT_8368",
+        "TEXT_8680",
+        "TEXT_10602",
+        "TEXT_10683",
+        "TEXT_11118",
+        "TEXT_15525",
+        "TEXT_16829"
+      ]
+    },
+    {
+      "number": 33,
+      "id": "Switzerland",
+      "label": "Switzerland",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.2319736,
+          46.7985624
+        ]
+      },
+      "why": "82 matching paragraphs",
+      "sources": [
+        "TEXT_1392",
+        "TEXT_4260",
+        "TEXT_4310",
+        "TEXT_4868",
+        "TEXT_7178",
+        "TEXT_11564",
+        "TEXT_15364",
+        "TEXT_15553",
+        "TEXT_18261",
+        "TEXT_34672"
+      ]
+    },
+    {
+      "number": 34,
+      "id": "Bulgaria",
+      "label": "Bulgaria",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.4856617,
+          42.6073975
+        ]
+      },
+      "why": "77 matching paragraphs",
+      "sources": [
+        "TEXT_898",
+        "TEXT_4439",
+        "TEXT_6932",
+        "TEXT_6944",
+        "TEXT_7432",
+        "TEXT_10593",
+        "TEXT_11559",
+        "TEXT_21518",
+        "TEXT_24825",
+        "TEXT_24863"
+      ]
+    },
+    {
+      "number": 35,
+      "id": "Saudi Arabia",
+      "label": "Saudi Arabia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          42.3528328,
+          25.6242618
+        ]
+      },
+      "why": "64 matching paragraphs",
+      "sources": [
+        "TEXT_1385",
+        "TEXT_1404",
+        "TEXT_1414",
+        "TEXT_19811",
+        "TEXT_21333",
+        "TEXT_23420",
+        "TEXT_39392",
+        "TEXT_39801",
+        "TEXT_40280",
+        "TEXT_40640"
+      ]
+    },
+    {
+      "number": 36,
+      "id": "South Ossetia",
+      "label": "South Ossetia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          44.0979465,
+          42.3476344
+        ]
+      },
+      "why": "125 matching paragraphs",
+      "sources": [
+        "TEXT_14",
+        "TEXT_153",
+        "TEXT_472",
+        "TEXT_10498",
+        "TEXT_26800",
+        "TEXT_39665",
+        "TEXT_39730",
+        "TEXT_43472",
+        "TEXT_50776",
+        "TEXT_52130"
+      ]
+    },
+    {
+      "number": 37,
+      "id": "Norway",
+      "label": "Norway",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.7876653,
+          61.1529386
+        ]
+      },
+      "why": "100 matching paragraphs",
+      "sources": [
+        "TEXT_4354",
+        "TEXT_6828",
+        "TEXT_11118",
+        "TEXT_11558",
+        "TEXT_11564",
+        "TEXT_23815",
+        "TEXT_27726",
+        "TEXT_36020",
+        "TEXT_39908",
+        "TEXT_39998"
+      ]
+    },
+    {
+      "number": 38,
+      "id": "Slovakia",
+      "label": "Slovakia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.4528646,
+          48.7411522
+        ]
+      },
+      "why": "113 matching paragraphs",
+      "sources": [
+        "TEXT_189",
+        "TEXT_257",
+        "TEXT_894",
+        "TEXT_914",
+        "TEXT_1387",
+        "TEXT_4439",
+        "TEXT_4475",
+        "TEXT_4624",
+        "TEXT_4663",
+        "TEXT_6942"
+      ]
+    },
+    {
+      "number": 39,
+      "id": "Italy",
+      "label": "Italy",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.674297,
+          42.6384261
+        ]
+      },
+      "why": "81 matching paragraphs",
+      "sources": [
+        "TEXT_153",
+        "TEXT_172",
+        "TEXT_1402",
+        "TEXT_1515",
+        "TEXT_4816",
+        "TEXT_9196",
+        "TEXT_10090",
+        "TEXT_10515",
+        "TEXT_10619",
+        "TEXT_10696"
+      ]
+    },
+    {
+      "number": 40,
+      "id": "Denmark",
+      "label": "Denmark",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.3333283,
+          55.670249
+        ]
+      },
+      "why": "100 matching paragraphs",
+      "sources": [
+        "TEXT_898",
+        "TEXT_1377",
+        "TEXT_1515",
+        "TEXT_1888",
+        "TEXT_3837",
+        "TEXT_7458",
+        "TEXT_10603",
+        "TEXT_11558",
+        "TEXT_12974",
+        "TEXT_24905"
+      ]
+    },
+    {
+      "number": 41,
+      "id": "Azerbaijan",
+      "label": "Azerbaijan",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          47.7872508,
+          40.3936294
+        ]
+      },
+      "why": "67 matching paragraphs",
+      "sources": [
+        "TEXT_1782",
+        "TEXT_7016",
+        "TEXT_7463",
+        "TEXT_7466",
+        "TEXT_7489",
+        "TEXT_7490",
+        "TEXT_7502",
+        "TEXT_7510",
+        "TEXT_7511",
+        "TEXT_7514"
+      ]
+    },
+    {
+      "number": 42,
+      "id": "Pakistan",
+      "label": "Pakistan",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          71.247499,
+          30.3308401
+        ]
+      },
+      "why": "46 matching paragraphs",
+      "sources": [
+        "TEXT_2787",
+        "TEXT_4520",
+        "TEXT_10902",
+        "TEXT_34790",
+        "TEXT_40451",
+        "TEXT_53762",
+        "TEXT_53763",
+        "TEXT_53949",
+        "TEXT_56120",
+        "TEXT_57492"
+      ]
+    },
+    {
+      "number": 43,
+      "id": "Kosovo",
+      "label": "Kosovo",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.9021231,
+          42.5869578
+        ]
+      },
+      "why": "46 matching paragraphs",
+      "sources": [
+        "TEXT_50",
+        "TEXT_5251",
+        "TEXT_7166",
+        "TEXT_10610",
+        "TEXT_10672",
+        "TEXT_10803",
+        "TEXT_34806",
+        "TEXT_39796",
+        "TEXT_39799",
+        "TEXT_39816"
+      ]
+    },
+    {
+      "number": 44,
+      "id": "Austria",
+      "label": "Austria",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.12456,
+          47.59397
+        ]
+      },
+      "why": "46 matching paragraphs",
+      "sources": [
+        "TEXT_50",
+        "TEXT_126",
+        "TEXT_788",
+        "TEXT_1368",
+        "TEXT_3837",
+        "TEXT_10685",
+        "TEXT_10690",
+        "TEXT_11234",
+        "TEXT_11559",
+        "TEXT_15517"
+      ]
+    },
+    {
+      "number": 45,
+      "id": "Brazil",
+      "label": "Brazil",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -53.2,
+          -10.3333333
+        ]
+      },
+      "why": "58 matching paragraphs",
+      "sources": [
+        "TEXT_1376",
+        "TEXT_1377",
+        "TEXT_1379",
+        "TEXT_1387",
+        "TEXT_1391",
+        "TEXT_1610",
+        "TEXT_4260",
+        "TEXT_4881",
+        "TEXT_6991",
+        "TEXT_7510"
+      ]
+    },
+    {
+      "number": 46,
+      "id": "Greece",
+      "label": "Greece",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          21.9877132,
+          38.9953683
+        ]
+      },
+      "why": "48 matching paragraphs",
+      "sources": [
+        "TEXT_4816",
+        "TEXT_8460",
+        "TEXT_10685",
+        "TEXT_12974",
+        "TEXT_24828",
+        "TEXT_25765",
+        "TEXT_36711",
+        "TEXT_53762",
+        "TEXT_59933",
+        "TEXT_63162"
+      ]
+    },
+    {
+      "number": 47,
+      "id": "Abkhazia",
+      "label": "Abkhazia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          41.2299786,
+          43.1500226
+        ]
+      },
+      "why": "98 matching paragraphs",
+      "sources": [
+        "TEXT_14",
+        "TEXT_153",
+        "TEXT_472",
+        "TEXT_10498",
+        "TEXT_11492",
+        "TEXT_24863",
+        "TEXT_26788",
+        "TEXT_26800",
+        "TEXT_34805",
+        "TEXT_38133"
+      ]
+    },
+    {
+      "number": 48,
+      "id": "Egypt",
+      "label": "Egypt",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.2675469,
+          26.2540493
+        ]
+      },
+      "why": "58 matching paragraphs",
+      "sources": [
+        "TEXT_1380",
+        "TEXT_6329",
+        "TEXT_19437",
+        "TEXT_24818",
+        "TEXT_24825",
+        "TEXT_38984",
+        "TEXT_39801",
+        "TEXT_40643",
+        "TEXT_46749",
+        "TEXT_46774"
+      ]
+    },
+    {
+      "number": 49,
+      "id": "Spain",
+      "label": "Spain",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4.8379791,
+          39.3260685
+        ]
+      },
+      "why": "68 matching paragraphs",
+      "sources": [
+        "TEXT_1402",
+        "TEXT_1515",
+        "TEXT_6944",
+        "TEXT_7443",
+        "TEXT_8884",
+        "TEXT_11101",
+        "TEXT_11118",
+        "TEXT_11564",
+        "TEXT_16758",
+        "TEXT_25765"
+      ]
+    },
+    {
+      "number": 50,
+      "id": "Libya",
+      "label": "Libya",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.1236723,
+          26.8234472
+        ]
+      },
+      "why": "53 matching paragraphs",
+      "sources": [
+        "TEXT_3866",
+        "TEXT_7914",
+        "TEXT_27694",
+        "TEXT_27726",
+        "TEXT_27766",
+        "TEXT_34823",
+        "TEXT_38996",
+        "TEXT_39763",
+        "TEXT_40377",
+        "TEXT_47541"
+      ]
+    },
+    {
+      "number": 51,
+      "id": "Armenia",
+      "label": "Armenia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          44.6736646,
+          40.7696272
+        ]
+      },
+      "why": "59 matching paragraphs",
+      "sources": [
+        "TEXT_1369",
+        "TEXT_2924",
+        "TEXT_7016",
+        "TEXT_10901",
+        "TEXT_10902",
+        "TEXT_12669",
+        "TEXT_14584",
+        "TEXT_21518",
+        "TEXT_22384",
+        "TEXT_47545"
+      ]
+    },
+    {
+      "number": 52,
+      "id": "Croatia",
+      "label": "Croatia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          15.6575209,
+          45.3658443
+        ]
+      },
+      "why": "54 matching paragraphs",
+      "sources": [
+        "TEXT_3837",
+        "TEXT_6941",
+        "TEXT_11118",
+        "TEXT_12967",
+        "TEXT_12969",
+        "TEXT_12974",
+        "TEXT_31979",
+        "TEXT_38050",
+        "TEXT_42334",
+        "TEXT_81788"
+      ]
+    },
+    {
+      "number": 53,
+      "id": "South Africa",
+      "label": "South Africa",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.991639,
+          -28.8166236
+        ]
+      },
+      "why": "41 matching paragraphs",
+      "sources": [
+        "TEXT_495",
+        "TEXT_16296",
+        "TEXT_1380",
+        "TEXT_10902",
+        "TEXT_12776",
+        "TEXT_23919",
+        "TEXT_32676",
+        "TEXT_34987",
+        "TEXT_40645",
+        "TEXT_40651"
+      ]
+    },
+    {
+      "number": 54,
+      "id": "Malaysia",
+      "label": "Malaysia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          102.2656823,
+          4.5693754
+        ]
+      },
+      "why": "36 matching paragraphs",
+      "sources": [
+        "TEXT_4065",
+        "TEXT_4495",
+        "TEXT_7005",
+        "TEXT_10628",
+        "TEXT_11660",
+        "TEXT_11699",
+        "TEXT_34792",
+        "TEXT_35402",
+        "TEXT_35456",
+        "TEXT_35462"
+      ]
+    },
+    {
+      "number": 55,
+      "id": "Indonesia",
+      "label": "Indonesia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          117.8902853,
+          -2.4833826
+        ]
+      },
+      "why": "34 matching paragraphs",
+      "sources": [
+        "TEXT_1377",
+        "TEXT_1379",
+        "TEXT_4065",
+        "TEXT_5824",
+        "TEXT_10902",
+        "TEXT_34792",
+        "TEXT_35456",
+        "TEXT_48565",
+        "TEXT_50794",
+        "TEXT_58074"
+      ]
+    },
+    {
+      "number": 56,
+      "id": "Vietnam",
+      "label": "Vietnam",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.9650855,
+          15.9266657
+        ]
+      },
+      "why": "41 matching paragraphs",
+      "sources": [
+        "TEXT_5774",
+        "TEXT_12776",
+        "TEXT_37148",
+        "TEXT_39840",
+        "TEXT_40643",
+        "TEXT_46774",
+        "TEXT_47582",
+        "TEXT_48177",
+        "TEXT_50668",
+        "TEXT_50794"
+      ]
+    },
+    {
+      "number": 57,
+      "id": "Taiwan",
+      "label": "Taiwan",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          120.9820179,
+          23.9739374
+        ]
+      },
+      "why": "32 matching paragraphs",
+      "sources": [
+        "TEXT_1920",
+        "TEXT_56120",
+        "TEXT_3392",
+        "TEXT_4810",
+        "TEXT_15496",
+        "TEXT_32695",
+        "TEXT_34794",
+        "TEXT_39801",
+        "TEXT_47446",
+        "TEXT_47940"
+      ]
+    },
+    {
+      "number": 58,
+      "id": "Qatar",
+      "label": "Qatar",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.2295295,
+          25.3336984
+        ]
+      },
+      "why": "29 matching paragraphs",
+      "sources": [
+        "TEXT_1394",
+        "TEXT_6962",
+        "TEXT_6981",
+        "TEXT_17307",
+        "TEXT_22725",
+        "TEXT_50909",
+        "TEXT_51025",
+        "TEXT_51372",
+        "TEXT_76729",
+        "TEXT_81078"
+      ]
+    },
+    {
+      "number": 59,
+      "id": "Albania",
+      "label": "Albania",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.8824191,
+          41.1793482
+        ]
+      },
+      "why": "28 matching paragraphs",
+      "sources": [
+        "TEXT_39998",
+        "TEXT_47736",
+        "TEXT_47737",
+        "TEXT_47738",
+        "TEXT_47739",
+        "TEXT_47940",
+        "TEXT_48991",
+        "TEXT_64193",
+        "TEXT_71235",
+        "TEXT_71242"
+      ]
+    },
+    {
+      "number": 60,
+      "id": "Bosnia and Herzegovina",
+      "label": "Bosnia and Herzegovina",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.5961467,
+          44.3053476
+        ]
+      },
+      "why": "27 matching paragraphs",
+      "sources": [
+        "TEXT_44002",
+        "TEXT_47722",
+        "TEXT_64193",
+        "TEXT_71255",
+        "TEXT_39790",
+        "TEXT_39796",
+        "TEXT_40121",
+        "TEXT_42334",
+        "TEXT_71235",
+        "TEXT_27650"
+      ]
+    },
+    {
+      "number": 61,
+      "id": "Sudan",
+      "label": "Sudan",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.4917691,
+          14.5844444
+        ]
+      },
+      "why": "26 matching paragraphs",
+      "sources": [
+        "TEXT_3159",
+        "TEXT_10902",
+        "TEXT_14584",
+        "TEXT_27694",
+        "TEXT_27724",
+        "TEXT_27726",
+        "TEXT_39763",
+        "TEXT_40645",
+        "TEXT_50780",
+        "TEXT_54247"
+      ]
+    },
+    {
+      "number": 62,
+      "id": "New Zealand",
+      "label": "New Zealand",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          172.8344077,
+          -41.5000831
+        ]
+      },
+      "why": "47 matching paragraphs",
+      "sources": [
+        "TEXT_961",
+        "TEXT_7013",
+        "TEXT_10632",
+        "TEXT_15544",
+        "TEXT_32653",
+        "TEXT_35481",
+        "TEXT_39998",
+        "TEXT_47940",
+        "TEXT_47961",
+        "TEXT_54943"
+      ]
+    },
+    {
+      "number": 63,
+      "id": "Ireland",
+      "label": "Ireland",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -7.9794599,
+          52.865196
+        ]
+      },
+      "why": "30 matching paragraphs",
+      "sources": [
+        "TEXT_3807",
+        "TEXT_6767",
+        "TEXT_6947",
+        "TEXT_7043",
+        "TEXT_8368",
+        "TEXT_16245",
+        "TEXT_67745",
+        "TEXT_68275",
+        "TEXT_86399",
+        "TEXT_15535"
+      ]
+    },
+    {
+      "number": 64,
+      "id": "Venezuela",
+      "label": "Venezuela",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -66.1109318,
+          8.0018709
+        ]
+      },
+      "why": "42 matching paragraphs",
+      "sources": [
+        "TEXT_143",
+        "TEXT_3159",
+        "TEXT_4969",
+        "TEXT_6898",
+        "TEXT_6900",
+        "TEXT_10902",
+        "TEXT_14584",
+        "TEXT_18567",
+        "TEXT_27694",
+        "TEXT_27746"
+      ]
+    },
+    {
+      "number": 65,
+      "id": "Central African Republic",
+      "label": "Central African Republic",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.9981227,
+          7.0323598
+        ]
+      },
+      "why": "30 matching paragraphs",
+      "sources": [
+        "TEXT_3861",
+        "TEXT_7914",
+        "TEXT_8108",
+        "TEXT_23912",
+        "TEXT_27694",
+        "TEXT_27700",
+        "TEXT_27726",
+        "TEXT_27734",
+        "TEXT_37148",
+        "TEXT_39763"
+      ]
+    },
+    {
+      "number": 66,
+      "id": "Belgium",
+      "label": "Belgium",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.6667145,
+          50.6402809
+        ]
+      },
+      "why": "58 matching paragraphs",
+      "sources": [
+        "TEXT_11564",
+        "TEXT_25765",
+        "TEXT_39790",
+        "TEXT_39865",
+        "TEXT_48886",
+        "TEXT_67392",
+        "TEXT_70722",
+        "TEXT_81580",
+        "TEXT_83117",
+        "TEXT_83120"
+      ]
+    },
+    {
+      "number": 67,
+      "id": "Kyrgyzstan",
+      "label": "Kyrgyzstan",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          74.724091,
+          41.5089324
+        ]
+      },
+      "why": "33 matching paragraphs",
+      "sources": [
+        "TEXT_1369",
+        "TEXT_16675",
+        "TEXT_22367",
+        "TEXT_34797",
+        "TEXT_37154",
+        "TEXT_39673",
+        "TEXT_43977",
+        "TEXT_47134",
+        "TEXT_57843",
+        "TEXT_64201"
+      ]
+    },
+    {
+      "number": 68,
+      "id": "Cuba",
+      "label": "Cuba",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -80.8328748,
+          23.0131338
+        ]
+      },
+      "why": "32 matching paragraphs",
+      "sources": [
+        "TEXT_3159",
+        "TEXT_4969",
+        "TEXT_6898",
+        "TEXT_6900",
+        "TEXT_10601",
+        "TEXT_10902",
+        "TEXT_14584",
+        "TEXT_16365",
+        "TEXT_27746",
+        "TEXT_34819"
+      ]
+    },
+    {
+      "number": 69,
+      "id": "Yemen",
+      "label": "Yemen",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          47.8915271,
+          16.3471243
+        ]
+      },
+      "why": "20 matching paragraphs",
+      "sources": [
+        "TEXT_48414",
+        "TEXT_82160",
+        "TEXT_82227",
+        "TEXT_82464",
+        "TEXT_53763",
+        "TEXT_53875",
+        "TEXT_57233",
+        "TEXT_71187",
+        "TEXT_71242",
+        "TEXT_53993"
+      ]
+    },
+    {
+      "number": 70,
+      "id": "Jordan",
+      "label": "Jordan",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.941628,
+          31.1667049
+        ]
+      },
+      "why": "18 matching paragraphs",
+      "sources": [
+        "TEXT_46515",
+        "TEXT_47453",
+        "TEXT_50842",
+        "TEXT_50904",
+        "TEXT_71232",
+        "TEXT_51010",
+        "TEXT_84565",
+        "TEXT_2791",
+        "TEXT_10621",
+        "TEXT_38932"
+      ]
+    },
+    {
+      "number": 71,
+      "id": "Mali",
+      "label": "Mali",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2.2900239,
+          16.3700359
+        ]
+      },
+      "why": "27 matching paragraphs",
+      "sources": [
+        "TEXT_7914",
+        "TEXT_16382",
+        "TEXT_27694",
+        "TEXT_37148",
+        "TEXT_39763",
+        "TEXT_40645",
+        "TEXT_47434",
+        "TEXT_48611",
+        "TEXT_71187",
+        "TEXT_75829"
+      ]
+    },
+    {
+      "number": 72,
+      "id": "Eritrea",
+      "label": "Eritrea",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9999668,
+          15.9500319
+        ]
+      },
+      "why": "25 matching paragraphs",
+      "sources": [
+        "TEXT_270",
+        "TEXT_497",
+        "TEXT_2574",
+        "TEXT_4633",
+        "TEXT_6936",
+        "TEXT_40645",
+        "TEXT_47332",
+        "TEXT_48611",
+        "TEXT_53938",
+        "TEXT_55399"
+      ]
+    },
+    {
+      "number": 73,
+      "id": "Nicaragua",
+      "label": "Nicaragua",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.7841006,
+          12.3506436
+        ]
+      },
+      "why": "22 matching paragraphs",
+      "sources": [
+        "TEXT_499",
+        "TEXT_3159",
+        "TEXT_4969",
+        "TEXT_10902",
+        "TEXT_14584",
+        "TEXT_15979",
+        "TEXT_40646",
+        "TEXT_48611",
+        "TEXT_71187",
+        "TEXT_10633"
+      ]
+    },
+    {
+      "number": 74,
+      "id": "Iceland",
+      "label": "Iceland",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -18.1059013,
+          64.9841821
+        ]
+      },
+      "why": "16 matching paragraphs",
+      "sources": [
+        "TEXT_970",
+        "TEXT_11558",
+        "TEXT_16328",
+        "TEXT_39998",
+        "TEXT_47102",
+        "TEXT_47940",
+        "TEXT_48868",
+        "TEXT_10613",
+        "TEXT_15534",
+        "TEXT_47686"
+      ]
+    },
+    {
+      "number": 75,
+      "id": "Portugal",
+      "label": "Portugal",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.1353519,
+          39.6621648
+        ]
+      },
+      "why": "36 matching paragraphs",
+      "sources": [
+        "TEXT_1046",
+        "TEXT_1579",
+        "TEXT_1595",
+        "TEXT_24825",
+        "TEXT_40375",
+        "TEXT_65751",
+        "TEXT_66230",
+        "TEXT_66287",
+        "TEXT_71212",
+        "TEXT_12249"
+      ]
+    },
+    {
+      "number": 76,
+      "id": "Tajikistan",
+      "label": "Tajikistan",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          70.8156541,
+          38.6281733
+        ]
+      },
+      "why": "31 matching paragraphs",
+      "sources": [
+        "TEXT_1077",
+        "TEXT_1369",
+        "TEXT_22333",
+        "TEXT_22347",
+        "TEXT_22367",
+        "TEXT_22384",
+        "TEXT_41805",
+        "TEXT_42332",
+        "TEXT_54752",
+        "TEXT_57144"
+      ]
+    },
+    {
+      "number": 77,
+      "id": "Uzbekistan",
+      "label": "Uzbekistan",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          63.9528098,
+          41.32373
+        ]
+      },
+      "why": "24 matching paragraphs",
+      "sources": [
+        "TEXT_1077",
+        "TEXT_10664",
+        "TEXT_48390",
+        "TEXT_2924",
+        "TEXT_34804",
+        "TEXT_43977",
+        "TEXT_57272",
+        "TEXT_61716",
+        "TEXT_64201",
+        "TEXT_65046"
+      ]
+    },
+    {
+      "number": 78,
+      "id": "Cyprus",
+      "label": "Cyprus",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.1451285,
+          34.9823018
+        ]
+      },
+      "why": "20 matching paragraphs",
+      "sources": [
+        "TEXT_34974",
+        "TEXT_35205",
+        "TEXT_47880",
+        "TEXT_50917",
+        "TEXT_61716",
+        "TEXT_87358",
+        "TEXT_87829",
+        "TEXT_61732",
+        "TEXT_61759",
+        "TEXT_61761"
+      ]
+    },
+    {
+      "number": 79,
+      "id": "Mexico",
+      "label": "Mexico",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -102.0077097,
+          23.6585116
+        ]
+      },
+      "why": "21 matching paragraphs",
+      "sources": [
+        "TEXT_1371",
+        "TEXT_10902",
+        "TEXT_11562",
+        "TEXT_32744",
+        "TEXT_63511",
+        "TEXT_71232",
+        "TEXT_86364",
+        "TEXT_87782",
+        "TEXT_1905",
+        "TEXT_10629"
+      ]
+    },
+    {
+      "number": 80,
+      "id": "Montenegro",
+      "label": "Montenegro",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.2022423,
+          42.7755624
+        ]
+      },
+      "why": "21 matching paragraphs",
+      "sources": [
+        "TEXT_27649",
+        "TEXT_38978",
+        "TEXT_39856",
+        "TEXT_39864",
+        "TEXT_39998",
+        "TEXT_40154",
+        "TEXT_47940",
+        "TEXT_51321",
+        "TEXT_64197",
+        "TEXT_71186"
+      ]
+    },
+    {
+      "number": 81,
+      "id": "Lebanon",
+      "label": "Lebanon",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.843409,
+          33.8750629
+        ]
+      },
+      "why": "20 matching paragraphs",
+      "sources": [
+        "TEXT_2582",
+        "TEXT_15842",
+        "TEXT_34974",
+        "TEXT_37154",
+        "TEXT_50917",
+        "TEXT_63870",
+        "TEXT_64452",
+        "TEXT_71232",
+        "TEXT_75428",
+        "TEXT_75436"
+      ]
+    },
+    {
+      "number": 82,
+      "id": "Argentina",
+      "label": "Argentina",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -64.9672817,
+          -34.9964963
+        ]
+      },
+      "why": "15 matching paragraphs",
+      "sources": [
+        "TEXT_6991",
+        "TEXT_36021",
+        "TEXT_47873",
+        "TEXT_53952",
+        "TEXT_60282",
+        "TEXT_63511",
+        "TEXT_58059",
+        "TEXT_63908",
+        "TEXT_76639",
+        "TEXT_84561"
+      ]
+    },
+    {
+      "number": 83,
+      "id": "Laos",
+      "label": "Laos",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.378253,
+          20.0171109
+        ]
+      },
+      "why": "12 matching paragraphs",
+      "sources": [
+        "TEXT_4625",
+        "TEXT_37148",
+        "TEXT_40651",
+        "TEXT_46774",
+        "TEXT_71187",
+        "TEXT_67145",
+        "TEXT_5199",
+        "TEXT_912",
+        "TEXT_35466",
+        "TEXT_46776"
+      ]
+    },
+    {
+      "number": 84,
+      "id": "North Macedonia",
+      "label": "North Macedonia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          21.7168387,
+          41.6171214
+        ]
+      },
+      "why": "16 matching paragraphs",
+      "sources": [
+        "TEXT_64193",
+        "TEXT_47940",
+        "TEXT_71235",
+        "TEXT_68210",
+        "TEXT_12249",
+        "TEXT_23887",
+        "TEXT_63869",
+        "TEXT_81285",
+        "TEXT_84561",
+        "TEXT_15847"
+      ]
+    },
+    {
+      "number": 85,
+      "id": "Singapore",
+      "label": "Singapore",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.8194992,
+          1.357107
+        ]
+      },
+      "why": "15 matching paragraphs",
+      "sources": [
+        "TEXT_4845",
+        "TEXT_47940",
+        "TEXT_50794",
+        "TEXT_34962",
+        "TEXT_1915",
+        "TEXT_7007",
+        "TEXT_10644",
+        "TEXT_32047",
+        "TEXT_63869",
+        "TEXT_65352"
+      ]
+    },
+    {
+      "number": 86,
+      "id": "Congo",
+      "label": "Congo",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          15.6419155,
+          -0.7264327
+        ]
+      },
+      "why": "13 matching paragraphs",
+      "sources": [
+        "TEXT_40643",
+        "TEXT_51627",
+        "TEXT_71242",
+        "TEXT_1380",
+        "TEXT_81022",
+        "TEXT_64691",
+        "TEXT_29954",
+        "TEXT_44182"
+      ]
+    },
+    {
+      "number": 87,
+      "id": "Slovenia",
+      "label": "Slovenia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.8153333,
+          46.1199444
+        ]
+      },
+      "why": "16 matching paragraphs",
+      "sources": [
+        "TEXT_4979",
+        "TEXT_10088",
+        "TEXT_12974",
+        "TEXT_15550",
+        "TEXT_47826",
+        "TEXT_8123",
+        "TEXT_10645",
+        "TEXT_22149",
+        "TEXT_35497",
+        "TEXT_63869"
+      ]
+    },
+    {
+      "number": 88,
+      "id": "Ethiopia",
+      "label": "Ethiopia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.6521203,
+          10.2116702
+        ]
+      },
+      "why": "12 matching paragraphs",
+      "sources": [
+        "TEXT_40643",
+        "TEXT_40651",
+        "TEXT_48611",
+        "TEXT_71232",
+        "TEXT_71242",
+        "TEXT_53938",
+        "TEXT_55399",
+        "TEXT_48178",
+        "TEXT_78497"
+      ]
+    },
+    {
+      "number": 89,
+      "id": "Vatican",
+      "label": "Vatican",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.4528527,
+          41.903411
+        ]
+      },
+      "why": "11 matching paragraphs",
+      "sources": [
+        "TEXT_1387",
+        "TEXT_16902",
+        "TEXT_18309",
+        "TEXT_38427",
+        "TEXT_86215",
+        "TEXT_4440",
+        "TEXT_35451"
+      ]
+    },
+    {
+      "number": 90,
+      "id": "Philippines",
+      "label": "Philippines",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.7312101,
+          12.7503486
+        ]
+      },
+      "why": "10 matching paragraphs",
+      "sources": [
+        "TEXT_79315",
+        "TEXT_34792",
+        "TEXT_50794",
+        "TEXT_71232",
+        "TEXT_86609",
+        "TEXT_10638",
+        "TEXT_35487",
+        "TEXT_84561"
+      ]
+    },
+    {
+      "number": 91,
+      "id": "Uganda",
+      "label": "Uganda",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          32.2166578,
+          1.5333554
+        ]
+      },
+      "why": "10 matching paragraphs",
+      "sources": [
+        "TEXT_1380",
+        "TEXT_3813",
+        "TEXT_40643",
+        "TEXT_71232",
+        "TEXT_81022",
+        "TEXT_57229"
+      ]
+    },
+    {
+      "number": 92,
+      "id": "Somalia",
+      "label": "Somalia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          49.083416,
+          8.3676771
+        ]
+      },
+      "why": "9 matching paragraphs",
+      "sources": [
+        "TEXT_47332",
+        "TEXT_53763",
+        "TEXT_50020",
+        "TEXT_263",
+        "TEXT_43294",
+        "TEXT_48205",
+        "TEXT_84561"
+      ]
+    },
+    {
+      "number": 93,
+      "id": "Sri Lanka",
+      "label": "Sri Lanka",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.7137847,
+          7.5554942
+        ]
+      },
+      "why": "8 matching paragraphs",
+      "sources": [
+        "TEXT_143",
+        "TEXT_10649",
+        "TEXT_40574",
+        "TEXT_57222",
+        "TEXT_63510",
+        "TEXT_63869"
+      ]
+    },
+    {
+      "number": 94,
+      "id": "Ecuador",
+      "label": "Ecuador",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.3666965,
+          -1.3397668
+        ]
+      },
+      "why": "7 matching paragraphs",
+      "sources": [
+        "TEXT_10088",
+        "TEXT_47875",
+        "TEXT_59933",
+        "TEXT_63869",
+        "TEXT_84561",
+        "TEXT_32588"
+      ]
+    },
+    {
+      "number": 95,
+      "id": "Nepal",
+      "label": "Nepal",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          83.9999901,
+          28.3780464
+        ]
+      },
+      "why": "7 matching paragraphs",
+      "sources": [
+        "TEXT_17382",
+        "TEXT_23895"
+      ]
+    },
+    {
+      "number": 96,
+      "id": "Algeria",
+      "label": "Algeria",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9999825,
+          28.0000272
+        ]
+      },
+      "why": "35 matching paragraphs",
+      "sources": [
+        "TEXT_5774",
+        "TEXT_16365",
+        "TEXT_24825",
+        "TEXT_34631",
+        "TEXT_42414",
+        "TEXT_48128",
+        "TEXT_50782",
+        "TEXT_53868",
+        "TEXT_53993",
+        "TEXT_57174"
+      ]
+    },
+    {
+      "number": 97,
+      "id": "Myanmar",
+      "label": "Myanmar",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          95.9999652,
+          17.1750495
+        ]
+      },
+      "why": "20 matching paragraphs",
+      "sources": [
+        "TEXT_4625",
+        "TEXT_4645",
+        "TEXT_5774",
+        "TEXT_34792",
+        "TEXT_37148",
+        "TEXT_40643",
+        "TEXT_46774",
+        "TEXT_50794",
+        "TEXT_63510",
+        "TEXT_71187"
+      ]
+    },
+    {
+      "number": 98,
+      "id": "Angola",
+      "label": "Angola",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.5691241,
+          -11.8775768
+        ]
+      },
+      "why": "11 matching paragraphs",
+      "sources": [
+        "TEXT_40645",
+        "TEXT_57201",
+        "TEXT_58887",
+        "TEXT_58904",
+        "TEXT_69455",
+        "TEXT_71242",
+        "TEXT_71255",
+        "TEXT_43289",
+        "TEXT_57212",
+        "TEXT_63869"
+      ]
+    },
+    {
+      "number": 99,
+      "id": "Kuwait",
+      "label": "Kuwait",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          47.4979476,
+          29.2733964
+        ]
+      },
+      "why": "10 matching paragraphs",
+      "sources": [
+        "TEXT_39801",
+        "TEXT_57214",
+        "TEXT_71187",
+        "TEXT_76729",
+        "TEXT_83142",
+        "TEXT_43289",
+        "TEXT_43292",
+        "TEXT_70071"
+      ]
+    },
+    {
+      "number": 100,
+      "id": "Zimbabwe",
+      "label": "Zimbabwe",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.7468414,
+          -18.4554963
+        ]
+      },
+      "why": "10 matching paragraphs",
+      "sources": [
+        "TEXT_3159",
+        "TEXT_10902",
+        "TEXT_14584",
+        "TEXT_48611",
+        "TEXT_53958",
+        "TEXT_47332",
+        "TEXT_10667",
+        "TEXT_63869"
+      ]
+    },
+    {
+      "number": 101,
+      "id": "Ghana",
+      "label": "Ghana",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.0800271,
+          8.0300284
+        ]
+      },
+      "why": "9 matching paragraphs",
+      "sources": [
+        "TEXT_1894",
+        "TEXT_71232",
+        "TEXT_83449",
+        "TEXT_84567",
+        "TEXT_84561"
+      ]
+    },
+    {
+      "number": 102,
+      "id": "Federated States of Micronesia",
+      "label": "Federated States of Micronesia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          151.8327443,
+          8.6062347
+        ]
+      },
+      "why": "8 matching paragraphs",
+      "sources": [
+        "TEXT_8046",
+        "TEXT_8404",
+        "TEXT_47940",
+        "TEXT_71185"
+      ]
+    },
+    {
+      "number": 103,
+      "id": "Nigeria",
+      "label": "Nigeria",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.9999721,
+          9.6000359
+        ]
+      },
+      "why": "6 matching paragraphs",
+      "sources": [
+        "TEXT_53957",
+        "TEXT_71232",
+        "TEXT_32656",
+        "TEXT_35482",
+        "TEXT_50540"
+      ]
+    },
+    {
+      "number": 104,
+      "id": "Turkmenistan",
+      "label": "Turkmenistan",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          59.3924609,
+          39.3763807
+        ]
+      },
+      "why": "13 matching paragraphs",
+      "sources": [
+        "TEXT_39673",
+        "TEXT_48571",
+        "TEXT_64206",
+        "TEXT_65046",
+        "TEXT_71187",
+        "TEXT_71259",
+        "TEXT_72252",
+        "TEXT_74128",
+        "TEXT_65084"
+      ]
+    },
+    {
+      "number": 105,
+      "id": "Peru",
+      "label": "Peru",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.0458515,
+          -6.8699697
+        ]
+      },
+      "why": "9 matching paragraphs",
+      "sources": [
+        "TEXT_53905",
+        "TEXT_63511",
+        "TEXT_63500",
+        "TEXT_27973",
+        "TEXT_47878",
+        "TEXT_61860",
+        "TEXT_63869",
+        "TEXT_84561",
+        "TEXT_32660"
+      ]
+    },
+    {
+      "number": 106,
+      "id": "Thailand",
+      "label": "Thailand",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.83273,
+          14.8971921
+        ]
+      },
+      "why": "9 matching paragraphs",
+      "sources": [
+        "TEXT_40651",
+        "TEXT_48187",
+        "TEXT_50794",
+        "TEXT_12249",
+        "TEXT_35508",
+        "TEXT_63869",
+        "TEXT_68500",
+        "TEXT_84561"
+      ]
+    },
+    {
+      "number": 107,
+      "id": "Bolivia",
+      "label": "Bolivia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -64.9912286,
+          -17.0568696
+        ]
+      },
+      "why": "9 matching paragraphs",
+      "sources": [
+        "TEXT_3159",
+        "TEXT_10902",
+        "TEXT_14584",
+        "TEXT_36013",
+        "TEXT_47872"
+      ]
+    },
+    {
+      "number": 108,
+      "id": "Liechtenstein",
+      "label": "Liechtenstein",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.5531527,
+          47.1416307
+        ]
+      },
+      "why": "8 matching paragraphs",
+      "sources": [
+        "TEXT_34672",
+        "TEXT_39998",
+        "TEXT_47940",
+        "TEXT_10625",
+        "TEXT_84561"
+      ]
+    },
+    {
+      "number": 109,
+      "id": "Zambia",
+      "label": "Zambia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.5589884,
+          -14.5189121
+        ]
+      },
+      "why": "6 matching paragraphs",
+      "sources": [
+        "TEXT_1380",
+        "TEXT_81022",
+        "TEXT_84565"
+      ]
+    },
+    {
+      "number": 110,
+      "id": "Ivory Coast",
+      "label": "Ivory Coast",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.5679458,
+          7.9897371
+        ]
+      },
+      "why": "6 matching paragraphs",
+      "sources": [
+        "TEXT_47434",
+        "TEXT_47453",
+        "TEXT_54247",
+        "TEXT_44178",
+        "TEXT_57212",
+        "TEXT_84561"
+      ]
+    },
+    {
+      "number": 111,
+      "id": "Bangladesh",
+      "label": "Bangladesh",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          90.2934413,
+          24.4769288
+        ]
+      },
+      "why": "5 matching paragraphs",
+      "sources": [
+        "TEXT_24804",
+        "TEXT_53949",
+        "TEXT_53948",
+        "TEXT_24806"
+      ]
+    },
+    {
+      "number": 112,
+      "id": "Botswana",
+      "label": "Botswana",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.5928742,
+          -23.1681782
+        ]
+      },
+      "why": "4 matching paragraphs",
+      "sources": [
+        "TEXT_42387",
+        "TEXT_50540",
+        "TEXT_63869"
+      ]
+    },
+    {
+      "number": 113,
+      "id": "Luxembourg",
+      "label": "Luxembourg",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.1296751,
+          49.8158683
+        ]
+      },
+      "why": "17 matching paragraphs",
+      "sources": [
+        "TEXT_70835",
+        "TEXT_83120",
+        "TEXT_15540",
+        "TEXT_16623",
+        "TEXT_32560",
+        "TEXT_47689",
+        "TEXT_48946",
+        "TEXT_56634",
+        "TEXT_70829",
+        "TEXT_70845"
+      ]
+    },
+    {
+      "number": 114,
+      "id": "Mongolia",
+      "label": "Mongolia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.8499736,
+          46.8250388
+        ]
+      },
+      "why": "12 matching paragraphs",
+      "sources": [
+        "TEXT_1752",
+        "TEXT_34631",
+        "TEXT_34792",
+        "TEXT_39675",
+        "TEXT_51430",
+        "TEXT_71187",
+        "TEXT_84219",
+        "TEXT_86235",
+        "TEXT_55917",
+        "TEXT_84275"
+      ]
+    },
+    {
+      "number": 115,
+      "id": "Burkina Faso",
+      "label": "Burkina Faso",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.6880314,
+          12.0753083
+        ]
+      },
+      "why": "11 matching paragraphs",
+      "sources": [
+        "TEXT_18566",
+        "TEXT_26723",
+        "TEXT_27223",
+        "TEXT_27753",
+        "TEXT_39763",
+        "TEXT_71187",
+        "TEXT_47332",
+        "TEXT_71228",
+        "TEXT_75853"
+      ]
+    },
+    {
+      "number": 116,
+      "id": "Colombia",
+      "label": "Colombia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.9088133,
+          4.099917
+        ]
+      },
+      "why": "10 matching paragraphs",
+      "sources": [
+        "TEXT_47453",
+        "TEXT_47874",
+        "TEXT_6450",
+        "TEXT_6994",
+        "TEXT_10600",
+        "TEXT_27973",
+        "TEXT_35430",
+        "TEXT_35431",
+        "TEXT_72745"
+      ]
+    },
+    {
+      "number": 117,
+      "id": "Malta",
+      "label": "Malta",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.3951627,
+          35.9311442
+        ]
+      },
+      "why": "9 matching paragraphs",
+      "sources": [
+        "TEXT_1388",
+        "TEXT_3837",
+        "TEXT_20692",
+        "TEXT_47802",
+        "TEXT_48010",
+        "TEXT_82339",
+        "TEXT_82344",
+        "TEXT_84561"
+      ]
+    },
+    {
+      "number": 118,
+      "id": "Monaco",
+      "label": "Monaco",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.4276832,
+          43.7323492
+        ]
+      },
+      "why": "8 matching paragraphs",
+      "sources": [
+        "TEXT_34864",
+        "TEXT_47940",
+        "TEXT_47804",
+        "TEXT_84561",
+        "TEXT_86596",
+        "TEXT_73925"
+      ]
+    },
+    {
+      "number": 119,
+      "id": "Bahrain",
+      "label": "Bahrain",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          50.5344606,
+          26.1551249
+        ]
+      },
+      "why": "6 matching paragraphs",
+      "sources": [
+        "TEXT_39801",
+        "TEXT_71187",
+        "TEXT_65764",
+        "TEXT_49098",
+        "TEXT_84561"
+      ]
+    },
+    {
+      "number": 120,
+      "id": "Oman",
+      "label": "Oman",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          57.0036901,
+          21.0000287
+        ]
+      },
+      "why": "6 matching paragraphs",
+      "sources": [
+        "TEXT_49227",
+        "TEXT_76729",
+        "TEXT_49228",
+        "TEXT_74263",
+        "TEXT_76249",
+        "TEXT_76253"
+      ]
+    },
+    {
+      "number": 121,
+      "id": "Chile",
+      "label": "Chile",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.3187697,
+          -31.7613365
+        ]
+      },
+      "why": "6 matching paragraphs",
+      "sources": [
+        "TEXT_10902",
+        "TEXT_84567",
+        "TEXT_10596",
+        "TEXT_84561"
+      ]
+    },
+    {
+      "number": 122,
+      "id": "Chad",
+      "label": "Chad",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.0156172,
+          15.6134137
+        ]
+      },
+      "why": "5 matching paragraphs",
+      "sources": [
+        "TEXT_27726",
+        "TEXT_54247",
+        "TEXT_10595",
+        "TEXT_44178"
+      ]
+    },
+    {
+      "number": 123,
+      "id": "Senegal",
+      "label": "Senegal",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -14.4529612,
+          14.4750607
+        ]
+      },
+      "why": "5 matching paragraphs",
+      "sources": [
+        "TEXT_1380",
+        "TEXT_64935",
+        "TEXT_81022"
+      ]
+    },
+    {
+      "number": 124,
+      "id": "Madagascar",
+      "label": "Madagascar",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          46.4416422,
+          -18.9249604
+        ]
+      },
+      "why": "5 matching paragraphs",
+      "sources": [
+        "TEXT_26729",
+        "TEXT_27694",
+        "TEXT_64935",
+        "TEXT_23423"
+      ]
+    },
+    {
+      "number": 125,
+      "id": "Comoros",
+      "label": "Comoros",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          44.2832964,
+          -12.2045176
+        ]
+      },
+      "why": "4 matching paragraphs",
+      "sources": [
+        "TEXT_1380",
+        "TEXT_81022"
+      ]
+    },
+    {
+      "number": 126,
+      "id": "Liberia",
+      "label": "Liberia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -9.3658524,
+          5.7499721
+        ]
+      },
+      "why": "12 matching paragraphs",
+      "sources": [
+        "TEXT_8460",
+        "TEXT_2791",
+        "TEXT_29954",
+        "TEXT_30424",
+        "TEXT_30742",
+        "TEXT_43289",
+        "TEXT_44178",
+        "TEXT_44629",
+        "TEXT_46497",
+        "TEXT_84561"
+      ]
+    },
+    {
+      "number": 127,
+      "id": "Sierra Leone",
+      "label": "Sierra Leone",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -11.8400269,
+          8.6400349
+        ]
+      },
+      "why": "8 matching paragraphs",
+      "sources": [
+        "TEXT_57244",
+        "TEXT_29954",
+        "TEXT_30424",
+        "TEXT_30742",
+        "TEXT_43289",
+        "TEXT_44178",
+        "TEXT_78550"
+      ]
+    },
+    {
+      "number": 128,
+      "id": "Niger",
+      "label": "Niger",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.3238432,
+          17.7356214
+        ]
+      },
+      "why": "7 matching paragraphs",
+      "sources": [
+        "TEXT_26709",
+        "TEXT_39763",
+        "TEXT_71187",
+        "TEXT_75835",
+        "TEXT_71228",
+        "TEXT_75853"
+      ]
+    },
+    {
+      "number": 129,
+      "id": "Burundi",
+      "label": "Burundi",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.9324519,
+          -3.426449
+        ]
+      },
+      "why": "6 matching paragraphs",
+      "sources": [
+        "TEXT_47887",
+        "TEXT_47889",
+        "TEXT_71187"
+      ]
+    },
+    {
+      "number": 130,
+      "id": "Mozambique",
+      "label": "Mozambique",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.9144977,
+          -19.302233
+        ]
+      },
+      "why": "5 matching paragraphs",
+      "sources": [
+        "TEXT_27694",
+        "TEXT_39763",
+        "TEXT_71242",
+        "TEXT_74809"
+      ]
+    },
+    {
+      "number": 131,
+      "id": "Costa Rica",
+      "label": "Costa Rica",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.0739102,
+          10.2735633
+        ]
+      },
+      "why": "5 matching paragraphs",
+      "sources": [
+        "TEXT_150",
+        "TEXT_3817",
+        "TEXT_84561",
+        "TEXT_87357"
+      ]
+    },
+    {
+      "number": 132,
+      "id": "Tunisia",
+      "label": "Tunisia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.400138,
+          33.8439408
+        ]
+      },
+      "why": "4 matching paragraphs",
+      "sources": [
+        "TEXT_39215",
+        "TEXT_2791",
+        "TEXT_46497",
+        "TEXT_48477"
+      ]
+    },
+    {
+      "number": 133,
+      "id": "Rwanda",
+      "label": "Rwanda",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.0003963,
+          -2.0002051
+        ]
+      },
+      "why": "4 matching paragraphs",
+      "sources": [
+        "TEXT_84565",
+        "TEXT_10642",
+        "TEXT_84561"
+      ]
+    },
+    {
+      "number": 134,
+      "id": "San Marino",
+      "label": "San Marino",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.458306,
+          43.9458623
+        ]
+      },
+      "why": "3 matching paragraphs",
+      "sources": [
+        "TEXT_47940",
+        "TEXT_84561"
+      ]
+    },
+    {
+      "number": 135,
+      "id": "St.",
+      "label": "St.",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.02255,
+          0.9713095
+        ]
+      },
+      "why": "3 matching paragraphs",
+      "sources": [
+        "TEXT_39605",
+        "TEXT_87188",
+        "TEXT_84561"
+      ]
+    },
+    {
+      "number": 136,
+      "id": "Faroe Islands",
+      "label": "Faroe Islands",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.8819254,
+          62.0282362
+        ]
+      },
+      "why": "3 matching paragraphs",
+      "sources": [
+        "TEXT_47751",
+        "TEXT_27973"
+      ]
+    },
+    {
+      "number": 137,
+      "id": "Tanzania",
+      "label": "Tanzania",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.7878438,
+          -6.5247123
+        ]
+      },
+      "why": "3 matching paragraphs",
+      "sources": [
+        "TEXT_38306",
+        "TEXT_71232"
+      ]
+    },
+    {
+      "number": 138,
+      "id": "Maldives",
+      "label": "Maldives",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.2244152,
+          3.7203503
+        ]
+      },
+      "why": "3 matching paragraphs",
+      "sources": [
+        "TEXT_915",
+        "TEXT_4665",
+        "TEXT_16716"
+      ]
+    },
+    {
+      "number": 139,
+      "id": "Marshall Islands",
+      "label": "Marshall Islands",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          167.7953224,
+          8.230817
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_84565"
+      ]
+    },
+    {
+      "number": 140,
+      "id": "Bhutan",
+      "label": "Bhutan",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          90.5119273,
+          27.549511
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_71185"
+      ]
+    },
+    {
+      "number": 141,
+      "id": "Equatorial Guinea",
+      "label": "Equatorial Guinea",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5170357,
+          1.613172
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_26724",
+        "TEXT_44178"
+      ]
+    },
+    {
+      "number": 142,
+      "id": "Brunei",
+      "label": "Brunei",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          114.5653908,
+          4.4137155
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_50794",
+        "TEXT_35424"
+      ]
+    },
+    {
+      "number": 143,
+      "id": "Benin",
+      "label": "Benin",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.2584408,
+          9.5293472
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_71242",
+        "TEXT_84561"
+      ]
+    },
+    {
+      "number": 144,
+      "id": "Antigua and Barbuda",
+      "label": "Antigua and Barbuda",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -61.9554608,
+          17.2234721
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_84565"
+      ]
+    },
+    {
+      "number": 145,
+      "id": "Barbados",
+      "label": "Barbados",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -59.5250305,
+          13.1500331
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_84565"
+      ]
+    },
+    {
+      "number": 146,
+      "id": "Guinea",
+      "label": "Guinea",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -10.7083587,
+          10.7226226
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_24863",
+        "TEXT_67139"
+      ]
+    },
+    {
+      "number": 147,
+      "id": "Dominican Republic",
+      "label": "Dominican Republic",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.3028026,
+          19.0974031
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_87696",
+        "TEXT_84561"
+      ]
+    },
+    {
+      "number": 148,
+      "id": "Solomon Islands",
+      "label": "Solomon Islands",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          159.1070694,
+          -8.7053941
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_71185"
+      ]
+    },
+    {
+      "number": 149,
+      "id": "Mauritania",
+      "label": "Mauritania",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -9.2399263,
+          20.2540382
+        ]
+      },
+      "why": "2 matching paragraphs",
+      "sources": [
+        "TEXT_40645",
+        "TEXT_84561"
+      ]
+    }
+  ],
+  "regions": [
+    {
+      "id": "(no region in the graph)",
+      "count": 147,
+      "places": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99,
+        100,
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108,
+        109,
+        110,
+        111,
+        112,
+        113,
+        114,
+        115,
+        116,
+        117,
+        118,
+        119,
+        120,
+        121,
+        122,
+        123,
+        124,
+        125,
+        126,
+        127,
+        128,
+        129,
+        130,
+        131,
+        132,
+        133,
+        134,
+        135,
+        136,
+        137,
+        138,
+        139,
+        140,
+        141,
+        142,
+        143,
+        144,
+        145,
+        146,
+        147,
+        148,
+        149
+      ],
+      "children": []
+    },
+    {
+      "id": "Georgia",
+      "place_type": "country",
+      "count": 2,
+      "places": [
+        36,
+        47
+      ],
+      "children": []
+    }
+  ],
+  "entities": [],
+  "citations": [],
+  "sources": [],
+  "map": {
+    "bbox": [
+      -113.26018,
+      38.29187,
+      40.51144,
+      56.19422
+    ],
+    "highlight": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "showing": "all",
+    "not_shown": 0
+  },
+  "follow_ups": [
+    "Which places are linked to Belarus?",
+    "What happened in Poland?"
+  ],
+  "did_you_mean": [],
+  "notes": [
+    "④ 149 places found (all go on the map); 10 described to the LLM",
+    "④ list answer: no corpus sentences by design; each place has a data line, and 'tell me about number N' gives the details"
+  ],
+  "meta": {
+    "question_type": "common",
+    "model": "google/gemini-2.5-flash",
+    "llm_calls": 2,
+    "cost_usd": 0.001518,
+    "seconds": 3.87
+  }
+}

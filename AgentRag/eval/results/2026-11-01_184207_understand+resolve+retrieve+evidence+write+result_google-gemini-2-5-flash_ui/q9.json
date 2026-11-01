@@ -1,0 +1,29 @@
+{
+  "answer": "No data from the graph — answer from the LLM only. I don't have information about specific Ukrainian locations connected to Russian military commanders.",
+  "answer_plain": "No data from the graph — answer from the LLM only. I don't have information about specific Ukrainian locations connected to Russian military commanders.",
+  "status": "no_data",
+  "grounded": false,
+  "shape": "explain",
+  "geo_locations": [],
+  "regions": [],
+  "entities": [],
+  "citations": [],
+  "sources": [],
+  "map": {
+    "highlight": [],
+    "showing": "discussed",
+    "not_shown": 0
+  },
+  "follow_ups": [],
+  "did_you_mean": [],
+  "notes": [
+    "① 'Russian military commanders' is a description, not a name: moved to concepts"
+  ],
+  "meta": {
+    "question_type": "entity_places",
+    "model": "google/gemini-2.5-flash",
+    "llm_calls": 2,
+    "cost_usd": 0.00097,
+    "seconds": 1.71
+  }
+}

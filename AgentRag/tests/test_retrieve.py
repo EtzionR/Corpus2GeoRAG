@@ -2,7 +2,7 @@
 import graph_tools as T
 from planner import Area, Concept, ConceptCandidate, EntityMention, QueryPlan
 from resolver import resolve
-from retrieve import retrieve
+from retrieve import event_titles, retrieve
 
 KYIV_CENTRE = Area(kind="point", coordinates=[30.5234, 50.4501])
 FAR_POINT = Area(kind="point", coordinates=[34.0, 47.0])
@@ -178,6 +178,38 @@ def test_relation_fallback_accepts_labelled_low_confidence_last(vr6_index):
 def test_event_places_from_the_article(vr6_index):
     out = run(vr6_index, "event_places", ("Battle of Bakhmut", "EVENT"))
     assert [h.group.id for h in out.places] == ["Bakhmut", "Soledar"]
+    assert out.summaries[0].article == "Battle of Bakhmut"
+
+
+TITLES = ["Battle of Bakhmut", "Battles for Karlivka", "Siege of Mariupol", "Bombing of Borodianka",
+          "Russian invasion of Ukraine", "Russian Black Sea Fleet", "Offensive Guard (Ukraine)", "Battlefield tactics"]
+
+
+def test_event_titles_take_the_event_kind_from_the_keywords():
+    assert event_titles(TITLES, ["major battles"]) == ["Battle of Bakhmut", "Battles for Karlivka"]
+    assert event_titles(TITLES, ["main sieges", "bombings"]) == ["Bombing of Borodianka", "Siege of Mariupol"]
+    assert event_titles(TITLES, []) == ["Battle of Bakhmut", "Battles for Karlivka", "Siege of Mariupol"]
+
+
+def test_event_titles_find_nothing_for_words_that_name_no_event_kind():
+    assert event_titles(TITLES, ["Russian offensives"]) == []
+
+
+def test_event_list_places_each_battle_found(vr6_index):
+    out = run(vr6_index, "event_list", keywords=["major battles"])
+    assert [h.group.id for h in out.places] == ["Bakhmut"]
+    assert out.summaries[0].article == "Battle of Bakhmut"
+
+
+def test_event_list_puts_the_longest_article_first_and_one_pin_per_place(vr6_index, monkeypatch):
+    tids = vr6_index.articles["Battle of Bakhmut"]
+    monkeypatch.setattr(vr6_index, "articles", {"Battle of Soledar": tids[:1], "Battle of Bakhmut": tids * 3,
+                                                "Battles for Bakhmut": tids})
+    top = {"Battle of Soledar": "Soledar", "Battle of Bakhmut": "Bakhmut", "Battles for Bakhmut": "Bakhmut"}
+    monkeypatch.setattr(T, "article_places", lambda gi, title: [T.Hit(group=gi.group(top[title]), records=1)])
+    out = run(vr6_index, "event_list")
+    assert [h.group.id for h in out.places] == ["Bakhmut", "Soledar"]
+    assert list(out.places[0].relations) == ["event: Battle of Bakhmut", "event: Battles for Bakhmut"]
     assert out.summaries[0].article == "Battle of Bakhmut"
 
 

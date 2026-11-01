@@ -1,0 +1,7495 @@
+{
+  "answer": "The Wagner Group is a Russian state-funded private military company that was controlled by Yevgeny Prigozhin until 2023, and since then by Pavel Prigozhin [L1]. A total of 323 places are connected to the Wagner Group. The strongest few are CAR [1], Yakovlivka [2], Sirte [3], Voronezh [4], and Marinka [5], and they are concentrated in Ukraine (95 places) and Russia (64 places).",
+  "answer_plain": "The Wagner Group is a Russian state-funded private military company that was controlled by Yevgeny Prigozhin until 2023, and since then by Pavel Prigozhin. A total of 323 places are connected to the Wagner Group. The strongest few are CAR, Yakovlivka, Sirte, Voronezh, and Marinka, and they are concentrated in Ukraine (95 places) and Russia (64 places).",
+  "status": "answered",
+  "grounded": true,
+  "shape": "list",
+  "geo_locations": [
+    {
+      "number": 1,
+      "id": "CAR",
+      "label": "CAR",
+      "kind": "shop",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.3887046,
+          42.356333
+        ]
+      },
+      "why": "OPERATES_IN in 1 record; mentioned together in 12 records; 13 matching paragraphs; 144% of the place's paragraphs",
+      "sources": [
+        "TEXT_26726",
+        "TEXT_27728",
+        "TEXT_27733",
+        "TEXT_27734",
+        "TEXT_27753",
+        "TEXT_27779",
+        "TEXT_41514",
+        "TEXT_27729",
+        "TEXT_27730"
+      ]
+    },
+    {
+      "number": 2,
+      "id": "Yakovlivka",
+      "label": "Yakovlivka",
+      "kind": "village",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.961781,
+          46.862179
+        ]
+      },
+      "why": "ATTACKED in 1 record; mentioned together in 4 records; 5 matching paragraphs; 46% of the place's paragraphs",
+      "sources": [
+        "TEXT_23866",
+        "TEXT_80451",
+        "TEXT_21861",
+        "TEXT_21862"
+      ]
+    },
+    {
+      "number": 3,
+      "id": "Sirte",
+      "label": "Sirte",
+      "kind": "city",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          16.5836206,
+          31.2059625
+        ]
+      },
+      "why": "ATTACKED in 1 record; 1 matching paragraphs; 20% of the place's paragraphs",
+      "sources": [
+        "TEXT_53904"
+      ]
+    },
+    {
+      "number": 4,
+      "id": "Voronezh",
+      "label": "Voronezh",
+      "kind": "city",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.2005858,
+          51.6605982
+        ]
+      },
+      "why": "OPERATES_IN in 1 record; mentioned together in 8 records; 9 matching paragraphs; 8% of the place's paragraphs",
+      "sources": [
+        "TEXT_7947",
+        "TEXT_16536",
+        "TEXT_7932",
+        "TEXT_7933",
+        "TEXT_16545"
+      ]
+    },
+    {
+      "number": 5,
+      "id": "Marinka",
+      "label": "Marinka",
+      "kind": "town",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.5022312,
+          47.9401242
+        ]
+      },
+      "why": "OPERATES_IN in 1 record; mentioned together in 3 records; 4 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_27049",
+        "TEXT_37562",
+        "TEXT_9370",
+        "TEXT_21865"
+      ]
+    },
+    {
+      "number": 6,
+      "id": "Abidiya",
+      "label": "Abidiya",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.9550754,
+          18.2186263
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 200% of the place's paragraphs",
+      "sources": [
+        "TEXT_27726"
+      ]
+    },
+    {
+      "number": 7,
+      "id": "Espia",
+      "label": "Espia",
+      "kind": "locality",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.1539872,
+          42.9843374
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 200% of the place's paragraphs",
+      "sources": [
+        "TEXT_3866"
+      ]
+    },
+    {
+      "number": 8,
+      "id": "Norway-Russia",
+      "label": "Norway-Russia",
+      "kind": "office",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.5962931,
+          55.7537369
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 200% of the place's paragraphs",
+      "sources": [
+        "TEXT_82316"
+      ]
+    },
+    {
+      "number": 9,
+      "id": "Pasvikdalen",
+      "label": "Pasvikdalen",
+      "kind": "hamlet",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.3304022,
+          69.3296724
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 200% of the place's paragraphs",
+      "sources": [
+        "TEXT_82316"
+      ]
+    },
+    {
+      "number": 10,
+      "id": "Krasnopolivka",
+      "label": "Krasnopolivka",
+      "kind": "hamlet",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0512144,
+          48.7303635
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 200% of the place's paragraphs",
+      "sources": [
+        "TEXT_27109"
+      ]
+    },
+    {
+      "number": 11,
+      "id": "Molkin",
+      "label": "Molkin",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.2338712,
+          44.8037918
+        ]
+      },
+      "why": "mentioned together in 5 records; 5 matching paragraphs; 167% of the place's paragraphs",
+      "sources": [
+        "TEXT_42222",
+        "TEXT_27666",
+        "TEXT_27777"
+      ]
+    },
+    {
+      "number": 12,
+      "id": "Bangui",
+      "label": "Bangui",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.5835913,
+          4.3635118
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 150% of the place's paragraphs",
+      "sources": [
+        "TEXT_23846",
+        "TEXT_27779"
+      ]
+    },
+    {
+      "number": 13,
+      "id": "Goryachy Klyuch",
+      "label": "Goryachy Klyuch",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.1363613,
+          44.6342653
+        ]
+      },
+      "why": "mentioned together in 7 records; 7 matching paragraphs; 117% of the place's paragraphs",
+      "sources": [
+        "TEXT_41532",
+        "TEXT_42248",
+        "TEXT_46733",
+        "TEXT_27777"
+      ]
+    },
+    {
+      "number": 14,
+      "id": "Bakhmutske",
+      "label": "Bakhmutske",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0935602,
+          48.6644807
+        ]
+      },
+      "why": "mentioned together in 5 records; 5 matching paragraphs; 100% of the place's paragraphs",
+      "sources": [
+        "TEXT_23868",
+        "TEXT_23880",
+        "TEXT_21866",
+        "TEXT_80462"
+      ]
+    },
+    {
+      "number": 15,
+      "id": "Luhansk Region",
+      "label": "Luhansk Region",
+      "kind": "historic",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.2963953,
+          48.5675612
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 100% of the place's paragraphs",
+      "sources": [
+        "TEXT_6641",
+        "TEXT_16045"
+      ]
+    },
+    {
+      "number": 16,
+      "id": "Democratic Republic of Congo",
+      "label": "Democratic Republic of Congo",
+      "kind": "office",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.289698,
+          -15.4139213
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 100% of the place's paragraphs",
+      "sources": [
+        "TEXT_27662"
+      ]
+    },
+    {
+      "number": 17,
+      "id": "Moura",
+      "label": "Moura",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -7.4500699,
+          38.1409785
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 100% of the place's paragraphs",
+      "sources": [
+        "TEXT_55300"
+      ]
+    },
+    {
+      "number": 18,
+      "id": "Alindao",
+      "label": "Alindao",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          21.2109342,
+          5.0421303
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 100% of the place's paragraphs",
+      "sources": [
+        "TEXT_55299"
+      ]
+    },
+    {
+      "number": 19,
+      "id": "Bossangoa",
+      "label": "Bossangoa",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.4463162,
+          6.4924441
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 100% of the place's paragraphs",
+      "sources": [
+        "TEXT_55299"
+      ]
+    },
+    {
+      "number": 20,
+      "id": "Bèzèrè",
+      "label": "Bèzèrè",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.9840422,
+          11.4952788
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 100% of the place's paragraphs",
+      "sources": [
+        "TEXT_27731"
+      ]
+    },
+    {
+      "number": 21,
+      "id": "Central Africa Republic",
+      "label": "Central Africa Republic",
+      "kind": "office",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          32.6001089,
+          0.3245129
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 100% of the place's paragraphs",
+      "sources": [
+        "TEXT_41514"
+      ]
+    },
+    {
+      "number": 22,
+      "id": "Greater Sahara",
+      "label": "Greater Sahara",
+      "kind": "sand",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0480403,
+          60.1470103
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 100% of the place's paragraphs",
+      "sources": [
+        "TEXT_68298"
+      ]
+    },
+    {
+      "number": 23,
+      "id": "Wagner Center",
+      "label": "Wagner Center",
+      "kind": "building",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.8611678,
+          38.97673
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 100% of the place's paragraphs",
+      "uncertain": "geocoded as a building with importance 0.00",
+      "sources": [
+        "TEXT_46725"
+      ]
+    },
+    {
+      "number": 24,
+      "id": "Boracay",
+      "label": "Boracay",
+      "kind": "island",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.9227339,
+          11.9693692
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 100% of the place's paragraphs",
+      "sources": [
+        "TEXT_48896"
+      ]
+    },
+    {
+      "number": 25,
+      "id": "El Sharara",
+      "label": "El Sharara",
+      "kind": "hamlet",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.9104,
+          12.933
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 100% of the place's paragraphs",
+      "sources": [
+        "TEXT_27735"
+      ]
+    },
+    {
+      "number": 26,
+      "id": "Haiyan",
+      "label": "Haiyan",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          120.9420572,
+          30.5276676
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 100% of the place's paragraphs",
+      "sources": [
+        "TEXT_27777"
+      ]
+    },
+    {
+      "number": 27,
+      "id": "In-Afarak",
+      "label": "In-Afarak",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.7314572,
+          21.3226041
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 100% of the place's paragraphs",
+      "sources": [
+        "TEXT_75850"
+      ]
+    },
+    {
+      "number": 28,
+      "id": "Intahaka",
+      "label": "Intahaka",
+      "kind": "amenity",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.4745056,
+          16.2015595
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 100% of the place's paragraphs",
+      "uncertain": "geocoded as a amenity with importance 0.00",
+      "sources": [
+        "TEXT_75846"
+      ]
+    },
+    {
+      "number": 29,
+      "id": "Kassala",
+      "label": "Kassala",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.3770699,
+          15.452011
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 100% of the place's paragraphs",
+      "sources": [
+        "TEXT_27745"
+      ]
+    },
+    {
+      "number": 30,
+      "id": "Khatmiya Mosque",
+      "label": "Khatmiya Mosque",
+      "kind": "amenity",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          32.5258557,
+          15.6253051
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 100% of the place's paragraphs",
+      "uncertain": "geocoded as a amenity with importance 0.00",
+      "sources": [
+        "TEXT_27745"
+      ]
+    },
+    {
+      "number": 31,
+      "id": "Klynove",
+      "label": "Klynove",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.15895,
+          48.56026
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 100% of the place's paragraphs",
+      "sources": [
+        "TEXT_37552"
+      ]
+    },
+    {
+      "number": 32,
+      "id": "Litak",
+      "label": "Litak",
+      "kind": "hamlet",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          119.7904653,
+          -3.2754742
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 100% of the place's paragraphs",
+      "sources": [
+        "TEXT_80482"
+      ]
+    },
+    {
+      "number": 33,
+      "id": "Russian Republic of Buryatia",
+      "label": "Russian Republic of Buryatia",
+      "kind": "leisure",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.636764,
+          51.4351865
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 100% of the place's paragraphs",
+      "sources": [
+        "TEXT_27776"
+      ]
+    },
+    {
+      "number": 34,
+      "id": "Samolet",
+      "label": "Samolet",
+      "kind": "building",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.5848604,
+          55.7254399
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 100% of the place's paragraphs",
+      "uncertain": "geocoded as a building with importance 0.33",
+      "sources": [
+        "TEXT_80482"
+      ]
+    },
+    {
+      "number": 35,
+      "id": "Semenivskyi Raion",
+      "label": "Semenivskyi Raion",
+      "kind": "road",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          32.2768535,
+          48.4953159
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 100% of the place's paragraphs",
+      "uncertain": "geocoded as a road with importance 0.05",
+      "sources": [
+        "TEXT_7582"
+      ]
+    },
+    {
+      "number": 36,
+      "id": "M4",
+      "label": "M4",
+      "kind": "road",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2.6724435,
+          51.5697375
+        ]
+      },
+      "why": "mentioned together in 4 records; 4 matching paragraphs; 80% of the place's paragraphs",
+      "uncertain": "geocoded as a road with importance 0.31",
+      "sources": [
+        "TEXT_16536",
+        "TEXT_7926",
+        "TEXT_7934"
+      ]
+    },
+    {
+      "number": 37,
+      "id": "Belarusian",
+      "label": "Belarusian",
+      "kind": "education",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.4761517,
+          53.8380675
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 67% of the place's paragraphs",
+      "sources": [
+        "TEXT_7982"
+      ]
+    },
+    {
+      "number": 38,
+      "id": "Kupiansk-Lyman",
+      "label": "Kupiansk-Lyman",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.7062717,
+          49.7908984
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 67% of the place's paragraphs",
+      "sources": [
+        "TEXT_21873"
+      ]
+    },
+    {
+      "number": 39,
+      "id": "Yuzivska",
+      "label": "Yuzivska",
+      "kind": "road",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.7611906,
+          48.5063583
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 67% of the place's paragraphs",
+      "uncertain": "geocoded as a road with importance 0.05",
+      "sources": [
+        "TEXT_80497"
+      ]
+    },
+    {
+      "number": 40,
+      "id": "Shusha",
+      "label": "Shusha",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          46.7511501,
+          39.7632567
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 67% of the place's paragraphs",
+      "sources": [
+        "TEXT_27750"
+      ]
+    },
+    {
+      "number": 41,
+      "id": "Ber",
+      "label": "Ber",
+      "kind": "aeroway",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.4888906,
+          52.3657974
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 67% of the place's paragraphs",
+      "sources": [
+        "TEXT_75728",
+        "TEXT_75841"
+      ]
+    },
+    {
+      "number": 42,
+      "id": "M-03",
+      "label": "M-03",
+      "kind": "road",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -49.4187964,
+          -16.7623085
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 67% of the place's paragraphs",
+      "uncertain": "geocoded as a road with importance 0.05",
+      "sources": [
+        "TEXT_21866",
+        "TEXT_21868"
+      ]
+    },
+    {
+      "number": 43,
+      "id": "Oka River",
+      "label": "Oka River",
+      "kind": "river",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          101.4084863,
+          53.4738206
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 67% of the place's paragraphs",
+      "sources": [
+        "TEXT_7993",
+        "TEXT_7934"
+      ]
+    },
+    {
+      "number": 44,
+      "id": "Tinzaouaten",
+      "label": "Tinzaouaten",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9694782,
+          19.9541906
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 50% of the place's paragraphs",
+      "sources": [
+        "TEXT_27740",
+        "TEXT_75851"
+      ]
+    },
+    {
+      "number": 45,
+      "id": "Chuvashia Republic",
+      "label": "Chuvashia Republic",
+      "kind": "building",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          47.2462513,
+          56.1400714
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 50% of the place's paragraphs",
+      "uncertain": "geocoded as a building with importance 0.00",
+      "sources": [
+        "TEXT_2593"
+      ]
+    },
+    {
+      "number": 46,
+      "id": "Dekonska",
+      "label": "Dekonska",
+      "kind": "railway",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0837805,
+          48.6769662
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 50% of the place's paragraphs",
+      "sources": [
+        "TEXT_23868"
+      ]
+    },
+    {
+      "number": 47,
+      "id": "Oktyabrske",
+      "label": "Oktyabrske",
+      "kind": "hamlet",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.8074557,
+          51.581736
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 50% of the place's paragraphs",
+      "sources": [
+        "TEXT_16442"
+      ]
+    },
+    {
+      "number": 48,
+      "id": "Patrice Lumumba",
+      "label": "Patrice Lumumba",
+      "kind": "suburb",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.5195587,
+          -14.9220385
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 50% of the place's paragraphs",
+      "sources": [
+        "TEXT_80451"
+      ]
+    },
+    {
+      "number": 49,
+      "id": "Vershyna",
+      "label": "Vershyna",
+      "kind": "hamlet",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.1457986,
+          48.5129297
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 50% of the place's paragraphs",
+      "sources": [
+        "TEXT_80451"
+      ]
+    },
+    {
+      "number": 50,
+      "id": "Sakko I Vantsetti",
+      "label": "Sakko I Vantsetti",
+      "kind": "hamlet",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0308095,
+          48.7459765
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 50% of the place's paragraphs",
+      "sources": [
+        "TEXT_16145"
+      ]
+    },
+    {
+      "number": 51,
+      "id": "Dubovo-Vasylivka",
+      "label": "Dubovo-Vasylivka",
+      "kind": "hamlet",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9303,
+          48.64952
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 50% of the place's paragraphs",
+      "sources": [
+        "TEXT_21868"
+      ]
+    },
+    {
+      "number": 52,
+      "id": "Krasnoye",
+      "label": "Krasnoye",
+      "kind": "hamlet",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.7101185,
+          54.7122283
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 50% of the place's paragraphs",
+      "sources": [
+        "TEXT_7936"
+      ]
+    },
+    {
+      "number": 53,
+      "id": "Mariinka",
+      "label": "Mariinka",
+      "kind": "stream",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          32.2964542,
+          47.1729721
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 50% of the place's paragraphs",
+      "sources": [
+        "TEXT_16432"
+      ]
+    },
+    {
+      "number": 54,
+      "id": "Pavshino",
+      "label": "Pavshino",
+      "kind": "railway",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.3395149,
+          55.8148976
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 50% of the place's paragraphs",
+      "sources": [
+        "TEXT_27666"
+      ]
+    },
+    {
+      "number": 55,
+      "id": "Sabha",
+      "label": "Sabha",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.4290398,
+          27.0364864
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 50% of the place's paragraphs",
+      "sources": [
+        "TEXT_27735"
+      ]
+    },
+    {
+      "number": 56,
+      "id": "Severnoye",
+      "label": "Severnoye",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.541626,
+          54.091789
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 50% of the place's paragraphs",
+      "sources": [
+        "TEXT_42164"
+      ]
+    },
+    {
+      "number": 57,
+      "id": "T0504",
+      "label": "T0504",
+      "kind": "building",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.2180293,
+          51.3779005
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 43% of the place's paragraphs",
+      "uncertain": "geocoded as a building with importance 0.00",
+      "sources": [
+        "TEXT_24495",
+        "TEXT_80443",
+        "TEXT_80483"
+      ]
+    },
+    {
+      "number": 58,
+      "id": "Darfur",
+      "label": "Darfur",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.8380398,
+          44.0513467
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 40% of the place's paragraphs",
+      "sources": [
+        "TEXT_27726"
+      ]
+    },
+    {
+      "number": 59,
+      "id": "Ozarianivka",
+      "label": "Ozarianivka",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9548643,
+          48.450343
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 40% of the place's paragraphs",
+      "sources": [
+        "TEXT_80456",
+        "TEXT_21859"
+      ]
+    },
+    {
+      "number": 60,
+      "id": "Berkhivka",
+      "label": "Berkhivka",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.96188,
+          48.64317
+        ]
+      },
+      "why": "mentioned together in 4 records; 4 matching paragraphs; 36% of the place's paragraphs",
+      "sources": [
+        "TEXT_16294",
+        "TEXT_16442",
+        "TEXT_21868",
+        "TEXT_21870"
+      ]
+    },
+    {
+      "number": 61,
+      "id": "Khasham",
+      "label": "Khasham",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          40.2864169,
+          35.306769
+        ]
+      },
+      "why": "mentioned together in 4 records; 4 matching paragraphs; 33% of the place's paragraphs",
+      "sources": [
+        "TEXT_27714",
+        "TEXT_50986",
+        "TEXT_47241"
+      ]
+    },
+    {
+      "number": 62,
+      "id": "Plavsk",
+      "label": "Plavsk",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.2920333,
+          53.7068732
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 33% of the place's paragraphs",
+      "sources": [
+        "TEXT_3872"
+      ]
+    },
+    {
+      "number": 63,
+      "id": "Sil",
+      "label": "Sil",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.9941954,
+          46.5203533
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 33% of the place's paragraphs",
+      "sources": [
+        "TEXT_23869"
+      ]
+    },
+    {
+      "number": 64,
+      "id": "Anefis",
+      "label": "Anefis",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.602897,
+          18.04589
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 33% of the place's paragraphs",
+      "sources": [
+        "TEXT_75843"
+      ]
+    },
+    {
+      "number": 65,
+      "id": "Ouagadougou",
+      "label": "Ouagadougou",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.5270944,
+          12.3681873
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 33% of the place's paragraphs",
+      "sources": [
+        "TEXT_27754"
+      ]
+    },
+    {
+      "number": 66,
+      "id": "Predtechyne",
+      "label": "Predtechyne",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.8174189,
+          48.5248219
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 33% of the place's paragraphs",
+      "sources": [
+        "TEXT_80485"
+      ]
+    },
+    {
+      "number": 67,
+      "id": "Tobruk",
+      "label": "Tobruk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.9599988,
+          32.0773764
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 33% of the place's paragraphs",
+      "sources": [
+        "TEXT_27735"
+      ]
+    },
+    {
+      "number": 68,
+      "id": "Soledar",
+      "label": "Soledar",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0671791,
+          48.6956698
+        ]
+      },
+      "why": "mentioned together in 36 records; 36 matching paragraphs; 31% of the place's paragraphs",
+      "sources": [
+        "TEXT_3871",
+        "TEXT_16113",
+        "TEXT_23868",
+        "TEXT_27706",
+        "TEXT_16294",
+        "TEXT_23866",
+        "TEXT_23869",
+        "TEXT_23872",
+        "TEXT_24660",
+        "TEXT_42256"
+      ]
+    },
+    {
+      "number": 69,
+      "id": "Orikhovo-Vasylivka",
+      "label": "Orikhovo-Vasylivka",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.88944,
+          48.6763
+        ]
+      },
+      "why": "mentioned together in 4 records; 4 matching paragraphs; 31% of the place's paragraphs",
+      "sources": [
+        "TEXT_21868",
+        "TEXT_80484",
+        "TEXT_80486",
+        "TEXT_80488"
+      ]
+    },
+    {
+      "number": 70,
+      "id": "Neva",
+      "label": "Neva",
+      "kind": "river",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.5614758,
+          59.8354498
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 29% of the place's paragraphs",
+      "sources": [
+        "TEXT_42161"
+      ]
+    },
+    {
+      "number": 71,
+      "id": "Eastern Ghouta",
+      "label": "Eastern Ghouta",
+      "kind": "building",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.3496035,
+          33.4877923
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 25% of the place's paragraphs",
+      "uncertain": "geocoded as a building with importance 0.00",
+      "sources": [
+        "TEXT_27715",
+        "TEXT_50987"
+      ]
+    },
+    {
+      "number": 72,
+      "id": "Krasna Hora",
+      "label": "Krasna Hora",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0156184,
+          48.6626919
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 25% of the place's paragraphs",
+      "sources": [
+        "TEXT_16164",
+        "TEXT_21866"
+      ]
+    },
+    {
+      "number": 73,
+      "id": "Molkino",
+      "label": "Molkino",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          40.566715,
+          55.167511
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 25% of the place's paragraphs",
+      "sources": [
+        "TEXT_27666"
+      ]
+    },
+    {
+      "number": 74,
+      "id": "Federal Military Memorial Cemetery",
+      "label": "Federal Military Memorial Cemetery",
+      "kind": "cemetery",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.6757882,
+          55.9272305
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 25% of the place's paragraphs",
+      "sources": [
+        "TEXT_42247"
+      ]
+    },
+    {
+      "number": 75,
+      "id": "Hmeimim",
+      "label": "Hmeimim",
+      "kind": "military",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.954477,
+          35.4119739
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 25% of the place's paragraphs",
+      "sources": [
+        "TEXT_7942"
+      ]
+    },
+    {
+      "number": 76,
+      "id": "Kashira",
+      "label": "Kashira",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.1505119,
+          54.837449
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 25% of the place's paragraphs",
+      "sources": [
+        "TEXT_7936"
+      ]
+    },
+    {
+      "number": 77,
+      "id": "West Asia",
+      "label": "West Asia",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.4670994,
+          9.6021766
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 25% of the place's paragraphs",
+      "sources": [
+        "TEXT_50845"
+      ]
+    },
+    {
+      "number": 78,
+      "id": "Asipovichy",
+      "label": "Asipovichy",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.6382068,
+          53.3084631
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 25% of the place's paragraphs",
+      "sources": [
+        "TEXT_86249"
+      ]
+    },
+    {
+      "number": 79,
+      "id": "Bakhmut",
+      "label": "Bakhmut",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0020994,
+          48.5894123
+        ]
+      },
+      "why": "mentioned together in 139 records; 139 matching paragraphs; 23% of the place's paragraphs",
+      "sources": [
+        "TEXT_841",
+        "TEXT_27049",
+        "TEXT_49361",
+        "TEXT_845",
+        "TEXT_16164",
+        "TEXT_23866",
+        "TEXT_80469",
+        "TEXT_3870",
+        "TEXT_3871",
+        "TEXT_7909"
+      ]
+    },
+    {
+      "number": 80,
+      "id": "Moscow City",
+      "label": "Moscow City",
+      "kind": "railway",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.5342309,
+          55.7483053
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 22% of the place's paragraphs",
+      "sources": [
+        "TEXT_2593",
+        "TEXT_23846"
+      ]
+    },
+    {
+      "number": 81,
+      "id": "Ivanivske",
+      "label": "Ivanivske",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.924595,
+          48.574936
+        ]
+      },
+      "why": "mentioned together in 8 records; 8 matching paragraphs; 20% of the place's paragraphs",
+      "sources": [
+        "TEXT_16307",
+        "TEXT_16442",
+        "TEXT_26113",
+        "TEXT_66910",
+        "TEXT_21870",
+        "TEXT_25159",
+        "TEXT_80486"
+      ]
+    },
+    {
+      "number": 82,
+      "id": "Bila Hora",
+      "label": "Bila Hora",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.8556952,
+          48.486595
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 20% of the place's paragraphs",
+      "sources": [
+        "TEXT_16294",
+        "TEXT_80488"
+      ]
+    },
+    {
+      "number": 83,
+      "id": "Valday",
+      "label": "Valday",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.2537994,
+          57.9791414
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 20% of the place's paragraphs",
+      "sources": [
+        "TEXT_46712"
+      ]
+    },
+    {
+      "number": 84,
+      "id": "Benghazi",
+      "label": "Benghazi",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.0812174,
+          32.1200168
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 20% of the place's paragraphs",
+      "sources": [
+        "TEXT_27735"
+      ]
+    },
+    {
+      "number": 85,
+      "id": "Pidhorodne",
+      "label": "Pidhorodne",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.1013002,
+          48.5681471
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 20% of the place's paragraphs",
+      "sources": [
+        "TEXT_80462"
+      ]
+    },
+    {
+      "number": 86,
+      "id": "Zaliznianske",
+      "label": "Zaliznianske",
+      "kind": "hamlet",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9465885,
+          48.701228
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 20% of the place's paragraphs",
+      "sources": [
+        "TEXT_21868"
+      ]
+    },
+    {
+      "number": 87,
+      "id": "Khromove",
+      "label": "Khromove",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9453103,
+          48.599054
+        ]
+      },
+      "why": "mentioned together in 4 records; 4 matching paragraphs; 19% of the place's paragraphs",
+      "sources": [
+        "TEXT_16294",
+        "TEXT_31602",
+        "TEXT_21868",
+        "TEXT_80485"
+      ]
+    },
+    {
+      "number": 88,
+      "id": "Klishchiivka",
+      "label": "Klishchiivka",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9588768,
+          48.5276741
+        ]
+      },
+      "why": "mentioned together in 14 records; 14 matching paragraphs; 19% of the place's paragraphs",
+      "sources": [
+        "TEXT_3871",
+        "TEXT_16442",
+        "TEXT_26113",
+        "TEXT_27706",
+        "TEXT_31602",
+        "TEXT_42150",
+        "TEXT_21865",
+        "TEXT_21870",
+        "TEXT_25159",
+        "TEXT_80462"
+      ]
+    },
+    {
+      "number": 89,
+      "id": "Bakhmutka",
+      "label": "Bakhmutka",
+      "kind": "river",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0130625,
+          48.5755332
+        ]
+      },
+      "why": "mentioned together in 4 records; 4 matching paragraphs; 18% of the place's paragraphs",
+      "sources": [
+        "TEXT_80467",
+        "TEXT_21868",
+        "TEXT_80442"
+      ]
+    },
+    {
+      "number": 90,
+      "id": "Berestove",
+      "label": "Berestove",
+      "kind": "neighbourhood",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.555038,
+          50.438046
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 18% of the place's paragraphs",
+      "sources": [
+        "TEXT_37551"
+      ]
+    },
+    {
+      "number": 91,
+      "id": "Zelenopillia",
+      "label": "Zelenopillia",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9632015,
+          48.4715849
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 17% of the place's paragraphs",
+      "sources": [
+        "TEXT_80456",
+        "TEXT_21859"
+      ]
+    },
+    {
+      "number": 92,
+      "id": "Khotilovo",
+      "label": "Khotilovo",
+      "kind": "military",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.0954811,
+          57.6579744
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 17% of the place's paragraphs",
+      "sources": [
+        "TEXT_46712"
+      ]
+    },
+    {
+      "number": 93,
+      "id": "Rybinsk",
+      "label": "Rybinsk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.8558908,
+          58.0489536
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 17% of the place's paragraphs",
+      "sources": [
+        "TEXT_3872"
+      ]
+    },
+    {
+      "number": 94,
+      "id": "Tessalit",
+      "label": "Tessalit",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.0124531,
+          20.2019542
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 17% of the place's paragraphs",
+      "sources": [
+        "TEXT_75843"
+      ]
+    },
+    {
+      "number": 95,
+      "id": "Tripoli",
+      "label": "Tripoli",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.1777923,
+          32.896672
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 14% of the place's paragraphs",
+      "sources": [
+        "TEXT_27735",
+        "TEXT_27736"
+      ]
+    },
+    {
+      "number": 96,
+      "id": "Havana",
+      "label": "Havana",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.3589631,
+          23.135305
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 14% of the place's paragraphs",
+      "sources": [
+        "TEXT_27743"
+      ]
+    },
+    {
+      "number": 97,
+      "id": "Aguelhok",
+      "label": "Aguelhok",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.8573623,
+          19.4641919
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 14% of the place's paragraphs",
+      "sources": [
+        "TEXT_75843"
+      ]
+    },
+    {
+      "number": 98,
+      "id": "Zhdanov",
+      "label": "Zhdanov",
+      "kind": "road",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.2018619,
+          42.3172109
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 14% of the place's paragraphs",
+      "uncertain": "geocoded as a road with importance 0.05",
+      "sources": [
+        "TEXT_3869"
+      ]
+    },
+    {
+      "number": 99,
+      "id": "Kurdiumivka",
+      "label": "Kurdiumivka",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9568757,
+          48.4683008
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 13% of the place's paragraphs",
+      "sources": [
+        "TEXT_80457",
+        "TEXT_21859"
+      ]
+    },
+    {
+      "number": 100,
+      "id": "Popasna",
+      "label": "Popasna",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.3777033,
+          48.6322687
+        ]
+      },
+      "why": "mentioned together in 16 records; 16 matching paragraphs; 13% of the place's paragraphs",
+      "sources": [
+        "TEXT_3864",
+        "TEXT_37514",
+        "TEXT_3865",
+        "TEXT_3868",
+        "TEXT_15869",
+        "TEXT_24524",
+        "TEXT_27701",
+        "TEXT_37897",
+        "TEXT_37898",
+        "TEXT_42155"
+      ]
+    },
+    {
+      "number": 101,
+      "id": "Kadiivka",
+      "label": "Kadiivka",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.6499847,
+          48.5595971
+        ]
+      },
+      "why": "mentioned together in 4 records; 4 matching paragraphs; 13% of the place's paragraphs",
+      "sources": [
+        "TEXT_3866",
+        "TEXT_3869",
+        "TEXT_15716"
+      ]
+    },
+    {
+      "number": 102,
+      "id": "Kidal",
+      "label": "Kidal",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.4075395,
+          18.4408358
+        ]
+      },
+      "why": "mentioned together in 4 records; 4 matching paragraphs; 13% of the place's paragraphs",
+      "sources": [
+        "TEXT_75728",
+        "TEXT_75851",
+        "TEXT_75843",
+        "TEXT_75844"
+      ]
+    },
+    {
+      "number": 103,
+      "id": "Ménaka",
+      "label": "Ménaka",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.4,
+          15.9167
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 12% of the place's paragraphs",
+      "sources": [
+        "TEXT_68298"
+      ]
+    },
+    {
+      "number": 104,
+      "id": "Novodonetske",
+      "label": "Novodonetske",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.9819183,
+          48.6342604
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 12% of the place's paragraphs",
+      "sources": [
+        "TEXT_16442"
+      ]
+    },
+    {
+      "number": 105,
+      "id": "Eastern Mediterranean",
+      "label": "Eastern Mediterranean",
+      "kind": "road",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.6623855,
+          -33.8086505
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 12% of the place's paragraphs",
+      "uncertain": "geocoded as a road with importance 0.04",
+      "sources": [
+        "TEXT_50845"
+      ]
+    },
+    {
+      "number": 106,
+      "id": "Deir ez-Zor",
+      "label": "Deir ez-Zor",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          40.1499999,
+          35.3333335
+        ]
+      },
+      "why": "mentioned together in 4 records; 4 matching paragraphs; 12% of the place's paragraphs",
+      "sources": [
+        "TEXT_42227",
+        "TEXT_27776",
+        "TEXT_47209"
+      ]
+    },
+    {
+      "number": 107,
+      "id": "Paraskoviivka",
+      "label": "Paraskoviivka",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.4445154,
+          47.8681484
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 10% of the place's paragraphs",
+      "sources": [
+        "TEXT_16442"
+      ]
+    },
+    {
+      "number": 108,
+      "id": "Azawad",
+      "label": "Azawad",
+      "kind": "historic",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.4140119,
+          18.4347176
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 9% of the place's paragraphs",
+      "sources": [
+        "TEXT_75728"
+      ]
+    },
+    {
+      "number": 109,
+      "id": "Hiroshima",
+      "label": "Hiroshima",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.4517589,
+          34.3917241
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 9% of the place's paragraphs",
+      "sources": [
+        "TEXT_24495"
+      ]
+    },
+    {
+      "number": 110,
+      "id": "Lohvynove",
+      "label": "Lohvynove",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.34683,
+          48.37898
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 9% of the place's paragraphs",
+      "sources": [
+        "TEXT_3866"
+      ]
+    },
+    {
+      "number": 111,
+      "id": "Migalovo",
+      "label": "Migalovo",
+      "kind": "aeroway",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.7564309,
+          56.8290939
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 8% of the place's paragraphs",
+      "sources": [
+        "TEXT_46712"
+      ]
+    },
+    {
+      "number": 112,
+      "id": "North Africa",
+      "label": "North Africa",
+      "kind": "garden",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.159665,
+          41.362599
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 8% of the place's paragraphs",
+      "sources": [
+        "TEXT_50845"
+      ]
+    },
+    {
+      "number": 113,
+      "id": "Svitlodarsk",
+      "label": "Svitlodarsk",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.22349,
+          48.43803
+        ]
+      },
+      "why": "mentioned together in 5 records; 5 matching paragraphs; 8% of the place's paragraphs",
+      "sources": [
+        "TEXT_3865",
+        "TEXT_27701"
+      ]
+    },
+    {
+      "number": 114,
+      "id": "Vuhlehirsk",
+      "label": "Vuhlehirsk",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.2609048,
+          48.3119524
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 8% of the place's paragraphs",
+      "sources": [
+        "TEXT_37551",
+        "TEXT_37552"
+      ]
+    },
+    {
+      "number": 115,
+      "id": "Palestine",
+      "label": "Palestine",
+      "kind": "disputed",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.3015948,
+          32.2591449
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 8% of the place's paragraphs",
+      "sources": [
+        "TEXT_27674"
+      ]
+    },
+    {
+      "number": 116,
+      "id": "Yahidne",
+      "label": "Yahidne",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.27685,
+          51.345119
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 8% of the place's paragraphs",
+      "sources": [
+        "TEXT_21868"
+      ]
+    },
+    {
+      "number": 117,
+      "id": "Avdiivka Coke Plant",
+      "label": "Avdiivka Coke Plant",
+      "kind": "industrial",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.6996204,
+          48.1725104
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 8% of the place's paragraphs",
+      "sources": [
+        "TEXT_37278"
+      ]
+    },
+    {
+      "number": 118,
+      "id": "Lipetsk",
+      "label": "Lipetsk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.5963775,
+          52.6051488
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 7% of the place's paragraphs",
+      "sources": [
+        "TEXT_16536"
+      ]
+    },
+    {
+      "number": 119,
+      "id": "Gao",
+      "label": "Gao",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.0412392,
+          16.2788129
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 7% of the place's paragraphs",
+      "sources": [
+        "TEXT_75728",
+        "TEXT_75846"
+      ]
+    },
+    {
+      "number": 120,
+      "id": "Munich",
+      "label": "Munich",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.5753822,
+          48.1371079
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 7% of the place's paragraphs",
+      "sources": [
+        "TEXT_86346"
+      ]
+    },
+    {
+      "number": 121,
+      "id": "Bamako",
+      "label": "Bamako",
+      "kind": "administrative",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -7.9850046,
+          12.6132656
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 7% of the place's paragraphs",
+      "sources": [
+        "TEXT_26714"
+      ]
+    },
+    {
+      "number": 122,
+      "id": "Saint Petersburg",
+      "label": "Saint Petersburg",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.316229,
+          59.938732
+        ]
+      },
+      "why": "mentioned together in 12 records; 12 matching paragraphs; 7% of the place's paragraphs",
+      "sources": [
+        "TEXT_3872",
+        "TEXT_41513",
+        "TEXT_46725",
+        "TEXT_49368",
+        "TEXT_16540",
+        "TEXT_7938",
+        "TEXT_27660",
+        "TEXT_7987",
+        "TEXT_23803",
+        "TEXT_27659"
+      ]
+    },
+    {
+      "number": 123,
+      "id": "Kremlin",
+      "label": "Kremlin",
+      "kind": "neighbourhood",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.6203201,
+          54.1950973
+        ]
+      },
+      "why": "mentioned together in 31 records; 31 matching paragraphs; 7% of the place's paragraphs",
+      "sources": [
+        "TEXT_1013",
+        "TEXT_6641",
+        "TEXT_7972",
+        "TEXT_7985",
+        "TEXT_16307",
+        "TEXT_23839",
+        "TEXT_41479",
+        "TEXT_41495",
+        "TEXT_42208",
+        "TEXT_49361"
+      ]
+    },
+    {
+      "number": 124,
+      "id": "Omsk",
+      "label": "Omsk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.371529,
+          54.991375
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 6% of the place's paragraphs",
+      "sources": [
+        "TEXT_27225"
+      ]
+    },
+    {
+      "number": 125,
+      "id": "Krasnogorsk",
+      "label": "Krasnogorsk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.3196942,
+          55.8204707
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 6% of the place's paragraphs",
+      "sources": [
+        "TEXT_27666"
+      ]
+    },
+    {
+      "number": 126,
+      "id": "Andriivka",
+      "label": "Andriivka",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.643724,
+          47.4688005
+        ]
+      },
+      "why": "mentioned together in 4 records; 4 matching paragraphs; 5% of the place's paragraphs",
+      "sources": [
+        "TEXT_31602",
+        "TEXT_21865",
+        "TEXT_80456",
+        "TEXT_21859"
+      ]
+    },
+    {
+      "number": 127,
+      "id": "Damascus",
+      "label": "Damascus",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.3095814,
+          33.5130695
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 5% of the place's paragraphs",
+      "sources": [
+        "TEXT_27715",
+        "TEXT_50987"
+      ]
+    },
+    {
+      "number": 128,
+      "id": "Urals",
+      "label": "Urals",
+      "kind": "mountain_range",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          60.115404,
+          65.0331721
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 5% of the place's paragraphs",
+      "sources": [
+        "TEXT_27040"
+      ]
+    },
+    {
+      "number": 129,
+      "id": "Pokrovske",
+      "label": "Pokrovske",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2333808,
+          47.9808528
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 5% of the place's paragraphs",
+      "sources": [
+        "TEXT_37552"
+      ]
+    },
+    {
+      "number": 130,
+      "id": "Rostov",
+      "label": "Rostov",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.7198736,
+          47.2222596
+        ]
+      },
+      "why": "mentioned together in 4 records; 4 matching paragraphs; 5% of the place's paragraphs",
+      "sources": [
+        "TEXT_40708",
+        "TEXT_7927",
+        "TEXT_7929",
+        "TEXT_27691"
+      ]
+    },
+    {
+      "number": 131,
+      "id": "Middle East",
+      "label": "Middle East",
+      "kind": "neighbourhood",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.5888477,
+          39.3014159
+        ]
+      },
+      "why": "mentioned together in 6 records; 6 matching paragraphs; 5% of the place's paragraphs",
+      "sources": [
+        "TEXT_8108",
+        "TEXT_16226",
+        "TEXT_41492",
+        "TEXT_7914"
+      ]
+    },
+    {
+      "number": 132,
+      "id": "Moscow",
+      "label": "Moscow",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.6174782,
+          55.7505412
+        ]
+      },
+      "why": "OPPOSES in 1 record; mentioned together in 68 records; 69 matching paragraphs; 5% of the place's paragraphs",
+      "sources": [
+        "TEXT_7910",
+        "TEXT_7925",
+        "TEXT_7968",
+        "TEXT_7985",
+        "TEXT_7991",
+        "TEXT_16536",
+        "TEXT_16541",
+        "TEXT_16870",
+        "TEXT_22837",
+        "TEXT_23839"
+      ]
+    },
+    {
+      "number": 133,
+      "id": "Krasnoyarsk",
+      "label": "Krasnoyarsk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          92.872586,
+          56.0091173
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 5% of the place's paragraphs",
+      "sources": [
+        "TEXT_86914"
+      ]
+    },
+    {
+      "number": 134,
+      "id": "Opytne",
+      "label": "Opytne",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.7192788,
+          48.0965542
+        ]
+      },
+      "why": "mentioned together in 4 records; 4 matching paragraphs; 4% of the place's paragraphs",
+      "sources": [
+        "TEXT_21865",
+        "TEXT_80456",
+        "TEXT_80462",
+        "TEXT_21859"
+      ]
+    },
+    {
+      "number": 135,
+      "id": "Pervomaiske",
+      "label": "Pervomaiske",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.77693,
+          47.99446
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 4% of the place's paragraphs",
+      "sources": [
+        "TEXT_21861"
+      ]
+    },
+    {
+      "number": 136,
+      "id": "Central",
+      "label": "Central",
+      "kind": "quarter",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.0504257,
+          14.6446934
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 4% of the place's paragraphs",
+      "sources": [
+        "TEXT_23839"
+      ]
+    },
+    {
+      "number": 137,
+      "id": "Kenya",
+      "label": "Kenya",
+      "kind": "historic:administrative",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.5164935,
+          0.2793165
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 4% of the place's paragraphs",
+      "sources": [
+        "TEXT_41514"
+      ]
+    },
+    {
+      "number": 138,
+      "id": "Geneva",
+      "label": "Geneva",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.1466014,
+          46.2017559
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 4% of the place's paragraphs",
+      "sources": [
+        "TEXT_3906"
+      ]
+    },
+    {
+      "number": 139,
+      "id": "Millerovo",
+      "label": "Millerovo",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          40.391854,
+          48.9196264
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 4% of the place's paragraphs",
+      "sources": [
+        "TEXT_7931"
+      ]
+    },
+    {
+      "number": 140,
+      "id": "Novoluhanske",
+      "label": "Novoluhanske",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.1734964,
+          48.4290318
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 4% of the place's paragraphs",
+      "sources": [
+        "TEXT_37551"
+      ]
+    },
+    {
+      "number": 141,
+      "id": "Pavlivka",
+      "label": "Pavlivka",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.46138,
+          50.627998
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 4% of the place's paragraphs",
+      "sources": [
+        "TEXT_21859"
+      ]
+    },
+    {
+      "number": 142,
+      "id": "Blahodatne",
+      "label": "Blahodatne",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.4193794,
+          47.6992867
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 4% of the place's paragraphs",
+      "sources": [
+        "TEXT_21866"
+      ]
+    },
+    {
+      "number": 143,
+      "id": "Donetsk People's Republic",
+      "label": "Donetsk People's Republic",
+      "kind": "amenity",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.8003465,
+          48.0089299
+        ]
+      },
+      "why": "mentioned together in 18 records; 18 matching paragraphs; 3% of the place's paragraphs",
+      "uncertain": "geocoded as a amenity with importance 0.39",
+      "sources": [
+        "TEXT_24660",
+        "TEXT_2728",
+        "TEXT_11479",
+        "TEXT_16315",
+        "TEXT_27065",
+        "TEXT_27595",
+        "TEXT_29115",
+        "TEXT_36743",
+        "TEXT_80537",
+        "TEXT_82081"
+      ]
+    },
+    {
+      "number": 144,
+      "id": "Minsk",
+      "label": "Minsk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.5618225,
+          53.9024716
+        ]
+      },
+      "why": "mentioned together in 8 records; 8 matching paragraphs; 3% of the place's paragraphs",
+      "sources": [
+        "TEXT_7982",
+        "TEXT_16639",
+        "TEXT_82538",
+        "TEXT_82563",
+        "TEXT_87805",
+        "TEXT_86249"
+      ]
+    },
+    {
+      "number": 145,
+      "id": "Debaltseve",
+      "label": "Debaltseve",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.3999096,
+          48.3396839
+        ]
+      },
+      "why": "mentioned together in 4 records; 4 matching paragraphs; 3% of the place's paragraphs",
+      "sources": [
+        "TEXT_3854",
+        "TEXT_80537"
+      ]
+    },
+    {
+      "number": 146,
+      "id": "Stanytsia Luhanska",
+      "label": "Stanytsia Luhanska",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.4956573,
+          48.6429638
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 3% of the place's paragraphs",
+      "sources": [
+        "TEXT_49378"
+      ]
+    },
+    {
+      "number": 147,
+      "id": "Siversk",
+      "label": "Siversk",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0902435,
+          48.8676267
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 3% of the place's paragraphs",
+      "sources": [
+        "TEXT_23371",
+        "TEXT_21866"
+      ]
+    },
+    {
+      "number": 148,
+      "id": "Luhansk",
+      "label": "Luhansk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.2973153,
+          48.5717084
+        ]
+      },
+      "why": "mentioned together in 24 records; 24 matching paragraphs; 3% of the place's paragraphs",
+      "sources": [
+        "TEXT_2586",
+        "TEXT_3868",
+        "TEXT_6641",
+        "TEXT_16226",
+        "TEXT_23794",
+        "TEXT_23846",
+        "TEXT_24524",
+        "TEXT_37898",
+        "TEXT_16045",
+        "TEXT_41510"
+      ]
+    },
+    {
+      "number": 149,
+      "id": "Tartus",
+      "label": "Tartus",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.885167,
+          34.8936225
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 3% of the place's paragraphs",
+      "sources": [
+        "TEXT_50845"
+      ]
+    },
+    {
+      "number": 150,
+      "id": "Ulan-Ude",
+      "label": "Ulan-Ude",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.5839105,
+          51.8357841
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 3% of the place's paragraphs",
+      "sources": [
+        "TEXT_27776"
+      ]
+    },
+    {
+      "number": 151,
+      "id": "Perm",
+      "label": "Perm",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          56.2318528,
+          58.0108531
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 3% of the place's paragraphs",
+      "sources": [
+        "TEXT_2593"
+      ]
+    },
+    {
+      "number": 152,
+      "id": "Serbia",
+      "label": "Serbia",
+      "kind": "claimed_administrative",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          21.0765743,
+          44.0243229
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_27756"
+      ]
+    },
+    {
+      "number": 153,
+      "id": "Novomykhailivka",
+      "label": "Novomykhailivka",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.4863822,
+          47.8552316
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_27049"
+      ]
+    },
+    {
+      "number": 154,
+      "id": "Chernobyl",
+      "label": "Chernobyl",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.2195609,
+          51.2705477
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_27233",
+        "TEXT_6780"
+      ]
+    },
+    {
+      "number": 155,
+      "id": "Murmansk",
+      "label": "Murmansk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.07497,
+          68.970665
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_7973"
+      ]
+    },
+    {
+      "number": 156,
+      "id": "Belgorod",
+      "label": "Belgorod",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.5873394,
+          50.5955595
+        ]
+      },
+      "why": "mentioned together in 6 records; 6 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_6641",
+        "TEXT_22244",
+        "TEXT_22813",
+        "TEXT_34129",
+        "TEXT_22266"
+      ]
+    },
+    {
+      "number": 157,
+      "id": "Sievierodonetsk",
+      "label": "Sievierodonetsk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.4936475,
+          48.9478698
+        ]
+      },
+      "why": "mentioned together in 4 records; 4 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_3866",
+        "TEXT_6641"
+      ]
+    },
+    {
+      "number": 158,
+      "id": "Nevelske",
+      "label": "Nevelske",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.5718822,
+          48.0623215
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_21861"
+      ]
+    },
+    {
+      "number": 159,
+      "id": "Novosibirsk",
+      "label": "Novosibirsk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          82.9515989,
+          54.9678145
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_46725"
+      ]
+    },
+    {
+      "number": 160,
+      "id": "Bohdanivka",
+      "label": "Bohdanivka",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          43.5927945,
+          41.2650182
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_21868"
+      ]
+    },
+    {
+      "number": 161,
+      "id": "Avdiivka",
+      "label": "Avdiivka",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.7466719,
+          48.1338824
+        ]
+      },
+      "why": "mentioned together in 9 records; 9 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_16315",
+        "TEXT_27595",
+        "TEXT_42346",
+        "TEXT_37368",
+        "TEXT_80485",
+        "TEXT_37278"
+      ]
+    },
+    {
+      "number": 162,
+      "id": "Vuhledar",
+      "label": "Vuhledar",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.2460771,
+          47.7809924
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_27036",
+        "TEXT_21859"
+      ]
+    },
+    {
+      "number": 163,
+      "id": "Nizhny Novgorod",
+      "label": "Nizhny Novgorod",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          44.0051395,
+          56.3264816
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_2593"
+      ]
+    },
+    {
+      "number": 164,
+      "id": "Sochi",
+      "label": "Sochi",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.723109,
+          43.5854823
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_46718"
+      ]
+    },
+    {
+      "number": 165,
+      "id": "Volgograd",
+      "label": "Volgograd",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          44.5153353,
+          48.7081906
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_82084",
+        "TEXT_7973"
+      ]
+    },
+    {
+      "number": 166,
+      "id": "Ryazan",
+      "label": "Ryazan",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.6884462,
+          54.6702523
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_23794"
+      ]
+    },
+    {
+      "number": 167,
+      "id": "Balakliia",
+      "label": "Balakliia",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.8397826,
+          49.4521336
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_27233"
+      ]
+    },
+    {
+      "number": 168,
+      "id": "Chasiv Yar",
+      "label": "Chasiv Yar",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.8373367,
+          48.5873911
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_27233",
+        "TEXT_844",
+        "TEXT_25159"
+      ]
+    },
+    {
+      "number": 169,
+      "id": "Paris",
+      "label": "Paris",
+      "kind": "suburb",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.320041,
+          48.8588897
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_51267"
+      ]
+    },
+    {
+      "number": 170,
+      "id": "Krasnodar",
+      "label": "Krasnodar",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.9772396,
+          45.0351532
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_7973"
+      ]
+    },
+    {
+      "number": 171,
+      "id": "Kharkiv",
+      "label": "Kharkiv",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2310146,
+          49.9923181
+        ]
+      },
+      "why": "mentioned together in 14 records; 14 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_3866",
+        "TEXT_6641",
+        "TEXT_27233",
+        "TEXT_42345",
+        "TEXT_77896",
+        "TEXT_844",
+        "TEXT_6622",
+        "TEXT_41497",
+        "TEXT_44032",
+        "TEXT_49366"
+      ]
+    },
+    {
+      "number": 172,
+      "id": "Kherson",
+      "label": "Kherson",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          32.6143922,
+          46.6401295
+        ]
+      },
+      "why": "mentioned together in 10 records; 10 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_36743",
+        "TEXT_42345",
+        "TEXT_844",
+        "TEXT_6622",
+        "TEXT_21861",
+        "TEXT_44032",
+        "TEXT_49366",
+        "TEXT_80442"
+      ]
+    },
+    {
+      "number": 173,
+      "id": "Bucha",
+      "label": "Bucha",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.2106925,
+          50.5503127
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_3863",
+        "TEXT_4951"
+      ]
+    },
+    {
+      "number": 174,
+      "id": "Ivano-Frankivsk",
+      "label": "Ivano-Frankivsk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.710334,
+          48.9224763
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_6780"
+      ]
+    },
+    {
+      "number": 175,
+      "id": "Huliaipole",
+      "label": "Huliaipole",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2656849,
+          47.6655382
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_8360"
+      ]
+    },
+    {
+      "number": 176,
+      "id": "Yekaterinburg",
+      "label": "Yekaterinburg",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          60.6007886,
+          56.8382071
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_27765"
+      ]
+    },
+    {
+      "number": 177,
+      "id": "Kreminna",
+      "label": "Kreminna",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.2178525,
+          49.0463189
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_27040"
+      ]
+    },
+    {
+      "number": 178,
+      "id": "Khmelnytskyi",
+      "label": "Khmelnytskyi",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.9793793,
+          49.4196404
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_6780"
+      ]
+    },
+    {
+      "number": 179,
+      "id": "Azovstal",
+      "label": "Azovstal",
+      "kind": "man_made",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.5991312,
+          47.106171
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_27049"
+      ]
+    },
+    {
+      "number": 180,
+      "id": "Washington",
+      "label": "Washington",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.0363849,
+          38.8950982
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_47207"
+      ]
+    },
+    {
+      "number": 181,
+      "id": "Kursk",
+      "label": "Kursk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.1923123,
+          51.7309249
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_2593",
+        "TEXT_17346",
+        "TEXT_22813"
+      ]
+    },
+    {
+      "number": 182,
+      "id": "Sloviansk",
+      "label": "Sloviansk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.6058241,
+          48.8522691
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_35352"
+      ]
+    },
+    {
+      "number": 183,
+      "id": "White House",
+      "label": "White House",
+      "kind": "office",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.0365525,
+          38.8976387
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_80510"
+      ]
+    },
+    {
+      "number": 184,
+      "id": "Snake Island",
+      "label": "Snake Island",
+      "kind": "islet",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.2033074,
+          45.2548067
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_81237"
+      ]
+    },
+    {
+      "number": 185,
+      "id": "Kyiv",
+      "label": "Kyiv",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.5241361,
+          50.4500336
+        ]
+      },
+      "why": "mentioned together in 17 records; 17 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_1013",
+        "TEXT_3861",
+        "TEXT_3879",
+        "TEXT_4951",
+        "TEXT_7968",
+        "TEXT_23750",
+        "TEXT_23795",
+        "TEXT_27212",
+        "TEXT_27233",
+        "TEXT_49415"
+      ]
+    },
+    {
+      "number": 186,
+      "id": "Krasnohorivka",
+      "label": "Krasnohorivka",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.50449,
+          48.01068
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_36892"
+      ]
+    },
+    {
+      "number": 187,
+      "id": "Siverskyi Donets",
+      "label": "Siverskyi Donets",
+      "kind": "river",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.2624823,
+          49.0235376
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_27233"
+      ]
+    },
+    {
+      "number": 188,
+      "id": "Kostiantynivka",
+      "label": "Kostiantynivka",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.6923755,
+          48.5348985
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_21861"
+      ]
+    },
+    {
+      "number": 189,
+      "id": "Sumy",
+      "label": "Sumy",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.8027723,
+          50.9119775
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_6641"
+      ]
+    },
+    {
+      "number": 190,
+      "id": "Pisky",
+      "label": "Pisky",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.67452,
+          48.06604
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_37562"
+      ]
+    },
+    {
+      "number": 191,
+      "id": "Sevastopol",
+      "label": "Sevastopol",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.5220842,
+          44.6054434
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 0% of the place's paragraphs",
+      "sources": [
+        "TEXT_2593",
+        "TEXT_15794",
+        "TEXT_81237"
+      ]
+    },
+    {
+      "number": 192,
+      "id": "Zaporizhzhia",
+      "label": "Zaporizhzhia",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.1182867,
+          47.8507859
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 0% of the place's paragraphs",
+      "sources": [
+        "TEXT_32829",
+        "TEXT_42345"
+      ]
+    },
+    {
+      "number": 193,
+      "id": "Berdiansk",
+      "label": "Berdiansk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.7887623,
+          46.755678
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 0% of the place's paragraphs",
+      "sources": [
+        "TEXT_68195"
+      ]
+    },
+    {
+      "number": 194,
+      "id": "Kramatorsk",
+      "label": "Kramatorsk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.5843812,
+          48.7389415
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 0% of the place's paragraphs",
+      "sources": [
+        "TEXT_23872"
+      ]
+    },
+    {
+      "number": 195,
+      "id": "Kupiansk",
+      "label": "Kupiansk",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.6141992,
+          49.7132963
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 0% of the place's paragraphs",
+      "sources": [
+        "TEXT_23104"
+      ]
+    },
+    {
+      "number": 196,
+      "id": "Lysychansk",
+      "label": "Lysychansk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.4285981,
+          48.917267
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 0% of the place's paragraphs",
+      "sources": [
+        "TEXT_29115"
+      ]
+    },
+    {
+      "number": 197,
+      "id": "Mariupol",
+      "label": "Mariupol",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.5499621,
+          47.0957648
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 0% of the place's paragraphs",
+      "sources": [
+        "TEXT_23839",
+        "TEXT_27647",
+        "TEXT_80499"
+      ]
+    },
+    {
+      "number": 198,
+      "id": "Odesa",
+      "label": "Odesa",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.7322878,
+          46.4843023
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 0% of the place's paragraphs",
+      "sources": [
+        "TEXT_6780",
+        "TEXT_81152"
+      ]
+    },
+    {
+      "number": 199,
+      "id": "Dnieper",
+      "label": "Dnieper",
+      "kind": "river",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.8243039,
+          51.9191343
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 0% of the place's paragraphs",
+      "sources": [
+        "TEXT_37004"
+      ]
+    },
+    {
+      "number": 200,
+      "id": "Chernihiv",
+      "label": "Chernihiv",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.294332,
+          51.494099
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 0% of the place's paragraphs",
+      "sources": [
+        "TEXT_17346"
+      ]
+    },
+    {
+      "number": 201,
+      "id": "Mykolaiv",
+      "label": "Mykolaiv",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.9939666,
+          46.9758615
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 0% of the place's paragraphs",
+      "sources": [
+        "TEXT_81152"
+      ]
+    },
+    {
+      "number": 202,
+      "id": "Crimea",
+      "label": "Crimea",
+      "kind": "peninsula",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.2008188,
+          45.2835044
+        ]
+      },
+      "why": "OPERATES_IN in 1 record; mentioned together in 17 records; 18 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_2593",
+        "TEXT_3853",
+        "TEXT_15794",
+        "TEXT_16307",
+        "TEXT_39653",
+        "TEXT_49415",
+        "TEXT_82084",
+        "TEXT_27655",
+        "TEXT_42240",
+        "TEXT_27697"
+      ]
+    },
+    {
+      "number": 203,
+      "id": "Cabo Delgado",
+      "label": "Cabo Delgado",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.4168743,
+          -12.4254942
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 150% of the place's paragraphs",
+      "sources": [
+        "TEXT_27779",
+        "TEXT_27719"
+      ]
+    },
+    {
+      "number": 204,
+      "id": "Chatham Islands",
+      "label": "Chatham Islands",
+      "kind": "region",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -176.18734,
+          -43.917534
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 100% of the place's paragraphs",
+      "sources": [
+        "TEXT_27760"
+      ]
+    },
+    {
+      "number": 205,
+      "id": "Homs Governorate",
+      "label": "Homs Governorate",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0622823,
+          34.4667601
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 100% of the place's paragraphs",
+      "sources": [
+        "TEXT_7942"
+      ]
+    },
+    {
+      "number": 206,
+      "id": "Mogilev Region",
+      "label": "Mogilev Region",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.3863145,
+          53.7254147
+        ]
+      },
+      "why": "mentioned together in 4 records; 4 matching paragraphs; 50% of the place's paragraphs",
+      "sources": [
+        "TEXT_7971",
+        "TEXT_16555",
+        "TEXT_86249"
+      ]
+    },
+    {
+      "number": 207,
+      "id": "6",
+      "label": "6",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -7.9639028,
+          33.2627128
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 50% of the place's paragraphs",
+      "sources": [
+        "TEXT_1696"
+      ]
+    },
+    {
+      "number": 208,
+      "id": "Yelets",
+      "label": "Yelets",
+      "kind": "county",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.5290418,
+          52.6150528
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 43% of the place's paragraphs",
+      "sources": [
+        "TEXT_16536",
+        "TEXT_7934"
+      ]
+    },
+    {
+      "number": 209,
+      "id": "Mopti",
+      "label": "Mopti",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.6464581,
+          14.514489
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 29% of the place's paragraphs",
+      "sources": [
+        "TEXT_27740"
+      ]
+    },
+    {
+      "number": 210,
+      "id": "Sahel",
+      "label": "Sahel",
+      "kind": "region",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.7717776,
+          14.0279165
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 27% of the place's paragraphs",
+      "sources": [
+        "TEXT_3926",
+        "TEXT_4064",
+        "TEXT_26709"
+      ]
+    },
+    {
+      "number": 211,
+      "id": "Rostov-on-Don",
+      "label": "Rostov-on-Don",
+      "kind": "county",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.7249086,
+          47.2610441
+        ]
+      },
+      "why": "mentioned together in 28 records; 28 matching paragraphs; 22% of the place's paragraphs",
+      "sources": [
+        "TEXT_7910",
+        "TEXT_7925",
+        "TEXT_16536",
+        "TEXT_27647",
+        "TEXT_27653",
+        "TEXT_42243",
+        "TEXT_7947",
+        "TEXT_16541",
+        "TEXT_34635",
+        "TEXT_46725"
+      ]
+    },
+    {
+      "number": 212,
+      "id": "Tver Oblast",
+      "label": "Tver Oblast",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.1744428,
+          57.1134475
+        ]
+      },
+      "why": "mentioned together in 11 records; 11 matching paragraphs; 21% of the place's paragraphs",
+      "sources": [
+        "TEXT_16870",
+        "TEXT_26702",
+        "TEXT_27693",
+        "TEXT_37210",
+        "TEXT_42206",
+        "TEXT_46702",
+        "TEXT_7987",
+        "TEXT_27780",
+        "TEXT_41482"
+      ]
+    },
+    {
+      "number": 213,
+      "id": "Palmyra",
+      "label": "Palmyra",
+      "kind": "region",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -162.0779477,
+          5.883126
+        ]
+      },
+      "why": "mentioned together in 6 records; 6 matching paragraphs; 21% of the place's paragraphs",
+      "sources": [
+        "TEXT_27713",
+        "TEXT_50984",
+        "TEXT_27676",
+        "TEXT_27775",
+        "TEXT_27777",
+        "TEXT_82293"
+      ]
+    },
+    {
+      "number": 214,
+      "id": "Lipetsk Oblast",
+      "label": "Lipetsk Oblast",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.1122664,
+          52.6935178
+        ]
+      },
+      "why": "mentioned together in 4 records; 4 matching paragraphs; 20% of the place's paragraphs",
+      "sources": [
+        "TEXT_16536",
+        "TEXT_7934",
+        "TEXT_7936"
+      ]
+    },
+    {
+      "number": 215,
+      "id": "Mari El",
+      "label": "Mari El",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          47.8817512,
+          56.5767504
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 20% of the place's paragraphs",
+      "sources": [
+        "TEXT_1696"
+      ]
+    },
+    {
+      "number": 216,
+      "id": "Republika Srpska",
+      "label": "Republika Srpska",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.3659025,
+          44.6696196
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 10% of the place's paragraphs",
+      "sources": [
+        "TEXT_27659"
+      ]
+    },
+    {
+      "number": 217,
+      "id": "Voronezh Oblast",
+      "label": "Voronezh Oblast",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          40.1506507,
+          50.9800393
+        ]
+      },
+      "why": "mentioned together in 8 records; 8 matching paragraphs; 9% of the place's paragraphs",
+      "sources": [
+        "TEXT_7910",
+        "TEXT_87252",
+        "TEXT_41629",
+        "TEXT_7931",
+        "TEXT_7934",
+        "TEXT_7933"
+      ]
+    },
+    {
+      "number": 218,
+      "id": "Krasnodar Krai",
+      "label": "Krasnodar Krai",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.0258102,
+          45.7682027
+        ]
+      },
+      "why": "mentioned together in 12 records; 12 matching paragraphs; 8% of the place's paragraphs",
+      "sources": [
+        "TEXT_41532",
+        "TEXT_42222",
+        "TEXT_42248",
+        "TEXT_46733",
+        "TEXT_27666",
+        "TEXT_27777",
+        "TEXT_42242"
+      ]
+    },
+    {
+      "number": 219,
+      "id": "Latakia",
+      "label": "Latakia",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.9772699,
+          35.579874
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 7% of the place's paragraphs",
+      "sources": [
+        "TEXT_50983"
+      ]
+    },
+    {
+      "number": 220,
+      "id": "Hong Kong",
+      "label": "Hong Kong",
+      "kind": "region",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          114.1857778,
+          22.3492361
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 6% of the place's paragraphs",
+      "sources": [
+        "TEXT_27660"
+      ]
+    },
+    {
+      "number": 221,
+      "id": "Chelyabinsk",
+      "label": "Chelyabinsk",
+      "kind": "county",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          61.3997019,
+          55.1559312
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 5% of the place's paragraphs",
+      "sources": [
+        "TEXT_3872"
+      ]
+    },
+    {
+      "number": 222,
+      "id": "Leningrad",
+      "label": "Leningrad",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.1586551,
+          59.9606739
+        ]
+      },
+      "why": "mentioned together in 9 records; 9 matching paragraphs; 4% of the place's paragraphs",
+      "sources": [
+        "TEXT_41514",
+        "TEXT_41513",
+        "TEXT_16599",
+        "TEXT_27091",
+        "TEXT_7937",
+        "TEXT_42164",
+        "TEXT_42223"
+      ]
+    },
+    {
+      "number": 223,
+      "id": "Bashkortostan",
+      "label": "Bashkortostan",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          55.9784582,
+          54.4747553
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 3% of the place's paragraphs",
+      "sources": [
+        "TEXT_2593"
+      ]
+    },
+    {
+      "number": 224,
+      "id": "Kaluga Oblast",
+      "label": "Kaluga Oblast",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.5272854,
+          54.4382773
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 3% of the place's paragraphs",
+      "sources": [
+        "TEXT_7937"
+      ]
+    },
+    {
+      "number": 225,
+      "id": "Karelia",
+      "label": "Karelia",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.4920267,
+          62.6194031
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 3% of the place's paragraphs",
+      "sources": [
+        "TEXT_27100"
+      ]
+    },
+    {
+      "number": 226,
+      "id": "Donbas",
+      "label": "Donbas",
+      "kind": "region",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.3480151,
+          48.59687505
+        ]
+      },
+      "why": "mentioned together in 54 records; 54 matching paragraphs; 3% of the place's paragraphs",
+      "sources": [
+        "TEXT_841",
+        "TEXT_846",
+        "TEXT_2728",
+        "TEXT_3853",
+        "TEXT_3863",
+        "TEXT_3864",
+        "TEXT_3865",
+        "TEXT_3866",
+        "TEXT_3868",
+        "TEXT_3872"
+      ]
+    },
+    {
+      "number": 227,
+      "id": "Balkans",
+      "label": "Balkans",
+      "kind": "peninsula",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.814677,
+          41.7785016
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 3% of the place's paragraphs",
+      "sources": [
+        "TEXT_23839"
+      ]
+    },
+    {
+      "number": 228,
+      "id": "Rostov Oblast",
+      "label": "Rostov Oblast",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          40.7957942,
+          47.6222451
+        ]
+      },
+      "why": "mentioned together in 4 records; 4 matching paragraphs; 3% of the place's paragraphs",
+      "sources": [
+        "TEXT_41510",
+        "TEXT_7927",
+        "TEXT_16533"
+      ]
+    },
+    {
+      "number": 229,
+      "id": "Moscow Oblast",
+      "label": "Moscow Oblast",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0353929,
+          55.5043158
+        ]
+      },
+      "why": "mentioned together in 5 records; 5 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_34948",
+        "TEXT_42247",
+        "TEXT_22244",
+        "TEXT_34129",
+        "TEXT_7936"
+      ]
+    },
+    {
+      "number": 230,
+      "id": "Tatarstan",
+      "label": "Tatarstan",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          50.4763591,
+          55.448217
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_2593"
+      ]
+    },
+    {
+      "number": 231,
+      "id": "Luhansk Oblast",
+      "label": "Luhansk Oblast",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.9150477,
+          49.2724587
+        ]
+      },
+      "why": "mentioned together in 11 records; 11 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_6641",
+        "TEXT_15869",
+        "TEXT_23839",
+        "TEXT_24524",
+        "TEXT_15716",
+        "TEXT_49378",
+        "TEXT_86428",
+        "TEXT_13246"
+      ]
+    },
+    {
+      "number": 232,
+      "id": "West",
+      "label": "West",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.4387315,
+          18.7668687
+        ]
+      },
+      "why": "mentioned together in 5 records; 5 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_82144",
+        "TEXT_86346",
+        "TEXT_16550",
+        "TEXT_27721"
+      ]
+    },
+    {
+      "number": 233,
+      "id": "Belgorod Oblast",
+      "label": "Belgorod Oblast",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.5837615,
+          50.7080119
+        ]
+      },
+      "why": "mentioned together in 5 records; 5 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_6640",
+        "TEXT_6641",
+        "TEXT_22813",
+        "TEXT_22266"
+      ]
+    },
+    {
+      "number": 234,
+      "id": "Chechnya",
+      "label": "Chechnya",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          45.7,
+          43.4
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_2593",
+        "TEXT_77896",
+        "TEXT_79744"
+      ]
+    },
+    {
+      "number": 235,
+      "id": "Kherson Oblast",
+      "label": "Kherson Oblast",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.4079326,
+          46.5421715
+        ]
+      },
+      "why": "mentioned together in 4 records; 4 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_846",
+        "TEXT_57261",
+        "TEXT_44032",
+        "TEXT_86428"
+      ]
+    },
+    {
+      "number": 236,
+      "id": "Kaliningrad",
+      "label": "Kaliningrad",
+      "kind": "county",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.4565666,
+          54.7046485
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_7973"
+      ]
+    },
+    {
+      "number": 237,
+      "id": "Donetsk",
+      "label": "Donetsk",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.7809825,
+          47.9212914
+        ]
+      },
+      "why": "mentioned together in 21 records; 21 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_2586",
+        "TEXT_35352",
+        "TEXT_3880",
+        "TEXT_27049",
+        "TEXT_27711",
+        "TEXT_27782",
+        "TEXT_80537",
+        "TEXT_17046",
+        "TEXT_80469",
+        "TEXT_3860"
+      ]
+    },
+    {
+      "number": 238,
+      "id": "Chernihiv Oblast",
+      "label": "Chernihiv Oblast",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.7417235,
+          51.272593
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_7582"
+      ]
+    },
+    {
+      "number": 239,
+      "id": "Mykolaiv Oblast",
+      "label": "Mykolaiv Oblast",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.9442334,
+          47.3886032
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_86428"
+      ]
+    },
+    {
+      "number": 240,
+      "id": "Zaporizhzhia Oblast",
+      "label": "Zaporizhzhia Oblast",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.922969,
+          47.4165079
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_32829",
+        "TEXT_23104",
+        "TEXT_86428"
+      ]
+    },
+    {
+      "number": 241,
+      "id": "Kursk Oblast",
+      "label": "Kursk Oblast",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.4852695,
+          51.6568453
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 0% of the place's paragraphs",
+      "sources": [
+        "TEXT_18464",
+        "TEXT_27223"
+      ]
+    },
+    {
+      "number": 242,
+      "id": "Kharkiv Oblast",
+      "label": "Kharkiv Oblast",
+      "kind": "state",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.3788957,
+          49.8299582
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 0% of the place's paragraphs",
+      "sources": [
+        "TEXT_86428"
+      ]
+    },
+    {
+      "number": 243,
+      "id": "Sudan",
+      "label": "Sudan",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.4917691,
+          14.5844444
+        ]
+      },
+      "why": "OPERATES_IN in 3 records; mentioned together in 24 records; 27 matching paragraphs; 37% of the place's paragraphs",
+      "sources": [
+        "TEXT_1244",
+        "TEXT_27724",
+        "TEXT_27726",
+        "TEXT_27733",
+        "TEXT_27769",
+        "TEXT_39763",
+        "TEXT_41514",
+        "TEXT_27662",
+        "TEXT_27694",
+        "TEXT_51648"
+      ]
+    },
+    {
+      "number": 244,
+      "id": "Africa",
+      "label": "Africa",
+      "kind": "continent",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.7578122,
+          11.5024338
+        ]
+      },
+      "why": "OPERATES_IN in 2 records; mentioned together in 48 records; 50 matching paragraphs; 41% of the place's paragraphs",
+      "sources": [
+        "TEXT_3926",
+        "TEXT_4064",
+        "TEXT_8067",
+        "TEXT_23839",
+        "TEXT_27718",
+        "TEXT_27722",
+        "TEXT_39763",
+        "TEXT_41493",
+        "TEXT_41514",
+        "TEXT_4043"
+      ]
+    },
+    {
+      "number": 245,
+      "id": "Libya",
+      "label": "Libya",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.1236723,
+          26.8234472
+        ]
+      },
+      "why": "OPERATES_IN in 2 records; mentioned together in 37 records; 39 matching paragraphs; 30% of the place's paragraphs",
+      "sources": [
+        "TEXT_1244",
+        "TEXT_3866",
+        "TEXT_3870",
+        "TEXT_27694",
+        "TEXT_27726",
+        "TEXT_27767",
+        "TEXT_27769",
+        "TEXT_34563",
+        "TEXT_39763",
+        "TEXT_41481"
+      ]
+    },
+    {
+      "number": 246,
+      "id": "Syria",
+      "label": "Syria",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.0494106,
+          34.6401861
+        ]
+      },
+      "why": "OPERATES_IN in 2 records; mentioned together in 59 records; 61 matching paragraphs; 9% of the place's paragraphs",
+      "sources": [
+        "TEXT_1244",
+        "TEXT_27694",
+        "TEXT_42157",
+        "TEXT_42161",
+        "TEXT_42227",
+        "TEXT_50983",
+        "TEXT_3866",
+        "TEXT_3870",
+        "TEXT_7941",
+        "TEXT_23839"
+      ]
+    },
+    {
+      "number": 247,
+      "id": "US",
+      "label": "US",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -100.445882,
+          39.7837304
+        ]
+      },
+      "why": "OPERATES_IN in 2 records, OPPOSES in 1 record; mentioned together in 87 records; 90 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_4411",
+        "TEXT_47454",
+        "TEXT_1244",
+        "TEXT_27771",
+        "TEXT_3861",
+        "TEXT_3882",
+        "TEXT_3926",
+        "TEXT_4647",
+        "TEXT_4951",
+        "TEXT_16072"
+      ]
+    },
+    {
+      "number": 248,
+      "id": "Belarus",
+      "label": "Belarus",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.6971358,
+          53.4250605
+        ]
+      },
+      "why": "OPERATES_IN in 1 record; mentioned together in 48 records; 49 matching paragraphs; 5% of the place's paragraphs",
+      "sources": [
+        "TEXT_7910",
+        "TEXT_8226",
+        "TEXT_16541",
+        "TEXT_16555",
+        "TEXT_16599",
+        "TEXT_21873",
+        "TEXT_27653",
+        "TEXT_36245",
+        "TEXT_39653",
+        "TEXT_41513"
+      ]
+    },
+    {
+      "number": 249,
+      "id": "Russia",
+      "label": "Russia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          97.7453061,
+          64.6863136
+        ]
+      },
+      "why": "OPERATES_IN in 1 record; mentioned together in 259 records; 260 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_845",
+        "TEXT_1013",
+        "TEXT_2586",
+        "TEXT_2593",
+        "TEXT_2728",
+        "TEXT_3851",
+        "TEXT_3861",
+        "TEXT_3872",
+        "TEXT_3926",
+        "TEXT_3942"
+      ]
+    },
+    {
+      "number": 250,
+      "id": "Turkey",
+      "label": "Turkey",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.2316631,
+          39.294076
+        ]
+      },
+      "why": "OPERATES_IN in 1 record; mentioned together in 7 records; 8 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_47415",
+        "TEXT_47434",
+        "TEXT_27750",
+        "TEXT_51649",
+        "TEXT_47447"
+      ]
+    },
+    {
+      "number": 251,
+      "id": "Ukraine",
+      "label": "Ukraine",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.2718321,
+          49.4871968
+        ]
+      },
+      "why": "OPERATES_IN in 1 record; mentioned together in 292 records; 293 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_846",
+        "TEXT_1013",
+        "TEXT_1244",
+        "TEXT_2586",
+        "TEXT_2594",
+        "TEXT_2728",
+        "TEXT_3851",
+        "TEXT_3853",
+        "TEXT_3854",
+        "TEXT_3861"
+      ]
+    },
+    {
+      "number": 252,
+      "id": "Central African Republic",
+      "label": "Central African Republic",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.9981227,
+          7.0323598
+        ]
+      },
+      "why": "OPPOSES in 1 record; mentioned together in 41 records; 42 matching paragraphs; 110% of the place's paragraphs",
+      "sources": [
+        "TEXT_1244",
+        "TEXT_3861",
+        "TEXT_7972",
+        "TEXT_8108",
+        "TEXT_23846",
+        "TEXT_23912",
+        "TEXT_27694",
+        "TEXT_27700",
+        "TEXT_27726",
+        "TEXT_27767"
+      ]
+    },
+    {
+      "number": 253,
+      "id": "Eswatini",
+      "label": "Eswatini",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.3991317,
+          -26.5624806
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 100% of the place's paragraphs",
+      "sources": [
+        "TEXT_27662"
+      ]
+    },
+    {
+      "number": 254,
+      "id": "Isle of Man",
+      "label": "Isle of Man",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4.5591148,
+          54.1936805
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 100% of the place's paragraphs",
+      "sources": [
+        "TEXT_46707"
+      ]
+    },
+    {
+      "number": 255,
+      "id": "Lesotho",
+      "label": "Lesotho",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.3350193,
+          -29.6039267
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 100% of the place's paragraphs",
+      "sources": [
+        "TEXT_27662"
+      ]
+    },
+    {
+      "number": 256,
+      "id": "Mozambique",
+      "label": "Mozambique",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.9144977,
+          -19.302233
+        ]
+      },
+      "why": "mentioned together in 9 records; 9 matching paragraphs; 64% of the place's paragraphs",
+      "sources": [
+        "TEXT_27662",
+        "TEXT_27694",
+        "TEXT_27719",
+        "TEXT_27779",
+        "TEXT_39763",
+        "TEXT_41514"
+      ]
+    },
+    {
+      "number": 257,
+      "id": "Seychelles",
+      "label": "Seychelles",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          55.4540146,
+          -4.6574977
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 50% of the place's paragraphs",
+      "sources": [
+        "TEXT_46707"
+      ]
+    },
+    {
+      "number": 258,
+      "id": "Guinea",
+      "label": "Guinea",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -10.7083587,
+          10.7226226
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 38% of the place's paragraphs",
+      "sources": [
+        "TEXT_27662",
+        "TEXT_41514"
+      ]
+    },
+    {
+      "number": 259,
+      "id": "Cameroon",
+      "label": "Cameroon",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.1535811,
+          4.6125522
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 33% of the place's paragraphs",
+      "sources": [
+        "TEXT_27733",
+        "TEXT_41514"
+      ]
+    },
+    {
+      "number": 260,
+      "id": "Guinea-Bissau",
+      "label": "Guinea-Bissau",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -15.2351044,
+          11.815215
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 33% of the place's paragraphs",
+      "sources": [
+        "TEXT_27662",
+        "TEXT_41514"
+      ]
+    },
+    {
+      "number": 261,
+      "id": "Botswana",
+      "label": "Botswana",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.5928742,
+          -23.1681782
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 33% of the place's paragraphs",
+      "sources": [
+        "TEXT_27662"
+      ]
+    },
+    {
+      "number": 262,
+      "id": "Mali",
+      "label": "Mali",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2.2900239,
+          16.3700359
+        ]
+      },
+      "why": "mentioned together in 34 records; 34 matching paragraphs; 30% of the place's paragraphs",
+      "sources": [
+        "TEXT_1244",
+        "TEXT_75869",
+        "TEXT_16382",
+        "TEXT_26700",
+        "TEXT_27694",
+        "TEXT_27737",
+        "TEXT_27740",
+        "TEXT_34563",
+        "TEXT_39763",
+        "TEXT_47434"
+      ]
+    },
+    {
+      "number": 263,
+      "id": "Burkina Faso",
+      "label": "Burkina Faso",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.6880314,
+          12.0753083
+        ]
+      },
+      "why": "mentioned together in 7 records; 7 matching paragraphs; 29% of the place's paragraphs",
+      "sources": [
+        "TEXT_27223",
+        "TEXT_27753",
+        "TEXT_27755",
+        "TEXT_34563",
+        "TEXT_39763",
+        "TEXT_27754"
+      ]
+    },
+    {
+      "number": 264,
+      "id": "Madagascar",
+      "label": "Madagascar",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          46.4416422,
+          -18.9249604
+        ]
+      },
+      "why": "mentioned together in 5 records; 5 matching paragraphs; 24% of the place's paragraphs",
+      "sources": [
+        "TEXT_27662",
+        "TEXT_27719",
+        "TEXT_27694",
+        "TEXT_41514"
+      ]
+    },
+    {
+      "number": 265,
+      "id": "Chad",
+      "label": "Chad",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.0156172,
+          15.6134137
+        ]
+      },
+      "why": "mentioned together in 5 records; 5 matching paragraphs; 23% of the place's paragraphs",
+      "sources": [
+        "TEXT_27726",
+        "TEXT_27733",
+        "TEXT_41514"
+      ]
+    },
+    {
+      "number": 266,
+      "id": "Haiti",
+      "label": "Haiti",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.3570972,
+          19.1399952
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 22% of the place's paragraphs",
+      "sources": [
+        "TEXT_47449",
+        "TEXT_27759"
+      ]
+    },
+    {
+      "number": 267,
+      "id": "Ivory Coast",
+      "label": "Ivory Coast",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.5679458,
+          7.9897371
+        ]
+      },
+      "why": "mentioned together in 4 records; 4 matching paragraphs; 19% of the place's paragraphs",
+      "sources": [
+        "TEXT_41514",
+        "TEXT_27737",
+        "TEXT_47434"
+      ]
+    },
+    {
+      "number": 268,
+      "id": "Niger",
+      "label": "Niger",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.3238432,
+          17.7356214
+        ]
+      },
+      "why": "mentioned together in 5 records; 5 matching paragraphs; 18% of the place's paragraphs",
+      "sources": [
+        "TEXT_34563",
+        "TEXT_39763",
+        "TEXT_41514",
+        "TEXT_26709",
+        "TEXT_75843"
+      ]
+    },
+    {
+      "number": 269,
+      "id": "Zimbabwe",
+      "label": "Zimbabwe",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.7468414,
+          -18.4554963
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 17% of the place's paragraphs",
+      "sources": [
+        "TEXT_27662",
+        "TEXT_41514"
+      ]
+    },
+    {
+      "number": 270,
+      "id": "South Sudan",
+      "label": "South Sudan",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.6667897,
+          7.8699431
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 17% of the place's paragraphs",
+      "sources": [
+        "TEXT_41514",
+        "TEXT_27723"
+      ]
+    },
+    {
+      "number": 271,
+      "id": "Gabon",
+      "label": "Gabon",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.6899699,
+          -0.8999695
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 17% of the place's paragraphs",
+      "sources": [
+        "TEXT_27036"
+      ]
+    },
+    {
+      "number": 272,
+      "id": "Equatorial Guinea",
+      "label": "Equatorial Guinea",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5170357,
+          1.613172
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 14% of the place's paragraphs",
+      "sources": [
+        "TEXT_27762"
+      ]
+    },
+    {
+      "number": 273,
+      "id": "Tanzania",
+      "label": "Tanzania",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.7878438,
+          -6.5247123
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 14% of the place's paragraphs",
+      "sources": [
+        "TEXT_38306"
+      ]
+    },
+    {
+      "number": 274,
+      "id": "Senegal",
+      "label": "Senegal",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -14.4529612,
+          14.4750607
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 12% of the place's paragraphs",
+      "sources": [
+        "TEXT_41514"
+      ]
+    },
+    {
+      "number": 275,
+      "id": "Rwanda",
+      "label": "Rwanda",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.0003963,
+          -2.0002051
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 11% of the place's paragraphs",
+      "sources": [
+        "TEXT_41514"
+      ]
+    },
+    {
+      "number": 276,
+      "id": "South America",
+      "label": "South America",
+      "kind": "continent",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -61.0006565,
+          -21.0002179
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 11% of the place's paragraphs",
+      "sources": [
+        "TEXT_27694"
+      ]
+    },
+    {
+      "number": 277,
+      "id": "Ghana",
+      "label": "Ghana",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.0800271,
+          8.0300284
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 10% of the place's paragraphs",
+      "sources": [
+        "TEXT_27755"
+      ]
+    },
+    {
+      "number": 278,
+      "id": "Zambia",
+      "label": "Zambia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.5589884,
+          -14.5189121
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 9% of the place's paragraphs",
+      "sources": [
+        "TEXT_41514"
+      ]
+    },
+    {
+      "number": 279,
+      "id": "Slovenia",
+      "label": "Slovenia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.8153333,
+          46.1199444
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 7% of the place's paragraphs",
+      "sources": [
+        "TEXT_46707"
+      ]
+    },
+    {
+      "number": 280,
+      "id": "Venezuela",
+      "label": "Venezuela",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -66.1109318,
+          8.0018709
+        ]
+      },
+      "why": "mentioned together in 5 records; 5 matching paragraphs; 6% of the place's paragraphs",
+      "sources": [
+        "TEXT_27694",
+        "TEXT_27744",
+        "TEXT_27743",
+        "TEXT_87805"
+      ]
+    },
+    {
+      "number": 281,
+      "id": "Angola",
+      "label": "Angola",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.5691241,
+          -11.8775768
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 6% of the place's paragraphs",
+      "sources": [
+        "TEXT_27662",
+        "TEXT_41514"
+      ]
+    },
+    {
+      "number": 282,
+      "id": "Nigeria",
+      "label": "Nigeria",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.9999721,
+          9.6000359
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 5% of the place's paragraphs",
+      "sources": [
+        "TEXT_41514"
+      ]
+    },
+    {
+      "number": 283,
+      "id": "United Arab Emirates",
+      "label": "United Arab Emirates",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          53.9994829,
+          24.0002488
+        ]
+      },
+      "why": "SUPPORTS in 2 records; mentioned together in 4 records; 6 matching paragraphs; 4% of the place's paragraphs",
+      "sources": [
+        "TEXT_1244",
+        "TEXT_27769"
+      ]
+    },
+    {
+      "number": 284,
+      "id": "Democratic Republic of the Congo",
+      "label": "Democratic Republic of the Congo",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.8222636,
+          -2.9814344
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 4% of the place's paragraphs",
+      "sources": [
+        "TEXT_41514"
+      ]
+    },
+    {
+      "number": 285,
+      "id": "Red Sea",
+      "label": "Red Sea",
+      "kind": "sea",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.5343146,
+          20.2965624
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 4% of the place's paragraphs",
+      "sources": [
+        "TEXT_27726"
+      ]
+    },
+    {
+      "number": 286,
+      "id": "Argentina",
+      "label": "Argentina",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -64.9672817,
+          -34.9964963
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 4% of the place's paragraphs",
+      "sources": [
+        "TEXT_27660"
+      ]
+    },
+    {
+      "number": 287,
+      "id": "Norway",
+      "label": "Norway",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.7876653,
+          61.1529386
+        ]
+      },
+      "why": "mentioned together in 6 records; 6 matching paragraphs; 4% of the place's paragraphs",
+      "sources": [
+        "TEXT_27726",
+        "TEXT_82312",
+        "TEXT_82316"
+      ]
+    },
+    {
+      "number": 288,
+      "id": "New Zealand",
+      "label": "New Zealand",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          172.8344077,
+          -41.5000831
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 3% of the place's paragraphs",
+      "sources": [
+        "TEXT_27760",
+        "TEXT_27768"
+      ]
+    },
+    {
+      "number": 289,
+      "id": "UK",
+      "label": "UK",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.2765753,
+          54.7023545
+        ]
+      },
+      "why": "OPPOSES in 1 record; mentioned together in 21 records; 22 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_3872",
+        "TEXT_3882",
+        "TEXT_36892",
+        "TEXT_42225",
+        "TEXT_80467",
+        "TEXT_16997",
+        "TEXT_27737",
+        "TEXT_27726",
+        "TEXT_41481",
+        "TEXT_85541"
+      ]
+    },
+    {
+      "number": 290,
+      "id": "Azerbaijan",
+      "label": "Azerbaijan",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          47.7872508,
+          40.3936294
+        ]
+      },
+      "why": "mentioned together in 4 records; 4 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_27749",
+        "TEXT_27750"
+      ]
+    },
+    {
+      "number": 291,
+      "id": "Abkhazia",
+      "label": "Abkhazia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          41.2299786,
+          43.1500226
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_82144",
+        "TEXT_27039"
+      ]
+    },
+    {
+      "number": 292,
+      "id": "Egypt",
+      "label": "Egypt",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.2675469,
+          26.2540493
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_1244",
+        "TEXT_27769"
+      ]
+    },
+    {
+      "number": 293,
+      "id": "Asia",
+      "label": "Asia",
+      "kind": "continent",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          89.2343748,
+          51.2086975
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_27694"
+      ]
+    },
+    {
+      "number": 294,
+      "id": "France",
+      "label": "France",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.8883335,
+          46.603354
+        ]
+      },
+      "why": "mentioned together in 10 records; 10 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_4043",
+        "TEXT_27737",
+        "TEXT_27753",
+        "TEXT_27755",
+        "TEXT_75727",
+        "TEXT_75833",
+        "TEXT_26709",
+        "TEXT_75834"
+      ]
+    },
+    {
+      "number": 295,
+      "id": "Switzerland",
+      "label": "Switzerland",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.2319736,
+          46.7985624
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_7178",
+        "TEXT_27768"
+      ]
+    },
+    {
+      "number": 296,
+      "id": "Bosnia and Herzegovina",
+      "label": "Bosnia and Herzegovina",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.5961467,
+          44.3053476
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_27676"
+      ]
+    },
+    {
+      "number": 297,
+      "id": "South Africa",
+      "label": "South Africa",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.991639,
+          -28.8166236
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_41514"
+      ]
+    },
+    {
+      "number": 298,
+      "id": "Canada",
+      "label": "Canada",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -107.991707,
+          61.0666922
+        ]
+      },
+      "why": "mentioned together in 4 records; 4 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_75727",
+        "TEXT_27768",
+        "TEXT_75834"
+      ]
+    },
+    {
+      "number": 299,
+      "id": "Saudi Arabia",
+      "label": "Saudi Arabia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          42.3528328,
+          25.6242618
+        ]
+      },
+      "why": "SUPPORTS in 1 record; mentioned together in 1 records; 2 matching paragraphs; 2% of the place's paragraphs",
+      "sources": [
+        "TEXT_27769"
+      ]
+    },
+    {
+      "number": 300,
+      "id": "Cuba",
+      "label": "Cuba",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -80.8328748,
+          23.0131338
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_27743"
+      ]
+    },
+    {
+      "number": 301,
+      "id": "Kyrgyzstan",
+      "label": "Kyrgyzstan",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          74.724091,
+          41.5089324
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_16675"
+      ]
+    },
+    {
+      "number": 302,
+      "id": "Europe",
+      "label": "Europe",
+      "kind": "continent",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.0,
+          51.0
+        ]
+      },
+      "why": "mentioned together in 8 records; 8 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_4411",
+        "TEXT_27682",
+        "TEXT_27694",
+        "TEXT_32548",
+        "TEXT_50845"
+      ]
+    },
+    {
+      "number": 303,
+      "id": "North Korea",
+      "label": "North Korea",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.0870417,
+          40.3736611
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_3870",
+        "TEXT_4647"
+      ]
+    },
+    {
+      "number": 304,
+      "id": "Latvia",
+      "label": "Latvia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.7537645,
+          56.8406494
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_7988"
+      ]
+    },
+    {
+      "number": 305,
+      "id": "South Ossetia",
+      "label": "South Ossetia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          44.0979465,
+          42.3476344
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_82144"
+      ]
+    },
+    {
+      "number": 306,
+      "id": "Estonia",
+      "label": "Estonia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.3319078,
+          58.7523778
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_7988"
+      ]
+    },
+    {
+      "number": 307,
+      "id": "Finland",
+      "label": "Finland",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.9209164,
+          63.2467777
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_82316"
+      ]
+    },
+    {
+      "number": 308,
+      "id": "Moldova",
+      "label": "Moldova",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.5670941,
+          47.2879608
+        ]
+      },
+      "why": "OPPOSES in 1 record; mentioned together in 2 records; 3 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_27757",
+        "TEXT_46676",
+        "TEXT_13044"
+      ]
+    },
+    {
+      "number": 309,
+      "id": "Algeria",
+      "label": "Algeria",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9999825,
+          28.0000272
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_75843"
+      ]
+    },
+    {
+      "number": 310,
+      "id": "China",
+      "label": "China",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.9237067,
+          34.5412252
+        ]
+      },
+      "why": "mentioned together in 5 records; 5 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_27664",
+        "TEXT_42346"
+      ]
+    },
+    {
+      "number": 311,
+      "id": "Afghanistan",
+      "label": "Afghanistan",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          66.2385139,
+          33.7680065
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_3874",
+        "TEXT_50845"
+      ]
+    },
+    {
+      "number": 312,
+      "id": "Lithuania",
+      "label": "Lithuania",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.7499997,
+          55.3500003
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_7988"
+      ]
+    },
+    {
+      "number": 313,
+      "id": "Germany",
+      "label": "Germany",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.4478313,
+          51.1638175
+        ]
+      },
+      "why": "mentioned together in 5 records; 5 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_3863",
+        "TEXT_7988",
+        "TEXT_86346"
+      ]
+    },
+    {
+      "number": 314,
+      "id": "Japan",
+      "label": "Japan",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.2394179,
+          36.5748441
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_27768"
+      ]
+    },
+    {
+      "number": 315,
+      "id": "Australia",
+      "label": "Australia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.755,
+          -24.7761086
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 1% of the place's paragraphs",
+      "sources": [
+        "TEXT_27768"
+      ]
+    },
+    {
+      "number": 316,
+      "id": "Georgia",
+      "label": "Georgia",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          43.8212482,
+          41.8441368
+        ]
+      },
+      "why": "mentioned together in 2 records; 2 matching paragraphs; 0% of the place's paragraphs",
+      "sources": [
+        "TEXT_39653",
+        "TEXT_80457"
+      ]
+    },
+    {
+      "number": 317,
+      "id": "Kazakhstan",
+      "label": "Kazakhstan",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          66.7780818,
+          48.1012954
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 0% of the place's paragraphs",
+      "sources": [
+        "TEXT_17346"
+      ]
+    },
+    {
+      "number": 318,
+      "id": "Poland",
+      "label": "Poland",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.134422,
+          52.215933
+        ]
+      },
+      "why": "mentioned together in 3 records; 3 matching paragraphs; 0% of the place's paragraphs",
+      "sources": [
+        "TEXT_7988",
+        "TEXT_16580"
+      ]
+    },
+    {
+      "number": 319,
+      "id": "Netherlands",
+      "label": "Netherlands",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.6343227,
+          52.2434979
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 0% of the place's paragraphs",
+      "sources": [
+        "TEXT_8226"
+      ]
+    },
+    {
+      "number": 320,
+      "id": "Hungary",
+      "label": "Hungary",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.5060937,
+          47.1817585
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 0% of the place's paragraphs",
+      "sources": [
+        "TEXT_4411"
+      ]
+    },
+    {
+      "number": 321,
+      "id": "Iraq",
+      "label": "Iraq",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          44.1749775,
+          33.0955793
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 0% of the place's paragraphs",
+      "sources": [
+        "TEXT_27674"
+      ]
+    },
+    {
+      "number": 322,
+      "id": "Iran",
+      "label": "Iran",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          54.5643516,
+          32.6475314
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 0% of the place's paragraphs",
+      "sources": [
+        "TEXT_3874"
+      ]
+    },
+    {
+      "number": 323,
+      "id": "Israel",
+      "label": "Israel",
+      "kind": "country",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.8594762,
+          30.8124247
+        ]
+      },
+      "why": "mentioned together in 1 records; 1 matching paragraphs; 0% of the place's paragraphs",
+      "sources": [
+        "TEXT_4014"
+      ]
+    }
+  ],
+  "regions": [
+    {
+      "id": "Ukraine",
+      "place_type": "country",
+      "count": 95,
+      "places": [
+        90,
+        185,
+        226,
+        231,
+        235,
+        237,
+        238,
+        239,
+        240,
+        242
+      ],
+      "children": [
+        {
+          "id": "Donetsk",
+          "place_type": "state",
+          "count": 50,
+          "places": [
+            5,
+            10,
+            14,
+            31,
+            39,
+            46,
+            49,
+            50,
+            51,
+            59,
+            60,
+            66,
+            68,
+            69,
+            72,
+            79,
+            81,
+            82,
+            86,
+            87,
+            88,
+            89,
+            91,
+            99,
+            104,
+            107,
+            110,
+            113,
+            114,
+            117,
+            126,
+            134,
+            135,
+            140,
+            142,
+            143,
+            145,
+            147,
+            153,
+            158,
+            161,
+            162,
+            168,
+            179,
+            182,
+            186,
+            188,
+            190,
+            194,
+            197
+          ],
+          "children": []
+        },
+        {
+          "id": "Luhansk Oblast",
+          "place_type": "state",
+          "count": 9,
+          "places": [
+            15,
+            100,
+            101,
+            146,
+            148,
+            157,
+            177,
+            187,
+            196
+          ],
+          "children": []
+        },
+        {
+          "id": "Kharkiv Oblast",
+          "place_type": "state",
+          "count": 4,
+          "places": [
+            38,
+            167,
+            171,
+            195
+          ],
+          "children": []
+        },
+        {
+          "id": "Odesa Oblast",
+          "place_type": "state",
+          "count": 3,
+          "places": [
+            2,
+            184,
+            198
+          ],
+          "children": []
+        },
+        {
+          "id": "Zaporizhzhia Oblast",
+          "place_type": "state",
+          "count": 3,
+          "places": [
+            175,
+            192,
+            193
+          ],
+          "children": []
+        },
+        {
+          "id": "Mykolaiv Oblast",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            53,
+            201
+          ],
+          "children": []
+        },
+        {
+          "id": "Dnipropetrovsk Oblast",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            85,
+            129
+          ],
+          "children": []
+        },
+        {
+          "id": "Chernihiv Oblast",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            116,
+            200
+          ],
+          "children": []
+        },
+        {
+          "id": "Kyiv Oblast",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            154,
+            173
+          ],
+          "children": []
+        },
+        {
+          "id": "Autonomous Republic of Crimea",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            191,
+            202
+          ],
+          "children": []
+        },
+        {
+          "id": "Kirovohrad",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            35
+          ],
+          "children": []
+        },
+        {
+          "id": "Volyn Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            141
+          ],
+          "children": []
+        },
+        {
+          "id": "Kherson Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            172
+          ],
+          "children": []
+        },
+        {
+          "id": "Ivano-Frankivsk Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            174
+          ],
+          "children": []
+        },
+        {
+          "id": "Khmelnytskyi Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            178
+          ],
+          "children": []
+        },
+        {
+          "id": "Sumy Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            189
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "(no region in the graph)",
+      "count": 80,
+      "places": [
+        115,
+        137,
+        152,
+        207,
+        227,
+        243,
+        245,
+        246,
+        247,
+        248,
+        249,
+        250,
+        251,
+        252,
+        253,
+        254,
+        255,
+        256,
+        257,
+        258,
+        259,
+        260,
+        261,
+        262,
+        263,
+        264,
+        265,
+        266,
+        267,
+        268,
+        269,
+        270,
+        271,
+        272,
+        273,
+        274,
+        275,
+        277,
+        278,
+        279,
+        280,
+        281,
+        282,
+        283,
+        284,
+        285,
+        286,
+        287,
+        288,
+        289,
+        290,
+        292,
+        294,
+        295,
+        296,
+        297,
+        298,
+        299,
+        300,
+        301,
+        303,
+        304,
+        306,
+        307,
+        308,
+        309,
+        310,
+        311,
+        312,
+        313,
+        314,
+        315,
+        316,
+        317,
+        318,
+        319,
+        320,
+        321,
+        322,
+        323
+      ],
+      "children": []
+    },
+    {
+      "id": "Russia",
+      "place_type": "country",
+      "count": 64,
+      "places": [
+        8,
+        34,
+        80,
+        128,
+        132,
+        212,
+        214,
+        215,
+        217,
+        218,
+        222,
+        223,
+        224,
+        225,
+        228,
+        229,
+        230,
+        233,
+        234,
+        241
+      ],
+      "children": [
+        {
+          "id": "Krasnodar Krai",
+          "place_type": "state",
+          "count": 4,
+          "places": [
+            11,
+            13,
+            164,
+            170
+          ],
+          "children": []
+        },
+        {
+          "id": "Moscow Oblast",
+          "place_type": "state",
+          "count": 4,
+          "places": [
+            54,
+            74,
+            76,
+            125
+          ],
+          "children": []
+        },
+        {
+          "id": "Rostov Oblast",
+          "place_type": "state",
+          "count": 3,
+          "places": [
+            130,
+            139,
+            211
+          ],
+          "children": []
+        },
+        {
+          "id": "Buryatia",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            33,
+            150
+          ],
+          "children": []
+        },
+        {
+          "id": "Kursk Oblast",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            47,
+            181
+          ],
+          "children": []
+        },
+        {
+          "id": "Kaliningrad Oblast",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            52,
+            236
+          ],
+          "children": []
+        },
+        {
+          "id": "Tula Oblast",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            62,
+            123
+          ],
+          "children": []
+        },
+        {
+          "id": "Leningrad",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            70,
+            122
+          ],
+          "children": []
+        },
+        {
+          "id": "Ryazan Oblast",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            73,
+            166
+          ],
+          "children": []
+        },
+        {
+          "id": "Tver Oblast",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            92,
+            111
+          ],
+          "children": []
+        },
+        {
+          "id": "Lipetsk Oblast",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            118,
+            208
+          ],
+          "children": []
+        },
+        {
+          "id": "Voronezh Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            4
+          ],
+          "children": []
+        },
+        {
+          "id": "Irkutsk Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            43
+          ],
+          "children": []
+        },
+        {
+          "id": "Chuvashia",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            45
+          ],
+          "children": []
+        },
+        {
+          "id": "Orenburg Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            56
+          ],
+          "children": []
+        },
+        {
+          "id": "Novgorod Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            83
+          ],
+          "children": []
+        },
+        {
+          "id": "Yaroslavl Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            93
+          ],
+          "children": []
+        },
+        {
+          "id": "Omsk Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            124
+          ],
+          "children": []
+        },
+        {
+          "id": "Krasnoyarsk Krai",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            133
+          ],
+          "children": []
+        },
+        {
+          "id": "Perm Krai",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            151
+          ],
+          "children": []
+        },
+        {
+          "id": "Murmansk Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            155
+          ],
+          "children": []
+        },
+        {
+          "id": "Belgorod Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            156
+          ],
+          "children": []
+        },
+        {
+          "id": "Novosibirsk Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            159
+          ],
+          "children": []
+        },
+        {
+          "id": "Nizhny Novgorod Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            163
+          ],
+          "children": []
+        },
+        {
+          "id": "Volgograd Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            165
+          ],
+          "children": []
+        },
+        {
+          "id": "Sverdlovsk Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            176
+          ],
+          "children": []
+        },
+        {
+          "id": "Chelyabinsk Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            221
+          ],
+          "children": []
+        },
+        {
+          "id": "Tuva",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            293
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "Mali",
+      "place_type": "country",
+      "count": 11,
+      "places": [
+        103,
+        121,
+        209
+      ],
+      "children": [
+        {
+          "id": "Kidal Region",
+          "place_type": "state",
+          "count": 6,
+          "places": [
+            27,
+            64,
+            94,
+            97,
+            102,
+            108
+          ],
+          "children": []
+        },
+        {
+          "id": "Gao Region",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            28,
+            119
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "Syria",
+      "place_type": "country",
+      "count": 8,
+      "places": [
+        71,
+        127,
+        149,
+        205,
+        219
+      ],
+      "children": [
+        {
+          "id": "Deir ez-Zor Governorate",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            61,
+            106
+          ],
+          "children": []
+        },
+        {
+          "id": "Latakia",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            75
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "US",
+      "place_type": "country",
+      "count": 6,
+      "places": [
+        180,
+        183,
+        213
+      ],
+      "children": [
+        {
+          "id": "Maryland",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            23,
+            131
+          ],
+          "children": []
+        },
+        {
+          "id": "Minnesota",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            58
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "Libya",
+      "place_type": "country",
+      "count": 5,
+      "places": [
+        3,
+        55,
+        67,
+        84,
+        95
+      ],
+      "children": []
+    },
+    {
+      "id": "Belarus",
+      "place_type": "country",
+      "count": 5,
+      "places": [
+        37,
+        144,
+        199,
+        206
+      ],
+      "children": [
+        {
+          "id": "Mogilev Region",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            78
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "Sudan",
+      "place_type": "country",
+      "count": 4,
+      "places": [
+        6,
+        25,
+        29,
+        30
+      ],
+      "children": []
+    },
+    {
+      "id": "Central African Republic",
+      "place_type": "country",
+      "count": 3,
+      "places": [
+        12,
+        18,
+        19
+      ],
+      "children": []
+    },
+    {
+      "id": "Philippines",
+      "place_type": "country",
+      "count": 3,
+      "places": [
+        24,
+        77,
+        136
+      ],
+      "children": []
+    },
+    {
+      "id": "Germany",
+      "place_type": "country",
+      "count": 3,
+      "places": [
+        120,
+        302
+      ],
+      "children": [
+        {
+          "id": "Brandenburg",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            41
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "Georgia",
+      "place_type": "country",
+      "count": 3,
+      "places": [
+        160,
+        291,
+        305
+      ],
+      "children": []
+    },
+    {
+      "id": "France",
+      "place_type": "country",
+      "count": 2,
+      "places": [
+        7
+      ],
+      "children": [
+        {
+          "id": "Île-de-France",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            169
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "China",
+      "place_type": "country",
+      "count": 2,
+      "places": [
+        220
+      ],
+      "children": [
+        {
+          "id": "Zhejiang",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            26
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "Burkina Faso",
+      "place_type": "country",
+      "count": 2,
+      "places": [
+        65,
+        210
+      ],
+      "children": []
+    },
+    {
+      "id": "Italy",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        1
+      ],
+      "children": []
+    },
+    {
+      "id": "Norway",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        9
+      ],
+      "children": []
+    },
+    {
+      "id": "Zambia",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        16
+      ],
+      "children": []
+    },
+    {
+      "id": "Portugal",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        17
+      ],
+      "children": []
+    },
+    {
+      "id": "Nigeria",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        20
+      ],
+      "children": []
+    },
+    {
+      "id": "Uganda",
+      "place_type": "country",
+      "count": 1,
+      "places": [],
+      "children": [
+        {
+          "id": "Central Region",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            21
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "Finland",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        22
+      ],
+      "children": []
+    },
+    {
+      "id": "Indonesia",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        32
+      ],
+      "children": []
+    },
+    {
+      "id": "UK",
+      "place_type": "country",
+      "count": 1,
+      "places": [],
+      "children": [
+        {
+          "id": "England",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            36
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "Azerbaijan",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        40
+      ],
+      "children": []
+    },
+    {
+      "id": "Brazil",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        42
+      ],
+      "children": []
+    },
+    {
+      "id": "Algeria",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        44
+      ],
+      "children": []
+    },
+    {
+      "id": "Angola",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        48
+      ],
+      "children": []
+    },
+    {
+      "id": "Netherlands",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        57
+      ],
+      "children": []
+    },
+    {
+      "id": "Hungary",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        63
+      ],
+      "children": []
+    },
+    {
+      "id": "Cuba",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        96
+      ],
+      "children": []
+    },
+    {
+      "id": "Bulgaria",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        98
+      ],
+      "children": []
+    },
+    {
+      "id": "South Africa",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        105
+      ],
+      "children": []
+    },
+    {
+      "id": "Japan",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        109
+      ],
+      "children": []
+    },
+    {
+      "id": "Spain",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        112
+      ],
+      "children": []
+    },
+    {
+      "id": "Switzerland",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        138
+      ],
+      "children": []
+    },
+    {
+      "id": "Mozambique",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        203
+      ],
+      "children": []
+    },
+    {
+      "id": "New Zealand",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        204
+      ],
+      "children": []
+    },
+    {
+      "id": "Bosnia and Herzegovina",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        216
+      ],
+      "children": []
+    },
+    {
+      "id": "Haiti",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        232
+      ],
+      "children": []
+    },
+    {
+      "id": "Chad",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        244
+      ],
+      "children": []
+    },
+    {
+      "id": "Paraguay",
+      "place_type": "country",
+      "count": 1,
+      "places": [
+        276
+      ],
+      "children": []
+    }
+  ],
+  "entities": [],
+  "citations": [
+    {
+      "id": "L1",
+      "pointer": "TEXT_27651",
+      "article": "Wagner Group",
+      "spans": []
+    }
+  ],
+  "sources": [
+    "TEXT_27651"
+  ],
+  "map": {
+    "bbox": [
+      10.80752,
+      29.1605,
+      41.78177,
+      53.70606
+    ],
+    "highlight": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "showing": "all",
+    "not_shown": 0
+  },
+  "follow_ups": [
+    "What happened in Sirte?"
+  ],
+  "did_you_mean": [],
+  "notes": [
+    "④ 323 places found (all go on the map); 10 described to the LLM",
+    "④ list answer: no corpus sentences by design; each place has a data line, and 'tell me about number N' gives the details",
+    "⑤ dropped follow-ups that name nothing in the material: Which places are linked to Pavel Prigozhin?"
+  ],
+  "meta": {
+    "question_type": "entity_places",
+    "model": "google/gemini-2.5-flash",
+    "llm_calls": 1,
+    "cost_usd": 0.000981,
+    "seconds": 1.91
+  }
+}

@@ -291,6 +291,10 @@ launch.py         what RUN_GEORAG.bat runs: Python environment, key, graph check
   few sentences, and paragraphs are never included, only their pointers. Fine in-process.
 - **"Countries where both Russia and Ukraine are mentioned"** isn't always understood as a country
   filter: some runs return every shared place (1,659 instead of about 149; DECISIONS_LOG ideas list).
+- **"Ukrainian locations connected to Russian military commanders" (project q9) is misread:** it
+  lists what is linked to Ukraine or Russia (2,798 places). The graph has no roles for people (who
+  is a commander), and the list route doesn't yet apply a country filter such as "Ukrainian".
+  Designed for a later stage (DECISIONS_LOG ideas list).
 - **A bare "number 3" follow-up** gives that place, not the previous question's subject at it. Name
   both ("Zelenskyy in the White House") for that.
 - **English only.**

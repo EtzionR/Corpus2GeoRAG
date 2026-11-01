@@ -1603,7 +1603,7 @@
     "question_type": "relation",
     "model": "google/gemini-2.5-flash",
     "llm_calls": 2,
-    "cost_usd": 0.002071,
-    "seconds": 2.11
+    "cost_usd": 0.001564,
+    "seconds": 2.53
   }
 }
