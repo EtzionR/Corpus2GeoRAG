@@ -2594,8 +2594,10 @@ st.markdown(f"""
         max-height: calc(100vh - 90px) !important;
         display: flex !important;
         flex-direction: column !important;
-        justify-content: space-between !important;
+        justify-content: flex-start !important;
         gap: 0.45rem !important;
+        position: relative !important;
+        padding-bottom: 68px !important;
     }}
 
     div[data-testid="column"]:first-child div[data-testid="stVerticalBlockBorderWrapper"] {{
@@ -2615,10 +2617,10 @@ st.markdown(f"""
         padding-right: 6px !important;
     }}
 
-    /* Streamlit 1.58+ Chat Container auto-flex expansion inside col1 */
-    div[data-testid="stMainBlockContainer"] div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:first-child div[data-testid="stLayoutWrapper"]:has(> div[data-testid="stVerticalBlock"][height]) {{
+    /* Streamlit 1.58+ Chat Container auto-flex expansion inside col1 (direct child > so inner chat messages are untouched) */
+    div[data-testid="stMainBlockContainer"] div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:first-child > div[data-testid="stVerticalBlock"] > div[data-testid="stLayoutWrapper"]:has(> div[data-testid="stVerticalBlock"][height]) {{
         flex: 1 1 0px !important;
-        height: auto !important;
+        height: 100% !important;
         min-height: 260px !important;
         max-height: 100% !important;
         display: flex !important;
@@ -2626,7 +2628,8 @@ st.markdown(f"""
         overflow: hidden !important;
     }}
 
-    div[data-testid="stMainBlockContainer"] div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:first-child div[data-testid="stVerticalBlock"][height] {{
+    div[data-testid="stMainBlockContainer"] div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:first-child > div[data-testid="stVerticalBlock"] > div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"][height],
+    div[data-testid="stMainBlockContainer"] div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:first-child div[data-testid="stVerticalBlockBorderWrapper"] > div[data-testid="stVerticalBlock"][height] {{
         flex: 1 1 0px !important;
         height: 100% !important;
         min-height: 260px !important;
@@ -2636,10 +2639,38 @@ st.markdown(f"""
         padding-right: 6px !important;
     }}
 
-    .st-key-geoai_chat_input {{
+    /* Prevent inner chat messages, expanders, and follow-up grids from inheriting container-level min-height */
+    div[data-testid="stMainBlockContainer"] div[data-testid="stChatMessage"] div[data-testid="stVerticalBlock"],
+    div[data-testid="stMainBlockContainer"] div[data-testid="stChatMessage"] div[data-testid="stLayoutWrapper"],
+    div[data-testid="stMainBlockContainer"] div[data-testid="stChatMessage"] div[data-testid="stHorizontalBlock"],
+    div[data-testid="stMainBlockContainer"] div[data-testid="stChatMessage"] div[data-testid="stColumn"],
+    div[data-testid="stMainBlockContainer"] div[data-testid="stChatMessage"] div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] > div[data-testid="stVerticalBlock"] {{
+        flex: 0 1 auto !important;
+        height: auto !important;
+        min-height: 0px !important;
+        max-height: none !important;
+        overflow: visible !important;
+        justify-content: flex-start !important;
+        padding-bottom: 0 !important;
+    }}
+    div[data-testid="stChatMessage"] div[data-testid="stVerticalBlock"] {{
+        gap: 0.35rem !important;
+    }}
+
+    /* Anchor chat input at bottom; expands upward on top of console window when typing long messages */
+    .st-key-geoai_chat_input,
+    div[data-testid="stElementContainer"]:has(.st-key-geoai_chat_input) {{
+        position: absolute !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        z-index: 50 !important;
         flex: 0 0 auto !important;
         margin-top: 0 !important;
         margin-bottom: 0 !important;
+        background: rgba(6, 10, 15, 0.96) !important;
+        border-radius: 6px !important;
     }}
 
     /* Independent vertical scrolling for sidebar controls */
@@ -2789,7 +2820,7 @@ st.markdown(f"""
         display: flex !important;
         box-sizing: border-box !important;
         margin-bottom: 0.95rem !important;
-        padding: 0.75rem 1rem 0.95rem 1rem !important;
+        padding: 0.65rem 0.95rem 0.35rem 0.95rem !important;
         border-radius: 12px 12px 12px 12px !important;
         transition: all 0.2s ease-in-out !important;
         width: fit-content !important;
@@ -2919,6 +2950,22 @@ st.markdown(f"""
         margin-bottom: 0 !important;
     }}
 
+    /* Remove excessive bottom buffer inside chat bubbles */
+    div[data-testid="stChatMessageContent"] {{
+        padding-bottom: 0 !important;
+        margin-bottom: 0 !important;
+    }}
+    div[data-testid="stChatMessageContent"] > div:last-child {{
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+    }}
+    div[data-testid="stChatMessageContent"] div[data-testid="stMarkdownContainer"] {{
+        margin-bottom: 0 !important;
+    }}
+    div[data-testid="stChatMessageContent"] div[data-testid="stMarkdownContainer"] > *:last-child {{
+        margin-bottom: 0 !important;
+    }}
+
     /* Marker helper */
     .bubble-marker-operator, .bubble-marker-geoai {{
         display: none !important;
@@ -2974,6 +3021,11 @@ st.markdown(f"""
         color: {t_cfg['text_main']} !important;
         font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
         font-size: 0.85rem !important;
+    }}
+    div[data-testid="stChatInput"] textarea:placeholder-shown {{
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
     }}
     div[data-testid="stChatInput"] textarea::placeholder {{
         color: {t_cfg['text_dim']} !important;
