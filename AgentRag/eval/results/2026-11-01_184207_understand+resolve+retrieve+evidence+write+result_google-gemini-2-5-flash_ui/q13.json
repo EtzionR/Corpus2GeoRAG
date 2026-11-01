@@ -1133,6 +1133,6 @@
     "model": "google/gemini-2.5-flash",
     "llm_calls": 1,
     "cost_usd": 0.000638,
-    "seconds": 1.01
+    "seconds": 1.22
   }
 }
