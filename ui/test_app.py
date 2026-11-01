@@ -19,6 +19,12 @@ import pytest
 from geo_agent import MapLayer, AgentResponse, query_geo_agent, to_bounding_box
 
 
+@pytest.fixture(autouse=True)
+def _isolate_openrouter_env(monkeypatch):
+    """Ensure unit tests do not make live OpenRouter API calls when AgentRag/.env exists on disk."""
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+
+
 class TestDataContracts:
     """Validate typing, default values, and structural contracts of the dataclasses."""
 
