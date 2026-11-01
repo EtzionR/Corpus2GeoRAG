@@ -1,0 +1,1463 @@
+{
+  "answer": "The Battle of Avdiivka was a major battle between the Russian and Ukrainian Armed Forces for control of Avdiivka, a city in Donetsk Oblast, during the Russo-Ukrainian war (2022–present) [L1]. A total of 48 places were found, with the strongest few being Avdiivka [1], Chasiv Yar [2], and Bakhmut [3], which are concentrated in the Donetsk region of Ukraine.",
+  "answer_plain": "The Battle of Avdiivka was a major battle between the Russian and Ukrainian Armed Forces for control of Avdiivka, a city in Donetsk Oblast, during the Russo-Ukrainian war (2022–present). A total of 48 places were found, with the strongest few being Avdiivka, Chasiv Yar, and Bakhmut, which are concentrated in the Donetsk region of Ukraine.",
+  "status": "answered",
+  "grounded": true,
+  "shape": "list",
+  "geo_locations": [
+    {
+      "number": 1,
+      "id": "Avdiivka",
+      "label": "Avdiivka",
+      "kind": "town",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.7466719,
+          48.1338824
+        ]
+      },
+      "why": "event: Battle of Avdiivka (2023–2024) in 85 records, event: Battle of Avdiivka (2017) in 10 records; 85 matching paragraphs",
+      "sources": [
+        "TEXT_37248",
+        "TEXT_37249",
+        "TEXT_37251",
+        "TEXT_37252",
+        "TEXT_37253",
+        "TEXT_37254",
+        "TEXT_37256",
+        "TEXT_37257",
+        "TEXT_37258",
+        "TEXT_37259"
+      ]
+    },
+    {
+      "number": 2,
+      "id": "Chasiv Yar",
+      "label": "Chasiv Yar",
+      "kind": "town",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.8373367,
+          48.5873911
+        ]
+      },
+      "why": "event: Battle of Chasiv Yar in 74 records; 74 matching paragraphs",
+      "sources": [
+        "TEXT_37382",
+        "TEXT_37383",
+        "TEXT_37384",
+        "TEXT_37385",
+        "TEXT_37386",
+        "TEXT_37387",
+        "TEXT_37388",
+        "TEXT_37389",
+        "TEXT_37390",
+        "TEXT_37391"
+      ]
+    },
+    {
+      "number": 3,
+      "id": "Bakhmut",
+      "label": "Bakhmut",
+      "kind": "town",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0020994,
+          48.5894123
+        ]
+      },
+      "why": "event: Battle of Bakhmut in 71 records, event: Battle of Donbas (2022) in 13 records, event: Battle of Artemivsk in 13 records; 71 matching paragraphs",
+      "sources": [
+        "TEXT_80440",
+        "TEXT_80441",
+        "TEXT_80442",
+        "TEXT_80443",
+        "TEXT_80444",
+        "TEXT_80445",
+        "TEXT_80446",
+        "TEXT_80447",
+        "TEXT_80448",
+        "TEXT_80449"
+      ]
+    },
+    {
+      "number": 4,
+      "id": "Kharkiv",
+      "label": "Kharkiv",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2310146,
+          49.9923181
+        ]
+      },
+      "why": "event: Battle of Kharkiv (2022) in 41 records; 41 matching paragraphs",
+      "sources": [
+        "TEXT_34439",
+        "TEXT_34440",
+        "TEXT_34441",
+        "TEXT_34442",
+        "TEXT_34443",
+        "TEXT_34444",
+        "TEXT_34445",
+        "TEXT_34447",
+        "TEXT_34448",
+        "TEXT_34449"
+      ]
+    },
+    {
+      "number": 5,
+      "id": "Sevastopol",
+      "label": "Sevastopol",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.5220842,
+          44.6054434
+        ]
+      },
+      "why": "event: Battle of Crimea (2022–present) in 13 records; 13 matching paragraphs",
+      "sources": [
+        "TEXT_21437",
+        "TEXT_21440",
+        "TEXT_21441",
+        "TEXT_21442",
+        "TEXT_21443",
+        "TEXT_21445",
+        "TEXT_21446",
+        "TEXT_21447",
+        "TEXT_21452",
+        "TEXT_21454"
+      ]
+    },
+    {
+      "number": 6,
+      "id": "Sievierodonetsk",
+      "label": "Sievierodonetsk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.4936475,
+          48.9478698
+        ]
+      },
+      "why": "event: Battle of Sievierodonetsk (2022) in 32 records; 32 matching paragraphs",
+      "sources": [
+        "TEXT_80592",
+        "TEXT_80593",
+        "TEXT_80595",
+        "TEXT_80596",
+        "TEXT_80597",
+        "TEXT_80598",
+        "TEXT_80600",
+        "TEXT_80601",
+        "TEXT_80602",
+        "TEXT_80603"
+      ]
+    },
+    {
+      "number": 7,
+      "id": "Kyiv",
+      "label": "Kyiv",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.5241361,
+          50.4500336
+        ]
+      },
+      "why": "event: Battle of Antonov Airport in 14 records, event: Battle of Kyiv (2022) in 26 records; 14 matching paragraphs",
+      "sources": [
+        "TEXT_22076",
+        "TEXT_22077",
+        "TEXT_22078",
+        "TEXT_22081",
+        "TEXT_22082",
+        "TEXT_22084",
+        "TEXT_22093",
+        "TEXT_22094",
+        "TEXT_22095",
+        "TEXT_22096"
+      ]
+    },
+    {
+      "number": 8,
+      "id": "Khasham",
+      "label": "Khasham",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          40.2864169,
+          35.306769
+        ]
+      },
+      "why": "event: Battle of Khasham in 9 records; 9 matching paragraphs",
+      "sources": [
+        "TEXT_47198",
+        "TEXT_47208",
+        "TEXT_47212",
+        "TEXT_47213",
+        "TEXT_47219",
+        "TEXT_47220",
+        "TEXT_47239",
+        "TEXT_47241",
+        "TEXT_47243"
+      ]
+    },
+    {
+      "number": 9,
+      "id": "Ilovaisk",
+      "label": "Ilovaisk",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.1976205,
+          47.9248328
+        ]
+      },
+      "why": "event: Battle of Ilovaisk in 16 records; 16 matching paragraphs",
+      "sources": [
+        "TEXT_11343",
+        "TEXT_11349",
+        "TEXT_11351",
+        "TEXT_11352",
+        "TEXT_11353",
+        "TEXT_11354",
+        "TEXT_11355",
+        "TEXT_11359",
+        "TEXT_11360",
+        "TEXT_11361"
+      ]
+    },
+    {
+      "number": 10,
+      "id": "Izium",
+      "label": "Izium",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.2784093,
+          49.1913202
+        ]
+      },
+      "why": "event: Battle of Izium in 35 records; 35 matching paragraphs",
+      "sources": [
+        "TEXT_37626",
+        "TEXT_37627",
+        "TEXT_37628",
+        "TEXT_37629",
+        "TEXT_37630",
+        "TEXT_37631",
+        "TEXT_37632",
+        "TEXT_37633",
+        "TEXT_37635",
+        "TEXT_37637"
+      ]
+    },
+    {
+      "number": 11,
+      "id": "Mykolaiv",
+      "label": "Mykolaiv",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.9939666,
+          46.9758615
+        ]
+      },
+      "why": "event: Battle of Mykolaiv in 26 records; 26 matching paragraphs",
+      "sources": [
+        "TEXT_34513",
+        "TEXT_34514",
+        "TEXT_34515",
+        "TEXT_34516",
+        "TEXT_34517",
+        "TEXT_34519",
+        "TEXT_34520",
+        "TEXT_34523",
+        "TEXT_34524",
+        "TEXT_34525"
+      ]
+    },
+    {
+      "number": 12,
+      "id": "Toretsk",
+      "label": "Toretsk",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.8501378,
+          48.3970469
+        ]
+      },
+      "why": "event: Battle of Toretsk in 35 records; 35 matching paragraphs",
+      "sources": [
+        "TEXT_37904",
+        "TEXT_37905",
+        "TEXT_37906",
+        "TEXT_37907",
+        "TEXT_37909",
+        "TEXT_37910",
+        "TEXT_37911",
+        "TEXT_37912",
+        "TEXT_37913",
+        "TEXT_37915"
+      ]
+    },
+    {
+      "number": 13,
+      "id": "Vuhledar",
+      "label": "Vuhledar",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.2460771,
+          47.7809924
+        ]
+      },
+      "why": "event: Battle of Vuhledar in 30 records; 30 matching paragraphs",
+      "sources": [
+        "TEXT_80644",
+        "TEXT_80645",
+        "TEXT_80646",
+        "TEXT_80648",
+        "TEXT_80651",
+        "TEXT_80652",
+        "TEXT_80653",
+        "TEXT_80654",
+        "TEXT_80655",
+        "TEXT_80656"
+      ]
+    },
+    {
+      "number": 14,
+      "id": "Kherson",
+      "label": "Kherson",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          32.6143922,
+          46.6401295
+        ]
+      },
+      "why": "event: Battle of Kherson in 22 records; 22 matching paragraphs",
+      "sources": [
+        "TEXT_37668",
+        "TEXT_37670",
+        "TEXT_37672",
+        "TEXT_37678",
+        "TEXT_37679",
+        "TEXT_37680",
+        "TEXT_37681",
+        "TEXT_37682",
+        "TEXT_37683",
+        "TEXT_37684"
+      ]
+    },
+    {
+      "number": 15,
+      "id": "Bucha",
+      "label": "Bucha",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.2106925,
+          50.5503127
+        ]
+      },
+      "why": "event: Battle of Bucha in 25 records; 25 matching paragraphs",
+      "sources": [
+        "TEXT_37215",
+        "TEXT_37216",
+        "TEXT_37217",
+        "TEXT_37218",
+        "TEXT_37219",
+        "TEXT_37220",
+        "TEXT_37221",
+        "TEXT_37222",
+        "TEXT_37223",
+        "TEXT_37224"
+      ]
+    },
+    {
+      "number": 16,
+      "id": "Marinka",
+      "label": "Marinka",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.5022312,
+          47.9401242
+        ]
+      },
+      "why": "event: Battle of Marinka (2022–2023) in 30 records, event: Battle of Marinka (2015) in 5 records; 30 matching paragraphs",
+      "sources": [
+        "TEXT_9360",
+        "TEXT_9361",
+        "TEXT_9362",
+        "TEXT_9363",
+        "TEXT_9364",
+        "TEXT_9365",
+        "TEXT_9366",
+        "TEXT_9368",
+        "TEXT_9369",
+        "TEXT_9370"
+      ]
+    },
+    {
+      "number": 17,
+      "id": "Soledar",
+      "label": "Soledar",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0671791,
+          48.6956698
+        ]
+      },
+      "why": "event: Battle of Soledar in 27 records; 27 matching paragraphs",
+      "sources": [
+        "TEXT_23854",
+        "TEXT_23855",
+        "TEXT_23856",
+        "TEXT_23857",
+        "TEXT_23858",
+        "TEXT_23859",
+        "TEXT_23860",
+        "TEXT_23861",
+        "TEXT_23862",
+        "TEXT_23863"
+      ]
+    },
+    {
+      "number": 18,
+      "id": "Kurakhove",
+      "label": "Kurakhove",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.2826414,
+          47.9835214
+        ]
+      },
+      "why": "event: Battle of Kurakhove in 24 records; 24 matching paragraphs",
+      "sources": [
+        "TEXT_37742",
+        "TEXT_37743",
+        "TEXT_37744",
+        "TEXT_37745",
+        "TEXT_37746",
+        "TEXT_37747",
+        "TEXT_37749",
+        "TEXT_37750",
+        "TEXT_37751",
+        "TEXT_37752"
+      ]
+    },
+    {
+      "number": 19,
+      "id": "Lysychansk",
+      "label": "Lysychansk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.4285981,
+          48.917267
+        ]
+      },
+      "why": "event: Battle of Lysychansk in 23 records, event: Battles of Sievierodonetsk (2014) in 3 records; 23 matching paragraphs",
+      "sources": [
+        "TEXT_37776",
+        "TEXT_37777",
+        "TEXT_37778",
+        "TEXT_37779",
+        "TEXT_37780",
+        "TEXT_37781",
+        "TEXT_37782",
+        "TEXT_37783",
+        "TEXT_37784",
+        "TEXT_37785"
+      ]
+    },
+    {
+      "number": 20,
+      "id": "Irpin",
+      "label": "Irpin",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.2448725,
+          50.5206777
+        ]
+      },
+      "why": "event: Battle of Irpin in 15 records; 15 matching paragraphs",
+      "sources": [
+        "TEXT_37603",
+        "TEXT_37604",
+        "TEXT_37605",
+        "TEXT_37606",
+        "TEXT_37608",
+        "TEXT_37609",
+        "TEXT_37611",
+        "TEXT_37613",
+        "TEXT_37614",
+        "TEXT_37615"
+      ]
+    },
+    {
+      "number": 21,
+      "id": "Mariupol",
+      "label": "Mariupol",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.5499621,
+          47.0957648
+        ]
+      },
+      "why": "event: Battle of Mariupol (May–June 2014) in 14 records, event: Battle of Mariupol (September 2014) in 8 records; 14 matching paragraphs",
+      "sources": [
+        "TEXT_44815",
+        "TEXT_44816",
+        "TEXT_44818",
+        "TEXT_44820",
+        "TEXT_44822",
+        "TEXT_44824",
+        "TEXT_44825",
+        "TEXT_44826",
+        "TEXT_44827",
+        "TEXT_44829"
+      ]
+    },
+    {
+      "number": 22,
+      "id": "Shakhtarsk",
+      "label": "Shakhtarsk",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.4459474,
+          48.0550423
+        ]
+      },
+      "why": "event: Battle in Shakhtarsk Raion in 8 records; 8 matching paragraphs",
+      "sources": [
+        "TEXT_44990",
+        "TEXT_44998",
+        "TEXT_44999",
+        "TEXT_45000",
+        "TEXT_45001",
+        "TEXT_45003",
+        "TEXT_45004",
+        "TEXT_45007"
+      ]
+    },
+    {
+      "number": 23,
+      "id": "Hostomel",
+      "label": "Hostomel",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.25909,
+          50.58826
+        ]
+      },
+      "why": "event: Battle of Hostomel in 19 records; 19 matching paragraphs",
+      "sources": [
+        "TEXT_37583",
+        "TEXT_37584",
+        "TEXT_37585",
+        "TEXT_37586",
+        "TEXT_37587",
+        "TEXT_37588",
+        "TEXT_37589",
+        "TEXT_37590",
+        "TEXT_37591",
+        "TEXT_37593"
+      ]
+    },
+    {
+      "number": 24,
+      "id": "Krynky",
+      "label": "Krynky",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.118969,
+          46.746479
+        ]
+      },
+      "why": "event: Battle of Krynky in 8 records; 8 matching paragraphs",
+      "sources": [
+        "TEXT_41691",
+        "TEXT_41692",
+        "TEXT_41697",
+        "TEXT_41698",
+        "TEXT_41699",
+        "TEXT_41700",
+        "TEXT_41701",
+        "TEXT_41709"
+      ]
+    },
+    {
+      "number": 25,
+      "id": "Moshchun",
+      "label": "Moshchun",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.3081105,
+          50.6046106
+        ]
+      },
+      "why": "event: Battle of Moshchun in 16 records; 16 matching paragraphs",
+      "sources": [
+        "TEXT_37852",
+        "TEXT_37854",
+        "TEXT_37855",
+        "TEXT_37856",
+        "TEXT_37857",
+        "TEXT_37858",
+        "TEXT_37859",
+        "TEXT_37860",
+        "TEXT_37861",
+        "TEXT_37862"
+      ]
+    },
+    {
+      "number": 26,
+      "id": "Bilohorivka",
+      "label": "Bilohorivka",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.2472032,
+          48.924437
+        ]
+      },
+      "why": "event: Battle of the Siverskyi Donets in 8 records; 8 matching paragraphs",
+      "sources": [
+        "TEXT_37964",
+        "TEXT_37969",
+        "TEXT_37970",
+        "TEXT_37971",
+        "TEXT_37972",
+        "TEXT_37973",
+        "TEXT_37977",
+        "TEXT_37981"
+      ]
+    },
+    {
+      "number": 27,
+      "id": "Debaltseve",
+      "label": "Debaltseve",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.3999096,
+          48.3396839
+        ]
+      },
+      "why": "event: Battle of Debaltseve in 17 records; 17 matching paragraphs",
+      "sources": [
+        "TEXT_80537",
+        "TEXT_80538",
+        "TEXT_80539",
+        "TEXT_80540",
+        "TEXT_80542",
+        "TEXT_80543",
+        "TEXT_80544",
+        "TEXT_80545",
+        "TEXT_80546",
+        "TEXT_80547"
+      ]
+    },
+    {
+      "number": 28,
+      "id": "Krasnohorivka",
+      "label": "Krasnohorivka",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.50449,
+          48.01068
+        ]
+      },
+      "why": "event: Battle of Krasnohorivka in 15 records; 15 matching paragraphs",
+      "sources": [
+        "TEXT_37724",
+        "TEXT_37725",
+        "TEXT_37726",
+        "TEXT_37727",
+        "TEXT_37728",
+        "TEXT_37729",
+        "TEXT_37730",
+        "TEXT_37731",
+        "TEXT_37732",
+        "TEXT_37733"
+      ]
+    },
+    {
+      "number": 29,
+      "id": "Lyman",
+      "label": "Lyman",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.8168012,
+          48.9801314
+        ]
+      },
+      "why": "event: Battle of Krasnyi Lyman in 8 records; 8 matching paragraphs",
+      "sources": [
+        "TEXT_45060",
+        "TEXT_45061",
+        "TEXT_45062",
+        "TEXT_45065",
+        "TEXT_45066",
+        "TEXT_45067",
+        "TEXT_45069",
+        "TEXT_45076"
+      ]
+    },
+    {
+      "number": 30,
+      "id": "Kramatorsk",
+      "label": "Kramatorsk",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.5843812,
+          48.7389415
+        ]
+      },
+      "why": "event: Battle of Kramatorsk in 13 records; 13 matching paragraphs",
+      "sources": [
+        "TEXT_44926",
+        "TEXT_44929",
+        "TEXT_44930",
+        "TEXT_44931",
+        "TEXT_44932",
+        "TEXT_44933",
+        "TEXT_44934",
+        "TEXT_44935",
+        "TEXT_44936",
+        "TEXT_44937"
+      ]
+    },
+    {
+      "number": 31,
+      "id": "Kostiantynivka",
+      "label": "Kostiantynivka",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.6923755,
+          48.5348985
+        ]
+      },
+      "why": "event: Battle of Kostiantynivka in 14 records; 14 matching paragraphs",
+      "sources": [
+        "TEXT_37705",
+        "TEXT_37706",
+        "TEXT_37707",
+        "TEXT_37708",
+        "TEXT_37709",
+        "TEXT_37710",
+        "TEXT_37711",
+        "TEXT_37712",
+        "TEXT_37713",
+        "TEXT_37714"
+      ]
+    },
+    {
+      "number": 32,
+      "id": "Sumy",
+      "label": "Sumy",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.8027723,
+          50.9119775
+        ]
+      },
+      "why": "event: Battle of Sumy in 11 records; 11 matching paragraphs",
+      "sources": [
+        "TEXT_41668",
+        "TEXT_41670",
+        "TEXT_41671",
+        "TEXT_41672",
+        "TEXT_41674",
+        "TEXT_41676",
+        "TEXT_41677",
+        "TEXT_41678",
+        "TEXT_41679",
+        "TEXT_41680"
+      ]
+    },
+    {
+      "number": 33,
+      "id": "Karlivka",
+      "label": "Karlivka",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.1374845,
+          49.4537175
+        ]
+      },
+      "why": "event: Battles for Karlivka in 14 records; 14 matching paragraphs",
+      "sources": [
+        "TEXT_44792",
+        "TEXT_44793",
+        "TEXT_44794",
+        "TEXT_44795",
+        "TEXT_44796",
+        "TEXT_44797",
+        "TEXT_44798",
+        "TEXT_44800",
+        "TEXT_44801",
+        "TEXT_44802"
+      ]
+    },
+    {
+      "number": 34,
+      "id": "Brovary",
+      "label": "Brovary",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.7900482,
+          50.5111168
+        ]
+      },
+      "why": "event: Battle of Brovary in 10 records; 10 matching paragraphs",
+      "sources": [
+        "TEXT_8494",
+        "TEXT_8495",
+        "TEXT_8496",
+        "TEXT_8497",
+        "TEXT_8498",
+        "TEXT_8499",
+        "TEXT_8500",
+        "TEXT_8502",
+        "TEXT_8503",
+        "TEXT_8505"
+      ]
+    },
+    {
+      "number": 35,
+      "id": "Mala Tokmachka",
+      "label": "Mala Tokmachka",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.896801,
+          47.532688
+        ]
+      },
+      "why": "event: Battle of Mala Tokmachka in 6 records; 6 matching paragraphs",
+      "sources": [
+        "TEXT_37830",
+        "TEXT_37831",
+        "TEXT_37835",
+        "TEXT_37836",
+        "TEXT_37839",
+        "TEXT_37840"
+      ]
+    },
+    {
+      "number": 36,
+      "id": "Horlivka",
+      "label": "Horlivka",
+      "kind": "city",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0027664,
+          48.3058686
+        ]
+      },
+      "why": "event: Battle of Horlivka in 10 records; 10 matching paragraphs",
+      "sources": [
+        "TEXT_44871",
+        "TEXT_44872",
+        "TEXT_44873",
+        "TEXT_44874",
+        "TEXT_44876",
+        "TEXT_44877",
+        "TEXT_44878",
+        "TEXT_44879",
+        "TEXT_44880",
+        "TEXT_44882"
+      ]
+    },
+    {
+      "number": 37,
+      "id": "Volnovakha",
+      "label": "Volnovakha",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.4934079,
+          47.6014517
+        ]
+      },
+      "why": "event: Battle of Volnovakha in 11 records; 11 matching paragraphs",
+      "sources": [
+        "TEXT_10309",
+        "TEXT_10311",
+        "TEXT_10312",
+        "TEXT_10313",
+        "TEXT_10314",
+        "TEXT_10315",
+        "TEXT_10316",
+        "TEXT_10317",
+        "TEXT_10318",
+        "TEXT_10319"
+      ]
+    },
+    {
+      "number": 38,
+      "id": "Voznesensk",
+      "label": "Voznesensk",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.3338636,
+          47.5679582
+        ]
+      },
+      "why": "event: Battle of Voznesensk in 9 records; 9 matching paragraphs",
+      "sources": [
+        "TEXT_37952",
+        "TEXT_37953",
+        "TEXT_37954",
+        "TEXT_37955",
+        "TEXT_37956",
+        "TEXT_37957",
+        "TEXT_37958",
+        "TEXT_37960",
+        "TEXT_37962"
+      ]
+    },
+    {
+      "number": 39,
+      "id": "Pisky",
+      "label": "Pisky",
+      "kind": "village",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.67452,
+          48.06604
+        ]
+      },
+      "why": "event: Battle of Pisky in 9 records; 9 matching paragraphs",
+      "sources": [
+        "TEXT_37881",
+        "TEXT_37882",
+        "TEXT_37883",
+        "TEXT_37884",
+        "TEXT_37885",
+        "TEXT_37886",
+        "TEXT_37887",
+        "TEXT_37888",
+        "TEXT_37890"
+      ]
+    },
+    {
+      "number": 40,
+      "id": "Rubizhne",
+      "label": "Rubizhne",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.3725819,
+          49.0329045
+        ]
+      },
+      "why": "event: Battle of Rubizhne in 10 records; 10 matching paragraphs",
+      "sources": [
+        "TEXT_37984",
+        "TEXT_37985",
+        "TEXT_37986",
+        "TEXT_37987",
+        "TEXT_37988",
+        "TEXT_37989",
+        "TEXT_37990",
+        "TEXT_37991",
+        "TEXT_37992",
+        "TEXT_37993"
+      ]
+    },
+    {
+      "number": 41,
+      "id": "Svitlodarsk",
+      "label": "Svitlodarsk",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.22349,
+          48.43803
+        ]
+      },
+      "why": "event: Battle of Svitlodarsk in 6 records; 6 matching paragraphs",
+      "sources": [
+        "TEXT_45088",
+        "TEXT_45089",
+        "TEXT_45092",
+        "TEXT_45093",
+        "TEXT_45094",
+        "TEXT_45095"
+      ]
+    },
+    {
+      "number": 42,
+      "id": "Makariv",
+      "label": "Makariv",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.8068986,
+          50.4639897
+        ]
+      },
+      "why": "event: Battle of Makariv in 9 records; 9 matching paragraphs",
+      "sources": [
+        "TEXT_37843",
+        "TEXT_37844",
+        "TEXT_37845",
+        "TEXT_37846",
+        "TEXT_37847",
+        "TEXT_37848",
+        "TEXT_37849",
+        "TEXT_37850",
+        "TEXT_37851"
+      ]
+    },
+    {
+      "number": 43,
+      "id": "Ocheretyne",
+      "label": "Ocheretyne",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.6129934,
+          48.2428705
+        ]
+      },
+      "why": "event: Battle of Ocheretyne in 9 records; 9 matching paragraphs",
+      "sources": [
+        "TEXT_37871",
+        "TEXT_37872",
+        "TEXT_37873",
+        "TEXT_37874",
+        "TEXT_37875",
+        "TEXT_37876",
+        "TEXT_37877",
+        "TEXT_37878",
+        "TEXT_37879"
+      ]
+    },
+    {
+      "number": 44,
+      "id": "Popasna",
+      "label": "Popasna",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.3777033,
+          48.6322687
+        ]
+      },
+      "why": "event: Battle of Popasna in 9 records; 9 matching paragraphs",
+      "sources": [
+        "TEXT_37893",
+        "TEXT_37894",
+        "TEXT_37895",
+        "TEXT_37896",
+        "TEXT_37897",
+        "TEXT_37898",
+        "TEXT_37899",
+        "TEXT_37900",
+        "TEXT_37901"
+      ]
+    },
+    {
+      "number": 45,
+      "id": "Enerhodar",
+      "label": "Enerhodar",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.6602709,
+          47.4900575
+        ]
+      },
+      "why": "event: Battle of Enerhodar in 6 records; 6 matching paragraphs",
+      "sources": [
+        "TEXT_37481",
+        "TEXT_37482",
+        "TEXT_37483",
+        "TEXT_37484",
+        "TEXT_37487",
+        "TEXT_37488"
+      ]
+    },
+    {
+      "number": 46,
+      "id": "Donetsk People's Republic",
+      "label": "Donetsk People's Republic",
+      "kind": "amenity",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.8003465,
+          48.0089299
+        ]
+      },
+      "why": "event: Battle of Yasynuvata in 2 records; 2 matching paragraphs",
+      "uncertain": "geocoded as a amenity with importance 0.39",
+      "sources": [
+        "TEXT_45081",
+        "TEXT_45085"
+      ]
+    },
+    {
+      "number": 47,
+      "id": "Slavutych",
+      "label": "Slavutych",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.7562301,
+          51.5201397
+        ]
+      },
+      "why": "event: Battle of Slavutych in 6 records; 6 matching paragraphs",
+      "sources": [
+        "TEXT_41662",
+        "TEXT_41663",
+        "TEXT_41664",
+        "TEXT_41665",
+        "TEXT_41666",
+        "TEXT_41667"
+      ]
+    },
+    {
+      "number": 48,
+      "id": "Novoazovsk",
+      "label": "Novoazovsk",
+      "kind": "town",
+      "role": "context",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0830911,
+          47.1138718
+        ]
+      },
+      "why": "event: Battle of Novoazovsk in 5 records; 5 matching paragraphs",
+      "sources": [
+        "TEXT_45011",
+        "TEXT_45012",
+        "TEXT_45013",
+        "TEXT_45014",
+        "TEXT_45015"
+      ]
+    }
+  ],
+  "regions": [
+    {
+      "id": "Ukraine",
+      "place_type": "country",
+      "count": 47,
+      "places": [
+        7
+      ],
+      "children": [
+        {
+          "id": "Donetsk",
+          "place_type": "state",
+          "count": 23,
+          "places": [
+            1,
+            2,
+            3,
+            9,
+            12,
+            13,
+            16,
+            17,
+            18,
+            21,
+            22,
+            27,
+            28,
+            29,
+            30,
+            31,
+            36,
+            37,
+            39,
+            41,
+            43,
+            46,
+            48
+          ],
+          "children": []
+        },
+        {
+          "id": "Kyiv Oblast",
+          "place_type": "state",
+          "count": 7,
+          "places": [
+            15,
+            20,
+            23,
+            25,
+            34,
+            42,
+            47
+          ],
+          "children": []
+        },
+        {
+          "id": "Luhansk Oblast",
+          "place_type": "state",
+          "count": 5,
+          "places": [
+            6,
+            19,
+            26,
+            40,
+            44
+          ],
+          "children": []
+        },
+        {
+          "id": "Kharkiv Oblast",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            4,
+            10
+          ],
+          "children": []
+        },
+        {
+          "id": "Mykolaiv Oblast",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            11,
+            38
+          ],
+          "children": []
+        },
+        {
+          "id": "Kherson Oblast",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            14,
+            24
+          ],
+          "children": []
+        },
+        {
+          "id": "Zaporizhzhia Oblast",
+          "place_type": "state",
+          "count": 2,
+          "places": [
+            35,
+            45
+          ],
+          "children": []
+        },
+        {
+          "id": "Autonomous Republic of Crimea",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            5
+          ],
+          "children": []
+        },
+        {
+          "id": "Sumy Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            32
+          ],
+          "children": []
+        },
+        {
+          "id": "Poltava Oblast",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            33
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "Syria",
+      "place_type": "country",
+      "count": 1,
+      "places": [],
+      "children": [
+        {
+          "id": "Deir ez-Zor Governorate",
+          "place_type": "state",
+          "count": 1,
+          "places": [
+            8
+          ],
+          "children": []
+        }
+      ]
+    }
+  ],
+  "entities": [],
+  "citations": [
+    {
+      "id": "L1",
+      "pointer": "TEXT_37248",
+      "article": "Battle of Avdiivka (2023–2024)",
+      "spans": []
+    }
+  ],
+  "sources": [
+    "TEXT_37248"
+  ],
+  "map": {
+    "bbox": [
+      37.72113,
+      48.08833,
+      38.02764,
+      48.63497
+    ],
+    "highlight": [
+      1,
+      2,
+      3
+    ],
+    "showing": "all",
+    "not_shown": 0
+  },
+  "follow_ups": [
+    "Which places are linked to the Battle of Avdiivka (2023–2024)?",
+    "What happened in Chasiv Yar?"
+  ],
+  "did_you_mean": [],
+  "notes": [
+    "② 'Russia–Ukraine war': no graph node or article matches",
+    "③ 55 event articles found, longest first; 55 placed on the map, at 48 places",
+    "④ 48 places found (all go on the map); 10 described to the LLM",
+    "④ list answer: no corpus sentences by design; each place has a data line, and 'tell me about number N' gives the details"
+  ],
+  "meta": {
+    "question_type": "event_list",
+    "model": "google/gemini-2.5-flash",
+    "llm_calls": 2,
+    "cost_usd": 0.00178,
+    "seconds": 2.66
+  }
+}

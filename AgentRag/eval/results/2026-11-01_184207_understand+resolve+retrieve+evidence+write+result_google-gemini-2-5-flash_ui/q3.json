@@ -1,6 +1,6 @@
 {
-  "answer": "The Battle of Bakhmut was a major battle between the Russian Armed Forces and the Ukrainian Armed Forces for control of the city of Bakhmut, during the eastern front, a theatre of the Russo-Ukrainian war [L1]. It is regarded by some military analysts to be the bloodiest battle since World War II [L1]. A total of 75 places were found in connection with the battle, with the strongest few being Bakhmut [1], Soledar [2], Klishchiivka [3], and Orikhovo-Vasylivka [4]. These places are concentrated in the Donetsk region of Ukraine.",
-  "answer_plain": "The Battle of Bakhmut was a major battle between the Russian Armed Forces and the Ukrainian Armed Forces for control of the city of Bakhmut, during the eastern front, a theatre of the Russo-Ukrainian war. It is regarded by some military analysts to be the bloodiest battle since World War II. A total of 75 places were found in connection with the battle, with the strongest few being Bakhmut, Soledar, Klishchiivka, and Orikhovo-Vasylivka. These places are concentrated in the Donetsk region of Ukraine.",
+  "answer": "The Battle of Bakhmut was a major battle between the Russian Armed Forces and the Ukrainian Armed Forces for control of the city of Bakhmut, during the eastern front, a theatre of the Russo-Ukrainian war [L1]. It is regarded by some military analysts to be the bloodiest battle since World War II [L1]. A total of 75 places were found in connection with this battle, with the strongest few being Bakhmut [1], Soledar [2], Klishchiivka [3], and Orikhovo-Vasylivka [4]. These places are concentrated in the Donetsk region of Ukraine.",
+  "answer_plain": "The Battle of Bakhmut was a major battle between the Russian Armed Forces and the Ukrainian Armed Forces for control of the city of Bakhmut, during the eastern front, a theatre of the Russo-Ukrainian war. It is regarded by some military analysts to be the bloodiest battle since World War II. A total of 75 places were found in connection with this battle, with the strongest few being Bakhmut, Soledar, Klishchiivka, and Orikhovo-Vasylivka. These places are concentrated in the Donetsk region of Ukraine.",
   "status": "answered",
   "grounded": true,
   "shape": "list",
@@ -1766,7 +1766,7 @@
     "question_type": "event_places",
     "model": "google/gemini-2.5-flash",
     "llm_calls": 2,
-    "cost_usd": 0.00178,
-    "seconds": 2.32
+    "cost_usd": 0.00102,
+    "seconds": 2.43
   }
 }

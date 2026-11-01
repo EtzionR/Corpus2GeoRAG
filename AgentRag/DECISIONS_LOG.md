@@ -1148,6 +1148,31 @@ it has topic words ("Tell me about drone attacks in this area"). A named place s
 about Kharkiv" with a box stays `about` Kharkiv). Checked live: 70 places for both questions, 7 for
 the drone one; the focus and project14 sets give the same results as before.
 
+**P2-78. A list of battles finds the battles** (owner's go, 2026-11-01). q4, "Show me the locations
+of major battles in the Russia–Ukraine war", answered "No data": the event_list route looked for
+article titles starting with the model's phrase "major battles", and none does. The graph has no
+event type (its nodes are text, people, organizations and places), so an event exists only as an
+article named after it. *Fix:* the route reads the event kind from each keyword word, in the
+singular ("battles" → battle), and keeps the titles shaped "<kind> of/for/in/at/on ..." ("Battle of
+Bakhmut", "Battles for Karlivka", "Siege of Mariupol"). A word that names no kind ("major",
+"Russian") matches nothing, because only that title shape counts, not any first word (88 titles
+start with "Russian"). No keywords still means battles and sieges; keywords that name no kind give
+no data, not battles. *Also:* the graph has no measure of a battle's size, so the longest articles
+come first (it opens with Avdiivka, not with the alphabetically first "Battle in Shakhtarsk Raion");
+each battle is placed at its main place as in P2-74, the most-mentioned specific place (the Battle
+of Khasham at Khasham in Syria, not at the US its article mentions more); two battles at one place
+share one pin that lists both (Avdiivka 2017 and 2023–2024). Checked live: q4 48 places (Avdiivka,
+Chasiv Yar, Bakhmut, Kharkiv, Sievierodonetsk, Kyiv ...); "List the main sieges of the war" the 4
+sieges; the focus and project14 sets otherwise unchanged. Not built for q4: the title search was
+already there, and the rule covers any list of events.
+
+**q9 stays open for the MVP** (owner, 2026-11-01). "Show me Ukrainian locations connected to Russian
+military commanders" is misread: the model takes "Ukrainian locations" as the country Ukraine and
+"Russian military commanders" as both the country Russia and the Russian Armed Forces, and the list
+route lists everything linked to either country (2,798 places; no data in some runs). Two causes:
+the graph can't tell who is a commander (people have no role, and commanders such as Gerasimov and Shoigu are only "mentioned with" the Russian Armed Forces, with no command link), and our list route doesn't yet apply the "only places in Ukraine" filter the planner records. A fix is designed and measured for a later stage (ideas list): about 114
+Ukrainian cities, towns and villages linked to the Russian Armed Forces.
+
 ### ④ Evidence pack
 
 **P2-15. Choosing the least text that answers.**
@@ -1231,3 +1256,4 @@ Things we chose not to do yet, kept here so we can pick them up if the results c
 | Leaner results for very big lists (e.g. context places without `why`/`sources`, fetched on demand) | ⑥ Result | 500 KB for q10 is fine in-process; matters only behind an HTTP API (P2-59) | 2026-10-21 |
 | Ignore entities with non-Latin names (1,458, mostly words from native-language names in brackets, e.g. `Україні`) | Loading | Owner to decide; better fixed in NER (GRAPH_TEAM_ISSUES F2) | 2026-10-21 |
 | q10 ("Russia and Ukraine ... the same country") sometimes loses its country filter: 1,659 places instead of about 149 (2 of the last 3 runs) | ① Understand | Model variance; owner: record the answers for the MVP, fix in a later stage | 2026-10-31 |
+| q9: words written as a filter ("Ukrainian locations") are not a subject; words read both as a country and as an organization keep the organization; the list route applies the country filter by the country's outline (the INSIDE chain misses places such as Borodianka, whose chain ends at a misspelled " Ukrain") | ① / ③ | Owner: a later stage. Measured: 114 places instead of 2,798. A real "commanders" answer needs people's roles in the graph | 2026-11-01 |
