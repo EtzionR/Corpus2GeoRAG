@@ -74,7 +74,7 @@ question costs about $0.002 and takes 1 to 8 seconds.
 - **We never edit other teams' work.** The graph file is read as is; corrections happen in memory
   when it loads. Problems go back to their owners as written notes: GRAPH_TEAM_ISSUES.md,
   MISSING_PAGES.md, UI_TEAM_NOTES.md, ner_review/, DATA_TEAM_DROPPED_ARTICLES.csv.
-- **205 automated tests**, plus the 10-question run before each commit.
+- **209 automated tests**, plus the 10-question run before each commit.
 
 ---
 
@@ -120,7 +120,7 @@ is what prevents each of those, and the evidence.
   | Event titles with lower-case words are names (P2-72) | Kharkiv counteroffensive | Bucha massacre, Wagner Group rebellion |
   | "Where did <event> happen" gives one place (P2-74) | Battle of Bakhmut | Siege of Mariupol, Bucha massacre, Battle of Avdiivka |
 
-- **The full project question list, not just our 10** (2026-10-31, the code as pushed, $0.022):
+- **The full project question list, not just our 10** (2026-10-31, rerun 2026-11-01 after the q4 fix, about $0.02 a run):
 
   | Question | Result |
   |---|---|
@@ -130,11 +130,11 @@ is what prevents each of those, and the evidence.
   | q11 the presidents of Ukraine and Russia | answered, 4 citations |
   | q12 within 500 m, q13 Dnipro, q14 drones in a box | answered |
   | q10 places linked to both Russia and Ukraine "with the same country" | partly: the "country" filter is often lost (1,659 places instead of about 149) |
-  | **q4 locations of major battles** | **fails** (no data): the battle-title search looked for titles starting with "major battles" |
-  | **q9 Ukrainian locations connected to Russian military commanders** | **misread**: answers about Ukraine itself (2,798 places) |
+  | q4 locations of major battles | answered since the 2026-11-01 fix (P2-78): 48 battles, longest articles first; before it, no data |
+  | **q9 Ukrainian locations connected to Russian military commanders** | **misread**: lists what is linked to Ukraine or Russia (2,798 places; no data in some runs) |
   | v14, the original q11: "the head of the Russian military" | answered: Gerasimov, Chief of the General Staff, 3 citations |
 
-  We report q4, q9 and q10 as open rather than hide them (section 7).
+  We report q9 and q10 as open rather than hide them (section 7).
 - **One test question was replaced, openly** (P2-46, 2026-10-20). The original q11, "Tell me about the
   head of the Russian military", failed because every graph record of who leads the Russian
   military has low confidence (0.41 to 0.47, below our 0.7 threshold). We did two things: built a
@@ -214,6 +214,7 @@ changed. The rules:
 | Russia zoomed to the whole world | Its border crosses the 180° line | Count only the parts on the side of its own point (P2-76) | Zooms to Russia |
 | "Show me where drone attacks happened" → no data | No place named, nothing selected: no area | The agent asks for an area instead of guessing (P2-75) | A clear instruction, without the second LLM call |
 | UI: old pins stay, long answers open at the end, the page can't scroll, blank page on some PCs | UI code | Written notes to the UI team; a copy with the fixes in our folder, run by the launcher, until their version had them | The UI team applied them in their own `ui/` (PR #33); the copy is deleted |
+| q4 "major battles" → no data | The battle search looked for titles starting with the whole phrase | Read the event kind from each word ("battles" → "Battle of ..."), longest articles first, each at its main specific place, one pin per place (P2-78) | 48 battles; "main sieges" works too |
 | "What happened in this area?" (box drawn) → no data | The model read it as a question about a named subject, and none was named | With the selection in use and nothing named, it searches the selection (P2-77) | 70 places in a box around Kharkiv |
 
 ---
@@ -247,10 +248,10 @@ changed. The rules:
 
 ## 7. Honest limits and what comes next
 
-- **q4 ("major battles") fails** and **q9 (Ukrainian places linked to Russian commanders) is
-  misread**. Both are fixable in how the question is read: q4 by searching battle titles by the
-  word "battle" instead of the whole phrase; q9 by keeping "Ukrainian" as a filter and "Russian
-  military commanders" as the thing to look up.
+- **q9 (Ukrainian places linked to Russian commanders) is misread**, and we left it for a later
+  stage. It has two causes, and it's worth naming both: the graph can't tell who is a commander (people have no role, and commanders such as Gerasimov and Shoigu are only "mentioned with" the Russian Armed Forces, with no command link), and our list route doesn't yet apply the "only places in Ukraine" filter the planner records. The fix is designed
+  and measured: about 114 Ukrainian places linked to the Russian Armed Forces instead of 2,798
+  (DECISIONS_LOG ideas list).
 - **q10 often loses its "same country" filter**, a matter of how the model reads the question
   (recorded; to fix after the MVP).
 - **15 missing pages** (MISSING_PAGES.md) limit answers about Russia, Crimea, Moscow and others.
@@ -277,8 +278,17 @@ inject its own answers; we found it, explained it (P2-27) and blocked it in code
 **"Did you tune the system to your test questions?"**
 The prompt's examples are deliberately different questions, and a test fails if a test question
 appears in the prompt (P2-26). Every fix is a rule about the kind of question and was checked on
-questions never used before. On the full project list, three questions still have problems (q4,
-q9, q10), and we report them.
+questions never used before. On the full project list, two questions still have problems (q9 and
+q10), and we report them. q4 was fixed by a rule about lists of events, which also answers "List the
+main sieges of the war".
+
+**"Why does q9 fail? Is it the graph's fault?"**
+Partly. The graph can't tell who is a commander: people have no role in it, and commanders such as
+Gerasimov are only "mentioned with" the Russian Armed Forces, with no command link. Bringing in a
+list of commanders from outside the graph would be exactly the cheating we avoid. The other part is
+ours: the model reads "Ukrainian locations" as the subject, and our list route doesn't yet apply the
+"only places in Ukraine" filter. We designed and measured the fix (114 places instead of 2,798) and
+left it for the next stage rather than rush it the day before the MVP.
 
 **"You replaced one of the project questions."**
 Yes, openly, on 2026-10-20 (P2-46): the original q11 failed because the graph's leadership records
@@ -319,10 +329,10 @@ mean".
 | LLM calls per question | 0 to 2 (fast path: none for planning) |
 | Cost per question | about $0.002; the 10-question run $0.019 |
 | Time per answer | 1 to 8 s (11 s for the 2,798-place q9) |
-| Automated tests | 205 |
+| Automated tests | 209 |
 | Recorded decisions | about 80 (DECISIONS_LOG.md) |
 | Data corrections at load | 11 points fixed, 34 wrong pins removed, 146 hierarchy links fixed, reference sections dropped |
-| Project questions answered well | 11 of 14 (q4 fails, q9 misread, q10 partly), plus the original q11 |
+| Project questions answered well | 12 of 14 (q9 misread, q10 partly), plus the original q11 |
 
 ## 10. Where to find more
 
