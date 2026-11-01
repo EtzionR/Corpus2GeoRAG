@@ -5,7 +5,7 @@ Russia–Ukraine war), compressed with gzip. It links people, organizations and 
 relation can be traced back to the exact words in a source text.
 
 * **Format:** NetworkX *node-link* JSON, undirected graph: `{"directed": false, "multigraph": false, "graph": {}, "nodes": [...], "links": [...]}`.
-* **Size:** 155,124 nodes — 88,120 texts and 67,004 entities (19,771 PER, 32,226 ORG, 15,007 LOC) — and 819,111 edges.
+* **Size:** 155,124 nodes — 88,120 texts and 67,004 entities (19,771 PER, 32,226 ORG, 15,007 LOC) — and 819,102 edges.
 * **File:** `knowledge_graph.json.gz`, 42 MB (gzip, lossless; the JSON inside is 268 MB). Python reads it directly (section 1);
   to look inside by hand, decompress it with 7-Zip.
 
