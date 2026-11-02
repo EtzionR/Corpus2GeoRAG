@@ -587,6 +587,17 @@ def clear_spatial_selection(ignore_current_drawing: bool = True):
     st.session_state.last_processed_drawing = None
 
 
+def clear_map_and_console(ignore_current_drawing: bool = True):
+    """Clear both tactical map overlays/selection and conversation console history."""
+    st.session_state.map_layers = []
+    st.session_state.last_map_bbox = None
+    clear_spatial_selection(ignore_current_drawing=ignore_current_drawing)
+    st.session_state.messages = []
+    st.session_state.agent_turns = []
+    st.session_state.pending_query = None
+    st.session_state.last_processed_chat_input = None
+
+
 class SelectionSyncHook(MacroElement):
     """
     Lightweight MacroElement attached to `selection_fg` (feature_group_0) so that whenever
@@ -3207,7 +3218,8 @@ st.markdown("""<script>
                 txt.indexOf('❌ Clear') !== -1 ||
                 txt.indexOf('Clear Box') !== -1 ||
                 txt.indexOf('Clear Point') !== -1 ||
-                txt.indexOf('Reset Map Layers') !== -1
+                txt.indexOf('Reset Map Layers') !== -1 ||
+                txt.indexOf('Clear Map & Console') !== -1
             ) {
                 var slot2 = document.getElementById('geoai-instant-pill-slot');
                 if (slot2) {
@@ -3765,6 +3777,15 @@ with st.sidebar:
         help="Inspect raw JSON request and response payloads, latency, grounding sources, and error logs."
     ):
         show_rag_log_dialog()
+
+    if st.button(
+        "🧹 Clear Map & Console",
+        use_container_width=True,
+        help="Reset both the tactical map (layers, selections) and conversation console history",
+        key="btn_clear_map_console_sidebar"
+    ):
+        clear_map_and_console()
+        st.rerun()
 
     if st.button("🗑️ Clear Chat History", use_container_width=True, help="Reset conversation messages"):
         st.session_state.messages = []

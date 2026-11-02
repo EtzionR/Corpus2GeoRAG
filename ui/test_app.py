@@ -1951,6 +1951,55 @@ class TestOption1MapCanvasTacticalHudAndStableLayout:
         assert st.session_state.last_processed_drawing is None
         assert st.session_state.selection_clear_seq == 4
 
+    def test_clear_map_and_console_resets_both_map_and_messages(self):
+        """Verify clear_map_and_console resets map layers, spatial selections, and conversation history."""
+        import streamlit as st
+        import app
+        from app import MapLayer
+
+        # Setup active map layers, spatial selection, and conversation messages
+        st.session_state.map_layers = [MapLayer(name="Test Layer", layer_type="marker", data={"lat": 48.0, "lon": 31.0})]
+        st.session_state.last_map_bbox = [30.0, 48.0, 32.0, 49.0]
+        st.session_state.selected_points = [(48.1, 31.1)]
+        st.session_state.bounding_box = ((48.0, 31.0), (49.0, 32.0))
+        st.session_state.answered_bbox = ((48.0, 31.0), (49.0, 32.0))
+        st.session_state.active_point = (48.1, 31.1)
+        st.session_state.active_tactical_scan = "point_scan"
+        st.session_state.selection_clear_seq = 10
+        st.session_state.messages = [{"role": "user", "content": "test"}, {"role": "assistant", "content": "ans"}]
+        st.session_state.agent_turns = [{"role": "user", "content": "test"}]
+        st.session_state.pending_query = {"text_prompt": "test"}
+        st.session_state.last_processed_chat_input = "test"
+
+        # Execute clear_map_and_console
+        app.clear_map_and_console()
+
+        # Verify all map state is cleared
+        assert st.session_state.map_layers == []
+        assert st.session_state.last_map_bbox is None
+        assert st.session_state.selected_points == []
+        assert st.session_state.bounding_box is None
+        assert st.session_state.answered_bbox is None
+        assert st.session_state.active_point is None
+        assert st.session_state.active_tactical_scan is None
+        assert st.session_state.selection_clear_seq == 11
+
+        # Verify all console state is cleared
+        assert st.session_state.messages == []
+        assert st.session_state.agent_turns == []
+        assert st.session_state.pending_query is None
+        assert st.session_state.last_processed_chat_input is None
+
+    def test_sidebar_has_clear_map_and_console_button(self):
+        """Verify app.py includes the 'Clear Map & Console' button in sidebar operations and client-side hook."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            code = f.read()
+
+        assert "🧹 Clear Map & Console" in code
+        assert "btn_clear_map_console_sidebar" in code
+        assert "clear_map_and_console()" in code
+        assert "txt.indexOf('Clear Map & Console') !== -1" in code
+
     def test_answered_pin_selection_keeps_info_window_and_hud_open(self):
         """Verify that selecting an answered pin does not overwrite with target reticle, preserves popup, and keeps HUD open."""
         with open("app.py", "r", encoding="utf-8") as f:
