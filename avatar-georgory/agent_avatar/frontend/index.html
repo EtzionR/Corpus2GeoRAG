@@ -1366,6 +1366,10 @@ function deliver(cfg) {
   // Called with a fresh config (html mode: once on load; component mode: every rerun).
   applyConfig(cfg);
   if (MODE === "component" && CFG.height !== lastHeight) { lastHeight = CFG.height; ST.height(CFG.height); }
+  if (CFG.hidden) {                                   // off screen: silent, and nothing is marked as spoken
+    if (Talk.active || Cues.list.length || Gestures.running === "listen") { stop(); }
+    return;
+  }
   if (CFG.busy) {                                     // backend is thinking: stop talking, listen to HQ
     if (Talk.active || Cues.list.length) stop();
     setStatus("busy");

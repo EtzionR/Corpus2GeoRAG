@@ -1,5 +1,5 @@
 diff --git a/ui/app.py b/ui/app.py
-index d6e3569..2ec188c 100644
+index d6e3569..1ac7191 100644
 --- a/ui/app.py
 +++ b/ui/app.py
 @@ -103,6 +103,15 @@ from geo_agent import (
@@ -47,3 +47,14 @@ index d6e3569..2ec188c 100644
      # Render the interactive map component inside Streamlit
      # Uses returned_objects to ensure 0ms client-side pans and zooms with zero reruns (AGENTS.md Rule 1.1)
      map_data = st_folium(
+@@ -5707,6 +5724,10 @@ with col1:
+             }
+             st.rerun()
+ 
++    # Agent Geo-rgory's button sits inside the chat box, right of the send arrow
++    if georgory:
++        georgory.chat_button()
++
+     # Chat input box for user queries
+     user_prompt = st.chat_input("Type a question (e.g. 'What units are stationed here?')...", key="geoai_chat_input")
+ 

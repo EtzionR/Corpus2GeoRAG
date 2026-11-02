@@ -12,7 +12,7 @@ From the repo root:
 git apply avatar-georgory/app_hooks.patch
 ```
 
-That adds four guarded hooks to `ui/app.py` and nothing else. Then run the tests and start the app as usual:
+That adds five guarded hooks to `ui/app.py` and nothing else. Then run the tests and start the app as usual:
 
 ```bash
 pytest avatar-georgory/test_georgory.py -v
@@ -21,12 +21,13 @@ cd ui && streamlit run app.py
 
 Use Chrome, and click ▶ on the agent once if the browser blocks sound.
 
-**If `app.py` has moved on and the patch no longer applies,** add the hooks by hand. There are only four, all marked `georgory` in `app_hooks.patch`:
+**If `app.py` has moved on and the patch no longer applies,** add the hooks by hand. There are only five, all marked `georgory` in `app_hooks.patch`:
 
 1. The guarded import, above the `get_source_text` helpers
 2. `"avatar": georgory.avatar_payload(resp) if georgory else None` in `_build_assistant_message`
 3. `georgory.sidebar()` before "Session metrics"
 4. `georgory.render(...)` right before `st_folium(...)`
+5. `georgory.chat_button()` right before `st.chat_input(...)`
 
 **Syncing from `GeoAI - Project`:** copying `app.py` over `ui/` (`AGENTS.md` §5.2) removes the hooks unless they are in that copy too, and he then silently disappears. Apply them there as well. The import looks for this folder next to `ui/`, so keep the same layout there.
 
@@ -34,7 +35,7 @@ Use Chrome, and click ▶ on the agent once if the browser blocks sound.
 
 | To… | Do this |
 |---|---|
-| Hide him for a session | Sidebar → 🕵️ Agent Geo-rgory |
+| Hide him for a session | The button with his face in the chat box, or Sidebar → 🕵️ Agent Geo-rgory |
 | Ship him off by default | Set `"georgory_on": False` in `DEFAULTS` in `agent_avatar/georgory.py` |
 | Remove him | `git apply -R avatar-georgory/app_hooks.patch`, then delete this folder |
 
@@ -45,13 +46,14 @@ If this folder is missing or fails to load, the guarded import sets `georgory = 
 - **Map tour:** every pin the answer cites by number (`Bakhmut [1]`) becomes a stop. As he says the name, he points, the map flies to that pin, pings it and opens its tooltip. Afterwards the map returns to the answer's `map_bbox`. This runs in the browser and adds no Python reruns (`st_folium` sends one update on the map's first move after load, whoever moves it; a user's first pan does the same).
 - **Briefing, not a reading:** markdown, emojis and citation marks are removed from the speech. *Brief* narration speaks the first ~500 characters; *Full answer* speaks everything. The chat always has the full text.
 - **While the agent thinks:** he holds his earpiece ("DECRYPTING"), and goes back to standby if the query fails. A new question cuts off whatever he is saying.
+- **Chat-box button:** a button with his face sits right of the send arrow. With an empty box it shows or hides him. With a question typed it sends the question, shows him if he was hidden, and he answers. While hidden he stays silent and keeps an unspoken answer for when he reappears.
 - **Sound:** browsers block speech until the user interacts with the page. When that happens he shows a **▶ ПРИНЯТЬ ПЕРЕДАЧУ** button, and one click unlocks audio for the session.
 
 ## Files
 
 | File | What it does |
 |---|---|
-| `app_hooks.patch` | The four hooks for `ui/app.py` |
+| `app_hooks.patch` | The five hooks for `ui/app.py` |
 | `agent_avatar/georgory.py` | Answer → spoken script (`avatar_payload`, `build_briefing`), sidebar section, placement and CSS |
 | `agent_avatar/__init__.py` | Streamlit component wrapper (`agent_avatar`, `build_config`) |
 | `agent_avatar/frontend/index.html` | The avatar: one self-contained file (SVG, speech, gestures, map tour). Open it directly in a browser for a test bar with every gesture |
@@ -65,6 +67,6 @@ Search `frontend/index.html` for `CUSTOMIZE`: colors, character shapes, voice, a
 
 - **Voice depends on the browser.** Chrome uses Google UK English Male, which is the intended voice. Edge picks a different one.
 - **The "Russian voice" toggle can pick a woman's voice** (Svetlana in Edge). It is off by default.
-- He covers about 236×300 px of the map, so you can't draw a box underneath him. The sidebar toggle hides him.
+- He covers about 236×300 px of the map, so you can't draw a box underneath him. His button hides him.
 - The map tour uses `window.map` inside the `st_folium` iframe, which isn't a public API. If a future version changes it, tours are skipped and he still talks.
 - Leaving "DECRYPTING" after a failed query reads Streamlit's `data-test-script-state` attribute, also not a public API. If it goes away, a 3-minute limit releases him instead.

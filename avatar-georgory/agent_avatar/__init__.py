@@ -45,6 +45,7 @@ def build_config(
     home_bbox: Sequence[float] | None = None,
     tour_map: bool = True,
     busy: bool = False,
+    hidden: bool = False,
     nonce: Any = None,
 ) -> dict[str, Any]:
     """Assemble the JSON config the frontend understands.
@@ -71,6 +72,7 @@ def build_config(
     tour_map    False = the agent never moves the map.
     busy        True while the backend is answering: the agent stops talking and
                 listens to his earpiece ("DECRYPTING").
+    hidden      True while he is off screen: he stays silent and keeps anything unspoken for later.
     nonce       Any value that changes between questions. Streamlit only re-renders a component
                 when its arguments change, and after a failed query the next question's
                 arguments would otherwise be identical, so "DECRYPTING" wouldn't show again.
@@ -97,6 +99,7 @@ def build_config(
         "homeBbox": list(home_bbox) if home_bbox else None,
         "tourMap": bool(tour_map),
         "busy": bool(busy),
+        "hidden": bool(hidden),
         "nonce": nonce,
     }
     if callsign is not None:

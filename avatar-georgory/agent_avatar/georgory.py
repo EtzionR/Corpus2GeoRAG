@@ -54,6 +54,7 @@ DEFAULTS = {
 
 PIP_KEY = "georgory_pip"
 PIP_WIDTH, PIP_HEIGHT = 236, 300
+TOGGLE_KEY = "georgory_toggle"
 MAX_TOUR = 10          # the agent contract gives at most 10 primary places per answer
 BRIEF_CHARS = 520      # brief mode speaks about this much of the answer
 
@@ -74,7 +75,7 @@ _CSS = f"""<style>
         gap: 0 !important;
         filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.6));
     }}
-    .st-key-{PIP_KEY} [data-testid="stElementContainer"]:has(style) {{ display: none; }}
+    .st-key-{PIP_KEY} [data-testid="stElementContainer"]:not(:has(iframe)) {{ display: none; }}
     div[data-testid="stMainBlockContainer"] div[data-testid="stColumn"]:last-child .st-key-{PIP_KEY} iframe {{
         height: clamp(210px, calc(100vh - 370px), {PIP_HEIGHT}px) !important;
         min-height: 0 !important;
@@ -82,6 +83,91 @@ _CSS = f"""<style>
         border-radius: 12px !important;
     }}
 </style>"""
+
+_HIDDEN_CSS = f"<style>.st-key-{PIP_KEY} {{ visibility: hidden; }}</style>"
+
+# His face for the chat-box button, drawn from the avatar's own hat, lenses and mustache (a CSS mask, so
+# it takes the button's color). The second one has a slash through it, for when he is hidden.
+_ICON_ON = "data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%27104%2096%20192%20192%27%3E%3Cpath%20d%3D%27M%20148%20180%20C%20146%20140%20156%20112%20178%20104%20C%20190%20111%20210%20111%20222%20104%20C%20244%20112%20254%20140%20252%20180%20Z%27%2F%3E%3Cpath%20d%3D%27M%20108%20180%20C%20146%20166%20254%20166%20292%20180%20C%20300%20184%20294%20192%20284%20191%20C%20256%20186%20232%20188%20200%20195%20C%20168%20188%20144%20186%20116%20191%20C%20106%20192%20100%20184%20108%20180%20Z%27%2F%3E%3Cg%20transform%3D%27translate%280%209%29%27%3E%3Cpath%20d%3D%27M%20155%20203%20Q%20175%20199%20195%20202%20Q%20197%20220%20189%20228%20Q%20177%20231%20165%20228%20Q%20155%20222%20155%20203%20Z%27%2F%3E%3Cpath%20d%3D%27M%20245%20203%20Q%20225%20199%20205%20202%20Q%20203%20220%20211%20228%20Q%20223%20231%20235%20228%20Q%20245%20222%20245%20203%20Z%27%2F%3E%3Cpath%20d%3D%27M190%20205%20Q200%20199%20210%20205%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%276%27%2F%3E%3Cpath%20d%3D%27M%20200%20248%20C%20194%20245%20184%20246%20178%20251%20C%20173%20255%20170%20261%20167%20267%20C%20172%20265%20177%20262%20182%20260%20C%20189%20258%20195%20258%20200%20259.5%20C%20205%20258%20211%20258%20218%20260%20C%20223%20262%20228%20265%20233%20267%20C%20230%20261%20227%20255%20222%20251%20C%20216%20246%20206%20245%20200%20248%20Z%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"
+_ICON_OFF = "data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%27104%2096%20192%20192%27%3E%3Cpath%20d%3D%27M%20148%20180%20C%20146%20140%20156%20112%20178%20104%20C%20190%20111%20210%20111%20222%20104%20C%20244%20112%20254%20140%20252%20180%20Z%27%2F%3E%3Cpath%20d%3D%27M%20108%20180%20C%20146%20166%20254%20166%20292%20180%20C%20300%20184%20294%20192%20284%20191%20C%20256%20186%20232%20188%20200%20195%20C%20168%20188%20144%20186%20116%20191%20C%20106%20192%20100%20184%20108%20180%20Z%27%2F%3E%3Cg%20transform%3D%27translate%280%209%29%27%3E%3Cpath%20d%3D%27M%20155%20203%20Q%20175%20199%20195%20202%20Q%20197%20220%20189%20228%20Q%20177%20231%20165%20228%20Q%20155%20222%20155%20203%20Z%27%2F%3E%3Cpath%20d%3D%27M%20245%20203%20Q%20225%20199%20205%20202%20Q%20203%20220%20211%20228%20Q%20223%20231%20235%20228%20Q%20245%20222%20245%20203%20Z%27%2F%3E%3Cpath%20d%3D%27M190%20205%20Q200%20199%20210%20205%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%276%27%2F%3E%3Cpath%20d%3D%27M%20200%20248%20C%20194%20245%20184%20246%20178%20251%20C%20173%20255%20170%20261%20167%20267%20C%20172%20265%20177%20262%20182%20260%20C%20189%20258%20195%20258%20200%20259.5%20C%20205%20258%20211%20258%20218%20260%20C%20223%20262%20228%20265%20233%20267%20C%20230%20261%20227%20255%20222%20251%20C%20216%20246%20206%20245%20200%20248%20Z%27%2F%3E%3C%2Fg%3E%3Cpath%20d%3D%27M112%20280%20L288%20104%27%20stroke%3D%27%23000%27%20stroke-width%3D%2714%27%20stroke-linecap%3D%27round%27%2F%3E%3C%2Fsvg%3E"
+
+# Takes the arrow's old spot; the arrow moves left by one button and a gap. Same size, corners and
+# resting color as the arrow, with the theme's cyan while he is showing.
+_BUTTON_CSS = """<style>
+    div[data-testid="stColumn"] .st-key-TOGGLE {
+        position: absolute !important;
+        top: auto !important;
+        left: auto !important;
+        right: 18px !important;
+        bottom: 14px !important;
+        width: 32px !important;
+        height: 32px !important;
+        z-index: 51;
+    }
+    .st-key-TOGGLE > div, .st-key-TOGGLE span { width: 32px !important; }
+    div[data-testid="stColumn"]:has(.st-key-TOGGLE) [data-testid="stChatInputSubmitButton"] { margin-right: 40px; }
+    .st-key-TOGGLE button {
+        width: 32px !important;
+        height: 32px !important;
+        min-height: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px !important;
+        background: BG !important;
+        border: 1px solid BORDER !important;
+        box-shadow: GLOW !important;
+        color: COLOR !important;
+        transition: border-color .15s, box-shadow .15s, color .15s;
+    }
+    .st-key-TOGGLE button:hover {
+        color: #00e5ff !important;
+        border-color: #00e5ff !important;
+        box-shadow: 0 0 10px rgba(0, 229, 255, .40) !important;
+    }
+    .st-key-TOGGLE button p { display: none; }
+    .st-key-TOGGLE button::before {
+        flex: none;
+        content: "";
+        width: 24px;
+        height: 24px;
+        background: currentColor;
+        -webkit-mask: url("ICON") center / contain no-repeat;
+        mask: url("ICON") center / contain no-repeat;
+    }
+</style>"""
+
+# A click reruns the script, which would interrupt a running question and ask the agent again, so both
+# switches rest while the agent answers. Gated on the script state: a failed query can't leave them stuck.
+_BUSY_CSS = """<style>
+    [data-testid="stApp"][data-test-script-state="running"] .st-key-TOGGLE button,
+    [data-testid="stApp"][data-test-script-state="running"] .st-key-georgory_on {
+        opacity: .45;
+        pointer-events: none;
+    }
+</style>"""
+
+# Streamlit can't read text that hasn't been sent, so the browser decides. A typed question goes through
+# the real send arrow. If he is hidden the click carries on and shows him; if he is showing it stops there.
+_ASK_SCRIPT = """<script>
+(function () {
+    if (window._georgoryAskInstalled) return;
+    window._georgoryAskInstalled = true;
+    document.addEventListener("click", function (e) {
+        if (!e.target.closest || !e.target.closest(".st-key-TOGGLE button")) return;
+        var box = document.querySelector('[data-testid="stChatInput"] textarea');
+        var send = document.querySelector('[data-testid="stChatInputSubmitButton"]');
+        if (!box || !box.value.trim() || !send || send.disabled) return;
+        var pip = document.querySelector(".st-key-PIP");
+        if (pip && getComputedStyle(pip).visibility !== "hidden") {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+        send.click();
+    }, true);
+})();
+</script>""".replace("TOGGLE", TOGGLE_KEY).replace("PIP", PIP_KEY)
 
 _CITE = re.compile(r"\s*\[((?:\s*(?:\d+|[SL]\d+)\s*,?)+)\]")
 _EMOJI = re.compile("[\U0001F000-\U0001FAFF☀-➿⬀-⯿️‍←-⇿★☆]")
@@ -320,7 +406,7 @@ def sidebar() -> None:
     st.markdown("---")
 
 
-def _speak_latest(messages: Sequence[Mapping[str, Any]], busy: bool) -> None:
+def _speak_latest(messages: Sequence[Mapping[str, Any]], busy: bool, hidden: bool = False) -> None:
     latest = next((m for m in reversed(messages) if m.get("role") == "assistant" and m.get("avatar")), None)
     if latest is None:
         text, tour, target, speak_id, home = INTRO, [], None, "georgory-intro", None
@@ -348,6 +434,7 @@ def _speak_latest(messages: Sequence[Mapping[str, Any]], busy: bool) -> None:
         home_bbox=home,
         tour_map=_setting("georgory_tour"),
         busy=busy,
+        hidden=hidden,
         nonce=len(messages),         # grows with each question, so every "busy" run reaches the frontend
         facing="right",              # pinned to the map's left edge: points into it
         height=PIP_HEIGHT,
@@ -362,17 +449,47 @@ def _speak_latest(messages: Sequence[Mapping[str, Any]], busy: bool) -> None:
     )
 
 
+def _flip() -> None:
+    st.session_state.georgory_on = not _setting("georgory_on")
+
+
+def chat_button() -> None:
+    """The avatar button inside the chat box. Empty box: show or hide him. Typed question: send it to him.
+
+    Only the button lives here. A container in this column would be stretched by the app's layout rules
+    and squeeze the chat, so render() supplies its styling and script from his own panel.
+    """
+    try:
+        st.button("Agent Geo-rgory", key=TOGGLE_KEY, on_click=_flip,
+                  help="Show or hide Agent Geo-rgory. With a question typed, it sends the question and he answers.")
+    except Exception as err:
+        print(f"[Agent Geo-rgory] Skipped the chat button: {err}")
+
+
+def _button_css(showing: bool, busy: bool) -> str:
+    css = (
+        _BUTTON_CSS.replace("TOGGLE", TOGGLE_KEY)
+        .replace("BG", "rgba(0, 229, 255, .10)" if showing else "rgba(140, 165, 197, .15)")
+        .replace("BORDER", "rgba(0, 229, 255, .45)" if showing else "transparent")
+        .replace("GLOW", "0 0 8px rgba(0, 229, 255, .25)" if showing else "none")
+        .replace("COLOR", "#00e5ff" if showing else "rgba(216, 226, 236, .4)")
+        .replace("ICON", _ICON_ON if showing else _ICON_OFF)
+    )
+    return css + _BUSY_CSS.replace("TOGGLE", TOGGLE_KEY) if busy else css
+
+
 def render(messages: Sequence[Mapping[str, Any]], *, busy: bool = False) -> None:
     """Render the avatar for the latest answer (or his introduction). Call it on every run.
 
-    The keyed container and its CSS are always emitted, even when he is switched off, so the map
-    after them keeps its position in the page and doesn't reload when the toggle changes. Any
-    failure in here is logged and costs only the avatar.
+    He stays mounted while hidden: the map keeps its position and doesn't reload, and the browser's
+    audio unlock survives, so he can answer as soon as he reappears. Any failure in here is logged
+    and costs only the avatar.
     """
     with st.container(key=PIP_KEY):
         try:
-            st.markdown(_CSS, unsafe_allow_html=True)
-            if _setting("georgory_on"):
-                _speak_latest(messages, busy)
+            showing = _setting("georgory_on")
+            st.markdown((_CSS if showing else _CSS + _HIDDEN_CSS) + _button_css(showing, busy), unsafe_allow_html=True)
+            st.html(_ASK_SCRIPT, unsafe_allow_javascript=True)
+            _speak_latest(messages, busy, hidden=not showing)
         except Exception as err:
             print(f"[Agent Geo-rgory] Skipped this run: {err}")

@@ -138,6 +138,31 @@ class TestRender:
         assert "I am Agent Geo-rgory" in spoken[0][0] and spoken[0][1] == "georgory-intro"
 
 
+    def test_hidden_he_stays_mounted_but_silent(self, monkeypatch):
+        """Unmounting would lose the browser's audio unlock, and he couldn't answer when he reappears."""
+        from agent_avatar import georgory
+        calls = []
+        monkeypatch.setattr(georgory, "agent_avatar", lambda text, **kw: calls.append(kw))
+        monkeypatch.setattr(georgory.st, "session_state", {"georgory_on": False})
+        monkeypatch.setattr(georgory.st, "markdown", lambda *a, **k: None)
+        monkeypatch.setattr(georgory.st, "html", lambda *a, **k: None)
+        monkeypatch.setattr(georgory.st, "container", lambda **k: __import__("contextlib").nullcontext())
+        georgory.render([], busy=False)
+        assert calls[0]["hidden"] is True
+
+    def test_the_chat_button_flips_him(self, monkeypatch):
+        from agent_avatar import georgory
+        state = {"georgory_on": True}
+        monkeypatch.setattr(georgory.st, "session_state", type("S", (dict,), {"__setattr__": dict.__setitem__})(state))
+        georgory._flip()
+        assert georgory.st.session_state["georgory_on"] is False
+
+    def test_a_typed_question_goes_through_the_real_send_arrow(self):
+        from agent_avatar.georgory import _ASK_SCRIPT
+        assert "stChatInputSubmitButton" in _ASK_SCRIPT and "send.click()" in _ASK_SCRIPT
+        assert ".st-key-georgory_toggle button" in _ASK_SCRIPT and ".st-key-georgory_pip" in _ASK_SCRIPT
+
+
 class TestAppIntegration:
     @needs_hooks
     def test_assistant_message_carries_the_payload(self):
@@ -166,9 +191,10 @@ class TestAppIntegration:
     def test_every_hook_in_app_is_guarded_and_the_map_call_is_untouched(self):
         code = (UI_DIR / "app.py").read_text(encoding="utf-8")
         assert "    from agent_avatar import georgory\nexcept Exception" in code.replace("\r\n", "\n")
-        for hook in ("georgory.sidebar()", "georgory.render(", "georgory.avatar_payload(resp) if georgory else None"):
+        for hook in ("georgory.sidebar()", "georgory.render(", "georgory.chat_button()", "georgory.avatar_payload(resp) if georgory else None"):
             assert code.count(hook) == 1, hook
-        assert code.count("if georgory:") == 2
+        assert code.count("if georgory:") == 3
+        assert code.find("georgory.chat_button()") < code.find("st.chat_input(")
         assert code.find("georgory.render(") < code.find("map_data = st_folium(")
         assert 'returned_objects=["last_clicked", "last_active_drawing", "all_drawings"]' in code
 
