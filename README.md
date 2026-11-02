@@ -81,44 +81,9 @@ The graph links 66,366 entities to each other and to the 88,120 paragraphs they 
 
 ## 5. Relation fixes
 
-On its own, `von` was right on only 51% of typed relations. It decides for the whole sentence, so it often answers about other entities in it. These fixes run on the built graph and changed 42,914 records:
+On its own, `von` was right on only 51% of typed relations, so the built graph goes through a cleanup. Rules remove 638 junk names and correct patterns `von` misreads, such as lists. Then an [NLI model](https://huggingface.co/MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli) checks whether each sentence really states its relation; if not, the relation becomes `CO_OCCURS_WITH`. Together they changed 42,914 records and raised accuracy on typed relations to 72% ±6, and on all records from a sentence from 63% to 77% ±4. This was measured on 600 new cases labelled by Claude, an AI model, and not yet checked by a person.
 
-| Fix | What it does | Records changed |
-|---|---|---:|
-| **Second model (NLI)** | A relation its sentence does not state becomes `CO_OCCURS_WITH` | 27,255 |
-| **Patterns von missed** | `Place, Region` → `PART_OF`, `mayor of X, Name` → `LEADS`, `Long Name (LN)` → `SAME_AS`, `was born / killed in` → `BORN_IN` / `DIED_IN`, `Unit (Place)` → `BASED_IN` | 7,962 |
-| **Lists** | Items of `A, B and C` become `CO_OCCURS_WITH` | 5,379 |
-| **Landmarks and sources** | `X, south of Y` between places and `according to X` become `CO_OCCURS_WITH` | 2,318 |
-
-They also removed 638 junk names that were NER mistakes, such as `.`, `Armed Forces of` or `Army` alone.
-
-### The NLI model
-
-Natural language inference (NLI) answers one question: does this text state this claim? We use [DeBERTa-v3-large-mnli-fever-anli-ling-wanli](https://huggingface.co/MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli) to check `von`'s relations.
-
-1. Each relation is written as short one-verb claims. `ATTACKED` between two places becomes `A attacked B`, `A invaded B`, `A shelled B` and `A struck B`.
-2. The model scores each claim against the sentence, and the best score counts.
-3. Below 0.5, the relation becomes `CO_OCCURS_WITH`. The record stays in the graph, so the link and its source are not lost.
-
-For example, `von` read `Brovary ATTACKED Russia` from this sentence, and the NLI model scored the claim at 0.0009:
-
-> The Ukrainian military said that its forces had retaken the villages of Lukianivka and Rudnytske, 40 kilometers east of Brovary, on 26 March, forcing Russia's 30th Separate Motor Rifle Brigade to retreat.
-
-Short claims worked much better than `von`'s longer descriptions: on a test sample they wrongly rejected 4 correct relations, against 47. In the evaluation below, 2 of the 40 relations the model changed were right before and 34 were right after. Scores are saved in `relation_fixes.parquet`, so later runs only score new relations.
-
-### What changed
-
-![Records per relation type before and after the fixes: most fell, while LEADS, SAME_AS, BASED_IN, DIED_IN and BORN_IN rose](figures/relations_before_after.png)
-
-![Accuracy before and after the fixes: typed relations from 51% to 72%, CO_OCCURS_WITH from 74% to 80%, all records from a sentence from 63% to 77%](figures/accuracy_before_after.png)
-
-Accuracy was measured on 600 new cases that were not used to write the rules, weighted to all decisions. **They were labelled by Claude, an AI model, and have not yet been checked by a person.**
-
-### Which relations should the RAG trust?
-
-`von`'s confidence says little about whether a relation is right, but it is still a useful filter. We suggest that the RAG accepts relations at **confidence ≥ 0.5** rather than its current 0.7. This keeps almost twice as many relations, and the drop in accuracy is within the margin of error. Details are in the [graph README](Graph_n_Geocoding/KNOWLEDGE_GRAPH_README.md).
-
-![Relations kept and their accuracy at each confidence threshold: 0.5 keeps 75,154 relations at 77%, 0.7 keeps 40,987 at 80%](figures/confidence_threshold.png)
+We suggest that the RAG accepts relations at confidence ≥ 0.5 rather than its current 0.7. This keeps almost twice as many relations, and the drop in accuracy is within the margin of error. Details are in the [graph README](Graph_n_Geocoding/KNOWLEDGE_GRAPH_README.md).
 
 ## 6. The agent
 

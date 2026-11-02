@@ -120,8 +120,7 @@ small model (`von`) from the sentence. Otherwise, and for items of one comma lis
 relation is `CO_OCCURS_WITH` with `confidence: null`. A classification below 0.4 confidence is also stored as
 `CO_OCCURS_WITH` (with its confidence).
 
-**Relation fixes.** von decides for the whole sentence, so it often answers about other entities in it. After the graph is
-built, five fixes run on its records (the "Relation Fixes" section of the notebook):
+**Relation fixes.** After the graph is built, five fixes run on its records (the "Relation Fixes" section of the notebook):
 
 1. **Junk names:** names that are NER mistakes (`.`, `Armed Forces of`, `Army` alone) leave the graph. Names made only of
    numbers stay.
@@ -130,11 +129,8 @@ built, five fixes run on its records (the "Relation Fixes" section of the notebo
 4. **Patterns von missed:** `Place, Region` inside our polygons becomes `PART_OF`, `mayor of X, Name` becomes `LEADS`,
    `Long Name (LN)` or the same name in another script becomes `SAME_AS`, `was born / was killed in` becomes `BORN_IN` /
    `DIED_IN`, `Unit (Place)` becomes `BASED_IN`.
-5. **Second model (NLI):** natural language inference answers one question: does this text state this claim? The model
-   ([DeBERTa-v3-large-mnli-fever-anli-ling-wanli](https://huggingface.co/MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli))
-   checks each remaining relation. The relation is written as short one-verb claims (`ATTACKED` becomes `A attacked B`,
-   `A shelled B`, ...), each is scored against the sentence, and the best score counts. Below 0.5 the sentence does not state
-   the relation, so it becomes `CO_OCCURS_WITH`; the record itself stays.
+5. **Second model (NLI):** an NLI model ([DeBERTa-v3-large-mnli-fever-anli-ling-wanli](https://huggingface.co/MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli))
+   checks whether the sentence states each remaining relation. Below 0.5 the relation becomes `CO_OCCURS_WITH`.
 
 Every record a fix changes gets `confidence: 0.77`; records that pass keep von's score. von's own scores can also be 0.77, so
 `relation_fixes.parquet` is what tells them apart: it lists each change with the name of the fix, and keeps the second model's
