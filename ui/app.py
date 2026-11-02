@@ -587,6 +587,17 @@ def clear_spatial_selection(ignore_current_drawing: bool = True):
     st.session_state.last_processed_drawing = None
 
 
+def clear_map_and_console(ignore_current_drawing: bool = True):
+    """Clear both tactical map overlays/selection and conversation console history."""
+    st.session_state.map_layers = []
+    st.session_state.last_map_bbox = None
+    clear_spatial_selection(ignore_current_drawing=ignore_current_drawing)
+    st.session_state.messages = []
+    st.session_state.agent_turns = []
+    st.session_state.pending_query = None
+    st.session_state.last_processed_chat_input = None
+
+
 class SelectionSyncHook(MacroElement):
     """
     Lightweight MacroElement attached to `selection_fg` (feature_group_0) so that whenever
@@ -1818,6 +1829,17 @@ class MapTrashBinHook(MacroElement):
                     header.style.marginTop = '8px';
                     header.innerHTML = '📍 <b>PIN FILTERS</b>';
 
+                    // Primary pins toggle
+                    var lblPri = L.DomUtil.create('label', '', overlays);
+                    var divPri = L.DomUtil.create('div', '', lblPri);
+                    var chkPri = L.DomUtil.create('input', 'leaflet-control-layers-selector', divPri);
+                    chkPri.type = 'checkbox';
+                    chkPri.id = 'pin_filter_chk_primary';
+                    chkPri.checked = true;
+                    var spanPri = L.DomUtil.create('span', '', divPri);
+                    spanPri.id = 'pin_filter_lbl_primary';
+                    spanPri.textContent = '🔹 Primary pins';
+
                     // Context pins toggle
                     var lblCtx = L.DomUtil.create('label', '', overlays);
                     var divCtx = L.DomUtil.create('div', '', lblCtx);
@@ -1835,7 +1857,7 @@ class MapTrashBinHook(MacroElement):
                     var chkUnc = L.DomUtil.create('input', 'leaflet-control-layers-selector', divUnc);
                     chkUnc.type = 'checkbox';
                     chkUnc.id = 'pin_filter_chk_uncertain';
-                    chkUnc.checked = true;
+                    chkUnc.checked = false;
                     var spanUnc = L.DomUtil.create('span', '', divUnc);
                     spanUnc.id = 'pin_filter_lbl_uncertain';
                     spanUnc.textContent = '🟠 Uncertain pins';
@@ -1868,12 +1890,14 @@ class MapTrashBinHook(MacroElement):
                     }
 
                     function applyPinFilter() {
+                        var showPri = chkPri.checked;
                         var showCtx = chkCtx.checked;
                         var showUnc = chkUnc.checked;
 
                         // 1. Instant 0ms visual toggle on map container via CSS classes
                         var containerEl = map.getContainer();
                         if (containerEl) {
+                            containerEl.classList.toggle('geoai-hide-primary-pins', !showPri);
                             containerEl.classList.toggle('geoai-hide-context-pins', !showCtx);
                             containerEl.classList.toggle('geoai-hide-uncertain-pins', !showUnc);
                         }
@@ -1899,7 +1923,10 @@ class MapTrashBinHook(MacroElement):
                                 var isUnc = cls.indexOf('geoai-pin--uncertain') !== -1 || cls.indexOf('awesome-marker-icon-orange') !== -1;
                                 if (!isCtx && !isUnc && cls.indexOf('awesome-marker-icon-red') !== -1) return;
 
+                                var isPri = !isCtx && !isUnc;
+
                                 var isVisible = true;
+                                if (isPri && !showPri) isVisible = false;
                                 if (isCtx && !showCtx) isVisible = false;
                                 if (isUnc && !showUnc) isVisible = false;
 
@@ -1915,13 +1942,17 @@ class MapTrashBinHook(MacroElement):
                         });
                     }
 
+                    chkPri.addEventListener('change', applyPinFilter);
                     chkCtx.addEventListener('change', applyPinFilter);
                     chkUnc.addEventListener('change', applyPinFilter);
 
+                    // Apply filter immediately on creation to enforce defaults (uncertain pins hidden)
+                    applyPinFilter();
+
                     function refreshPinCounts() {
+                        var countPri = 0;
                         var countCtx = 0;
                         var countUnc = 0;
-                        var countTotal = 0;
 
                         var activeClusters = getActiveClusterGroups();
                         var clusteredMarkers = new Set();
@@ -1943,20 +1974,22 @@ class MapTrashBinHook(MacroElement):
                                 if (clusteredMarkers.has(layer)) return;
 
                                 var cls = layer._icon.className || '';
-                                if (cls.indexOf('geoai-pin--target') !== -1 || cls.indexOf('geoai-pin--corner') !== -1) return;
+                                if (cls.indexOf('geoai-pin--target') !== -1 || cls.indexOf('geoai-pin--corner') !== -1 || cls.indexOf('geoai-pin--event') !== -1) return;
 
                                 var isCtx = cls.indexOf('geoai-pin--context') !== -1 || cls.indexOf('awesome-marker-icon-cadetblue') !== -1;
                                 var isUnc = cls.indexOf('geoai-pin--uncertain') !== -1 || cls.indexOf('awesome-marker-icon-orange') !== -1;
+                                if (!isCtx && !isUnc && cls.indexOf('awesome-marker-icon-red') !== -1) return;
 
                                 if (isCtx) countCtx++;
                                 else if (isUnc) countUnc++;
-                                else if (cls.indexOf('geoai-pin--') !== -1 || cls.indexOf('awesome-marker-icon-blue') !== -1) countTotal++;
+                                else countPri++;
                             }
                         });
+                        spanPri.textContent = '🔹 Primary pins (' + countPri + ')';
                         spanCtx.textContent = '🔘 Context pins (' + countCtx + ')';
                         spanUnc.textContent = '🟠 Uncertain pins (' + countUnc + ')';
 
-                        if (countCtx === 0 && countUnc === 0 && countTotal === 0) {
+                        if (countPri === 0 && countCtx === 0 && countUnc === 0) {
                             container.style.display = 'none';
                         } else {
                             container.style.display = 'block';
@@ -2594,8 +2627,10 @@ st.markdown(f"""
         max-height: calc(100vh - 90px) !important;
         display: flex !important;
         flex-direction: column !important;
-        justify-content: space-between !important;
+        justify-content: flex-start !important;
         gap: 0.45rem !important;
+        position: relative !important;
+        padding-bottom: 68px !important;
     }}
 
     div[data-testid="column"]:first-child div[data-testid="stVerticalBlockBorderWrapper"] {{
@@ -2615,10 +2650,10 @@ st.markdown(f"""
         padding-right: 6px !important;
     }}
 
-    /* Streamlit 1.58+ Chat Container auto-flex expansion inside col1 */
-    div[data-testid="stMainBlockContainer"] div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:first-child div[data-testid="stLayoutWrapper"]:has(> div[data-testid="stVerticalBlock"][height]) {{
+    /* Streamlit 1.58+ Chat Container auto-flex expansion inside col1 (direct child > so inner chat messages are untouched) */
+    div[data-testid="stMainBlockContainer"] div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:first-child > div[data-testid="stVerticalBlock"] > div[data-testid="stLayoutWrapper"]:has(> div[data-testid="stVerticalBlock"][height]) {{
         flex: 1 1 0px !important;
-        height: auto !important;
+        height: 100% !important;
         min-height: 260px !important;
         max-height: 100% !important;
         display: flex !important;
@@ -2626,7 +2661,8 @@ st.markdown(f"""
         overflow: hidden !important;
     }}
 
-    div[data-testid="stMainBlockContainer"] div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:first-child div[data-testid="stVerticalBlock"][height] {{
+    div[data-testid="stMainBlockContainer"] div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:first-child > div[data-testid="stVerticalBlock"] > div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"][height],
+    div[data-testid="stMainBlockContainer"] div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:first-child div[data-testid="stVerticalBlockBorderWrapper"] > div[data-testid="stVerticalBlock"][height] {{
         flex: 1 1 0px !important;
         height: 100% !important;
         min-height: 260px !important;
@@ -2636,10 +2672,38 @@ st.markdown(f"""
         padding-right: 6px !important;
     }}
 
-    .st-key-geoai_chat_input {{
+    /* Prevent inner chat messages, expanders, and follow-up grids from inheriting container-level min-height */
+    div[data-testid="stMainBlockContainer"] div[data-testid="stChatMessage"] div[data-testid="stVerticalBlock"],
+    div[data-testid="stMainBlockContainer"] div[data-testid="stChatMessage"] div[data-testid="stLayoutWrapper"],
+    div[data-testid="stMainBlockContainer"] div[data-testid="stChatMessage"] div[data-testid="stHorizontalBlock"],
+    div[data-testid="stMainBlockContainer"] div[data-testid="stChatMessage"] div[data-testid="stColumn"],
+    div[data-testid="stMainBlockContainer"] div[data-testid="stChatMessage"] div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] > div[data-testid="stVerticalBlock"] {{
+        flex: 0 1 auto !important;
+        height: auto !important;
+        min-height: 0px !important;
+        max-height: none !important;
+        overflow: visible !important;
+        justify-content: flex-start !important;
+        padding-bottom: 0 !important;
+    }}
+    div[data-testid="stChatMessage"] div[data-testid="stVerticalBlock"] {{
+        gap: 0.35rem !important;
+    }}
+
+    /* Anchor chat input at bottom; expands upward on top of console window when typing long messages */
+    .st-key-geoai_chat_input,
+    div[data-testid="stElementContainer"]:has(.st-key-geoai_chat_input) {{
+        position: absolute !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        z-index: 50 !important;
         flex: 0 0 auto !important;
         margin-top: 0 !important;
         margin-bottom: 0 !important;
+        background: rgba(6, 10, 15, 0.96) !important;
+        border-radius: 6px !important;
     }}
 
     /* Independent vertical scrolling for sidebar controls */
@@ -2789,7 +2853,7 @@ st.markdown(f"""
         display: flex !important;
         box-sizing: border-box !important;
         margin-bottom: 0.95rem !important;
-        padding: 0.75rem 1rem 0.95rem 1rem !important;
+        padding: 0.65rem 0.95rem 0.35rem 0.95rem !important;
         border-radius: 12px 12px 12px 12px !important;
         transition: all 0.2s ease-in-out !important;
         width: fit-content !important;
@@ -2919,6 +2983,22 @@ st.markdown(f"""
         margin-bottom: 0 !important;
     }}
 
+    /* Remove excessive bottom buffer inside chat bubbles */
+    div[data-testid="stChatMessageContent"] {{
+        padding-bottom: 0 !important;
+        margin-bottom: 0 !important;
+    }}
+    div[data-testid="stChatMessageContent"] > div:last-child {{
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+    }}
+    div[data-testid="stChatMessageContent"] div[data-testid="stMarkdownContainer"] {{
+        margin-bottom: 0 !important;
+    }}
+    div[data-testid="stChatMessageContent"] div[data-testid="stMarkdownContainer"] > *:last-child {{
+        margin-bottom: 0 !important;
+    }}
+
     /* Marker helper */
     .bubble-marker-operator, .bubble-marker-geoai {{
         display: none !important;
@@ -2974,6 +3054,11 @@ st.markdown(f"""
         color: {t_cfg['text_main']} !important;
         font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
         font-size: 0.85rem !important;
+    }}
+    div[data-testid="stChatInput"] textarea:placeholder-shown {{
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
     }}
     div[data-testid="stChatInput"] textarea::placeholder {{
         color: {t_cfg['text_dim']} !important;
@@ -3133,7 +3218,8 @@ st.markdown("""<script>
                 txt.indexOf('❌ Clear') !== -1 ||
                 txt.indexOf('Clear Box') !== -1 ||
                 txt.indexOf('Clear Point') !== -1 ||
-                txt.indexOf('Reset Map Layers') !== -1
+                txt.indexOf('Reset Map Layers') !== -1 ||
+                txt.indexOf('Clear Map & Console') !== -1
             ) {
                 var slot2 = document.getElementById('geoai-instant-pill-slot');
                 if (slot2) {
@@ -3352,13 +3438,17 @@ if "show_citations" not in st.session_state:
     # Toggle to display inline citation marks ([1], [S2], [L1]) vs plain text
     st.session_state.show_citations = True
 
+if "show_primary_pins" not in st.session_state:
+    # Toggle to show or hide primary answered pins (sky blue)
+    st.session_state.show_primary_pins = True
+
 if "show_context_pins" not in st.session_state:
     # Toggle to show or hide surrounding context pins (slate blue)
     st.session_state.show_context_pins = True
 
 if "show_uncertain_pins" not in st.session_state:
-    # Toggle to show or hide pins with uncertain coordinates (orange)
-    st.session_state.show_uncertain_pins = True
+    # Toggle to show or hide pins with uncertain coordinates (orange) - unchecked (OFF) by default
+    st.session_state.show_uncertain_pins = False
 
 if "last_map_bbox" not in st.session_state:
     # Bounding box [west, south, east, north] returned by agent for automatic framing
@@ -3687,6 +3777,15 @@ with st.sidebar:
         help="Inspect raw JSON request and response payloads, latency, grounding sources, and error logs."
     ):
         show_rag_log_dialog()
+
+    if st.button(
+        "🧹 Clear Map & Console",
+        use_container_width=True,
+        help="Reset both the tactical map (layers, selections) and conversation console history",
+        key="btn_clear_map_console_sidebar"
+    ):
+        clear_map_and_console()
+        st.rerun()
 
     if st.button("🗑️ Clear Chat History", use_container_width=True, help="Reset conversation messages"):
         st.session_state.messages = []
@@ -4548,6 +4647,10 @@ with col2:
             }
 
             /* Instant Client-Side Pin Filter Toggles */
+            .geoai-hide-primary-pins .geoai-pin--primary,
+            .geoai-hide-primary-pins .awesome-marker-icon-blue {
+                display: none !important;
+            }
             .geoai-hide-context-pins .geoai-pin--context,
             .geoai-hide-context-pins .awesome-marker-icon-cadetblue,
             .geoai-hide-context-pins .geoai-cluster-wrap {
