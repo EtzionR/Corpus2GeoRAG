@@ -18,7 +18,7 @@ Use from the UI (e.g. ui/app.py):
 
     result["answer"]                 # the written answer; [3] cites place 3, [S2] cites a passage
     result["geo_locations"]          # every place found: number, id, label, kind, role, geometry (Point),
-                                     #   shape (outline, for the places the answer discusses), why, sources
+                                     #   shape (outline, for the places the question is about), why, sources
     result["regions"]                # nested overview of big lists: country -> region -> place numbers
     result["citations"]              # what [S2] / [L1] point to: pointer, article, section, spans
     get_source_text("TEXT_123")      # the paragraph behind a pointer

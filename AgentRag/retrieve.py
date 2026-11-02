@@ -8,6 +8,7 @@ much of it the LLM reads.
 Question types without a route yet (compound questions, follow-ups) go to the LLM tool-loop
 fallback, which isn't built yet; the result says so.
 """
+import re
 import time
 from typing import Optional
 
@@ -114,6 +115,7 @@ def _place_lookup(plan, res, gi) -> Retrieval:
     for g in _groups(res):
         if not g.place:
             run.out.notes.append(f"{g.id} has no coordinates in the graph")
+            run.summary(gi, g.own_article, g.id)   # no pin, but its own article still says what it is (P2-72)
             continue
         chain = run.call("parents", lambda: T.parents(gi, g.place.from_name),
                          lambda c: " → ".join(c), place=g.place.from_name)
@@ -123,7 +125,11 @@ def _place_lookup(plan, res, gi) -> Retrieval:
             run.out.notes.append(f"{g.id}'s point is uncertain: {g.place.uncertain_reason}")
         run.summary(gi, g.own_article, g.id)
     if not run.out.places and _articles(res):
-        run.out.notes.append("the name is an event (an article), not a place: see event_places")
+        # "Where did the Battle of Bakhmut happen?": an event is an article, not a place, so its places
+        # answer it. The plan stays a place lookup, so the result shows the main place, not the list (P2-72).
+        out = _event_places(plan, res, gi)
+        out.notes.insert(0, "the name is an event (an article), not a place: answered from its places")
+        return out
     return run.out
 
 
@@ -303,6 +309,11 @@ def _drilldown(plan, gi, actor: Group, place: Group) -> Retrieval:
 def _about(plan, res, gi) -> Retrieval:
     run = _Run("about / relation: what the graph links to the entity (by relation, if one is asked)")
     targets = list({g.id: g for g in _groups(res) + _concept_groups(res)}.values())   # each group once
+    if not targets and _articles(res):
+        # "Tell me about the Siege of Mariupol": an event is an article, not a node (P2-69)
+        return _event_places(plan, res, gi)
+    for title in _articles(res):          # an event named next to a person or place: read its summary too
+        run.summary(gi, title, title)
     if not targets:
         run.out.notes.append("nothing resolved to look up")
         return run.out
@@ -375,20 +386,44 @@ def _event_places(plan, res, gi) -> Retrieval:
     return run.out
 
 
+# An event article's title names its kind first: "Battle of Bakhmut", "Battles for Karlivka", "Siege of Mariupol".
+_EVENT_TITLE = re.compile(r"(\S+)\s+(?:of|for|at|in|on)\s", re.I)
+
+
+def _singular(word: str) -> str:
+    return word[:-1] if len(word) > 3 and word.endswith("s") and not word.endswith("ss") else word
+
+
+def event_titles(titles, keywords: list[str]) -> list[str]:
+    """The event articles of the kinds the keywords name ("major battles" -> "Battle of ...", "Battles for ...").
+    A word that names no kind ("major", "Russian") matches nothing; no keywords means battles and sieges (P2-78)."""
+    kinds = {_singular(w) for k in keywords for w in k.lower().split()} or {"battle", "siege"}
+    return sorted(t for t in titles if (m := _EVENT_TITLE.match(t)) and _singular(m[1].lower()) in kinds)
+
+
 def _event_list(plan, res, gi) -> Retrieval:
-    run = _Run("event_list: event articles whose titles match, each placed by its most-mentioned place")
-    words = [k.lower() for k in plan.keywords] or ["battle", "siege"]
-    titles = run.call("find_event_articles",
-                      lambda: sorted(t for t in gi.articles if any(t.lower().startswith(w) for w in words)),
-                      lambda t: _n(t, "articles"), title_starts_with=words)
+    run = _Run("event_list: event articles titled '<kind> of ...', each placed by its most-mentioned place")
+    titles = run.call("find_event_articles", lambda: event_titles(gi.articles, plan.keywords),
+                      lambda t: _n(t, "articles"), kinds_from=plan.keywords or ["battle", "siege"])
+    # The graph has no measure of an event's size; the longest articles come first (P2-78)
+    titles = sorted(titles, key=lambda t: -len(gi.articles[t]))
+    placed = 0
+    by_place: dict[str, T.Hit] = {}
     for title in titles:
-        top = T.article_places(gi, title)[:1]
+        # its main place, as for "Where did <event> happen" (P2-74): the most-mentioned specific place, so the
+        # Battle of Khasham is placed at Khasham, not at the US its article mentions more
+        top = T.tiered(T.article_places(gi, title))[:1]
         if top:
-            hit = top[0]
-            hit.relations = {f"event: {title}": hit.records}
-            run.out.places.append(hit)
+            placed += 1
+            hit = by_place.get(top[0].group.id)
+            if hit is None:   # two battles of Avdiivka: one place, both events on it
+                hit = by_place[top[0].group.id] = top[0]
+                hit.relations = {}
+                run.out.places.append(hit)
+            hit.relations[f"event: {title}"] = top[0].records
             run.summary(gi, title, title)
-    run.out.notes.append(f"{len(titles)} event articles found; {len(run.out.places)} could be placed on the map")
+    run.out.notes.append(f"{len(titles)} event articles found, longest first; {placed} placed on the map, "
+                         f"at {len(run.out.places)} places")
     return run.out
 
 

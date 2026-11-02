@@ -33,6 +33,8 @@ __all__ = [
     "AgentResponse",
     "to_bounding_box",
     "get_source_text",
+    "get_agent_env_path",
+    "persist_openrouter_api_key",
     "query_geo_agent",
     "AgentError",
     "InvalidRequestError",
@@ -48,11 +50,13 @@ __all__ = [
 _BACKEND_AVAILABLE = False
 _backend_query = None
 _backend_get_source_text = None
+_DISCOVERED_AGENT_DIR: Optional[Path] = None
 
 # Attempt to locate AgentRag dynamically
 _current_dir = Path(__file__).resolve().parent
 _potential_agent_dirs = [
     _current_dir.parent / "AgentRag",                             # Inside Corpus2GeoRAG repository (standard layout)
+    _current_dir.parent,                                          # AgentRag/ui_mvp: the agent is the parent folder
     _current_dir / "AgentRag",                                    # Local vendored copy
     _current_dir.parent / "Corpus2GeoRAG" / "AgentRag",           # Sibling project directory
 ]
@@ -61,6 +65,7 @@ if "AGENT_RAG_PATH" in os.environ:
 
 for _p in _potential_agent_dirs:
     if (_p / "georag_agent.py").is_file():
+        _DISCOVERED_AGENT_DIR = _p
         if str(_p) not in sys.path:
             sys.path.insert(0, str(_p))
         break
@@ -174,9 +179,11 @@ class AgentResponse:
     status: str = "answered"
     shape: str = "fact"
     map_bbox: Optional[List[float]] = None
+    map_showing: str = "all"
+    map_not_shown: int = 0
     follow_ups: List[str] = field(default_factory=list)
-    regions: List[Dict[str, Any]] = field(default_factory=list)
-    did_you_mean: List[Dict[str, Any]] = field(default_factory=list)
+    regions: Any = field(default_factory=list)
+    did_you_mean: Any = field(default_factory=list)
 
     def __post_init__(self):
         if not self.answer_plain:
@@ -186,6 +193,68 @@ class AgentResponse:
 # ==============================================================================
 # 2. Bounding Box & Source Utilities
 # ==============================================================================
+
+def get_agent_env_path() -> Optional[Path]:
+    """
+    Locate the AgentRag/.env file used by RUN_GEORAG.bat / AgentRag/launch.py.
+    Returns the Path to AgentRag/.env if the AgentRag directory exists, else None.
+    """
+    candidates: List[Path] = []
+    if "AGENT_RAG_PATH" in os.environ:
+        candidates.append(Path(os.environ["AGENT_RAG_PATH"]))
+    if _DISCOVERED_AGENT_DIR is not None:
+        candidates.append(_DISCOVERED_AGENT_DIR)
+    candidates.extend(_potential_agent_dirs)
+
+    for cand in candidates:
+        try:
+            if cand.is_dir() and ((cand / "georag_agent.py").is_file() or (cand / "launch.py").is_file()):
+                return cand / ".env"
+        except Exception:
+            continue
+    return None
+
+
+def persist_openrouter_api_key(
+    api_key: Optional[str],
+    update_dotenv: bool = True,
+    env_path: Optional[Path] = None,
+) -> bool:
+    """
+    Update OPENROUTER_API_KEY in the active process environment (os.environ) and optionally
+    persist it to AgentRag/.env so subsequent launches via RUN_GEORAG.bat use the new key.
+
+    When api_key is empty/None, removes OPENROUTER_API_KEY from os.environ (and from AgentRag/.env
+    if update_dotenv is True) so the app cleanly enters Offline Simulation (Mock) mode.
+    Returns True if AgentRag/.env was updated on disk, False otherwise.
+    """
+    cleaned = (api_key or "").strip().strip("'\"")
+    key_name = "OPENROUTER_API_KEY"
+
+    if cleaned:
+        os.environ[key_name] = cleaned
+    else:
+        os.environ.pop(key_name, None)
+
+    if not update_dotenv:
+        return False
+
+    target_env = env_path or get_agent_env_path()
+    if target_env is None or not target_env.parent.is_dir():
+        return False
+
+    try:
+        lines = target_env.read_text(encoding="utf-8-sig").splitlines() if target_env.is_file() else []
+        lines = [ln for ln in lines if ln.partition("=")[0].strip() != key_name]
+        if cleaned:
+            lines.append(f"{key_name}={cleaned}")
+        content = ("\n".join(lines) + "\n") if lines else ""
+        target_env.write_text(content, encoding="utf-8")
+        return True
+    except Exception as exc:
+        logger.warning("Could not persist %s to %s: %s", key_name, target_env, exc)
+        return False
+
 
 def to_bounding_box(
     p1: Tuple[float, float],
@@ -403,7 +472,7 @@ def query_geo_agent(
             layers.append(MapLayer(
                 name=f"Sector BBox [{min_lat:.3f}, {min_lng:.3f}]-[{max_lat:.3f}, {max_lng:.3f}]",
                 layer_type="polygon",
-                data={"coordinates": bbox_poly},
+                data={"coordinates": bbox_poly, "role": "query_bbox"},
                 color="cyan",
                 tooltip="Active Query Bounding Box",
                 popup=f"<b>Bounding Box Sector</b><br>SW: ({min_lat:.4f}°, {min_lng:.4f}°)<br>NE: ({max_lat:.4f}°, {max_lng:.4f}°)"
@@ -412,7 +481,7 @@ def query_geo_agent(
             layers.append(MapLayer(
                 name=f"Target Buffer ({selected_point[0]:.3f}, {selected_point[1]:.3f})",
                 layer_type="circle",
-                data={"lat": selected_point[0], "lng": selected_point[1], "radius": 5000},
+                data={"lat": selected_point[0], "lng": selected_point[1], "radius": 5000, "role": "target_buffer"},
                 color="cyan",
                 tooltip="Target Buffer (5km)",
                 popup=f"<b>Target Coordinate:</b> ({selected_point[0]:.4f}°, {selected_point[1]:.4f}°)"
@@ -437,6 +506,17 @@ def query_geo_agent(
 
         map_meta = raw_result.get("map", {})
         map_bbox = map_meta.get("bbox") if isinstance(map_meta, dict) else None
+        map_showing = str(map_meta.get("showing", "all") or "all") if isinstance(map_meta, dict) else "all"
+        try:
+            map_not_shown = int(map_meta.get("not_shown", 0) or 0) if isinstance(map_meta, dict) else 0
+        except (TypeError, ValueError):
+            map_not_shown = 0
+
+        raw_regions = raw_result.get("regions")
+        if isinstance(raw_regions, (list, dict)):
+            parsed_regions = raw_regions
+        else:
+            parsed_regions = []
 
         return AgentResponse(
             answer=ans_text,
@@ -450,8 +530,10 @@ def query_geo_agent(
             status=raw_result.get("status", "answered"),
             shape=raw_result.get("shape", "fact"),
             map_bbox=map_bbox,
+            map_showing=map_showing,
+            map_not_shown=map_not_shown,
             follow_ups=list(raw_result.get("follow_ups") or raw_result.get("follow_up_questions") or []),
-            regions=raw_result.get("regions") if isinstance(raw_result.get("regions"), dict) else {},
+            regions=parsed_regions,
             did_you_mean=raw_result.get("did_you_mean") or None,
         )
 
@@ -528,7 +610,7 @@ def _query_mock_agent(
                 MapLayer(
                     name=f"Box Lower-Left ({lower_left[0]:.3f}, {lower_left[1]:.3f})",
                     layer_type="marker",
-                    data={"lat": lower_left[0], "lng": lower_left[1]},
+                    data={"lat": lower_left[0], "lng": lower_left[1], "role": "bbox_corner", "corner": "sw"},
                     color="red",
                     tooltip=f"Lower-Left (SW): {lower_left[0]:.4f}, {lower_left[1]:.4f}",
                     popup=(
@@ -541,7 +623,7 @@ def _query_mock_agent(
                 MapLayer(
                     name=f"Box Upper-Right ({upper_right[0]:.3f}, {upper_right[1]:.3f})",
                     layer_type="marker",
-                    data={"lat": upper_right[0], "lng": upper_right[1]},
+                    data={"lat": upper_right[0], "lng": upper_right[1], "role": "bbox_corner", "corner": "ne"},
                     color="red",
                     tooltip=f"Upper-Right (NE): {upper_right[0]:.4f}, {upper_right[1]:.4f}",
                     popup=(
@@ -554,7 +636,7 @@ def _query_mock_agent(
                 MapLayer(
                     name=f"Bounding Box Area [{lower_left[0]:.3f}, {lower_left[1]:.3f}]-[{upper_right[0]:.3f}, {upper_right[1]:.3f}]",
                     layer_type="polygon",
-                    data={"coordinates": bbox_coords},
+                    data={"coordinates": bbox_coords, "role": "query_bbox"},
                     color="orange",
                     tooltip=f"Bounding Box Area: {user_query[:25]}...",
                     popup=(
@@ -582,7 +664,7 @@ def _query_mock_agent(
                 MapLayer(
                     name=f"Box Lower-Left ({lower_left[0]:.3f}, {lower_left[1]:.3f})",
                     layer_type="marker",
-                    data={"lat": lower_left[0], "lng": lower_left[1]},
+                    data={"lat": lower_left[0], "lng": lower_left[1], "role": "bbox_corner", "corner": "sw"},
                     color="purple",
                     tooltip=f"Lower-Left (SW): {lower_left[0]:.4f}, {lower_left[1]:.4f}",
                     popup=(
@@ -594,7 +676,7 @@ def _query_mock_agent(
                 MapLayer(
                     name=f"Box Upper-Right ({upper_right[0]:.3f}, {upper_right[1]:.3f})",
                     layer_type="marker",
-                    data={"lat": upper_right[0], "lng": upper_right[1]},
+                    data={"lat": upper_right[0], "lng": upper_right[1], "role": "bbox_corner", "corner": "ne"},
                     color="purple",
                     tooltip=f"Upper-Right (NE): {upper_right[0]:.4f}, {upper_right[1]:.4f}",
                     popup=(
@@ -606,7 +688,7 @@ def _query_mock_agent(
                 MapLayer(
                     name=f"Bounding Box Area ({lower_left[0]:.3f}, {lower_left[1]:.3f})",
                     layer_type="polygon",
-                    data={"coordinates": bbox_coords},
+                    data={"coordinates": bbox_coords, "role": "query_bbox"},
                     color="purple",
                     tooltip="Bounding Box Reconnaissance Zone",
                     popup=(

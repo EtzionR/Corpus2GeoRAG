@@ -54,7 +54,7 @@ def build_vr6_graph() -> nx.Graph:
     entity("Kyiv City", "LOC", 1, **place(50.38, 30.47, "shop", 0.1, "Kyiv City, a shop"))
     entity("Kharkiv", "LOC", 12, **place(49.99, 36.23, "city", 0.71, "Kharkiv, Ukraine"))
     entity("Bakhmut", "LOC", 8, **place(48.59, 38.0, "town", 0.57, "Bakhmut, Donetsk Oblast, Ukraine"))
-    entity("Donbas", "LOC", 7, **place(41.99, 21.43, "road", 0.04, "Donbas, Skopje, North Macedonia"))
+    entity("Hrushevsky Street", "LOC", 7, **place(41.99, 21.43, "road", 0.04, "Hrushevsky Street, Zdovbytsia, Ukraine"))
     entity("Avdiivka Industrial Zone", "LOC", 5, **place(48.14, 37.75, "industrial", 0.3, "Avdiivka, Ukraine"))
     entity("Novorossiya", "LOC", 3)   # not geocoded
 

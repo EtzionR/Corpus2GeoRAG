@@ -1,0 +1,603 @@
+{
+  "answer": "Maidan [1], also known as Independence Square, was the site of several significant events. On February 20, riot police gathered at the edge of the Maidan camp [S1], and later that morning, clashes broke out as protesters tried to push the Berkut away from the Maidan and back up Instytutska Street [S28]. On February 18, some 20,000 Maidan protesters marched from Independence Square towards the Verkhovna Rada in support of restoring the 2004 Constitution [S22]. That evening and into the early hours of February 19, security forces launched an operation to clear Independence Square and stormed the main protest camp [S26]. On December 11, 2013, over 15,000 people were on the Maidan as the Berkut tried to break into the Trade Unions Building and encircle the Maidan [S18]. Maidan activists were also involved in the formation of volunteer battalions for the National Guard of Ukraine [S46], [S54].\n\nKyiv [2] is a major city in Ukraine and has multiple urban rail systems, including three metro lines, two light rail lines, two urban elektrychka lines, and two cable railways [S2]. The city was conquered by Prince Oleg in 882, who proclaimed it the new capital of the Rus' [S23]. In the 19th century, several higher education institutions were established in Kyiv, including a university in 1834 and a Polytechnic Institute in 1898 [S29]. During the 2022 Russian invasion, Russia failed to take Kyiv and was repulsed in battles in nearby towns [S9]. Russian attacks on Kyiv stalled in March amidst heavy losses and strong Ukrainian resistance, and by April, Russian troops retreated [S31]. Evidence of war crimes by Russian forces was discovered after their withdrawal from areas north of Kyiv [S33]. The Euromaidan protest movement began in Kyiv in late November 2013 [S45].\n\nKhreshchatyk Street [3] was a location where Kyiv Post journalists reported finding additional bodies [S3]. During the Euromaidan assault on December 11, 2013, tactics included displacing peaceful protesters from lightly barricaded camps at Independence Square and part of Khreshchatyk Street [S10]. In August 2014, an agreement was made for the release of Khreshchatyk Street in exchange for the release of prisoners [S15]. The Kyiv City council building is located on Khreshchatyk Street [S20].\n\nOctober Palace [4] was a location where protesters pushed back the Berkut after security forces attempted to set fire to the Kyiv Conservatory [S4]. Riot police also threw bricks down a hill at protesters from a bridge along Instytutska Street at the October Palace [S11]. The October Palace is also listed as one of Kyiv's theaters [S16].\n\nKhreschatyk [5] is a metro station that was closed along with Teatralna and Maidan Nezalezhnosti due to an anonymous bomb threat received by Kyiv police [S5].\n\nEuropean Square [6] was a location where six ambulance vehicles were parked during the 2014 Hrushevsky Street protests [S6]. The Party of Regions thanked law enforcement officers and considered the actions of the opposition, which organized riots on Hrushevskoho Street and European Square, to be \"criminal and immoral\" [S12]. In December 2013, Azarov stated at a rally on European Square that Ukraine should allow same-sex marriage and pass an equality act for sexual minorities to get a visa-free regime with the EU [S17]. Pro-EU demonstrators marched toward European Square for a rally, chanting \"Ukraine is Europe\" [S21].\n\nMykhaila Hrushevskoho [7] (Hrushevsky Street) is where most key buildings of the national government are located [S7].",
+  "answer_plain": "Maidan, also known as Independence Square, was the site of several significant events. On February 20, riot police gathered at the edge of the Maidan camp, and later that morning, clashes broke out as protesters tried to push the Berkut away from the Maidan and back up Instytutska Street. On February 18, some 20,000 Maidan protesters marched from Independence Square towards the Verkhovna Rada in support of restoring the 2004 Constitution. That evening and into the early hours of February 19, security forces launched an operation to clear Independence Square and stormed the main protest camp. On December 11, 2013, over 15,000 people were on the Maidan as the Berkut tried to break into the Trade Unions Building and encircle the Maidan. Maidan activists were also involved in the formation of volunteer battalions for the National Guard of Ukraine.\n\nKyiv is a major city in Ukraine and has multiple urban rail systems, including three metro lines, two light rail lines, two urban elektrychka lines, and two cable railways. The city was conquered by Prince Oleg in 882, who proclaimed it the new capital of the Rus'. In the 19th century, several higher education institutions were established in Kyiv, including a university in 1834 and a Polytechnic Institute in 1898. During the 2022 Russian invasion, Russia failed to take Kyiv and was repulsed in battles in nearby towns. Russian attacks on Kyiv stalled in March amidst heavy losses and strong Ukrainian resistance, and by April, Russian troops retreated. Evidence of war crimes by Russian forces was discovered after their withdrawal from areas north of Kyiv. The Euromaidan protest movement began in Kyiv in late November 2013.\n\nKhreshchatyk Street was a location where Kyiv Post journalists reported finding additional bodies. During the Euromaidan assault on December 11, 2013, tactics included displacing peaceful protesters from lightly barricaded camps at Independence Square and part of Khreshchatyk Street. In August 2014, an agreement was made for the release of Khreshchatyk Street in exchange for the release of prisoners. The Kyiv City council building is located on Khreshchatyk Street.\n\nOctober Palace was a location where protesters pushed back the Berkut after security forces attempted to set fire to the Kyiv Conservatory. Riot police also threw bricks down a hill at protesters from a bridge along Instytutska Street at the October Palace. The October Palace is also listed as one of Kyiv's theaters.\n\nKhreschatyk is a metro station that was closed along with Teatralna and Maidan Nezalezhnosti due to an anonymous bomb threat received by Kyiv police.\n\nEuropean Square was a location where six ambulance vehicles were parked during the 2014 Hrushevsky Street protests. The Party of Regions thanked law enforcement officers and considered the actions of the opposition, which organized riots on Hrushevskoho Street and European Square, to be \"criminal and immoral\". In December 2013, Azarov stated at a rally on European Square that Ukraine should allow same-sex marriage and pass an equality act for sexual minorities to get a visa-free regime with the EU. Pro-EU demonstrators marched toward European Square for a rally, chanting \"Ukraine is Europe\".\n\nMykhaila Hrushevskoho (Hrushevsky Street) is where most key buildings of the national government are located.",
+  "status": "answered",
+  "grounded": true,
+  "shape": "explain",
+  "geo_locations": [
+    {
+      "number": 1,
+      "id": "Maidan",
+      "label": "Maidan",
+      "kind": "square",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.5240622,
+          50.4502431
+        ]
+      },
+      "why": "50 m away; 169 matching paragraphs",
+      "sources": [
+        "TEXT_98",
+        "TEXT_125",
+        "TEXT_377",
+        "TEXT_574",
+        "TEXT_2365",
+        "TEXT_11405",
+        "TEXT_11553",
+        "TEXT_12237",
+        "TEXT_12350",
+        "TEXT_12408"
+      ]
+    },
+    {
+      "number": 2,
+      "id": "Kyiv",
+      "label": "Kyiv",
+      "kind": "city",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.5241361,
+          50.4500336
+        ]
+      },
+      "why": "53 m away; 2490 matching paragraphs",
+      "sources": [
+        "TEXT_1",
+        "TEXT_11",
+        "TEXT_16",
+        "TEXT_27",
+        "TEXT_28",
+        "TEXT_31",
+        "TEXT_56",
+        "TEXT_112",
+        "TEXT_189",
+        "TEXT_200"
+      ]
+    },
+    {
+      "number": 3,
+      "id": "Khreshchatyk Street",
+      "label": "Khreshchatyk Street",
+      "kind": "road",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.5252117,
+          50.4507937
+        ]
+      },
+      "why": "150 m away; 5 matching paragraphs",
+      "sources": [
+        "TEXT_69870",
+        "TEXT_69884",
+        "TEXT_74110",
+        "TEXT_84739",
+        "TEXT_84773"
+      ]
+    },
+    {
+      "number": 4,
+      "id": "October Palace",
+      "label": "October Palace",
+      "kind": "amenity",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.5279579,
+          50.449862
+        ]
+      },
+      "why": "324 m away; 3 matching paragraphs",
+      "sources": [
+        "TEXT_46244",
+        "TEXT_46266",
+        "TEXT_84766"
+      ]
+    },
+    {
+      "number": 5,
+      "id": "Khreschatyk",
+      "label": "Khreschatyk",
+      "kind": "railway",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.5229456,
+          50.4471871
+        ]
+      },
+      "why": "325 m away; 1 matching paragraphs",
+      "sources": [
+        "TEXT_74020"
+      ]
+    },
+    {
+      "number": 6,
+      "id": "European Square",
+      "label": "European Square",
+      "kind": "square",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.5275356,
+          50.4522239
+        ]
+      },
+      "why": "376 m away; 5 matching paragraphs",
+      "sources": [
+        "TEXT_73139",
+        "TEXT_73155",
+        "TEXT_73898",
+        "TEXT_74000",
+        "TEXT_84757"
+      ]
+    },
+    {
+      "number": 7,
+      "id": "Mykhaila Hrushevskoho",
+      "label": "Mykhaila Hrushevskoho",
+      "kind": "road",
+      "role": "primary",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.5286384,
+          50.4512856
+        ]
+      },
+      "why": "394 m away; 1 matching paragraphs",
+      "sources": [
+        "TEXT_84738"
+      ]
+    }
+  ],
+  "regions": [],
+  "entities": [],
+  "citations": [
+    {
+      "id": "S1",
+      "pointer": "TEXT_69850",
+      "article": "Maidan casualties",
+      "section": "History",
+      "spans": [
+        [
+          69,
+          75
+        ],
+        [
+          84,
+          103
+        ]
+      ]
+    },
+    {
+      "id": "S28",
+      "pointer": "TEXT_46230",
+      "article": "Revolution of Dignity",
+      "section": "Overview",
+      "spans": [
+        [
+          208,
+          227
+        ],
+        [
+          353,
+          359
+        ]
+      ]
+    },
+    {
+      "id": "S22",
+      "pointer": "TEXT_46226",
+      "article": "Revolution of Dignity",
+      "section": "Overview",
+      "spans": [
+        [
+          28,
+          34
+        ],
+        [
+          59,
+          78
+        ]
+      ]
+    },
+    {
+      "id": "S26",
+      "pointer": "TEXT_46227",
+      "article": "Revolution of Dignity",
+      "section": "Overview",
+      "spans": [
+        [
+          122,
+          141
+        ]
+      ]
+    },
+    {
+      "id": "S18",
+      "pointer": "TEXT_69888",
+      "article": "11 December 2013 Euromaidan assault",
+      "section": "Events",
+      "spans": [
+        [
+          679,
+          685
+        ],
+        [
+          802,
+          808
+        ],
+        [
+          851,
+          857
+        ]
+      ]
+    },
+    {
+      "id": "S46",
+      "pointer": "TEXT_12237",
+      "article": "Ukrainian volunteer battalions",
+      "section": "Volunteer formations",
+      "spans": [
+        [
+          216,
+          222
+        ]
+      ]
+    },
+    {
+      "id": "S54",
+      "pointer": "TEXT_27889",
+      "article": "1st Serhii Kulchytskyi Battalion (Ukraine)",
+      "section": "History",
+      "spans": [
+        [
+          3571,
+          3577
+        ]
+      ]
+    },
+    {
+      "id": "S2",
+      "pointer": "TEXT_273",
+      "article": "Ukraine",
+      "section": "Economy",
+      "spans": [
+        [
+          361,
+          365
+        ],
+        [
+          399,
+          403
+        ],
+        [
+          462,
+          466
+        ],
+        [
+          488,
+          492
+        ]
+      ]
+    },
+    {
+      "id": "S23",
+      "pointer": "TEXT_200",
+      "article": "Ukraine",
+      "section": "History",
+      "spans": [
+        [
+          325,
+          329
+        ]
+      ]
+    },
+    {
+      "id": "S29",
+      "pointer": "TEXT_303",
+      "article": "Ukraine",
+      "section": "Demographics",
+      "spans": [
+        [
+          178,
+          182
+        ],
+        [
+          513,
+          517
+        ]
+      ]
+    },
+    {
+      "id": "S9",
+      "pointer": "TEXT_806",
+      "article": "Russo-Ukrainian war (2022–present)",
+      "section": "Events",
+      "spans": [
+        [
+          82,
+          86
+        ],
+        [
+          171,
+          175
+        ],
+        [
+          580,
+          584
+        ]
+      ]
+    },
+    {
+      "id": "S31",
+      "pointer": "TEXT_412",
+      "article": "Russo-Ukrainian war",
+      "section": "History",
+      "spans": [
+        [
+          81,
+          85
+        ],
+        [
+          276,
+          280
+        ]
+      ]
+    },
+    {
+      "id": "S33",
+      "pointer": "TEXT_419",
+      "article": "Russo-Ukrainian war",
+      "section": "War crimes and human rights violations",
+      "spans": [
+        [
+          369,
+          373
+        ]
+      ]
+    },
+    {
+      "id": "S45",
+      "pointer": "TEXT_16",
+      "article": "2014 Russian annexation of Crimea",
+      "section": "Background",
+      "spans": [
+        [
+          41,
+          45
+        ]
+      ]
+    },
+    {
+      "id": "S3",
+      "pointer": "TEXT_69870",
+      "article": "Maidan casualties",
+      "section": "Identified deaths",
+      "spans": [
+        [
+          240,
+          259
+        ]
+      ]
+    },
+    {
+      "id": "S10",
+      "pointer": "TEXT_69884",
+      "article": "11 December 2013 Euromaidan assault",
+      "spans": [
+        [
+          378,
+          397
+        ]
+      ]
+    },
+    {
+      "id": "S15",
+      "pointer": "TEXT_74110",
+      "article": "Timeline of the Euromaidan",
+      "section": "Aftermath",
+      "spans": [
+        [
+          288,
+          307
+        ]
+      ]
+    },
+    {
+      "id": "S20",
+      "pointer": "TEXT_84739",
+      "article": "Kyiv",
+      "section": "Legal status, local government and politics",
+      "spans": [
+        [
+          82,
+          101
+        ]
+      ]
+    },
+    {
+      "id": "S4",
+      "pointer": "TEXT_46266",
+      "article": "Revolution of Dignity",
+      "section": "Detailed timeline",
+      "spans": [
+        [
+          150,
+          164
+        ]
+      ]
+    },
+    {
+      "id": "S11",
+      "pointer": "TEXT_46244",
+      "article": "Revolution of Dignity",
+      "section": "Detailed timeline",
+      "spans": [
+        [
+          321,
+          335
+        ]
+      ]
+    },
+    {
+      "id": "S16",
+      "pointer": "TEXT_84766",
+      "article": "Kyiv",
+      "section": "Culture",
+      "spans": [
+        [
+          158,
+          172
+        ]
+      ]
+    },
+    {
+      "id": "S5",
+      "pointer": "TEXT_74020",
+      "article": "Timeline of the Euromaidan",
+      "section": "8–10 December 2013",
+      "spans": [
+        [
+          345,
+          356
+        ]
+      ]
+    },
+    {
+      "id": "S6",
+      "pointer": "TEXT_73139",
+      "article": "2014 Hrushevsky Street protests",
+      "section": "Participants",
+      "spans": [
+        [
+          53,
+          68
+        ]
+      ]
+    },
+    {
+      "id": "S12",
+      "pointer": "TEXT_73155",
+      "article": "2014 Hrushevsky Street protests",
+      "section": "Domestic responses",
+      "spans": [
+        [
+          769,
+          784
+        ]
+      ]
+    },
+    {
+      "id": "S17",
+      "pointer": "TEXT_73898",
+      "article": "Domestic responses to the Euromaidan",
+      "section": "Government response",
+      "spans": [
+        [
+          81,
+          96
+        ]
+      ]
+    },
+    {
+      "id": "S21",
+      "pointer": "TEXT_74000",
+      "article": "Timeline of the Euromaidan",
+      "section": "21–29 November 2013",
+      "spans": [
+        [
+          250,
+          265
+        ]
+      ]
+    },
+    {
+      "id": "S7",
+      "pointer": "TEXT_84738",
+      "article": "Kyiv",
+      "section": "Legal status, local government and politics",
+      "spans": [
+        [
+          84,
+          105
+        ]
+      ]
+    }
+  ],
+  "sources": [
+    "TEXT_69850",
+    "TEXT_46230",
+    "TEXT_46226",
+    "TEXT_46227",
+    "TEXT_69888",
+    "TEXT_12237",
+    "TEXT_27889",
+    "TEXT_273",
+    "TEXT_200",
+    "TEXT_303",
+    "TEXT_806",
+    "TEXT_412",
+    "TEXT_419",
+    "TEXT_16",
+    "TEXT_69870",
+    "TEXT_69884",
+    "TEXT_74110",
+    "TEXT_84739",
+    "TEXT_46266",
+    "TEXT_46244",
+    "TEXT_84766",
+    "TEXT_74020",
+    "TEXT_73139",
+    "TEXT_73155",
+    "TEXT_73898",
+    "TEXT_74000",
+    "TEXT_84738"
+  ],
+  "map": {
+    "bbox": [
+      30.51295,
+      50.43719,
+      30.53864,
+      50.46222
+    ],
+    "highlight": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "showing": "all",
+    "not_shown": 0
+  },
+  "follow_ups": [
+    "What happened at Maidan?",
+    "Tell me about the 2022 Russian invasion of Kyiv?"
+  ],
+  "did_you_mean": [],
+  "notes": [
+    "④ 7 places found (all go on the map); 7 described to the LLM",
+    "④ 60 more passages didn't fit the 2000-word budget (available for a 'show more' page)",
+    "⑤ dropped follow-ups that name nothing in the material: Which places are linked to the Euromaidan protest movement?"
+  ],
+  "meta": {
+    "question_type": "area",
+    "model": "google/gemini-2.5-flash",
+    "llm_calls": 2,
+    "cost_usd": 0.004229,
+    "seconds": 6.12
+  }
+}

@@ -2,7 +2,7 @@
 import graph_tools as T
 from planner import Area, Concept, ConceptCandidate, EntityMention, QueryPlan
 from resolver import resolve
-from retrieve import retrieve
+from retrieve import event_titles, retrieve
 
 KYIV_CENTRE = Area(kind="point", coordinates=[30.5234, 50.4501])
 FAR_POINT = Area(kind="point", coordinates=[34.0, 47.0])
@@ -76,8 +76,24 @@ def test_place_lookup_returns_the_place_its_parents_and_its_summary(vr6_index):
     assert out.steps[0].tool == "parents"
 
 
+def test_where_an_event_happened_is_answered_from_its_places(vr6_index):
+    out = run(vr6_index, "place_lookup", ("Battle of Bakhmut", "EVENT"))
+    assert out.places and out.places[0].group.id == "Bakhmut"
+    assert out.notes[0] == "the name is an event (an article), not a place: answered from its places"
+
+
+def test_place_lookup_without_a_point_still_reads_its_own_article(vr6_index):
+    vr6_index.articles["Novorossiya"] = vr6_index.articles["Kyiv"]          # give the ungeocoded place an article
+    try:
+        out = run(vr6_index, "place_lookup", ("Novorossiya", "LOC"))
+    finally:
+        del vr6_index.articles["Novorossiya"]
+    assert not out.places and "Novorossiya has no coordinates in the graph" in out.notes
+    assert [s.article for s in out.summaries] == ["Novorossiya"]
+
+
 def test_place_lookup_reports_an_uncertain_point(vr6_index):
-    out = run(vr6_index, "place_lookup", ("Donbas", "LOC"))
+    out = run(vr6_index, "place_lookup", ("Hrushevsky Street", "LOC"))
     assert any("uncertain" in n for n in out.notes)
 
 
@@ -165,6 +181,38 @@ def test_event_places_from_the_article(vr6_index):
     assert out.summaries[0].article == "Battle of Bakhmut"
 
 
+TITLES = ["Battle of Bakhmut", "Battles for Karlivka", "Siege of Mariupol", "Bombing of Borodianka",
+          "Russian invasion of Ukraine", "Russian Black Sea Fleet", "Offensive Guard (Ukraine)", "Battlefield tactics"]
+
+
+def test_event_titles_take_the_event_kind_from_the_keywords():
+    assert event_titles(TITLES, ["major battles"]) == ["Battle of Bakhmut", "Battles for Karlivka"]
+    assert event_titles(TITLES, ["main sieges", "bombings"]) == ["Bombing of Borodianka", "Siege of Mariupol"]
+    assert event_titles(TITLES, []) == ["Battle of Bakhmut", "Battles for Karlivka", "Siege of Mariupol"]
+
+
+def test_event_titles_find_nothing_for_words_that_name_no_event_kind():
+    assert event_titles(TITLES, ["Russian offensives"]) == []
+
+
+def test_event_list_places_each_battle_found(vr6_index):
+    out = run(vr6_index, "event_list", keywords=["major battles"])
+    assert [h.group.id for h in out.places] == ["Bakhmut"]
+    assert out.summaries[0].article == "Battle of Bakhmut"
+
+
+def test_event_list_puts_the_longest_article_first_and_one_pin_per_place(vr6_index, monkeypatch):
+    tids = vr6_index.articles["Battle of Bakhmut"]
+    monkeypatch.setattr(vr6_index, "articles", {"Battle of Soledar": tids[:1], "Battle of Bakhmut": tids * 3,
+                                                "Battles for Bakhmut": tids})
+    top = {"Battle of Soledar": "Soledar", "Battle of Bakhmut": "Bakhmut", "Battles for Bakhmut": "Bakhmut"}
+    monkeypatch.setattr(T, "article_places", lambda gi, title: [T.Hit(group=gi.group(top[title]), records=1)])
+    out = run(vr6_index, "event_list")
+    assert [h.group.id for h in out.places] == ["Bakhmut", "Soledar"]
+    assert list(out.places[0].relations) == ["event: Battle of Bakhmut", "event: Battles for Bakhmut"]
+    assert out.summaries[0].article == "Battle of Bakhmut"
+
+
 def test_common_route_infers_countries_from_the_question(vr6_index):
     out = run(vr6_index, "common", ("Russia", "LOC"), ("Ukraine", "LOC"), keywords=["same country"])
     assert [h.group.id for h in out.places] == ["Belarus"]
@@ -185,3 +233,12 @@ def test_a_follow_up_naming_the_same_place_twice_is_still_a_drilldown(vr6_index)
 def test_types_without_a_route_say_so(vr6_index):
     out = run(vr6_index, "other")
     assert out.route == "none" and "fallback" in out.notes[0]
+
+
+def test_tell_me_about_an_event_uses_its_article():
+    from conftest import build_vr6_graph
+    from graph_index import GraphIndex
+    gi = GraphIndex(build_vr6_graph())
+    ret = run(gi, "about", ("Battle of Bakhmut", "EVENT"))
+    assert ret.route.startswith("event_places") and [h.group.id for h in ret.places][:1] == ["Bakhmut"]
+    assert ret.summaries and ret.summaries[0].article == "Battle of Bakhmut"

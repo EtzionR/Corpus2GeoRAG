@@ -116,11 +116,70 @@ def test_what_is_here_becomes_an_area_question():
     assert plan.type == "area" and (plan.radius_m, plan.radius_source) == (DEFAULT_RADIUS_M, "default")
 
 
+@pytest.mark.parametrize("question", ["What happened in this area?", "Tell me about this area"])
+def test_an_about_question_on_the_map_selection_becomes_an_area_question(question):
+    plan = understand(question, area=DONBAS_BOX, llm=FakePlanner(PlanDraft(type="about", refers_to_map=True)))
+    assert plan.type == "area" and plan.area is not None
+
+
+def test_an_about_question_with_a_topic_on_the_map_selection_searches_the_topic():
+    draft = PlanDraft(type="about", refers_to_map=True, keywords=["drone"])
+    plan = understand("Tell me about drones in this area", area=DONBAS_BOX, llm=FakePlanner(draft))
+    assert plan.type == "area_topic" and plan.keywords == ["drone"] and plan.area is not None
+
+
+def test_an_about_question_naming_a_place_ignores_the_selection():
+    draft = PlanDraft(type="about", entities=[EntityMention(text="Kharkiv", name="Kharkiv", kind="LOC")])
+    plan = understand("Tell me about Kharkiv", area=DONBAS_BOX, llm=FakePlanner(draft))
+    assert plan.type == "about" and plan.area is None
+
+
 def test_numbers_coordinates_and_names_are_not_keywords():
     draft = PlanDraft(type="area", refers_to_map=True, keywords=["30.5234,50.4501", "500", "drone", "Kyiv", "drone"],
                       entities=[EntityMention(text="Kyiv", name="Kyiv", kind="LOC")])
     plan = understand("drones near Kyiv here", area=KYIV_POINT, llm=FakePlanner(draft))
     assert plan.keywords == ["drone"]
+
+
+def test_what_happened_in_a_place_is_a_question_about_the_place():
+    # the model typed it as a topic search for the word "happened" (P2-72)
+    draft = PlanDraft(type="area_topic", keywords=["happened"],
+                      entities=[EntityMention(text="Moscow", name="Moscow", kind="LOC")])
+    plan = understand("What happened in Moscow?", llm=FakePlanner(draft))
+    assert plan.type == "about" and plan.keywords == []
+    assert "area_topic with no topic words: treated as about" in plan.notes
+
+
+def test_what_happened_here_stays_a_question_about_the_map_selection():
+    draft = PlanDraft(type="area_topic", refers_to_map=True, keywords=["events"])
+    plan = understand("What happened here?", area=DONBAS_BOX, llm=FakePlanner(draft))
+    assert plan.type == "area" and plan.area is not None
+
+
+def test_a_real_topic_keeps_the_area_topic_type():
+    draft = PlanDraft(type="area_topic", keywords=["happened", "shelling"],
+                      entities=[EntityMention(text="Kherson", name="Kherson", kind="LOC")])
+    plan = understand("What shelling happened in Kherson?", llm=FakePlanner(draft))
+    assert plan.type == "area_topic" and plan.keywords == ["shelling"]
+
+
+@pytest.mark.parametrize("question, expected", [
+    ("Show me where the battle of Bakhmut occurred", "place_lookup"),
+    ("Where did the Battle of Bakhmut happen?", "place_lookup"),
+    ("Where did the Battle of Bakhmut take place?", "place_lookup"),                  # "place" here is no list
+    ("Show me all locations where the Battle of Bakhmut was fought", "event_places"),   # asks for the list
+    ("Which places were part of the Battle of Bakhmut?", "event_places"),               # no "where"
+])
+def test_where_one_event_happened_is_a_place_lookup(question, expected):
+    draft = PlanDraft(type="event_places",
+                      entities=[EntityMention(text="Battle of Bakhmut", name="Battle of Bakhmut", kind="EVENT")])
+    assert understand(question, llm=FakePlanner(draft)).type == expected
+
+
+def test_where_a_topic_happened_is_not_a_place_lookup():
+    draft = PlanDraft(type="event_places", keywords=["drone", "attack"],
+                      entities=[EntityMention(text="drone attacks", name="drone attacks", kind="EVENT")])
+    assert understand("Show me where drone attacks happened", llm=FakePlanner(draft)).type != "place_lookup"
 
 
 def test_the_map_selection_is_used_when_the_question_refers_to_it():
@@ -187,6 +246,18 @@ def test_a_description_becomes_a_concept():
         EntityMention(text="Russian military commanders", name="Russian military commanders", kind="UNKNOWN")])
     plan = understand("Show me Ukrainian locations connected to Russian military commanders.", llm=FakePlanner(draft))
     assert plan.entities == [] and plan.concepts[0].text == "Russian military commanders"
+
+
+@pytest.mark.parametrize("text, name, kept", [
+    ("bucha massacre", "Bucha massacre", True),
+    ("Kharkiv counteroffensive", "2022 Kharkiv counteroffensive", True),
+    ("drone attacks", "drone attacks", False),          # an event-like description stays a concept
+])
+def test_an_event_title_with_lower_case_words_is_a_name(text, name, kept):
+    draft = PlanDraft(type="event_places", entities=[EntityMention(text=text, name=name, kind="EVENT")])
+    plan = understand(f"Show me all locations connected to the {text}", llm=FakePlanner(draft))
+    assert ([e.name for e in plan.entities] == [name]) is kept
+    assert (plan.concepts == []) is kept
 
 
 def test_place_candidates_are_dropped_when_the_question_asks_for_places():
@@ -356,3 +427,14 @@ def test_history_summary_lists_at_most_20_places():
         {"number": n, "id": f"P{n}", "label": f"Place {n}"} for n in range(1, 501)]}}]
     summary = summarize_history(previous)
     assert "20. Place 20 (+480 more on the map)" in summary and "Place 21" not in summary
+
+
+def test_the_writer_reads_the_place_name_instead_of_the_old_number():
+    from planner import FollowUp, QueryPlan, question_for_answer
+    plan = QueryPlan(question="Tell me about location number 4", type="follow_up", source="llm",
+                     follow_up=FollowUp(kind="item", item_number=4, target_id="Illich", target_label="Illich"))
+    assert question_for_answer(plan) == "Tell me about Illich"
+    plan.question = "What happened at number four?"
+    assert question_for_answer(plan) == "What happened at Illich?"
+    plan.question = "And that one?"
+    assert question_for_answer(plan) == "And that one? (meaning Illich, from the previous answer)"
