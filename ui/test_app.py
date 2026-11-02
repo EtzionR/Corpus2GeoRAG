@@ -714,7 +714,7 @@ class TestBackendAdapter:
         assert meta["paragraph_index"] == 89
 
     def test_vr6_pin_visibility_filters(self):
-        """Verify context and uncertain pins can be toggled on/off."""
+        """Verify primary, context, and uncertain pins can be toggled on/off."""
         from geo_agent import MapLayer
 
         primary_pin = MapLayer(
@@ -737,12 +737,15 @@ class TestBackendAdapter:
         )
         all_layers = [primary_pin, context_pin, uncertain_pin]
 
-        def filter_markers(layers, show_context, show_uncertain):
+        def filter_markers(layers, show_primary=True, show_context=True, show_uncertain=False):
             rendered = []
             for l in layers:
                 if l.layer_type == "marker":
                     is_context = isinstance(l.data, dict) and (l.data.get("role") == "context" or l.color == "cadetblue")
                     is_uncertain = isinstance(l.data, dict) and bool(l.data.get("uncertain") or l.color == "orange")
+                    is_primary = not is_context and not is_uncertain
+                    if is_primary and not show_primary:
+                        continue
                     if is_context and not show_context:
                         continue
                     if is_uncertain and not show_uncertain:
@@ -750,23 +753,29 @@ class TestBackendAdapter:
                     rendered.append(l)
             return rendered
 
-        # All visible by default
-        assert len(filter_markers(all_layers, show_context=True, show_uncertain=True)) == 3
+        # Default state: primary & context visible, uncertain unchecked (hidden)
+        res_default = filter_markers(all_layers, show_primary=True, show_context=True, show_uncertain=False)
+        assert len(res_default) == 2
+        assert primary_pin in res_default
+        assert context_pin in res_default
+        assert uncertain_pin not in res_default
+
+        # When user checks uncertain pins: all 3 visible
+        assert len(filter_markers(all_layers, show_primary=True, show_context=True, show_uncertain=True)) == 3
+
+        # Toggle off primary pins: only context remains (with uncertain off)
+        res_no_pri = filter_markers(all_layers, show_primary=False, show_context=True, show_uncertain=False)
+        assert len(res_no_pri) == 1
+        assert res_no_pri[0].name == "2. [TOWN] Bucha"
 
         # Hide context: only primary remains
-        res_no_ctx = filter_markers(all_layers, show_context=False, show_uncertain=True)
+        res_no_ctx = filter_markers(all_layers, show_primary=True, show_context=False, show_uncertain=False)
         assert len(res_no_ctx) == 1
         assert res_no_ctx[0].name == "1. [CITY] Kyiv"
 
-        # Hide uncertain: primary and normal context remain
-        res_no_unc = filter_markers(all_layers, show_context=True, show_uncertain=False)
-        assert len(res_no_unc) == 2
-        assert uncertain_pin not in res_no_unc
-
-        # Hide both: only primary remains
-        res_no_both = filter_markers(all_layers, show_context=False, show_uncertain=False)
-        assert len(res_no_both) == 1
-        assert res_no_both[0].name == "1. [CITY] Kyiv"
+        # Hide both primary and context: empty if uncertain is also off
+        res_no_both = filter_markers(all_layers, show_primary=False, show_context=False, show_uncertain=False)
+        assert len(res_no_both) == 0
 
 
 class TestDrawingIngestion:
@@ -2230,10 +2239,45 @@ class TestContextPinsStabilityAndNoLeak:
         with open("app.py", "r", encoding="utf-8") as f:
             content = f.read()
 
+        assert ".geoai-hide-primary-pins .geoai-pin--primary" in content
+        assert ".geoai-hide-primary-pins .awesome-marker-icon-blue" in content
         assert ".geoai-hide-context-pins .geoai-pin--context" in content
         assert ".geoai-hide-context-pins .awesome-marker-icon-cadetblue" in content
         assert ".geoai-hide-context-pins .geoai-cluster-wrap" in content
         assert ".geoai-hide-uncertain-pins .geoai-pin--uncertain" in content
+        assert ".geoai-hide-uncertain-pins .awesome-marker-icon-orange" in content
+
+    def test_pin_filter_control_primary_pins_and_uncertain_default_off(self):
+        """Verify PinFilterControl has primary pins filter, and uncertain pins are unchecked by default."""
+        import folium
+        from streamlit_folium import _get_map_string
+        import app
+
+        m = folium.Map()
+        app.MapTrashBinHook().add_to(m)
+        script = _get_map_string(m)
+
+        # Primary pins checkbox exists and is checked (true) by default
+        assert "chkPri.id = 'pin_filter_chk_primary';" in script
+        assert "chkPri.checked = true;" in script
+
+        # Context pins checkbox exists and is checked (true) by default
+        assert "chkCtx.id = 'pin_filter_chk_context';" in script
+        assert "chkCtx.checked = true;" in script
+
+        # Uncertain pins checkbox exists and is unchecked (false / OFF) by default
+        assert "chkUnc.id = 'pin_filter_chk_uncertain';" in script
+        assert "chkUnc.checked = false;" in script
+
+        # Instant client-side toggles for primary, context, and uncertain
+        assert "containerEl.classList.toggle('geoai-hide-primary-pins', !showPri);" in script
+        assert "containerEl.classList.toggle('geoai-hide-context-pins', !showCtx);" in script
+        assert "containerEl.classList.toggle('geoai-hide-uncertain-pins', !showUnc);" in script
+
+        # Event listeners for all 3 filters
+        assert "chkPri.addEventListener('change', applyPinFilter);" in script
+        assert "chkCtx.addEventListener('change', applyPinFilter);" in script
+        assert "chkUnc.addEventListener('change', applyPinFilter);" in script
 
     def test_context_pins_not_duplicated_in_session_state_on_map_clicks(self):
         """Verify map clicks only update spatial selection without multiplying map_layers in session_state."""

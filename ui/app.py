@@ -1818,6 +1818,17 @@ class MapTrashBinHook(MacroElement):
                     header.style.marginTop = '8px';
                     header.innerHTML = '📍 <b>PIN FILTERS</b>';
 
+                    // Primary pins toggle
+                    var lblPri = L.DomUtil.create('label', '', overlays);
+                    var divPri = L.DomUtil.create('div', '', lblPri);
+                    var chkPri = L.DomUtil.create('input', 'leaflet-control-layers-selector', divPri);
+                    chkPri.type = 'checkbox';
+                    chkPri.id = 'pin_filter_chk_primary';
+                    chkPri.checked = true;
+                    var spanPri = L.DomUtil.create('span', '', divPri);
+                    spanPri.id = 'pin_filter_lbl_primary';
+                    spanPri.textContent = '🔹 Primary pins';
+
                     // Context pins toggle
                     var lblCtx = L.DomUtil.create('label', '', overlays);
                     var divCtx = L.DomUtil.create('div', '', lblCtx);
@@ -1835,7 +1846,7 @@ class MapTrashBinHook(MacroElement):
                     var chkUnc = L.DomUtil.create('input', 'leaflet-control-layers-selector', divUnc);
                     chkUnc.type = 'checkbox';
                     chkUnc.id = 'pin_filter_chk_uncertain';
-                    chkUnc.checked = true;
+                    chkUnc.checked = false;
                     var spanUnc = L.DomUtil.create('span', '', divUnc);
                     spanUnc.id = 'pin_filter_lbl_uncertain';
                     spanUnc.textContent = '🟠 Uncertain pins';
@@ -1868,12 +1879,14 @@ class MapTrashBinHook(MacroElement):
                     }
 
                     function applyPinFilter() {
+                        var showPri = chkPri.checked;
                         var showCtx = chkCtx.checked;
                         var showUnc = chkUnc.checked;
 
                         // 1. Instant 0ms visual toggle on map container via CSS classes
                         var containerEl = map.getContainer();
                         if (containerEl) {
+                            containerEl.classList.toggle('geoai-hide-primary-pins', !showPri);
                             containerEl.classList.toggle('geoai-hide-context-pins', !showCtx);
                             containerEl.classList.toggle('geoai-hide-uncertain-pins', !showUnc);
                         }
@@ -1899,7 +1912,10 @@ class MapTrashBinHook(MacroElement):
                                 var isUnc = cls.indexOf('geoai-pin--uncertain') !== -1 || cls.indexOf('awesome-marker-icon-orange') !== -1;
                                 if (!isCtx && !isUnc && cls.indexOf('awesome-marker-icon-red') !== -1) return;
 
+                                var isPri = !isCtx && !isUnc;
+
                                 var isVisible = true;
+                                if (isPri && !showPri) isVisible = false;
                                 if (isCtx && !showCtx) isVisible = false;
                                 if (isUnc && !showUnc) isVisible = false;
 
@@ -1915,13 +1931,17 @@ class MapTrashBinHook(MacroElement):
                         });
                     }
 
+                    chkPri.addEventListener('change', applyPinFilter);
                     chkCtx.addEventListener('change', applyPinFilter);
                     chkUnc.addEventListener('change', applyPinFilter);
 
+                    // Apply filter immediately on creation to enforce defaults (uncertain pins hidden)
+                    applyPinFilter();
+
                     function refreshPinCounts() {
+                        var countPri = 0;
                         var countCtx = 0;
                         var countUnc = 0;
-                        var countTotal = 0;
 
                         var activeClusters = getActiveClusterGroups();
                         var clusteredMarkers = new Set();
@@ -1943,20 +1963,22 @@ class MapTrashBinHook(MacroElement):
                                 if (clusteredMarkers.has(layer)) return;
 
                                 var cls = layer._icon.className || '';
-                                if (cls.indexOf('geoai-pin--target') !== -1 || cls.indexOf('geoai-pin--corner') !== -1) return;
+                                if (cls.indexOf('geoai-pin--target') !== -1 || cls.indexOf('geoai-pin--corner') !== -1 || cls.indexOf('geoai-pin--event') !== -1) return;
 
                                 var isCtx = cls.indexOf('geoai-pin--context') !== -1 || cls.indexOf('awesome-marker-icon-cadetblue') !== -1;
                                 var isUnc = cls.indexOf('geoai-pin--uncertain') !== -1 || cls.indexOf('awesome-marker-icon-orange') !== -1;
+                                if (!isCtx && !isUnc && cls.indexOf('awesome-marker-icon-red') !== -1) return;
 
                                 if (isCtx) countCtx++;
                                 else if (isUnc) countUnc++;
-                                else if (cls.indexOf('geoai-pin--') !== -1 || cls.indexOf('awesome-marker-icon-blue') !== -1) countTotal++;
+                                else countPri++;
                             }
                         });
+                        spanPri.textContent = '🔹 Primary pins (' + countPri + ')';
                         spanCtx.textContent = '🔘 Context pins (' + countCtx + ')';
                         spanUnc.textContent = '🟠 Uncertain pins (' + countUnc + ')';
 
-                        if (countCtx === 0 && countUnc === 0 && countTotal === 0) {
+                        if (countPri === 0 && countCtx === 0 && countUnc === 0) {
                             container.style.display = 'none';
                         } else {
                             container.style.display = 'block';
@@ -3404,13 +3426,17 @@ if "show_citations" not in st.session_state:
     # Toggle to display inline citation marks ([1], [S2], [L1]) vs plain text
     st.session_state.show_citations = True
 
+if "show_primary_pins" not in st.session_state:
+    # Toggle to show or hide primary answered pins (sky blue)
+    st.session_state.show_primary_pins = True
+
 if "show_context_pins" not in st.session_state:
     # Toggle to show or hide surrounding context pins (slate blue)
     st.session_state.show_context_pins = True
 
 if "show_uncertain_pins" not in st.session_state:
-    # Toggle to show or hide pins with uncertain coordinates (orange)
-    st.session_state.show_uncertain_pins = True
+    # Toggle to show or hide pins with uncertain coordinates (orange) - unchecked (OFF) by default
+    st.session_state.show_uncertain_pins = False
 
 if "last_map_bbox" not in st.session_state:
     # Bounding box [west, south, east, north] returned by agent for automatic framing
@@ -4600,6 +4626,10 @@ with col2:
             }
 
             /* Instant Client-Side Pin Filter Toggles */
+            .geoai-hide-primary-pins .geoai-pin--primary,
+            .geoai-hide-primary-pins .awesome-marker-icon-blue {
+                display: none !important;
+            }
             .geoai-hide-context-pins .geoai-pin--context,
             .geoai-hide-context-pins .awesome-marker-icon-cadetblue,
             .geoai-hide-context-pins .geoai-cluster-wrap {
