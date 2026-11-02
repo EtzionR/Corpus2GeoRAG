@@ -1,0 +1,10 @@
+{
+  "version": "single_dispute_calibration_v1",
+  "model": "AtlaAI/Selene-1-Mini-Llama-3.1-8B",
+  "examples_sha256": "8aac0314746941e7ac5c722d95d4d8edd2ed15ee59883fd01747ac622e2ad09e",
+  "sample_sha256": "4e3572c6734b5cde1df85ab57d11676fa430c6ea2c9b18e70fbd9d90a82e2403",
+  "system_prompt_sha256": "a4dd461a7863b48ffe59186a499a82c7a61b4a89a2a1a3a3d460bff41300e2ba",
+  "max_input_tokens": 6000,
+  "max_new_tokens": 256,
+  "examples_per_case": 4
+}

@@ -1,0 +1,10 @@
+{
+  "version": "flertdate_train_predictions_v1",
+  "split_sha256": "54fcb3849843354dc415bf4b95e85a2befc50bfccf8a2484a23adfaa81cbbc36",
+  "checkpoint_path": "C:\\Users\\idosc\\Corpus2GeoRAG\\ApplyNER\\NER_output\\model_evaluation\\fine_tuning\\flert_5label\\FlertDate\\best-model.pt",
+  "checkpoint_size": 2256898906,
+  "checkpoint_modified_ns": 1793022839022911000,
+  "paragraph_count": 707,
+  "batch_size": 16,
+  "prediction_batch_size": 4
+}
