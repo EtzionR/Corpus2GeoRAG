@@ -1,0 +1,49 @@
+diff --git a/ui/app.py b/ui/app.py
+index d6e3569..2ec188c 100644
+--- a/ui/app.py
++++ b/ui/app.py
+@@ -103,6 +103,15 @@ from geo_agent import (
+     to_bounding_box,
+ )
+ 
++# Agent Geo-rgory (optional talking avatar, see avatar-georgory/README.md): if he can't load, the app runs without him
++try:
++    from pathlib import Path as _Path
++    sys.path.append(str(_Path(__file__).resolve().parents[1] / "avatar-georgory"))
++    from agent_avatar import georgory
++except Exception as _georgory_err:
++    print(f"[Agent Geo-rgory] Disabled: {_georgory_err}")
++    georgory = None
++
+ # Ensure get_source_text, API key persistence helpers, and AgentError are safely resolved even across hot-reloads
+ get_source_text = getattr(geo_agent, "get_source_text", lambda pointer: None)
+ get_agent_env_path = getattr(geo_agent, "get_agent_env_path", lambda: None)
+@@ -400,6 +409,7 @@ def _build_assistant_message(resp: AgentResponse) -> Dict[str, Any]:
+         "map_bbox": getattr(resp, "map_bbox", None),
+         "map_showing": getattr(resp, "map_showing", "all"),
+         "map_not_shown": int(getattr(resp, "map_not_shown", 0) or 0),
++        "avatar": georgory.avatar_payload(resp) if georgory else None,
+     }
+ 
+ 
+@@ -3840,6 +3850,9 @@ with st.sidebar:
+ 
+     st.markdown("---")
+ 
++    if georgory:
++        georgory.sidebar()
++
+     # Session metrics
+     st.subheader("📊 Session Telemetry")
+     col_m1, col_m2 = st.columns(2)
+@@ -5268,6 +5281,10 @@ with col2:
+     # Attach trash bin hook to integrate Leaflet Draw's trash icon with GeoAI selection removal
+     MapTrashBinHook().add_to(m)
+ 
++    # Agent Geo-rgory floats over the map's corner and takes no layout space
++    if georgory:
++        georgory.render(st.session_state.messages, busy=bool(st.session_state.get("pending_query")))
++
+     # Render the interactive map component inside Streamlit
+     # Uses returned_objects to ensure 0ms client-side pans and zooms with zero reruns (AGENTS.md Rule 1.1)
+     map_data = st_folium(

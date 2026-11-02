@@ -1,0 +1,1441 @@
+<!doctype html>
+<!--
+  AGENT AVATAR — "Russian secret agent" tour guide for a Streamlit + Folium GeoRAG app.
+
+  One file, no external assets, no build step. It runs in three modes:
+    1. html      — Python injects a config via st.components.v1.html()  (see agent_avatar_html)
+    2. component — loaded by components.declare_component(); receives configs via
+                   "streamlit:render" messages, so the iframe persists across reruns
+                   (see agent_avatar). Recommended for TTS, because the browser's
+                   one-time audio unlock survives between prompts.
+    3. standalone — open this file directly in a browser to get a dev bar for testing.
+
+  Quick customization map (search for "CUSTOMIZE"):
+    - Colors ............ :root CSS variables (or pass colors={"--coat": "#222"} from Python)
+    - Character shapes .. the <svg id="scene"> markup (paths are in a 460x500 viewBox)
+    - Voice ............. DEFAULTS.voice (pitch / rate / preferred voice names)
+    - Animation speed ... DEFAULTS.anim.speed (global), SPRING table (per-parameter stiffness)
+    - Gestures .......... GESTURES object (async choreography functions)
+    - Trigger API ....... window.Agent.say / .gesture / .stop, inline tags like "[point]"
+
+  Map tour: a tag with a pin number, e.g. "[point:3] Bakhmut", flies the Folium map (the
+  st_folium iframe on the same page) to stop 3 of config.tour while the agent says it, pings
+  the spot and opens that pin's tooltip. When the speech ends the map returns to config.homeBbox.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent Avatar</title>
+<style>
+  /* ===== CUSTOMIZE: palette. Every fill in the SVG reads from these. ===== */
+  :root {
+    --bg-1: #0b0f0d;
+    --bg-2: #17211c;
+    --hud: #8fd694;                      /* phosphor-green HUD text */
+    --hud-dim: rgba(143, 214, 148, .32);
+    --hud-glow: rgba(143, 214, 148, .4);  /* text glow, radar sweep */
+    --amber: #e3b24f;
+    --alert: #d8432f;                    /* transmit / stamp red */
+    --coat: #2d302b;
+    --coat-shade: #1c1e1b;
+    --coat-light: #3c4039;
+    --hat: #1a1b19;
+    --hat-band: #0b0b0a;
+    --skin: #c9987b;
+    --skin-shade: #a3735a;
+    --skin-light: #ddb093;
+    --stubble: #2b1d16;
+    --mustache: #24170f;
+    --brow: #1d1612;
+    --shirt: #d6d1c3;
+    --tie: #5b1712;
+    --lens-top: rgba(34, 46, 42, .90);
+    --lens-bottom: rgba(4, 6, 6, .94);
+    --frame: #0b0b0b;
+    --wire: rgba(205, 222, 228, .6);
+    --folder: #b98d4f;
+    --folder-inside: #cfa76a;
+    --paper: #e2d6b6;
+    --ink: #3b352b;
+    --rim: rgba(143, 214, 148, .38);     /* screen-glow rim light on the map side */
+    --font-hud: "Courier New", ui-monospace, Consolas, monospace;
+  }
+
+  html, body { margin: 0; height: 100%; overflow: hidden; background: transparent; }
+  body { font-family: var(--font-hud); color: var(--hud); -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+
+  #stage {
+    position: relative; width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    border-radius: 12px; overflow: hidden;
+    border: 1px solid var(--hud-dim);
+    background:
+      radial-gradient(120% 80% at 50% 38%, var(--bg-2) 0%, var(--bg-1) 70%),
+      var(--bg-1);
+  }
+  body.transparent #stage { background: transparent; border-color: transparent; }
+  body.transparent #radar, body.transparent #stage::before, body.transparent #stage::after { display: none; }
+
+  /* CRT scanlines + film grain + vignette (purely decorative overlays) */
+  #stage::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 5;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,.20) 0 1px, transparent 1px 3px);
+  }
+  #stage::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 6; opacity: .09;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    box-shadow: inset 0 0 70px rgba(0,0,0,.85);
+  }
+
+  /* Rotating radar sweep behind the agent */
+  #radar {
+    position: absolute; left: 50%; top: 40%; width: 92%; aspect-ratio: 1; z-index: 0;   /* repositioned by layout() */
+    transform: translate(-50%, -50%); border-radius: 50%; pointer-events: none; opacity: .55;
+    background:
+      repeating-radial-gradient(circle, transparent 0 18%, var(--hud-dim) 18% calc(18% + 1px)),
+      conic-gradient(from 0deg, var(--hud-glow), transparent 18%, transparent);
+    -webkit-mask: radial-gradient(circle, #000 55%, transparent 71%);
+            mask: radial-gradient(circle, #000 55%, transparent 71%);
+    animation: sweep 6s linear infinite;
+  }
+  @keyframes sweep { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+  #sceneWrap { position: relative; flex: 1 1 auto; min-height: 0; z-index: 1; }
+  #scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+  /* ---- HUD text ---- */
+  .hud { position: absolute; z-index: 7; font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+         text-shadow: 0 0 6px var(--hud-glow); white-space: nowrap; }
+  #status { top: 10px; left: 12px; display: flex; align-items: center; gap: 7px; }
+  #statusDot { width: 8px; height: 8px; border-radius: 50%; background: var(--hud); box-shadow: 0 0 8px var(--hud); }
+  body[data-status="talk"]  #statusDot { background: var(--alert); box-shadow: 0 0 10px var(--alert); animation: blink 1s steps(2) infinite; }
+  body[data-status="link"]  #statusDot,
+  body[data-status="wait"]  #statusDot,
+  body[data-status="busy"]  #statusDot { background: var(--amber); box-shadow: 0 0 10px var(--amber); animation: blink .6s steps(2) infinite; }
+  body[data-status="talk"]  #statusText { color: #ff8a78; }
+  @keyframes blink { 50% { opacity: .15; } }
+  #callsign { top: 10px; right: 12px; opacity: .85; }
+  #coords { top: 28px; left: 12px; opacity: .9; font-size: 10px; color: var(--amber); text-shadow: 0 0 6px rgba(227,178,79,.4); }
+
+  #controls { position: absolute; z-index: 8; right: 8px; top: 28px; display: flex; gap: 4px; }
+  #controls button {
+    all: unset; cursor: pointer; width: 24px; height: 24px; display: grid; place-items: center;
+    border: 1px solid var(--hud-dim); border-radius: 6px; color: var(--hud); background: rgba(0,0,0,.35);
+  }
+  #controls button:hover { background: var(--hud-dim); }
+  #controls button:focus-visible { outline: 2px solid var(--hud); outline-offset: 1px; }
+  #controls svg { width: 14px; height: 14px; }
+
+  /* ---- Subtitles (typewriter reveal) ---- */
+  #subs {
+    position: relative; z-index: 7; flex: 0 0 auto; height: 4.6em; overflow: hidden;
+    margin: 0 10px 10px; padding: 6px 10px; border: 1px solid var(--hud-dim); border-radius: 8px;
+    background: rgba(0,0,0,.55); font-size: 13px; line-height: 1.45; color: var(--hud-glow);
+    scroll-behavior: smooth;
+  }
+  #subs .spoken { color: var(--hud); text-shadow: 0 0 6px var(--hud-glow); }
+  #caret { display: inline-block; width: .55em; height: 1em; vertical-align: -.12em; background: var(--hud); margin-left: 1px; opacity: 0; }
+  body[data-status="talk"] #caret { opacity: 1; animation: blink .8s steps(2) infinite; }
+  #subs:empty::before, #subs.empty::before { content: "— НЕТ ДАННЫХ / NO TRAFFIC —"; opacity: .5; }
+
+  /* ---- Autoplay-blocked overlay ---- */
+  #engage {
+    all: unset; position: absolute; z-index: 9; left: 50%; top: 46%; transform: translate(-50%, -50%);
+    display: none; cursor: pointer; text-align: center; padding: 12px 18px; border-radius: 10px;
+    border: 1px solid var(--alert); background: rgba(20, 6, 4, .82); color: #ffb3a6;
+    font: 700 13px/1.35 var(--font-hud); letter-spacing: .1em; box-shadow: 0 0 24px rgba(216,67,47,.35);
+  }
+  #engage small { display: block; font-weight: 400; font-size: 10px; opacity: .8; letter-spacing: .14em; }
+  #engage:hover { background: rgba(60, 12, 8, .9); }
+  #engage:focus-visible { outline: 2px solid #ffb3a6; outline-offset: 2px; }
+  body.blocked #engage { display: block; }
+
+  /* ---- Compact (PIP) layout ---- */
+  body.compact .hud { font-size: 9px; }
+  body.compact #callsign { display: none; }
+  body.compact #coords { font-size: 8.5px; top: 24px; max-width: calc(100% - 82px); overflow: hidden; text-overflow: ellipsis; }
+  body.compact #subs { font-size: 11px; height: 3.2em; margin: 0 6px 6px; padding: 4px 8px; }
+  body.compact #controls { top: 24px; }
+  body.compact #engage { font-size: 11px; padding: 9px 12px; }
+
+  /* ---- Standalone dev bar (only when this file is opened directly) ---- */
+  #devbar { display: none; }
+  body.standalone #devbar {
+    display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; background: #0e1311; border-top: 1px solid var(--hud-dim);
+  }
+  body.standalone { display: flex; flex-direction: column; background: #050706; }
+  body.standalone #stage { flex: 1; border-radius: 0; }
+  #devbar textarea { flex: 1 1 100%; min-height: 48px; background: #000; color: var(--hud); border: 1px solid var(--hud-dim); font: 12px var(--font-hud); padding: 6px; }
+  #devbar button { background: #11201a; color: var(--hud); border: 1px solid var(--hud-dim); padding: 5px 10px; font: 12px var(--font-hud); cursor: pointer; border-radius: 4px; }
+
+  /* ---- SVG classes (fills come from the palette) ---- */
+  .coat { fill: var(--coat); }
+  .coat-shade { fill: var(--coat-shade); }
+  .coat-light { fill: var(--coat-light); stroke: var(--coat-shade); stroke-width: 1.2; stroke-linejoin: round; }
+  .seam { fill: none; stroke: var(--coat-shade); stroke-width: 1.6; stroke-linecap: round; }
+  .button { fill: #0d0d0c; stroke: #4a4c47; stroke-width: .8; }
+  .shirt { fill: var(--shirt); }
+  .tie { fill: var(--tie); }
+  .skin { fill: var(--skin); }
+  .skin-shade { fill: var(--skin-shade); }
+  .line-shade { fill: none; stroke: var(--skin-shade); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .rim { fill: none; stroke: var(--rim); stroke-width: 2.2; stroke-linecap: round; }
+  .hat { fill: var(--hat); }
+  .hat-band { fill: var(--hat-band); }
+  .hat-edge { fill: none; stroke: #34352f; stroke-width: 1.2; stroke-linecap: round; }
+  .brow { fill: none; stroke: var(--brow); stroke-width: 5.5; stroke-linecap: round; }
+  .lens { fill: url(#lensGrad); stroke: var(--frame); stroke-width: 2.6; stroke-linejoin: round; }
+  .frame { fill: none; stroke: var(--frame); stroke-width: 2.6; stroke-linecap: round; }
+  .eyewhite { fill: #d9d2c4; }
+  .pupil { fill: #1b1f1d; }
+  .lid { fill: var(--skin-shade); }
+  .wire { fill: none; stroke: var(--wire); stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 2.2 1.4; }
+  .earpiece { fill: #1a1d1e; stroke: var(--wire); stroke-width: 1; }
+  .scar { fill: none; stroke: rgba(122, 62, 50, .55); stroke-width: 1.4; stroke-linecap: round; }
+  .mustache { fill: var(--mustache); stroke: #120b07; stroke-width: .8; stroke-linejoin: round; }
+  .mustache-hair { fill: none; stroke: rgba(255, 255, 255, .10); stroke-width: .9; stroke-linecap: round; }
+  .mouth-in { fill: #2c1310; }
+  .teeth { fill: #e6dfcf; }
+  .lips { fill: none; stroke: #6d3a2c; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .sleeve { fill: var(--coat); stroke: var(--coat-shade); stroke-width: 1.4; stroke-linejoin: round; }
+  .cuffband { fill: var(--coat-shade); }
+  .hand .skin { stroke: var(--skin-shade); stroke-width: 1; }
+  .hand .cuff { fill: var(--shirt); }
+  .hand > g { display: none; }
+  .hand[data-pose="point"] .pose-point,
+  .hand[data-pose="open"]  .pose-open,
+  .hand[data-pose="fist"]  .pose-fist { display: inline; }
+  .folder-back { fill: var(--folder); }
+  .folder-front { fill: var(--folder); stroke: #8c6634; stroke-width: 1; }
+  .folder-inside { fill: var(--folder-inside); stroke: #8c6634; stroke-width: 1; }
+  .paper { fill: var(--paper); }
+  .ink { fill: var(--ink); }
+  .stamp { fill: none; stroke: var(--alert); stroke-width: 1.6; }
+  .stamp-text { fill: var(--alert); font: 700 8px var(--font-hud); letter-spacing: .04em; }
+  .doc-text { fill: var(--ink); font: 700 6.5px var(--font-hud); }
+  .laser { stroke: var(--alert); stroke-width: 1.6; stroke-dasharray: 6 4; fill: none; filter: drop-shadow(0 0 3px var(--alert)); }
+  .laser-label { fill: var(--alert); font: 700 10px var(--font-hud); letter-spacing: .06em; }
+</style>
+</head>
+<body data-status="idle">
+<div id="stage">
+  <div id="radar"></div>
+  <div id="sceneWrap">
+    <!-- CUSTOMIZE: the character. viewBox is 460x500; the agent's centerline is x=200.
+         Groups are animated by id from JS, so keep the ids when you redraw shapes. -->
+    <svg id="scene" viewBox="0 0 460 500" preserveAspectRatio="xMidYMax meet" aria-label="Animated agent avatar" role="img">
+      <defs>
+        <linearGradient id="lensGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="var(--lens-top)"/>
+          <stop offset="1" stop-color="var(--lens-bottom)"/>
+        </linearGradient>
+        <linearGradient id="faceShade" x1="0" y1="0" x2="1" y2="0">
+          <stop offset=".45" stop-color="#000" stop-opacity="0"/>
+          <stop offset="1" stop-color="#3a2216" stop-opacity=".42"/>
+        </linearGradient>
+        <linearGradient id="hatShadow" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#000" stop-opacity=".45"/>
+          <stop offset="1" stop-color="#000" stop-opacity="0"/>
+        </linearGradient>
+        <pattern id="stubble" width="3.2" height="3.2" patternUnits="userSpaceOnUse">
+          <circle cx="1" cy="1" r=".55" fill="var(--stubble)"/>
+          <circle cx="2.6" cy="2.4" r=".45" fill="var(--stubble)"/>
+        </pattern>
+        <clipPath id="lensClip">
+          <path d="M 155 203 Q 175 199 195 202 Q 197 220 189 228 Q 177 231 165 228 Q 155 222 155 203 Z"/>
+          <path d="M 245 203 Q 225 199 205 202 Q 203 220 211 228 Q 223 231 235 228 Q 245 222 245 203 Z"/>
+        </clipPath>
+        <clipPath id="eyeClipL"><ellipse cx="176" cy="215" rx="9" ry="4.8"/></clipPath>
+        <clipPath id="eyeClipR"><ellipse cx="224" cy="215" rx="9" ry="4.8"/></clipPath>
+        <clipPath id="mouthClip"><path id="mouthClipPath" d=""/></clipPath>
+      </defs>
+
+      <!-- Everything inside #char is mirrored when the map is on the left (facing = "left"). -->
+      <g id="char">
+        <g id="torso">
+          <path class="coat" d="M 34 500 L 58 404 C 66 366 92 344 136 334 L 180 318 L 220 318 L 264 334 C 308 344 334 366 342 404 L 366 500 Z"/>
+          <path class="coat-shade" opacity=".55" d="M 262 334 C 306 344 332 366 340 404 L 364 500 L 292 500 C 298 440 288 380 262 334 Z"/>
+          <path class="rim" d="M 270 337 C 310 347 334 370 342 406 L 362 494"/>
+          <path class="shirt" d="M 176 314 L 224 314 L 202 448 L 198 448 Z"/>
+          <path class="tie" d="M 195 333 L 205 333 L 212 410 L 200 424 L 188 410 Z"/>
+          <path class="tie" d="M 191 318 L 209 318 L 205 334 L 195 334 Z" style="filter:brightness(.8)"/>
+          <path class="coat-light" d="M 180 316 L 136 334 L 158 360 L 146 370 L 198 448 L 178 316 Z"/>
+          <path class="coat-light" d="M 220 316 L 264 334 L 242 360 L 254 370 L 202 448 L 222 316 Z"/>
+          <path class="seam" d="M 202 448 L 214 500"/>
+          <path class="coat-light" d="M 100 346 L 152 330 L 155 338 L 104 355 Z"/>
+          <path class="coat-light" d="M 300 346 L 248 330 L 245 338 L 296 355 Z"/>
+          <circle class="button" cx="146" cy="336" r="2.4"/><circle class="button" cx="254" cy="336" r="2.4"/>
+          <circle class="button" cx="182" cy="462" r="3.6"/><circle class="button" cx="220" cy="462" r="3.6"/>
+          <circle class="button" cx="182" cy="489" r="3.6"/><circle class="button" cx="220" cy="489" r="3.6"/>
+        </g>
+
+        <path class="skin-shade" d="M 180 262 L 220 262 L 222 322 L 178 322 Z"/>
+        <path fill="#000" opacity=".25" d="M 180 284 Q 200 302 220 284 L 220 300 Q 200 312 180 300 Z"/>
+        <!-- popped trench-coat collar -->
+        <path class="coat-light" d="M 182 318 L 163 279 L 149 300 L 136 334 Z"/>
+        <path class="coat-light" d="M 218 318 L 237 279 L 251 300 L 264 334 Z"/>
+
+        <g id="head">
+          <ellipse class="skin" cx="147" cy="224" rx="8" ry="15"/>
+          <ellipse class="skin" cx="253" cy="224" rx="8" ry="15"/>
+          <path class="line-shade" d="M 148 214 Q 143 224 148 234"/>
+          <path class="line-shade" d="M 252 214 Q 257 224 252 234"/>
+          <path class="skin" d="M 150 176 C 150 136 250 136 250 176 L 253 232 C 253 264 232 286 212 292 L 188 292 C 168 286 147 264 147 232 Z"/>
+          <path fill="url(#faceShade)" d="M 150 176 C 150 136 250 136 250 176 L 253 232 C 253 264 232 286 212 292 L 188 292 C 168 286 147 264 147 232 Z"/>
+          <path fill="url(#stubble)" opacity=".6" d="M 152 244 C 158 274 182 292 200 292 C 218 292 242 274 248 244 C 240 262 226 274 214 276 L 186 276 C 174 274 160 262 152 244 Z"/>
+          <path class="rim" d="M 251 182 L 253 232 C 253 262 234 284 214 291"/>
+          <path class="line-shade" opacity=".55" d="M 196 286 Q 200 289 204 286"/>
+          <path fill="url(#hatShadow)" d="M 150 182 C 180 192 220 192 250 182 L 252 202 C 220 206 180 206 148 202 Z"/>
+
+          <!-- earpiece + coiled wire running down into the collar -->
+          <path class="wire" d="M 256 231 C 263 248 259 266 247 284 C 240 294 238 304 238 318"/>
+          <ellipse class="earpiece" cx="254" cy="226" rx="3.6" ry="5.2"/>
+
+          <!-- facial features shift slightly sideways for a cheap 2.5D head turn -->
+          <g id="features">
+            <g clip-path="url(#eyeClipL)">
+              <ellipse class="eyewhite" cx="176" cy="215" rx="9" ry="4.8"/>
+              <circle class="pupil" id="pupilL" cx="176" cy="215" r="3.2"/>
+              <rect class="lid" id="lidL" x="165" y="209" width="22" height="0"/>
+            </g>
+            <g clip-path="url(#eyeClipR)">
+              <ellipse class="eyewhite" cx="224" cy="215" rx="9" ry="4.8"/>
+              <circle class="pupil" id="pupilR" cx="224" cy="215" r="3.2"/>
+              <rect class="lid" id="lidR" x="213" y="209" width="22" height="0"/>
+            </g>
+            <path id="browL" class="brow" d="M 158 197 Q 174 191 190 195"/>
+            <path id="browR" class="brow" d="M 210 195 Q 226 191 242 197"/>
+            <path class="skin-shade" opacity=".5" d="M 203 210 C 206 224 211 234 210 241 L 206 240 C 205 230 203 220 203 210 Z"/>
+            <path class="line-shade" d="M 201 208 C 199 222 194 234 193 240 C 197 245 205 245 209 241"/>
+            <path class="scar" d="M 167 240 L 173 254"/>
+            <g id="mouth" transform="translate(200 264)">
+              <path id="mouthIn" class="mouth-in" d=""/>
+              <rect class="teeth" id="teeth" x="-18" y="-6" width="36" height="5" clip-path="url(#mouthClip)"/>
+              <path id="lips" class="lips" d=""/>
+              <path id="lipShade" fill="#000" opacity=".18" d=""/>
+            </g>
+            <!-- CUSTOMIZE: the mustache (a drooping Soviet-style chevron). It lifts slightly as the mouth opens. -->
+            <g id="mustache">
+              <path class="mustache" d="M 200 248 C 194 245 184 246 178 251 C 173 255 170 261 167 267 C 172 265 177 262 182 260 C 189 258 195 258 200 259.5 C 205 258 211 258 218 260 C 223 262 228 265 233 267 C 230 261 227 255 222 251 C 216 246 206 245 200 248 Z"/>
+              <path class="mustache-hair" d="M 183 252 L 179 258 M 189 250 L 186 256 M 195 249 L 193 255 M 205 249 L 207 255 M 211 250 L 214 256 M 217 252 L 221 258"/>
+            </g>
+            <g id="glasses">
+              <path class="lens" d="M 155 203 Q 175 199 195 202 Q 197 220 189 228 Q 177 231 165 228 Q 155 222 155 203 Z"/>
+              <path class="lens" d="M 245 203 Q 225 199 205 202 Q 203 220 211 228 Q 223 231 235 228 Q 245 222 245 203 Z"/>
+              <path class="frame" d="M 195 204 Q 200 200 205 204"/>
+              <path class="frame" d="M 153 202 Q 200 195 247 202"/>
+              <path class="frame" d="M 155 205 L 146 212"/>
+              <path class="frame" d="M 245 205 L 254 212"/>
+              <g clip-path="url(#lensClip)">
+                <path fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.6" d="M 160 207 Q 168 204 176 205 M 210 205 Q 218 204 226 205"/>
+                <rect id="glint" x="-40" y="185" width="10" height="60" fill="rgba(255,255,255,.42)" transform="skewX(-25)"/>
+              </g>
+            </g>
+          </g>
+
+          <g id="hat">
+            <path class="hat" d="M 148 180 C 146 140 156 112 178 104 C 190 111 210 111 222 104 C 244 112 254 140 252 180 Z"/>
+            <path fill="#000" opacity=".3" d="M 222 104 C 244 112 254 140 252 180 L 232 180 C 236 150 232 124 222 104 Z"/>
+            <path class="hat-edge" d="M 200 113 C 198 126 199 136 200 148"/>
+            <path class="hat-band" d="M 149 164 C 182 158 218 158 251 164 L 252 178 C 218 172 182 172 148 178 Z"/>
+            <path class="hat" d="M 108 180 C 146 166 254 166 292 180 C 300 184 294 192 284 191 C 256 186 232 188 200 195 C 168 188 144 186 116 191 C 106 192 100 184 108 180 Z"/>
+            <path class="hat-edge" d="M 112 180 C 148 168 252 168 288 180"/>
+            <path class="rim" d="M 246 118 C 254 140 254 160 252 172"/>
+          </g>
+        </g>
+
+        <!-- Arms: sleeve paths are rebuilt every frame from 2-bone IK (see drawArm). -->
+        <g id="armL">
+          <path class="sleeve" id="sleeveL"/>
+          <path class="cuffband" id="cuffL"/>
+          <circle class="coat" id="elbowL" r="13"/>
+          <circle class="coat" id="shoulderL" r="18"/>
+        </g>
+
+        <!-- Classified dossier (held by the left hand). Local origin = bottom-left corner. -->
+        <g id="folder" opacity="0">
+          <rect fill="#000" opacity=".35" x="4" y="-88" width="124" height="94" rx="3"/>
+          <rect class="folder-back" x="-2" y="-92" width="124" height="94" rx="3"/>
+          <rect class="paper" x="1" y="-89" width="118" height="88"/>
+          <g id="pageContent">
+            <rect fill="#9b9384" x="8" y="-82" width="30" height="34"/>
+            <path fill="#4b463c" d="M 12 -48 Q 13 -60 23 -61 Q 33 -60 34 -48 Z M 16 -70 Q 23 -74 30 -70 L 32 -66 L 14 -66 Z M 18 -66 Q 23 -56 28 -66 Z"/>
+            <text class="doc-text" x="44" y="-75">ДЕЛО № 07-114</text>
+            <text class="doc-text" id="docName" x="44" y="-65" style="font-size:8.5px">ОБЪЕКТ</text>
+            <text class="doc-text" id="docCoords" x="44" y="-56" style="font-weight:400">--.----° --.----°</text>
+            <rect class="ink" opacity=".5" x="8" y="-40" width="102" height="2.2"/>
+            <rect class="ink" opacity=".5" x="8" y="-33" width="88" height="2.2"/>
+            <rect class="ink" opacity=".5" x="8" y="-26" width="96" height="2.2"/>
+            <rect class="ink" opacity=".5" x="8" y="-19" width="64" height="2.2"/>
+            <rect class="ink" x="40" y="-34" width="30" height="5"/>
+            <g transform="rotate(-11 66 -24)" opacity=".85">
+              <rect class="stamp" x="16" y="-33" width="100" height="15" rx="2"/>
+              <text class="stamp-text" x="66" y="-22.6" text-anchor="middle">СОВ. СЕКРЕТНО</text>
+            </g>
+          </g>
+          <g id="cover">
+            <g id="coverFront">
+              <rect class="folder-front" x="0" y="-92" width="122" height="94" rx="3"/>
+              <path fill="#8c6634" d="M 82 -92 L 116 -92 L 112 -99 L 86 -99 Z"/>
+              <rect fill="var(--alert)" opacity=".85" x="0" y="-78" width="122" height="7"/>
+              <g id="coverText">
+                <text class="stamp-text" x="61" y="-44" text-anchor="middle" style="font-size:11px">СЕКРЕТНО</text>
+                <text class="doc-text" x="61" y="-32" text-anchor="middle">ДЕЛО · DOSSIER</text>
+                <path fill="var(--alert)" d="M 61 -24 l 2.4 5 5.4 .6 -4 3.6 1.2 5.3 -5 -2.8 -5 2.8 1.2 -5.3 -4 -3.6 5.4 -.6 Z"/>
+              </g>
+            </g>
+            <rect id="coverInside" class="folder-inside" x="0" y="-92" width="122" height="94" rx="3" style="display:none"/>
+          </g>
+        </g>
+
+        <g id="handL" class="hand" data-pose="fist">
+          <rect class="cuff" x="-6" y="-11" width="8" height="22" rx="2"/>
+          <g class="pose-point">
+            <rect class="skin" x="0" y="-9" width="21" height="18" rx="7"/>
+            <rect class="skin" x="17" y="-9" width="23" height="6" rx="3"/>
+            <path class="skin" d="M 6 -8 Q 12 -15 19 -11 L 17 -6 Z"/>
+            <circle class="skin" cx="21" cy="-.5" r="3.4"/><circle class="skin" cx="21" cy="4" r="3.4"/><circle class="skin" cx="20" cy="7.6" r="3"/>
+          </g>
+          <g class="pose-open">
+            <rect class="skin" x="0" y="-9" width="20" height="18" rx="7"/>
+            <rect class="skin" x="16" y="-9" width="20" height="4.4" rx="2.2"/>
+            <rect class="skin" x="16" y="-4.4" width="22" height="4.4" rx="2.2"/>
+            <rect class="skin" x="16" y=".2" width="21" height="4.4" rx="2.2"/>
+            <rect class="skin" x="16" y="4.8" width="17" height="4.2" rx="2.1"/>
+            <path class="skin" d="M 4 -8 Q 9 -18 17 -16 L 13 -8 Z"/>
+          </g>
+          <g class="pose-fist">
+            <rect class="skin" x="0" y="-10" width="22" height="20" rx="8"/>
+            <circle class="skin" cx="21" cy="-6" r="3.2"/><circle class="skin" cx="22" cy="-1.5" r="3.2"/>
+            <circle class="skin" cx="22" cy="3" r="3.2"/><circle class="skin" cx="21" cy="7.2" r="3"/>
+            <path class="line-shade" style="stroke-width:1.4" d="M 5 -8 Q 15 -8 18 -2"/>
+          </g>
+        </g>
+
+        <g id="armR">
+          <path class="sleeve" id="sleeveR"/>
+          <path class="cuffband" id="cuffR"/>
+          <circle class="coat" id="elbowR" r="13"/>
+          <circle class="coat" id="shoulderR" r="18"/>
+        </g>
+        <!-- handR markup is cloned from handL at startup (same poses) -->
+      </g>
+
+      <!-- Effects drawn in screen space (never mirrored) -->
+      <g id="fx">
+        <path id="laser" class="laser" d="" opacity="0"/>
+        <circle id="laserDot" r="3.5" fill="var(--alert)" opacity="0"/>
+        <text id="laserLabel" class="laser-label" opacity="0"></text>
+      </g>
+    </svg>
+
+    <div class="hud" id="status"><span id="statusDot"></span><span id="statusText">ОЖИДАНИЕ · STANDBY</span></div>
+    <div class="hud" id="callsign"></div>
+    <div class="hud" id="coords"></div>
+    <div id="controls">
+      <button id="btnReplay" title="Replay transmission" aria-label="Replay transmission">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 8a5 5 0 1 0 1.6-3.7"/><path d="M3 2.5v2.8h2.8"/></svg>
+      </button>
+      <button id="btnMute" title="Mute / unmute voice" aria-label="Mute or unmute voice">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6v4h2.6L8.5 13V3L5.1 6z"/><path id="muteWaves" d="M11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.8a6 6 0 0 1 0 8.4"/><path id="muteX" d="M11 6l3.5 4M14.5 6L11 10" style="display:none"/></svg>
+      </button>
+    </div>
+    <button id="engage">▶ ПРИНЯТЬ ПЕРЕДАЧУ<small>CLICK TO RECEIVE TRANSMISSION</small></button>
+  </div>
+  <div id="subs" class="empty" aria-live="polite"><span class="spoken" id="subsSpoken"></span><span id="caret"></span><span id="subsPending"></span></div>
+</div>
+
+<div id="devbar">
+  <textarea id="devText">Comrade. [earpiece] Headquarters confirms the package. [point] The target is in Kharkiv, forty kilometres from the border. [dossier] Everything else is in the file. Memorize it.</textarea>
+  <button data-dev="say">Say</button>
+  <button data-dev="point">point</button><button data-dev="dossier">dossier</button>
+  <button data-dev="earpiece">earpiece</button><button data-dev="peek">peek</button><button data-dev="nod">nod</button>
+  <button data-dev="flip">flip side</button><button data-dev="compact">compact</button><button data-dev="stop">stop</button>
+</div>
+
+<script>
+(() => {
+"use strict";
+
+/* ==========================================================================
+   1. CONFIG
+   Python's agent_avatar_html() replaces the placeholder below with JSON.
+   ========================================================================== */
+const INJECTED = /*__AGENT_CONFIG__*/null;
+const MODE = INJECTED ? "html" : (window.parent !== window ? "component" : "standalone");
+
+// CUSTOMIZE: defaults. Every key can be overridden from Python (build_config).
+const DEFAULTS = {
+  id: null,                 // unique id per message; same id is never auto-spoken twice
+  text: "",                 // what to say. Inline tags trigger gestures: "[point] Here."
+  gesture: "auto",          // "auto" | "none" | "point" | "dossier" | "earpiece" | "peek" | "nod" | [list]
+  target: null,             // {name, lat, lon} -> shown in HUD, on the dossier and the laser label
+  facing: "right",          // side of the screen the map is on; the agent points that way
+  autoplay: true,           // speak as soon as a new message arrives
+  audio: null,              // {b64, mime} or {url}: play this instead of browser TTS (mouth follows the waveform)
+  callsign: "АГЕНТ ГЕО-РГОРИЙ · GEO-RGORY",
+  tour: [],                 // [{n, name, lat, lon, kind}] — stops addressed by "[point:n]" tags
+  homeBbox: null,           // [west, south, east, north] to fly back to after a tour
+  tourMap: true,            // false = never move the Folium map
+  busy: false,              // true while the backend is answering (agent listens to HQ)
+  height: 520,
+  compact: null,            // null = auto (height < 380)
+  transparent: false,       // no background panel (for a floating PIP over the map)
+  emitEvents: false,        // component mode only: send {event, id} back to Python (triggers a rerun)
+  voice: {
+    lang: "en",             // preferred language prefix for Latin text
+    cyrillicLang: "ru",     // used automatically when the text contains Cyrillic
+    russianAccent: false,   // true = read English text with a Russian voice (heavy accent, quality varies)
+    name: null,             // substring of a specific voice name, e.g. "Pavel" or "David"
+    pitch: 0.62,            // 0..2 — low pitch = deep
+    rate: 0.88,             // 0.1..10 — slightly slow = composed / deadpan
+    volume: 1,
+    // Preference order when several voices match (male voices first).
+    prefer: ["Dmitry", "Pavel", "Guy", "Davis", "Christopher", "Eric", "Ryan", "Thomas", "David", "Mark", "George", "Daniel", "Male"],
+    avoid: ["Female", "Zira", "Irina", "Svetlana", "Aria", "Jenny", "Susan", "Hazel", "Samantha", "Libby", "Sonia", "Dariya"],
+  },
+  anim: {
+    speed: 1,               // global multiplier for gesture choreography (2 = twice as fast)
+    idleGestures: true,     // occasional earpiece touch / glasses adjust while idle
+    blinkMin: 2.4, blinkMax: 6.0,
+    breathPeriod: 4.4,      // seconds per breath
+  },
+  colors: {},               // CSS variable overrides, e.g. {"--coat": "#1f2a3a", "--hud": "#7fd3ff"}
+};
+
+let CFG = deepMerge(structuredCloneSafe(DEFAULTS), INJECTED || {});
+
+/* ==========================================================================
+   2. SMALL UTILITIES
+   ========================================================================== */
+function structuredCloneSafe(o) { return JSON.parse(JSON.stringify(o)); }
+function deepMerge(base, extra) {
+  for (const [k, v] of Object.entries(extra || {})) {
+    if (v && typeof v === "object" && !Array.isArray(v) && base[k] && typeof base[k] === "object" && !Array.isArray(base[k])) deepMerge(base[k], v);
+    else if (v !== undefined) base[k] = v;
+  }
+  return base;
+}
+const $ = (id) => document.getElementById(id);
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const rand = (a, b) => a + Math.random() * (b - a);
+const now = () => performance.now() / 1000;
+const hash = (s) => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36); };
+const store = {
+  get(k) { try { return sessionStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { sessionStorage.setItem(k, v); } catch { /* storage blocked: ignore */ } },
+  getLocal(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  setLocal(k, v) { try { localStorage.setItem(k, v); } catch { /* ignore */ } },
+};
+const CANCEL = Symbol("cancel");
+
+/* ==========================================================================
+   3. ANIMATED PARAMETERS
+   Every moving part is a scalar driven by a critically-damped spring toward
+   a target. Gestures only set targets (T.x = ...); the frame loop does easing.
+   CUSTOMIZE: spring stiffness (higher = snappier).
+   ========================================================================== */
+const SPRING = {
+  rx: 7.5, ry: 7.5, lx: 6.5, ly: 6.5,            // wrist targets (IK)
+  headRot: 5, headY: 7, yaw: 5,                   // head tilt / nod / turn
+  eyeX: 16, eyeY: 16, blink: 45, lid: 10, brow: 9,
+  mOpen: 30, mWide: 20, mRound: 20,               // mouth
+  folder: 9, folderOpen: 6, glassesY: 8, laser: 9,
+};
+const P = {}, V = {}, T = {};
+function def(name, value) { P[name] = T[name] = value; V[name] = 0; }
+const REST = { R: { x: 300, y: 620 }, L: { x: 100, y: 620 } };   // arms hang straight down, hands off-frame
+def("rx", REST.R.x); def("ry", REST.R.y); def("lx", REST.L.x); def("ly", REST.L.y);
+for (const k of ["headRot", "headY", "yaw", "eyeX", "eyeY", "blink", "brow", "mOpen", "mWide", "mRound", "folder", "folderOpen", "glassesY", "laser"]) def(k, 0);
+def("lid", 0.18);                                                  // heavy-lidded, deadpan baseline
+
+function springStep(k, dt) {
+  // exact solution of a critically damped spring: stable for any dt
+  const w = SPRING[k] || 8, y = P[k] - T[k], v = V[k], e = Math.exp(-w * dt);
+  P[k] = T[k] + (y + (v + w * y) * dt) * e;
+  V[k] = (v - (v + w * y) * w * dt) * e;
+}
+const to = (obj) => Object.assign(T, obj);
+
+/* ==========================================================================
+   4. DOM REFERENCES + one-time setup
+   ========================================================================== */
+const el = {};
+["char", "torso", "head", "features", "pupilL", "pupilR", "lidL", "lidR", "browL", "browR", "glasses", "glint",
+ "mouthIn", "mouthClipPath", "teeth", "lips", "lipShade", "mustache", "hat",
+ "sleeveL", "cuffL", "elbowL", "shoulderL", "sleeveR", "cuffR", "elbowR", "shoulderR", "handL",
+ "folder", "cover", "coverFront", "coverInside", "coverText", "pageContent", "docName", "docCoords",
+ "laser", "laserDot", "laserLabel", "statusText", "callsign", "coords", "subs", "subsSpoken", "subsPending", "caret",
+ "engage", "btnReplay", "btnMute", "muteWaves", "muteX"].forEach((id) => (el[id] = $(id)));
+
+// Right hand = clone of the left hand markup, inserted after the right arm.
+el.handR = el.handL.cloneNode(true);
+el.handR.id = "handR";
+el.handR.setAttribute("data-pose", "open");
+$("armR").after(el.handR);
+
+const SHOULDER = { L: { x: 108, y: 352 }, R: { x: 292, y: 352 } };
+const ARM = { upper: 82, fore: 76, handScale: 1.15 };              // CUSTOMIZE: arm proportions
+const VIEW_W = 460;
+
+function applyConfig(cfg) {
+  if (cfg) CFG = deepMerge(CFG, cfg);
+  for (const [k, v] of Object.entries(CFG.colors || {})) document.documentElement.style.setProperty(k, v);
+  document.body.classList.toggle("transparent", !!CFG.transparent);
+  el.callsign.textContent = CFG.callsign || "";
+  setTarget(CFG.target);
+  layout();
+}
+
+function layout() {
+  // Responsive tweaks: compact HUD in small frames; in tall narrow frames (e.g. a st.columns([1, 2])
+  // side column) the agent is width-limited, so the spare height goes to the transcript box.
+  const W = window.innerWidth, H = window.innerHeight;
+  if (!W || !H) return;
+  const compact = CFG.compact == null ? H < 380 || W < 330 : !!CFG.compact;
+  document.body.classList.toggle("compact", compact);
+  if (MODE === "standalone") return;
+  el.subs.style.height = "";
+  const base = el.subs.offsetHeight, sceneH = W * 500 / VIEW_W;
+  const spare = H - base - (compact ? 6 : 10) - sceneH - 30;
+  if (spare > 24) el.subs.style.height = `${Math.round(Math.min(base + spare, H * 0.34))}px`;
+  // keep the radar centred on the agent's head (scene is bottom-aligned, head at y≈200 of 500)
+  const wrap = $("sceneWrap").getBoundingClientRect(), scale = Math.min(wrap.width / VIEW_W, wrap.height / 500);
+  const radar = $("radar");
+  radar.style.top = `${wrap.top + wrap.height - 300 * scale}px`;
+  radar.style.width = `${Math.round(440 * scale)}px`;
+}
+window.addEventListener("resize", layout);
+
+function fmtCoord(v, pos, neg) { return `${Math.abs(v).toFixed(4)}°${v >= 0 ? pos : neg}`; }
+function setTarget(t) {
+  CFG.target = t || null;
+  const has = t && isFinite(t.lat) && isFinite(t.lon);
+  const ll = has ? `${fmtCoord(+t.lat, "N", "S")} ${fmtCoord(+t.lon, "E", "W")}` : "";
+  el.coords.textContent = t ? `ЦЕЛЬ / TGT ▸ ${(t.name || "").toUpperCase()} ${ll}`.trim() : "";
+  el.docName.textContent = (t && t.name ? t.name : "ОБЪЕКТ").toUpperCase().slice(0, 16);
+  el.docCoords.textContent = has ? ll : "--.----° --.----°";
+  el.laserLabel.textContent = has ? `TGT ${(+t.lat).toFixed(2)}, ${(+t.lon).toFixed(2)}` : "TGT";
+}
+
+const STATUS = {
+  idle: "ОЖИДАНИЕ · STANDBY",
+  link: "УСТАНОВКА СВЯЗИ · LINKING",
+  talk: "ПЕРЕДАЧА · TRANSMITTING",
+  recv: "ПРИЁМ · RECEIVING",
+  wait: "ЖДУ ДОПУСКА · AWAITING CLEARANCE",
+  busy: "РАСШИФРОВКА · DECRYPTING",
+};
+function setStatus(s) { document.body.dataset.status = s; el.statusText.textContent = STATUS[s] || s; }
+
+/* ==========================================================================
+   5. RENDERING (called every frame)
+   ========================================================================== */
+const flipped = () => CFG.facing === "left";
+
+function ik(S, tx, ty, side) {
+  // 2-bone inverse kinematics. Returns elbow + wrist positions and segment angles.
+  const { upper: l1, fore: l2 } = ARM;
+  const dx = tx - S.x, dy = ty - S.y;
+  const d = clamp(Math.hypot(dx, dy), Math.abs(l1 - l2) + 0.5, l1 + l2 - 0.01);
+  const a = Math.atan2(dy, dx);
+  const bend = Math.acos(clamp((l1 * l1 + d * d - l2 * l2) / (2 * l1 * d), -1, 1));
+  // Pick the elbow solution that sits farther from the body centerline (x=200), with hysteresis.
+  const sol = (sgn) => { const a1 = a + sgn * bend; return { a1, ex: S.x + l1 * Math.cos(a1), ey: S.y + l1 * Math.sin(a1) }; };
+  const p = sol(1), m = sol(-1);
+  const out = (s) => Math.abs(s.ex - 200) + (s.ey - S.y) * 0.15;
+  let sgn = ik.prev[side] || 1;
+  const cur = sgn > 0 ? p : m, alt = sgn > 0 ? m : p;
+  if (out(alt) > out(cur) + 6) sgn = -sgn;
+  ik.prev[side] = sgn;
+  const s = sgn > 0 ? p : m;
+  const a2 = Math.atan2(ty - s.ey, tx - s.ex);
+  return { ex: s.ex, ey: s.ey, wx: s.ex + l2 * Math.cos(a2), wy: s.ey + l2 * Math.sin(a2), a1: s.a1, a2 };
+}
+ik.prev = { L: 1, R: 1 };
+
+function drawArm(side, tx, ty) {
+  const S = SHOULDER[side], j = ik(S, tx, ty, side);
+  const n1 = { x: -Math.sin(j.a1), y: Math.cos(j.a1) }, n2 = { x: -Math.sin(j.a2), y: Math.cos(j.a2) };
+  let nE = { x: n1.x + n2.x, y: n1.y + n2.y };
+  const len = Math.hypot(nE.x, nE.y);
+  nE = len < 0.2 ? n1 : { x: nE.x / len, y: nE.y / len };
+  const w0 = 17, w1 = 14, w2 = 12;                               // CUSTOMIZE: sleeve half-widths
+  const pt = (x, y) => `${x.toFixed(1)} ${y.toFixed(1)}`;
+  el["sleeve" + side].setAttribute("d",
+    `M ${pt(S.x + n1.x * w0, S.y + n1.y * w0)} L ${pt(j.ex + nE.x * w1, j.ey + nE.y * w1)} L ${pt(j.wx + n2.x * w2, j.wy + n2.y * w2)} ` +
+    `L ${pt(j.wx - n2.x * w2, j.wy - n2.y * w2)} L ${pt(j.ex - nE.x * w1, j.ey - nE.y * w1)} L ${pt(S.x - n1.x * w0, S.y - n1.y * w0)} Z`);
+  const u2 = { x: Math.cos(j.a2), y: Math.sin(j.a2) }, cb = 7;
+  el["cuff" + side].setAttribute("d",
+    `M ${pt(j.wx - u2.x * cb + n2.x * (w2 + .5), j.wy - u2.y * cb + n2.y * (w2 + .5))} L ${pt(j.wx + n2.x * (w2 + .5), j.wy + n2.y * (w2 + .5))} ` +
+    `L ${pt(j.wx - n2.x * (w2 + .5), j.wy - n2.y * (w2 + .5))} L ${pt(j.wx - u2.x * cb - n2.x * (w2 + .5), j.wy - u2.y * cb - n2.y * (w2 + .5))} Z`);
+  el["elbow" + side].setAttribute("cx", j.ex.toFixed(1)); el["elbow" + side].setAttribute("cy", j.ey.toFixed(1));
+  el["shoulder" + side].setAttribute("cx", S.x); el["shoulder" + side].setAttribute("cy", S.y);
+  // Keep the thumb on top when the forearm points leftward.
+  const fy = Math.cos(j.a2) < 0 ? -1 : 1, hs = ARM.handScale;
+  el["hand" + side].setAttribute("transform",
+    `translate(${j.wx.toFixed(1)} ${j.wy.toFixed(1)}) rotate(${(j.a2 * 180 / Math.PI).toFixed(1)}) scale(${hs} ${hs * fy})`);
+  return { ...j, fy };
+}
+
+function mouthPaths(open, wide, round) {
+  // open 0..1, wide -1..1 (oo..ee), round 0..1. Corners sit slightly low for a deadpan expression.
+  const w = 15 * (1 + 0.22 * wide - 0.28 * round), c = 1.6 - open * 0.8, h = 0.6 + open * 10.5;
+  const top = -1.2 - open * 2.2;
+  const inside = `M ${-w} ${c} Q 0 ${top} ${w} ${c} Q 0 ${c + h * 1.9} ${-w} ${c} Z`;
+  const lips = `M ${-w - 1} ${c + .4} Q 0 ${top - .4} ${w + 1} ${c + .4}` + (open > 0.04 ? ` M ${w} ${c + .6} Q 0 ${c + h * 1.9 + 1} ${-w} ${c + .6}` : "");
+  const shade = `M ${-w * .6} ${c + h * .95 + 4} Q 0 ${c + h * .95 + 7.5} ${w * .6} ${c + h * .95 + 4} Q 0 ${c + h * .95 + 5.5} ${-w * .6} ${c + h * .95 + 4} Z`;
+  return { inside, lips, shade };
+}
+
+let breathPhase = 0, glintT0 = -10;
+function render(t, dt) {
+  breathPhase += dt * (2 * Math.PI / (CFG.anim.breathPeriod || 4.4));
+  const breath = Math.sin(breathPhase);
+  const by = -breath * 1.5;
+  const flip = flipped();
+
+  el.char.setAttribute("transform", (flip ? `translate(${VIEW_W} 0) scale(-1 1) ` : "") + `translate(0 ${by.toFixed(2)})`);
+  el.torso.setAttribute("transform", `translate(0 ${(-breath * 0.6).toFixed(2)})`);
+
+  const talkBob = Talk.active ? P.mOpen * 1.3 : 0;
+  const hy = P.headY + talkBob - breath * 0.8;
+  el.head.setAttribute("transform", `translate(${(P.yaw * 1.6).toFixed(2)} ${hy.toFixed(2)}) rotate(${P.headRot.toFixed(2)} 200 300)`);
+  el.features.setAttribute("transform", `translate(${(P.yaw * 4.5).toFixed(2)} ${(P.headY * 0.25).toFixed(2)})`);
+  el.hat.setAttribute("transform", `translate(${(P.yaw * 1.2).toFixed(2)} 0)`);
+
+  const ex = clamp(P.eyeX, -1.3, 1.3) * 4.2, ey = clamp(P.eyeY, -1, 1) * 2.4;
+  for (const id of ["pupilL", "pupilR"]) el[id].setAttribute("transform", `translate(${ex.toFixed(2)} ${ey.toFixed(2)})`);
+  const lid = clamp(Math.max(P.blink, P.lid + Math.max(0, P.eyeY) * 0.3), 0, 1) * 12;
+  el.lidL.setAttribute("height", lid.toFixed(2)); el.lidR.setAttribute("height", lid.toFixed(2));
+  const bY = -P.brow * 3.2;
+  el.browL.setAttribute("transform", `translate(0 ${bY.toFixed(2)}) rotate(${(-P.brow * 2).toFixed(2)} 174 194)`);
+  el.browR.setAttribute("transform", `translate(0 ${bY.toFixed(2)}) rotate(${(P.brow * 2).toFixed(2)} 226 194)`);
+  el.glasses.setAttribute("transform", `translate(0 ${P.glassesY.toFixed(2)})`);
+  const gp = (t - glintT0) / 0.7;
+  el.glint.setAttribute("x", gp >= 0 && gp <= 1 ? (150 + gp * 200).toFixed(1) : "-40");
+
+  const m = mouthPaths(clamp(P.mOpen, 0, 1), clamp(P.mWide, -1, 1), clamp(P.mRound, 0, 1));
+  el.mouthIn.setAttribute("d", m.inside); el.mouthClipPath.setAttribute("d", m.inside);
+  el.lips.setAttribute("d", m.lips); el.lipShade.setAttribute("d", m.shade);
+  el.teeth.style.display = P.mOpen > 0.12 ? "" : "none";
+  el.mustache.setAttribute("transform", `translate(0 ${(-clamp(P.mOpen, 0, 1) * 1.6).toFixed(2)})`);
+
+  // Hands can be attached to moving head features (ear / glasses) for accurate contact.
+  if (attach.R) {
+    const a = ATTACH[attach.R], r = P.headRot * Math.PI / 180;
+    const px = a.x + P.yaw * 1.6 - 200, py = a.y + hy - 300;
+    to({ rx: 200 + px * Math.cos(r) - py * Math.sin(r) + attach.dx, ry: 300 + px * Math.sin(r) + py * Math.cos(r) + attach.dy });
+  }
+  const jl = drawArm("L", P.lx, P.ly);
+  const jr = drawArm("R", P.rx, P.ry);
+
+  // Dossier follows the left wrist.
+  const f = clamp(P.folder, 0, 1);
+  el.folder.setAttribute("opacity", f.toFixed(3));
+  el.folder.setAttribute("transform", `translate(${(jl.wx + 2).toFixed(1)} ${(jl.wy + 12).toFixed(1)}) scale(${(0.6 + 0.4 * f).toFixed(3)})`);
+  const sx = Math.cos(clamp(P.folderOpen, 0, 1) * Math.PI);
+  el.cover.setAttribute("transform", `scale(${sx.toFixed(3)} 1)`);
+  el.coverFront.style.display = sx >= 0 ? "" : "none";
+  el.coverInside.style.display = sx < 0 ? "" : "none";
+  // Counter-mirror text so it stays readable when the character is flipped.
+  const unflip = flip ? "translate(122 0) scale(-1 1)" : "";
+  el.pageContent.setAttribute("transform", unflip);
+  el.coverText.setAttribute("transform", unflip);
+
+  drawLaser(jr, flip, by);
+}
+
+function drawLaser(jr, flip, by) {
+  const a = clamp(P.laser, 0, 1);
+  if (a < 0.02) { el.laser.setAttribute("opacity", 0); el.laserDot.setAttribute("opacity", 0); el.laserLabel.setAttribute("opacity", 0); return; }
+  const hs = ARM.handScale, c = Math.cos(jr.a2), s = Math.sin(jr.a2);
+  const lx = 40 * hs, ly = -6 * hs * jr.fy;                        // fingertip in hand-local coords
+  let x = jr.wx + c * lx - s * ly, y = jr.wy + s * lx + c * ly + by;
+  let dx = c, dy = s;
+  if (flip) { x = VIEW_W - x; dx = -dx; }
+  const edge = flip ? 8 : VIEW_W - 8;
+  const k = Math.max(0, (edge - x) / (dx || 1e-6));
+  const x2 = x + dx * k * a, y2 = clamp(y + dy * k * a, 40, 480);
+  el.laser.setAttribute("d", `M ${x.toFixed(1)} ${y.toFixed(1)} L ${x2.toFixed(1)} ${y2.toFixed(1)}`);
+  el.laser.setAttribute("opacity", a); el.laser.style.strokeDashoffset = (-performance.now() / 40).toFixed(1);
+  el.laserDot.setAttribute("cx", x2.toFixed(1)); el.laserDot.setAttribute("cy", y2.toFixed(1)); el.laserDot.setAttribute("opacity", a);
+  el.laserLabel.setAttribute("x", (flip ? 14 : VIEW_W - 14)); el.laserLabel.setAttribute("y", (y2 - 10).toFixed(1));
+  el.laserLabel.setAttribute("text-anchor", flip ? "start" : "end"); el.laserLabel.setAttribute("opacity", a);
+}
+
+/* ==========================================================================
+   6. GESTURES
+   CUSTOMIZE: each gesture is an async choreography. Use ctx.wait(ms) between
+   target changes; a newer gesture cancels the running one automatically.
+   Coordinates are in the character's own space (as if facing right).
+   ========================================================================== */
+const attach = { R: null, dx: 0, dy: 0 };
+const ATTACH = {                    // head-relative anchor points the right wrist can follow
+  ear: { x: 268, y: 250 },
+  glasses: { x: 268, y: 238 },
+};
+const pose = (side, p) => el["hand" + side].setAttribute("data-pose", p);
+const restArm = (side) => (side === "R" ? to({ rx: REST.R.x, ry: REST.R.y }) : to({ lx: REST.L.x, ly: REST.L.y }));
+
+const GESTURES = {
+  // Point toward the map, with a laser line and the target's coordinates.
+  async point(ctx, opts = {}) {
+    const alreadyUp = P.rx > 390 && P.ry < 360;          // re-aim without lowering the arm (map tours)
+    if (!alreadyUp) { pose("R", "open"); to({ rx: 345, ry: 420 }); await ctx.wait(260); }
+    pose("R", "point");
+    to({ rx: 428, ry: 322, yaw: 0.6, eyeX: 1.1, eyeY: -0.1, headRot: -1.5, brow: 0.25 });
+    await ctx.wait(alreadyUp ? 120 : 620);
+    to({ laser: 1 });
+    await ctx.wait(450); to({ ry: 314 }); await ctx.wait(200); to({ ry: 322 });   // emphatic jab
+    await ctx.wait(1600);
+    to({ laser: 0, yaw: 0.2, eyeX: 0.2 });
+    await ctx.wait(300);
+    restArm("R"); to({ yaw: 0, eyeX: 0, eyeY: 0, headRot: 0, brow: 0 });
+  },
+
+  // Press the earpiece, tilt the head, listen to HQ.
+  async earpiece(ctx, opts = {}) {
+    pose("R", "open"); attach.R = "ear"; attach.dx = 0; attach.dy = 0;
+    to({ headRot: 5, eyeX: 0.75, eyeY: -0.35, brow: 0.45 });
+    if (opts.idle) setStatus("recv");
+    await ctx.wait(900);
+    for (let i = 0; i < 2; i++) { attach.dy = -3; await ctx.wait(150); attach.dy = 0; await ctx.wait(170); }
+    await ctx.wait(opts.idle ? 900 : 600);
+    attach.R = null; restArm("R"); to({ headRot: 0, eyeX: 0, eyeY: 0, brow: 0 });
+    if (opts.idle && document.body.dataset.status === "recv") setStatus("idle");
+  },
+
+  // Raise a classified dossier, open it, tap the page, close it.
+  async dossier(ctx) {
+    pose("L", "fist"); P.lx = 120; P.ly = 560; T.lx = 120; T.ly = 560;
+    to({ folder: 1, folderOpen: 0 });
+    to({ lx: 150, ly: 448, headY: 3, eyeY: 0.85, eyeX: -0.15, yaw: -0.2, headRot: 1 });
+    await ctx.wait(750);
+    to({ folderOpen: 1 });
+    await ctx.wait(650);
+    pose("R", "point"); to({ rx: 250, ry: 404 });
+    await ctx.wait(650);
+    for (let i = 0; i < 2; i++) { to({ ry: 410 }); await ctx.wait(140); to({ ry: 402 }); await ctx.wait(160); }
+    await ctx.wait(400);
+    restArm("R"); to({ eyeY: 0, headY: 0, eyeX: 0, yaw: 0, headRot: 0, brow: 0.35 });   // look back up at you
+    await ctx.wait(1400);
+    to({ folderOpen: 0, brow: 0 });
+    await ctx.wait(600);
+    to({ lx: 120, ly: 580 });
+    await ctx.wait(450);
+    to({ folder: 0 });
+    await ctx.wait(400);
+    restArm("L");
+  },
+
+  // Slide the sunglasses down and look over them.
+  async peek(ctx) {
+    pose("R", "open"); attach.R = "glasses"; attach.dx = 0; attach.dy = 0;
+    await ctx.wait(650);
+    to({ glassesY: 11, brow: 0.9, eyeX: 0, eyeY: -0.2, lid: 0.05 });
+    attach.dy = 10;
+    await ctx.wait(1500);
+    attach.dy = 0; to({ glassesY: 0, brow: 0, lid: 0.18 });
+    await ctx.wait(450);
+    attach.R = null; restArm("R");
+  },
+
+  // Hand on the earpiece while headquarters decrypts the answer (held while CFG.busy).
+  async listen(ctx) {
+    pose("R", "open"); attach.R = "ear"; attach.dx = 0; attach.dy = 0;
+    to({ headRot: 5, eyeX: 0.6, eyeY: -0.3, brow: 0.5 });
+    while (CFG.busy) {
+      await ctx.wait(700); attach.dy = -2; to({ eyeX: rand(0.3, 0.9) });
+      await ctx.wait(160); attach.dy = 0;
+    }
+    attach.R = null; restArm("R"); to({ headRot: 0, eyeX: 0, eyeY: 0, brow: 0 });
+  },
+
+  // A curt nod.
+  async nod(ctx) {
+    to({ headY: 5, eyeY: 0.3 }); await ctx.wait(200);
+    to({ headY: -1 }); await ctx.wait(200);
+    to({ headY: 4 }); await ctx.wait(180);
+    to({ headY: 0, eyeY: 0 });
+  },
+};
+
+const Gestures = {
+  token: 0, running: null,
+  run(name, opts) {
+    const fn = GESTURES[name];
+    if (!fn) return Promise.resolve();
+    const tok = ++this.token;
+    // reset anything a cancelled gesture may have left behind
+    const repoint = name === "point" && this.running === "point";
+    this.running = name;
+    attach.R = null; to({ glassesY: 0, lid: 0.18 });
+    if (!repoint) to({ laser: 0 });
+    if (document.body.dataset.status === "recv") setStatus(Talk.active ? "talk" : "idle");
+    if (name !== "dossier") { to({ folder: 0, folderOpen: 0 }); restArm("L"); }
+    if (!["point", "earpiece", "peek", "dossier", "listen"].includes(name)) restArm("R");
+    const ctx = {
+      alive: () => tok === this.token,
+      wait: (ms) => new Promise((res, rej) => setTimeout(() => (tok === this.token ? res() : rej(CANCEL)), ms / (CFG.anim.speed || 1))),
+    };
+    return fn(ctx, opts || {})
+      .catch((e) => { if (e !== CANCEL) console.error(e); })
+      .finally(() => { if (tok === this.token) this.running = null; });
+  },
+  stop() { this.token++; this.running = null; attach.R = null; restArm("R"); restArm("L"); to({ folder: 0, folderOpen: 0, laser: 0, glassesY: 0, headRot: 0, headY: 0, yaw: 0 }); },
+};
+
+/* ==========================================================================
+   7. IDLE BEHAVIOUR (blinks, scanning eyes, glints, fidgets)
+   ========================================================================== */
+const Idle = { blink: 1.2, look: 1.5, glint: 3, fidget: 9 };
+function updateIdle(t) {
+  if (t > Idle.blink) {
+    T.blink = 1; setTimeout(() => (T.blink = 0), 90);
+    if (Math.random() < 0.15) setTimeout(() => { T.blink = 1; setTimeout(() => (T.blink = 0), 80); }, 230);  // double blink
+    Idle.blink = t + rand(CFG.anim.blinkMin, CFG.anim.blinkMax);
+  }
+  if (!Gestures.running && t > Idle.look) {
+    if (Talk.active) {                                  // mostly eye contact while talking
+      to({ eyeX: rand(-0.25, 0.25), eyeY: rand(-0.15, 0.1), yaw: rand(-0.1, 0.1) });
+      Idle.look = t + rand(0.8, 2.0);
+    } else {                                            // scanning the room
+      const x = Math.random() < 0.3 ? 0 : rand(-1.1, 1.1);
+      to({ eyeX: x, eyeY: rand(-0.3, 0.25), yaw: x * 0.35 });
+      Idle.look = t + rand(1.6, 4.2);
+    }
+  }
+  if (t > Idle.glint) { glintT0 = t; Idle.glint = t + rand(5, 11); }
+  if (CFG.anim.idleGestures && !Talk.active && !Gestures.running && t > Idle.fidget) {
+    Gestures.run(Math.random() < 0.7 ? "earpiece" : "peek", { idle: true });
+    Idle.fidget = t + rand(14, 26);
+  }
+}
+
+/* ==========================================================================
+   8. LIP SYNC
+   Three drivers, chosen automatically:
+     audio    — Web Audio analyser on the <audio> element (real amplitude)
+     boundary — speechSynthesis word-boundary events -> per-letter visemes
+     proc     — procedural syllable cycling (fallback when no events arrive)
+   ========================================================================== */
+// CUSTOMIZE: viseme table. [open, wide, round]
+const VISEME = [
+  [/[aаяá]/i, [0.9, 0.15, 0]], [/[eэеыé]/i, [0.55, 0.6, 0]], [/[iийyі]/i, [0.35, 0.9, 0]],
+  [/[oоё]/i, [0.7, -0.3, 0.75]], [/[uуюw]/i, [0.35, -0.5, 1]], [/[mbpмбп]/i, [0, 0, 0]],
+  [/[fvфв]/i, [0.12, 0.25, 0]], [/[a-zа-яё]/i, [0.25, 0.2, 0.1]],
+];
+const visemeFor = (ch) => { for (const [re, v] of VISEME) if (re.test(ch)) return v; return [0.05, 0, 0]; };
+
+const Talk = {
+  active: false, mode: "proc", rate: 1,
+  queue: [], qStart: 0, qStep: 0.07,
+  syl: { t0: 0, dur: 0.2, amp: 0.6, wide: 0, round: 0 },
+  analyser: null, buf: null, fbuf: null, audioEl: null,
+  // subtitle progress
+  offset: 0, len: 0, chunkStart: 0, boundaryAt: -1, sawBoundary: false,
+  start(mode, offset, len) {
+    this.active = true; this.mode = mode; this.offset = offset; this.len = len;
+    this.chunkStart = now(); this.boundaryAt = -1; this.sawBoundary = false; this.queue = [];
+    setStatus("talk");
+  },
+  pause() { this.active = false; to({ mOpen: 0, mWide: 0, mRound: 0 }); },
+  word(word, charIndex) {
+    this.sawBoundary = true; this.mode = "boundary"; this.boundaryAt = charIndex;
+    this.queue = [...word].map(visemeFor); this.qStart = now(); this.qStep = 0.072 / this.rate;
+  },
+};
+
+function driveMouth(t) {
+  if (!Talk.active) { to({ mOpen: 0, mWide: 0, mRound: 0 }); return; }
+  if (Talk.mode === "audio" && Talk.analyser) {
+    const a = Talk.analyser;
+    a.getFloatTimeDomainData(Talk.buf);
+    let sum = 0; for (let i = 0; i < Talk.buf.length; i++) sum += Talk.buf[i] * Talk.buf[i];
+    const rms = Math.sqrt(sum / Talk.buf.length);
+    a.getByteFrequencyData(Talk.fbuf);
+    let num = 0, den = 0; for (let i = 2; i < Talk.fbuf.length; i++) { num += i * Talk.fbuf[i]; den += Talk.fbuf[i]; }
+    const centroidHz = den ? (num / den) * (a.context.sampleRate / 2 / Talk.fbuf.length) : 0;
+    const wide = clamp((centroidHz - 1400) / 1400, -1, 1);
+    to({ mOpen: clamp((rms - 0.012) * 7.5, 0, 1), mWide: wide, mRound: clamp(-wide, 0, 1) });
+    return;
+  }
+  if (Talk.mode === "boundary") {
+    const i = Math.floor((t - Talk.qStart) / Talk.qStep);
+    if (i < Talk.queue.length) { const [o, w, r] = Talk.queue[i]; to({ mOpen: o, mWide: w, mRound: r }); }
+    else to({ mOpen: 0.05, mWide: 0, mRound: 0 });
+    return;
+  }
+  // procedural: 4-6 syllables per second with random emphasis and short pauses
+  if (Talk.mode !== "boundary" && !Talk.sawBoundary && t - Talk.chunkStart > 0.6) Talk.mode = "proc";
+  const s = Talk.syl;
+  if (t > s.t0 + s.dur) {
+    const pause = Math.random() < 0.1;
+    s.t0 = t; s.dur = (pause ? 0.18 : rand(0.13, 0.24)) / Talk.rate;
+    s.amp = pause ? 0 : rand(0.35, 1); s.wide = rand(-0.6, 0.8); s.round = Math.random() < 0.25 ? rand(0.4, 1) : 0;
+    if (s.amp > 0.92 && Math.random() < 0.35) { T.brow = 0.45; setTimeout(() => (T.brow = 0), 300); }
+  }
+  const ph = clamp((t - s.t0) / s.dur, 0, 1);
+  to({ mOpen: s.amp * Math.pow(Math.sin(Math.PI * ph), 0.7), mWide: s.wide, mRound: s.round });
+}
+
+/* ==========================================================================
+   9. SUBTITLES (typewriter reveal synced to speech progress)
+   ========================================================================== */
+const Subs = {
+  text: "", shown: -1,
+  set(text) { this.text = text; this.shown = -1; el.subs.classList.toggle("empty", !text); this.show(0); },
+  show(n) {
+    n = clamp(Math.round(n), 0, this.text.length);
+    if (n === this.shown) return;
+    this.shown = n;
+    el.subsSpoken.textContent = this.text.slice(0, n);
+    el.subsPending.textContent = this.text.slice(n);
+    const target = el.caret.offsetTop - el.subs.clientHeight + 26;
+    if (Math.abs(el.subs.scrollTop - Math.max(0, target)) > 4) el.subs.scrollTop = Math.max(0, target);
+  },
+};
+function updateSubs(t) {
+  if (!Talk.active) return;
+  if (Talk.mode === "audio" || Talk.audioEl) {
+    const a = Talk.audioEl; if (a && a.duration) Subs.show((a.currentTime / a.duration) * Subs.text.length);
+    return;
+  }
+  const cps = 14.5 * Talk.rate;                                  // estimated characters per second
+  const est = Talk.boundaryAt >= 0
+    ? Talk.boundaryAt + Math.min(Talk.queue.length, (t - Talk.qStart) / Talk.qStep)
+    : (t - Talk.chunkStart) * cps;
+  Subs.show(Talk.offset + Math.min(Talk.len, est));
+}
+
+/* ==========================================================================
+   10. SPEECH (browser TTS, external audio, or silent)
+   ========================================================================== */
+const Speech = {
+  supported: "speechSynthesis" in window && "SpeechSynthesisUtterance" in window,
+  current: null,               // keep a reference: Chrome can garbage-collect utterances mid-speech
+  async voices() {
+    if (!this.supported) return [];
+    let v = speechSynthesis.getVoices();
+    if (v.length) return v;
+    await new Promise((res) => { speechSynthesis.addEventListener("voiceschanged", res, { once: true }); setTimeout(res, 1200); });
+    return speechSynthesis.getVoices();
+  },
+  pick(voices, text) {
+    const vc = CFG.voice, cyr = /[Ѐ-ӿ]/.test(text);
+    const lang = (cyr || vc.russianAccent ? vc.cyrillicLang : vc.lang || "en").toLowerCase();
+    if (vc.name) { const v = voices.find((x) => x.name.toLowerCase().includes(String(vc.name).toLowerCase())); if (v) return v; }
+    const pool = voices.filter((v) => v.lang.toLowerCase().startsWith(lang));
+    const score = (v) => {
+      let s = 0;
+      const i = vc.prefer.findIndex((p) => v.name.toLowerCase().includes(p.toLowerCase()));
+      if (i >= 0) s += 100 - i;
+      if (vc.avoid.some((p) => v.name.toLowerCase().includes(p.toLowerCase()))) s -= 200;
+      if (/natural|neural|online/i.test(v.name)) s += 20;
+      return s;
+    };
+    return pool.sort((a, b) => score(b) - score(a))[0] || null;
+  },
+  stop() { if (this.supported) speechSynthesis.cancel(); this.current = null; },
+};
+
+let muted = store.getLocal("agentAvatar:muted") === "1";
+function setMuted(m) {
+  muted = m; store.setLocal("agentAvatar:muted", m ? "1" : "0");
+  el.muteWaves.style.display = m ? "none" : ""; el.muteX.style.display = m ? "" : "none";
+  if (m) { Speech.stop(); if (Talk.audioEl) Talk.audioEl.muted = true; }
+  else if (Talk.audioEl) Talk.audioEl.muted = false;
+}
+
+function speakChunk(text, offset, tok, voice) {
+  return new Promise((resolve, reject) => {
+    if (muted || !Speech.supported) return silentChunk(text, offset, tok).then(resolve, reject);
+    const u = new SpeechSynthesisUtterance(text);
+    const vc = CFG.voice;
+    if (voice) { u.voice = voice; u.lang = voice.lang; }
+    u.pitch = vc.pitch; u.rate = vc.rate; u.volume = vc.volume;
+    Talk.rate = vc.rate;
+    let started = false;
+    const watchdog = setTimeout(() => { if (!started && tok === sayToken) { Speech.stop(); reject("blocked"); } }, 3500);
+    u.onstart = () => { started = true; clearTimeout(watchdog); if (tok === sayToken) Talk.start("proc", offset, text.length); };
+    u.onboundary = (e) => {
+      if (tok !== sayToken || e.name && e.name !== "word") return;
+      const rest = text.slice(e.charIndex);
+      const len = e.charLength || (rest.match(/^\S+/) || [""])[0].length;
+      Talk.word(text.substr(e.charIndex, len), e.charIndex);
+    };
+    u.onend = () => { clearTimeout(watchdog); Talk.pause(); Subs.show(offset + text.length); resolve(); };
+    u.onerror = (e) => {
+      clearTimeout(watchdog); Talk.pause();
+      if (e.error === "not-allowed") reject("blocked");
+      else if (e.error === "interrupted" || e.error === "canceled") reject(CANCEL);
+      else { console.warn("TTS error:", e.error); silentChunk(text, offset, tok).then(resolve, reject); }
+    };
+    Speech.current = u;
+    speechSynthesis.speak(u);
+  });
+}
+
+function silentChunk(text, offset, tok) {
+  // No audio: animate the mouth + subtitles for the estimated speaking time.
+  Talk.rate = CFG.voice.rate || 1;
+  const dur = Math.max(0.6, text.length / (14.5 * Talk.rate));
+  Talk.start("proc", offset, text.length);
+  return new Promise((resolve, reject) => {
+    const t0 = now();
+    const iv = setInterval(() => {
+      if (tok !== sayToken) { clearInterval(iv); Talk.pause(); return reject(CANCEL); }
+      if (now() - t0 >= dur) { clearInterval(iv); Talk.pause(); Subs.show(offset + text.length); resolve(); }
+    }, 50);
+  });
+}
+
+let audioCtx = null;
+async function playAudio(script, audio, tok) {
+  const src = audio.url || `data:${audio.mime || "audio/mpeg"};base64,${audio.b64}`;
+  const a = new Audio();
+  if (audio.url) a.crossOrigin = "anonymous";      // analyser needs CORS for remote URLs
+  a.src = src; a.muted = muted;
+  Talk.audioEl = a; Talk.analyser = null;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    await Promise.race([audioCtx.resume(), new Promise((r) => setTimeout(r, 300))]);
+    // Only route through Web Audio when the context is running, otherwise the clip would be silent.
+    if (audioCtx.state === "running") {
+      const node = audioCtx.createMediaElementSource(a), an = audioCtx.createAnalyser();
+      an.fftSize = 1024; node.connect(an); an.connect(audioCtx.destination);
+      Talk.analyser = an; Talk.buf = new Float32Array(an.fftSize); Talk.fbuf = new Uint8Array(an.frequencyBinCount);
+    }
+  } catch (e) { Talk.analyser = null; }
+  try { await a.play(); }
+  catch (e) { Talk.audioEl = null; throw "blocked"; }
+  Talk.rate = 1; Talk.start(Talk.analyser ? "audio" : "proc", 0, script.plain.length);
+  // cues fire from the frame loop as the subtitle progress (currentTime / duration) passes them
+  await new Promise((resolve, reject) => {
+    const iv = setInterval(() => {
+      if (tok !== sayToken) { clearInterval(iv); a.pause(); return reject(CANCEL); }
+      if (a.ended) { clearInterval(iv); resolve(); }
+    }, 60);
+  });
+  Talk.audioEl = null; Talk.analyser = null;
+}
+
+/* ==========================================================================
+   10b. CUES + MAP LINK
+   A cue is a gesture at a character position of the spoken text. The frame loop
+   fires each cue when the subtitle progress reaches it, so one sentence that names
+   three places stays one utterance while the agent re-points three times.
+   ========================================================================== */
+const Cues = {
+  list: [], i: 0,
+  load(list) { this.list = list.slice().sort((a, b) => a.pos - b.pos); this.i = 0; },
+  clear() { this.list = []; this.i = 0; },
+  update(pos) { while (this.i < this.list.length && this.list[this.i].pos <= pos) fireCue(this.list[this.i++]); },
+};
+
+function fireCue(c) {
+  const stop = c.stop != null ? (CFG.tour || []).find((s) => Number(s.n) === c.stop) : null;
+  if (stop) { setTarget({ name: stop.name, lat: stop.lat, lon: stop.lon }); MapLink.focus(stop); }
+  Gestures.run(c.gesture, { stop });
+}
+
+// Drives the Leaflet map inside the st_folium iframe (same origin, exposed as window.map).
+const MapLink = {
+  used: [], ping: null, tip: null,
+  find() {
+    try {
+      for (const f of window.parent.document.querySelectorAll("iframe")) {
+        let w; try { w = f.contentWindow; } catch { continue; }
+        if (!w || w === window) continue;
+        let m; try { m = w.map; } catch { continue; }
+        if (m && typeof m.flyTo === "function" && w.L) return { m, L: w.L, doc: w.document };
+      }
+    } catch { /* cross-origin parent or no map: tours are skipped */ }
+    return null;
+  },
+  // CUSTOMIZE: zoom level per place kind (from the agent's geo_locations[].kind)
+  zoomFor(kind) {
+    const k = String(kind || "").toLowerCase();
+    if (/country|nation|empire|union/.test(k)) return 5;
+    if (/state|oblast|region|province|area|sea|river/.test(k)) return 7;
+    if (/village|neighbourhood|neighborhood|building|square|street|road/.test(k)) return 12;
+    if (/town/.test(k)) return 11;
+    return 10;                                         // city and anything else
+  },
+  focus(stop) {
+    if (!CFG.tourMap) return;
+    const h = this.find(); if (!h) return;
+    const { m, L, doc } = h;
+    try {
+      if (!doc.getElementById("georgory-ping-css")) {
+        const s = doc.createElement("style"); s.id = "georgory-ping-css";
+        s.textContent = ".georgory-ping span{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;" +
+          "border:2px solid #ff4d3d;border-radius:50%;box-shadow:0 0 14px #ff4d3d;animation:georgoryPing 1.4s ease-out infinite}" +
+          ".georgory-ping span+span{animation-delay:.7s}@keyframes georgoryPing{from{transform:scale(.15);opacity:1}to{transform:scale(1.7);opacity:0}}";
+        doc.head.appendChild(s);
+      }
+      const ll = L.latLng(stop.lat, stop.lon);
+      this.used.push(ll);
+      m.invalidateSize({ pan: false });               // the column may have been resized since the map was built
+      m.flyTo(ll, this.zoomFor(stop.kind), { duration: 1.1 });
+      if (this.ping) this.ping.remove();
+      this.ping = L.marker(ll, {
+        icon: L.divIcon({ className: "georgory-ping", html: "<span></span><span></span>", iconSize: [46, 46] }),
+        interactive: false, keyboard: false, zIndexOffset: 1000,
+      }).addTo(m);
+      if (this.tip) this.tip.closeTooltip();
+      this.tip = null;
+      m.eachLayer((l) => {
+        if (!this.tip && l !== this.ping && l.getLatLng && l.getTooltip && l.getTooltip() && l.getLatLng().distanceTo(ll) < 60) this.tip = l;
+      });
+      if (this.tip) this.tip.openTooltip();
+    } catch (e) { console.warn("map tour:", e); }
+  },
+  home() {
+    if (!this.used.length) return;
+    const pts = this.used; this.used = [];
+    const h = this.find(); if (!h) return;
+    try {
+      if (this.ping) this.ping.remove();
+      if (this.tip) this.tip.closeTooltip();
+      this.ping = null; this.tip = null;
+      const b = CFG.homeBbox;
+      if (b && b.length === 4) h.m.flyToBounds([[b[1], b[0]], [b[3], b[2]]], { padding: [30, 30], duration: 1.3 });
+      else if (pts.length > 1) h.m.flyToBounds(h.L.latLngBounds(pts), { padding: [40, 40], duration: 1.3 });
+    } catch (e) { console.warn("map tour:", e); }
+  },
+};
+
+/* ==========================================================================
+   11. SCRIPT PARSING + AUTO GESTURES
+   Inline tags: "[point] The target is here. [dossier] Details in the file."
+   "[point:3] Bakhmut" also flies the map to stop 3 of CFG.tour.
+   ========================================================================== */
+const TAG = /\[(point|dossier|earpiece|peek|nod)(?::(\d+))?\]/gi;
+// CUSTOMIZE: keywords that pick a gesture when gesture = "auto" and the text has no tags.
+const AUTO = {
+  point: /\b(here|there|located|location|north|south|east|west|map|coordinates?|target|km|kilomet(er|re)s?|border|city|town|village|region)\b|здесь|там|север|юг|восток|запад|координат|цель|карт|город|район|граница/i,
+  dossier: /\b(report|dossier|file|document|classified|intel|intelligence|records?|sources?|according)\b|досье|доклад|документ|секрет|отчёт|отчет|источник/i,
+};
+
+function parseScript(raw, opts) {
+  // Strip the tags, collapse whitespace, and record each tag as a cue at its position in the plain text.
+  let plain = "", last = 0, m;
+  const cues = [];
+  const append = (s) => {
+    let t = s.replace(/\s+/g, " ");
+    if (!plain || plain.endsWith(" ")) t = t.replace(/^ /, "");
+    plain += t;
+  };
+  TAG.lastIndex = 0;
+  while ((m = TAG.exec(raw))) {
+    append(raw.slice(last, m.index));
+    cues.push({ pos: plain.length, gesture: m[1].toLowerCase(), stop: m[2] ? Number(m[2]) : null });
+    last = m.index + m[0].length;
+  }
+  append(raw.slice(last));
+  plain = plain.trimEnd();
+  cues.forEach((c) => (c.pos = Math.min(c.pos, plain.length)));
+
+  const g = opts.gesture ?? CFG.gesture;
+  if (!cues.length && plain && g && g !== "none") {
+    if (Array.isArray(g)) distribute(plain, cues, g);
+    else if (g === "auto") {
+      const first = CFG.target || AUTO.point.test(plain) ? "point" : AUTO.dossier.test(plain) ? "dossier" : "earpiece";
+      const list = [first];
+      if (plain.length > 240) list.push(first === "dossier" ? "point" : AUTO.dossier.test(plain) ? "dossier" : "nod");
+      distribute(plain, cues, list);
+    } else cues.push({ pos: 0, gesture: g, stop: null });
+  }
+  return { plain, cues };
+}
+
+function distribute(plain, cues, gestures) {
+  // Spread gestures over sentence starts.
+  const starts = [...plain.matchAll(/[^.!?…]+[.!?…]*\s*/g)].map((x) => x.index);
+  const per = Math.max(1, Math.ceil(starts.length / gestures.length));
+  gestures.forEach((gesture, i) => { if (starts[i * per] !== undefined) cues.push({ pos: starts[i * per], gesture, stop: null }); });
+}
+
+function chunks(text) {
+  // Chrome stops long utterances after ~15 s, so speak sentence-sized pieces.
+  const parts = text.match(/[^.!?…;]+[.!?…;]*\s*/g) || [text];
+  const out = [];
+  let buf = "";
+  for (const p of parts) {
+    if ((buf + p).length > 180 && buf) { out.push(buf); buf = ""; }
+    buf += p;
+  }
+  if (buf.trim()) out.push(buf);
+  return out.flatMap((c) => (c.length <= 220 ? [c] : c.match(/.{1,200}(\s|$)/g)));
+}
+
+/* ==========================================================================
+   12. PUBLIC API: say / gesture / stop
+   ========================================================================== */
+let sayToken = 0, lastSay = null;
+
+async function say(raw, opts = {}) {
+  const tok = ++sayToken;
+  Speech.stop(); Talk.pause();
+  document.body.classList.remove("blocked");
+  if (opts.target !== undefined) setTarget(opts.target);
+  lastSay = { raw, opts };
+  const script = parseScript(String(raw || ""), opts);
+  Subs.set(script.plain);
+  if (!script.plain) return;
+  Cues.load(script.cues);
+  Cues.update(0);                                     // opening gesture starts while the voice loads
+  emit("started");
+  setStatus("link");
+  try {
+    const audio = opts.audio !== undefined ? opts.audio : CFG.audio;
+    if (audio && (audio.b64 || audio.url)) await playAudio(script, audio, tok);
+    else {
+      const voice = Speech.supported && !muted ? Speech.pick(await Speech.voices(), script.plain) : null;
+      let off = 0;
+      for (const c of chunks(script.plain)) {
+        if (tok !== sayToken) return;
+        const text = c.trim();
+        if (!text) continue;
+        off = Math.max(off, script.plain.indexOf(text, off));
+        await speakChunk(text, off, tok, voice);
+        off += text.length;
+      }
+    }
+  } catch (e) {
+    Talk.pause();
+    if (e === "blocked" && tok === sayToken) { Cues.clear(); Gestures.stop(); document.body.classList.add("blocked"); setStatus("wait"); emit("blocked"); }
+    return;
+  }
+  if (tok !== sayToken) return;
+  Talk.pause(); Subs.show(Subs.text.length); Cues.clear(); setStatus("idle"); emit("ended");
+  setTimeout(() => { if (tok === sayToken) MapLink.home(); }, 1200);
+}
+
+function stop() { sayToken++; Speech.stop(); if (Talk.audioEl) Talk.audioEl.pause(); Talk.audioEl = null; Talk.pause(); Cues.clear(); Gestures.stop(); MapLink.home(); setStatus("idle"); }
+
+window.Agent = {
+  say, stop,
+  gesture: (name, opts) => Gestures.run(name, opts),
+  configure: (cfg) => applyConfig(cfg),
+  setTarget,
+  replay: () => lastSay && say(lastSay.raw, lastSay.opts),
+  get gestures() { return Object.keys(GESTURES); },
+};
+
+/* ==========================================================================
+   13. STREAMLIT BRIDGE (bidirectional component protocol, no build step)
+   ========================================================================== */
+const ST = {
+  send(type, data) { window.parent.postMessage({ isStreamlitMessage: true, type, ...data }, "*"); },
+  ready() { this.send("streamlit:componentReady", { apiVersion: 1 }); },
+  height(h) { this.send("streamlit:setFrameHeight", { height: h }); },
+  value(v) { this.send("streamlit:setComponentValue", { value: v, dataType: "json" }); },
+};
+function emit(event) { if (MODE === "component" && CFG.emitEvents) ST.value({ event, id: CFG.id, t: Date.now() }); }
+
+// A failed query ends the script without another render, so nothing would ever clear CFG.busy.
+// Watch Streamlit's own run state (with a time limit as a backstop) so he can't stay stuck on "DECRYPTING".
+const BUSY_LIMIT_MS = 180000;
+let busyWatch = null;
+function scriptStopped() {
+  try {
+    const app = window.parent.document.querySelector('[data-testid="stApp"]');
+    return !!app && app.getAttribute("data-test-script-state") === "notRunning";
+  } catch { return false; }
+}
+function watchBusy() {
+  clearInterval(busyWatch);
+  const t0 = Date.now();
+  let stopped = 0;
+  busyWatch = setInterval(() => {
+    stopped = scriptStopped() ? stopped + 1 : 0;
+    if (!CFG.busy || stopped >= 4 || Date.now() - t0 > BUSY_LIMIT_MS) {
+      clearInterval(busyWatch);
+      if (CFG.busy) { CFG.busy = false; setStatus("idle"); }
+    }
+  }, 500);
+}
+
+let lastHeight = null, spokenId = null;
+function deliver(cfg) {
+  // Called with a fresh config (html mode: once on load; component mode: every rerun).
+  applyConfig(cfg);
+  if (MODE === "component" && CFG.height !== lastHeight) { lastHeight = CFG.height; ST.height(CFG.height); }
+  if (CFG.busy) {                                     // backend is thinking: stop talking, listen to HQ
+    if (Talk.active || Cues.list.length) stop();
+    setStatus("busy");
+    if (Gestures.running !== "listen") Gestures.run("listen");
+    watchBusy();
+    return;
+  }
+  if (document.body.dataset.status === "busy") setStatus("idle");
+  const id = String(CFG.id || hash(`${CFG.text}|${JSON.stringify(CFG.gesture)}|${JSON.stringify(CFG.target)}`));
+  // sessionStorage survives remounts (toggling the avatar off/on), so old answers aren't repeated
+  const key = `agentAvatar:spoken:${location.pathname}`;
+  if (!CFG.text || id === spokenId || store.get(key) === id) return;
+  spokenId = id; store.set(key, id);
+  if (CFG.autoplay) say(CFG.text, { gesture: CFG.gesture });
+  else { lastSay = { raw: CFG.text, opts: { gesture: CFG.gesture } }; Subs.set(CFG.text.replace(TAG, "").replace(/\s+/g, " ").trim()); document.body.classList.add("blocked"); setStatus("wait"); }
+}
+
+window.addEventListener("message", (e) => {
+  const d = e.data;
+  if (!d || typeof d !== "object") return;
+  if (d.type === "streamlit:render" && e.source === window.parent) deliver((d.args && d.args.config) || d.args || {});
+});
+
+/* ==========================================================================
+   14. CONTROLS + BOOT
+   ========================================================================== */
+el.engage.addEventListener("click", async () => {
+  document.body.classList.remove("blocked");
+  try { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); await audioCtx.resume(); } catch { /* optional */ }
+  if (lastSay) say(lastSay.raw, lastSay.opts);
+});
+el.btnReplay.addEventListener("click", () => window.Agent.replay());
+el.btnMute.addEventListener("click", () => setMuted(!muted));
+setMuted(muted);
+
+let lastT = now();
+function frame() {
+  const t = now(), dt = Math.min(0.05, t - lastT);
+  lastT = t;
+  updateIdle(t);
+  driveMouth(t);
+  updateSubs(t);
+  if (Cues.list.length && Talk.active) Cues.update(Subs.shown);
+  for (const k in P) springStep(k, dt);
+  render(t, dt);
+  requestAnimationFrame(frame);
+}
+
+applyConfig();
+setStatus("idle");
+Subs.set("");
+requestAnimationFrame(frame);
+
+if (MODE === "html") deliver(INJECTED);
+else if (MODE === "component") ST.ready();
+else {
+  // Standalone dev bar: open this file directly in a browser to tune visuals.
+  document.body.classList.add("standalone");
+  setTarget({ name: "Kharkiv", lat: 49.9935, lon: 36.2304 });
+  document.getElementById("devbar").addEventListener("click", (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    const a = b.dataset.dev;
+    if (a === "say") say(document.getElementById("devText").value);
+    else if (a === "flip") CFG.facing = flipped() ? "right" : "left";
+    else if (a === "compact") document.body.classList.toggle("compact");
+    else if (a === "stop") stop();
+    else Gestures.run(a);
+  });
+}
+})();
+</script>
+</body>
+</html>
