@@ -1,0 +1,181 @@
+2026-11-03 18:29:48,698 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:29:48,700 Model: "SequenceTagger(
+  (embeddings): TransformerWordEmbeddings(
+    (model): XLMRobertaModel(
+      (embeddings): XLMRobertaEmbeddings(
+        (word_embeddings): Embedding(250002, 1024, padding_idx=1)
+        (position_embeddings): Embedding(514, 1024, padding_idx=1)
+        (token_type_embeddings): Embedding(1, 1024)
+        (LayerNorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True, bias=True)
+        (dropout): Dropout(p=0.1, inplace=False)
+      )
+      (encoder): XLMRobertaEncoder(
+        (layer): ModuleList(
+          (0-23): 24 x XLMRobertaLayer(
+            (attention): XLMRobertaAttention(
+              (self): XLMRobertaSdpaSelfAttention(
+                (query): Linear(in_features=1024, out_features=1024, bias=True)
+                (key): Linear(in_features=1024, out_features=1024, bias=True)
+                (value): Linear(in_features=1024, out_features=1024, bias=True)
+                (dropout): Dropout(p=0.1, inplace=False)
+              )
+              (output): XLMRobertaSelfOutput(
+                (dense): Linear(in_features=1024, out_features=1024, bias=True)
+                (LayerNorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True, bias=True)
+                (dropout): Dropout(p=0.1, inplace=False)
+              )
+            )
+            (intermediate): XLMRobertaIntermediate(
+              (dense): Linear(in_features=1024, out_features=4096, bias=True)
+              (intermediate_act_fn): GELUActivation()
+            )
+            (output): XLMRobertaOutput(
+              (dense): Linear(in_features=4096, out_features=1024, bias=True)
+              (LayerNorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+        )
+      )
+      (pooler): XLMRobertaPooler(
+        (dense): Linear(in_features=1024, out_features=1024, bias=True)
+        (activation): Tanh()
+      )
+    )
+  )
+  (locked_dropout): LockedDropout(p=0.5)
+  (linear): Linear(in_features=1024, out_features=24, bias=True)
+  (loss_function): CrossEntropyLoss()
+)"
+2026-11-03 18:29:48,711 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:29:48,713 Corpus: 1121 train + 173 dev + 0 test sentences
+2026-11-03 18:29:48,713 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:29:48,715 Train:  1121 sentences
+2026-11-03 18:29:48,716         (train_with_dev=False, train_with_test=False)
+2026-11-03 18:29:48,716 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:29:48,718 Training Params:
+2026-11-03 18:29:48,719  - learning_rate: "5e-06" 
+2026-11-03 18:29:48,720  - mini_batch_size: "4"
+2026-11-03 18:29:48,721  - max_epochs: "20"
+2026-11-03 18:29:48,722  - shuffle: "True"
+2026-11-03 18:29:48,722 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:29:48,722 Plugins:
+2026-11-03 18:29:48,723  - LinearScheduler | warmup_fraction: '0.1'
+2026-11-03 18:29:48,723 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:29:48,723 Final evaluation on model from best epoch (best-model.pt)
+2026-11-03 18:29:48,725  - metric: "('micro avg', 'f1-score')"
+2026-11-03 18:29:48,725 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:29:48,726 Computation:
+2026-11-03 18:29:48,726  - compute on device: cuda:0
+2026-11-03 18:29:48,727  - embedding storage: none
+2026-11-03 18:29:48,727 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:29:48,727 Model training base path: "C:\Users\idosc\Corpus2GeoRAG\ApplyNER\NER_output\model_evaluation\fine_tuning\flert_5label\FlertDate_v2"
+2026-11-03 18:29:48,728 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:29:48,730 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:30:25,116 epoch 1 - iter 28/281 - loss 0.11179306 - time (sec): 36.38 - samples/sec: 320.11 - lr: 0.000000 - momentum: 0.000000
+2026-11-03 18:30:49,152 epoch 1 - iter 56/281 - loss 0.12059659 - time (sec): 60.42 - samples/sec: 363.21 - lr: 0.000000 - momentum: 0.000000
+2026-11-03 18:31:12,111 epoch 1 - iter 84/281 - loss 0.12965133 - time (sec): 83.38 - samples/sec: 361.22 - lr: 0.000001 - momentum: 0.000000
+2026-11-03 18:31:35,437 epoch 1 - iter 112/281 - loss 0.13518535 - time (sec): 106.70 - samples/sec: 376.59 - lr: 0.000001 - momentum: 0.000000
+2026-11-03 18:31:58,261 epoch 1 - iter 140/281 - loss 0.13047904 - time (sec): 129.53 - samples/sec: 377.62 - lr: 0.000001 - momentum: 0.000000
+2026-11-03 18:32:20,427 epoch 1 - iter 168/281 - loss 0.13123943 - time (sec): 151.69 - samples/sec: 378.91 - lr: 0.000001 - momentum: 0.000000
+2026-11-03 18:32:45,298 epoch 1 - iter 196/281 - loss 0.12871283 - time (sec): 176.57 - samples/sec: 376.95 - lr: 0.000002 - momentum: 0.000000
+2026-11-03 18:33:05,642 epoch 1 - iter 224/281 - loss 0.13023158 - time (sec): 196.91 - samples/sec: 378.20 - lr: 0.000002 - momentum: 0.000000
+2026-11-03 18:33:27,286 epoch 1 - iter 252/281 - loss 0.12924758 - time (sec): 218.55 - samples/sec: 378.96 - lr: 0.000002 - momentum: 0.000000
+2026-11-03 18:33:49,365 epoch 1 - iter 280/281 - loss 0.13085899 - time (sec): 240.63 - samples/sec: 383.07 - lr: 0.000002 - momentum: 0.000000
+2026-11-03 18:33:49,687 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:33:49,689 EPOCH 1 done: loss 0.1308 - lr: 0.000002
+2026-11-03 18:34:37,528 DEV : loss 0.22562088072299957 - f1-score (micro avg)  0.8043
+2026-11-03 18:34:37,540 saving best model
+2026-11-03 18:34:40,708 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:35:03,737 epoch 2 - iter 28/281 - loss 0.10143292 - time (sec): 23.03 - samples/sec: 432.82 - lr: 0.000003 - momentum: 0.000000
+2026-11-03 18:35:29,541 epoch 2 - iter 56/281 - loss 0.10740275 - time (sec): 48.83 - samples/sec: 397.36 - lr: 0.000003 - momentum: 0.000000
+2026-11-03 18:35:51,343 epoch 2 - iter 84/281 - loss 0.11034134 - time (sec): 70.63 - samples/sec: 379.26 - lr: 0.000003 - momentum: 0.000000
+2026-11-03 18:36:13,417 epoch 2 - iter 112/281 - loss 0.10631439 - time (sec): 92.71 - samples/sec: 396.91 - lr: 0.000003 - momentum: 0.000000
+2026-11-03 18:36:36,434 epoch 2 - iter 140/281 - loss 0.10849882 - time (sec): 115.72 - samples/sec: 401.11 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:36:57,613 epoch 2 - iter 168/281 - loss 0.10763744 - time (sec): 136.90 - samples/sec: 398.43 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:37:18,978 epoch 2 - iter 196/281 - loss 0.10656069 - time (sec): 158.27 - samples/sec: 404.41 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:37:39,779 epoch 2 - iter 224/281 - loss 0.10348411 - time (sec): 179.07 - samples/sec: 410.42 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:38:01,019 epoch 2 - iter 252/281 - loss 0.10546771 - time (sec): 200.31 - samples/sec: 412.60 - lr: 0.000005 - momentum: 0.000000
+2026-11-03 18:38:21,852 epoch 2 - iter 280/281 - loss 0.10527023 - time (sec): 221.14 - samples/sec: 416.60 - lr: 0.000005 - momentum: 0.000000
+2026-11-03 18:38:22,120 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:38:22,120 EPOCH 2 done: loss 0.1052 - lr: 0.000005
+2026-11-03 18:38:56,407 DEV : loss 0.246937096118927 - f1-score (micro avg)  0.8233
+2026-11-03 18:38:56,416 saving best model
+2026-11-03 18:39:00,251 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:39:21,451 epoch 3 - iter 28/281 - loss 0.10490727 - time (sec): 21.20 - samples/sec: 403.86 - lr: 0.000005 - momentum: 0.000000
+2026-11-03 18:39:44,464 epoch 3 - iter 56/281 - loss 0.08914709 - time (sec): 44.21 - samples/sec: 422.43 - lr: 0.000005 - momentum: 0.000000
+2026-11-03 18:40:06,753 epoch 3 - iter 84/281 - loss 0.09013913 - time (sec): 66.50 - samples/sec: 428.14 - lr: 0.000005 - momentum: 0.000000
+2026-11-03 18:40:27,383 epoch 3 - iter 112/281 - loss 0.09206467 - time (sec): 87.13 - samples/sec: 429.88 - lr: 0.000005 - momentum: 0.000000
+2026-11-03 18:40:48,116 epoch 3 - iter 140/281 - loss 0.09106661 - time (sec): 107.86 - samples/sec: 428.77 - lr: 0.000005 - momentum: 0.000000
+2026-11-03 18:41:08,820 epoch 3 - iter 168/281 - loss 0.09158346 - time (sec): 128.56 - samples/sec: 427.77 - lr: 0.000005 - momentum: 0.000000
+2026-11-03 18:41:29,812 epoch 3 - iter 196/281 - loss 0.08883087 - time (sec): 149.56 - samples/sec: 435.08 - lr: 0.000005 - momentum: 0.000000
+2026-11-03 18:41:50,754 epoch 3 - iter 224/281 - loss 0.08866345 - time (sec): 170.50 - samples/sec: 437.79 - lr: 0.000005 - momentum: 0.000000
+2026-11-03 18:42:12,127 epoch 3 - iter 252/281 - loss 0.08801091 - time (sec): 191.87 - samples/sec: 439.29 - lr: 0.000005 - momentum: 0.000000
+2026-11-03 18:42:32,897 epoch 3 - iter 280/281 - loss 0.08675092 - time (sec): 212.64 - samples/sec: 433.71 - lr: 0.000005 - momentum: 0.000000
+2026-11-03 18:42:33,158 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:42:33,159 EPOCH 3 done: loss 0.0867 - lr: 0.000005
+2026-11-03 18:43:18,399 DEV : loss 0.26683810353279114 - f1-score (micro avg)  0.8076
+2026-11-03 18:43:18,408 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:43:39,312 epoch 4 - iter 28/281 - loss 0.06707731 - time (sec): 20.90 - samples/sec: 463.58 - lr: 0.000005 - momentum: 0.000000
+2026-11-03 18:44:00,641 epoch 4 - iter 56/281 - loss 0.06020556 - time (sec): 42.23 - samples/sec: 436.71 - lr: 0.000005 - momentum: 0.000000
+2026-11-03 18:44:20,991 epoch 4 - iter 84/281 - loss 0.06386861 - time (sec): 62.58 - samples/sec: 417.15 - lr: 0.000005 - momentum: 0.000000
+2026-11-03 18:44:41,745 epoch 4 - iter 112/281 - loss 0.06611765 - time (sec): 83.34 - samples/sec: 426.15 - lr: 0.000005 - momentum: 0.000000
+2026-11-03 18:45:02,350 epoch 4 - iter 140/281 - loss 0.06788271 - time (sec): 103.94 - samples/sec: 426.57 - lr: 0.000005 - momentum: 0.000000
+2026-11-03 18:45:23,326 epoch 4 - iter 168/281 - loss 0.06728105 - time (sec): 124.92 - samples/sec: 425.76 - lr: 0.000005 - momentum: 0.000000
+2026-11-03 18:45:44,310 epoch 4 - iter 196/281 - loss 0.06649378 - time (sec): 145.90 - samples/sec: 436.67 - lr: 0.000005 - momentum: 0.000000
+2026-11-03 18:46:11,563 epoch 4 - iter 224/281 - loss 0.06726490 - time (sec): 173.15 - samples/sec: 432.29 - lr: 0.000005 - momentum: 0.000000
+2026-11-03 18:46:32,418 epoch 4 - iter 252/281 - loss 0.06646477 - time (sec): 194.01 - samples/sec: 431.46 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:46:53,249 epoch 4 - iter 280/281 - loss 0.06639900 - time (sec): 214.84 - samples/sec: 429.00 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:46:53,526 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:46:53,527 EPOCH 4 done: loss 0.0664 - lr: 0.000004
+2026-11-03 18:47:36,955 DEV : loss 0.30910351872444153 - f1-score (micro avg)  0.8202
+2026-11-03 18:47:36,965 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:47:57,855 epoch 5 - iter 28/281 - loss 0.05024963 - time (sec): 20.89 - samples/sec: 464.18 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:48:18,401 epoch 5 - iter 56/281 - loss 0.05506562 - time (sec): 41.43 - samples/sec: 427.00 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:48:38,652 epoch 5 - iter 84/281 - loss 0.05438050 - time (sec): 61.69 - samples/sec: 409.24 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:49:00,053 epoch 5 - iter 112/281 - loss 0.05261005 - time (sec): 83.09 - samples/sec: 423.28 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:49:21,131 epoch 5 - iter 140/281 - loss 0.05271273 - time (sec): 104.16 - samples/sec: 428.20 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:49:41,645 epoch 5 - iter 168/281 - loss 0.05215017 - time (sec): 124.68 - samples/sec: 422.44 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:50:02,851 epoch 5 - iter 196/281 - loss 0.05195593 - time (sec): 145.88 - samples/sec: 432.98 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:50:23,939 epoch 5 - iter 224/281 - loss 0.05223897 - time (sec): 166.97 - samples/sec: 434.54 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:50:48,637 epoch 5 - iter 252/281 - loss 0.05349072 - time (sec): 191.67 - samples/sec: 428.56 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:51:09,397 epoch 5 - iter 280/281 - loss 0.05275479 - time (sec): 212.43 - samples/sec: 433.96 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:51:09,659 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:51:09,660 EPOCH 5 done: loss 0.0527 - lr: 0.000004
+2026-11-03 18:51:56,020 DEV : loss 0.2857022285461426 - f1-score (micro avg)  0.8082
+2026-11-03 18:51:56,029 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:52:17,174 epoch 6 - iter 28/281 - loss 0.04727110 - time (sec): 21.14 - samples/sec: 438.91 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:52:38,203 epoch 6 - iter 56/281 - loss 0.04293778 - time (sec): 42.17 - samples/sec: 432.78 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:53:05,974 epoch 6 - iter 84/281 - loss 0.04477908 - time (sec): 69.94 - samples/sec: 420.14 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:53:27,305 epoch 6 - iter 112/281 - loss 0.04297163 - time (sec): 91.27 - samples/sec: 428.28 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:53:48,233 epoch 6 - iter 140/281 - loss 0.04192875 - time (sec): 112.20 - samples/sec: 426.18 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:54:09,909 epoch 6 - iter 168/281 - loss 0.04384404 - time (sec): 133.88 - samples/sec: 429.44 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:54:30,644 epoch 6 - iter 196/281 - loss 0.04420993 - time (sec): 154.61 - samples/sec: 431.99 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:54:51,674 epoch 6 - iter 224/281 - loss 0.04403045 - time (sec): 175.64 - samples/sec: 434.22 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:55:12,510 epoch 6 - iter 252/281 - loss 0.04332756 - time (sec): 196.48 - samples/sec: 432.40 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:55:32,962 epoch 6 - iter 280/281 - loss 0.04357198 - time (sec): 216.93 - samples/sec: 425.06 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:55:33,229 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:55:33,230 EPOCH 6 done: loss 0.0436 - lr: 0.000004
+2026-11-03 18:56:17,641 DEV : loss 0.3649326264858246 - f1-score (micro avg)  0.8131
+2026-11-03 18:56:17,652 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:56:41,092 epoch 7 - iter 28/281 - loss 0.03474432 - time (sec): 23.44 - samples/sec: 445.85 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:57:01,808 epoch 7 - iter 56/281 - loss 0.03607268 - time (sec): 44.15 - samples/sec: 417.15 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:57:22,478 epoch 7 - iter 84/281 - loss 0.03641844 - time (sec): 64.83 - samples/sec: 423.45 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:57:42,861 epoch 7 - iter 112/281 - loss 0.03728135 - time (sec): 85.21 - samples/sec: 418.96 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:58:04,305 epoch 7 - iter 140/281 - loss 0.03634829 - time (sec): 106.65 - samples/sec: 418.30 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:58:25,516 epoch 7 - iter 168/281 - loss 0.03768495 - time (sec): 127.86 - samples/sec: 423.26 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:58:47,149 epoch 7 - iter 196/281 - loss 0.03607010 - time (sec): 149.50 - samples/sec: 429.95 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:59:08,622 epoch 7 - iter 224/281 - loss 0.03607514 - time (sec): 170.97 - samples/sec: 429.99 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:59:29,435 epoch 7 - iter 252/281 - loss 0.03751834 - time (sec): 191.78 - samples/sec: 429.12 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:59:50,864 epoch 7 - iter 280/281 - loss 0.03628397 - time (sec): 213.21 - samples/sec: 432.42 - lr: 0.000004 - momentum: 0.000000
+2026-11-03 18:59:51,152 ----------------------------------------------------------------------------------------------------
+2026-11-03 18:59:51,153 EPOCH 7 done: loss 0.0363 - lr: 0.000004
+2026-11-03 19:00:37,325 DEV : loss 0.3867511749267578 - f1-score (micro avg)  0.8099
+2026-11-03 19:00:37,334 ----------------------------------------------------------------------------------------------------
+2026-11-03 19:00:37,336 Early stopping after epoch 7: 5 epochs without improvement.
+2026-11-03 19:00:37,336 ----------------------------------------------------------------------------------------------------
+2026-11-03 19:00:37,337 Saving model ...
+2026-11-03 19:00:41,516 Done.
+2026-11-03 19:00:41,516 Loading model from best epoch ...
+2026-11-03 19:00:54,415 SequenceTagger predicts: Dictionary with 24 tags: <unk>, O, S-ORG, S-MISC, B-PER, E-PER, S-LOC, B-ORG, E-ORG, I-PER, S-PER, B-MISC, I-MISC, E-MISC, I-ORG, B-LOC, E-LOC, I-LOC, <START>, <STOP>, S-DATE, B-DATE, E-DATE, I-DATE
+2026-11-03 19:00:55,045 Test data not provided setting final score to 0
