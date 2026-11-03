@@ -16,7 +16,7 @@ UI_DIR = HERE.parent / "ui"
 sys.path[:0] = [str(HERE), str(UI_DIR)]
 
 from geo_agent import AgentResponse, MapLayer, query_geo_agent
-from agent_avatar.georgory import avatar_payload, build_briefing, speakable
+from agent_avatar.georgory import BESIDE_MAP, DEFAULTS, ON_MAP, avatar_payload, build_briefing, speakable
 
 needs_hooks = pytest.mark.skipif(
     "from agent_avatar import georgory" not in (UI_DIR / "app.py").read_text(encoding="utf-8"),
@@ -150,6 +150,37 @@ class TestRender:
         georgory.render([], busy=False)
         assert calls[0]["hidden"] is True
 
+    def test_he_starts_hidden_and_beside_the_map(self):
+        assert DEFAULTS["georgory_on"] is False and DEFAULTS["georgory_place"] == BESIDE_MAP
+
+    @pytest.mark.parametrize("showing, place, narrowed, hidden", [
+        (True, BESIDE_MAP, True, False),
+        (True, ON_MAP, False, False),
+        (False, BESIDE_MAP, False, True),
+        (False, ON_MAP, False, True),
+    ])
+    def test_the_map_narrows_only_while_he_stands_beside_it(self, monkeypatch, showing, place, narrowed, hidden):
+        from agent_avatar import georgory
+        monkeypatch.setattr(georgory.st, "session_state", {"georgory_place": place})
+        css = georgory._placement_css(showing)
+        assert ("margin-left" in css) is narrowed
+        assert ("visibility: hidden" in css) is hidden
+
+    def test_hiding_him_keeps_settings_whose_widgets_are_not_drawn(self, monkeypatch):
+        from agent_avatar import georgory
+        state = type("S", (dict,), {"__getattr__": dict.__getitem__})(georgory_mode="Full answer")
+        monkeypatch.setattr(georgory.st, "session_state", state)
+        for name in ("subheader", "toggle", "radio", "markdown"):
+            monkeypatch.setattr(georgory.st, name, lambda *a, **k: None)
+        georgory.sidebar()
+        assert state["georgory_mode"] == "Full answer" and state["georgory_on"] is False
+
+    def test_every_setting_rests_during_an_answer(self):
+        """A rerun during an answer would ask the agent twice."""
+        from agent_avatar.georgory import _BUSY_CSS
+        for name in DEFAULTS:
+            assert f".st-key-{name}" in _BUSY_CSS
+
     def test_the_chat_button_flips_him(self, monkeypatch):
         from agent_avatar import georgory
         state = {"georgory_on": True}
@@ -199,10 +230,11 @@ class TestAppIntegration:
         assert 'returned_objects=["last_clicked", "last_active_drawing", "all_drawings"]' in code
 
     def test_iframe_size_rule_outranks_the_apps_map_column_rule(self):
-        from agent_avatar.georgory import _CSS
+        from agent_avatar.georgory import _BESIDE_CSS, _CSS
         code = (UI_DIR / "app.py").read_text(encoding="utf-8")
         assert 'div[data-testid="stMainBlockContainer"] div[data-testid="stColumn"]:last-child iframe' in code
-        assert 'div[data-testid="stMainBlockContainer"] div[data-testid="stColumn"]:last-child .st-key-georgory_pip iframe' in _CSS
+        for css in (_CSS, _BESIDE_CSS):
+            assert 'div[data-testid="stMainBlockContainer"] div[data-testid="stColumn"]:last-child .st-key-georgory_pip iframe' in css
 
     def test_frontend_never_injects_text_as_html_and_takes_no_outside_commands(self):
         html = (HERE / "agent_avatar" / "frontend" / "index.html").read_text(encoding="utf-8")

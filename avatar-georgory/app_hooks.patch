@@ -40,7 +40,7 @@ index d6e3569..1ac7191 100644
      # Attach trash bin hook to integrate Leaflet Draw's trash icon with GeoAI selection removal
      MapTrashBinHook().add_to(m)
  
-+    # Agent Geo-rgory floats over the map's corner and takes no layout space
++    # Agent Geo-rgory: hidden until his button is clicked, then beside the map or over its left edge
 +    if georgory:
 +        georgory.render(st.session_state.messages, busy=bool(st.session_state.get("pending_query")))
 +

@@ -8,8 +8,9 @@ Turns an agent answer into a spoken briefing for the avatar:
 - long answers are cut to a short briefing (``"Brief"`` narration); the full text stays
   in the chat.
 
-``app.py`` calls three things, each guarded so the avatar can never break the app:
-``avatar_payload()`` (stored on each assistant message), ``sidebar()`` and ``render()``.
+``app.py`` calls four things, each guarded so the avatar can never break the app:
+``avatar_payload()`` (stored on each assistant message), ``sidebar()``, ``render()`` and
+``chat_button()``.
 """
 from __future__ import annotations
 
@@ -42,9 +43,13 @@ THEME = {
     "--bg-2": "#0f1a24",
 }
 
-# Sidebar settings. CUSTOMIZE: set "georgory_on" to False to ship him switched off by default.
+# Where he can stand. Beside the map, the map narrows while he is showing.
+BESIDE_MAP, ON_MAP = "Beside the map", "On the map"
+
+# Sidebar settings. CUSTOMIZE: set "georgory_on" to True to have him showing from the start.
 DEFAULTS = {
-    "georgory_on": True,          # show the avatar over the map
+    "georgory_on": False,         # hidden until his button is clicked
+    "georgory_place": BESIDE_MAP,
     "georgory_mode": "Brief",     # "Brief" speaks ~3 sentences; "Full answer" speaks everything
     "georgory_tour": True,        # fly the map to each pin he names
     "georgory_pitch": 0.62,
@@ -54,6 +59,7 @@ DEFAULTS = {
 
 PIP_KEY = "georgory_pip"
 PIP_WIDTH, PIP_HEIGHT = 236, 300
+BESIDE_WIDTH, BESIDE_GAP = 210, 10
 TOGGLE_KEY = "georgory_toggle"
 MAX_TOUR = 10          # the agent contract gives at most 10 primary places per answer
 BRIEF_CHARS = 520      # brief mode speaks about this much of the answer
@@ -85,6 +91,28 @@ _CSS = f"""<style>
 </style>"""
 
 _HIDDEN_CSS = f"<style>.st-key-{PIP_KEY} {{ visibility: hidden; }}</style>"
+
+# Beside the map: a strip of the map's height down the column's left side, with the map narrowed to make
+# room. Only CSS changes, so neither iframe reloads. The app stretches every folium wrapper to 100%,
+# which is why the map rule is !important and scoped to his column.
+_BESIDE_CSS = f"""<style>
+    .st-key-{PIP_KEY} {{
+        left: 0;
+        bottom: 0;
+        width: {BESIDE_WIDTH}px !important;
+        filter: none;
+    }}
+    div[data-testid="stMainBlockContainer"] div[data-testid="stColumn"]:last-child .st-key-{PIP_KEY} iframe {{
+        height: calc(100vh - 90px) !important;
+        min-height: 480px !important;
+        max-height: calc(100vh - 90px) !important;
+        border-radius: 4px !important;
+    }}
+    div[data-testid="stColumn"]:has(.st-key-{PIP_KEY}) div[data-testid="stElementContainer"]:has(iframe[title*="folium"]) {{
+        width: calc(100% - {BESIDE_WIDTH + BESIDE_GAP}px) !important;
+        margin-left: {BESIDE_WIDTH + BESIDE_GAP}px;
+    }}
+</style>"""
 
 # His face for the chat-box button, drawn from the avatar's own hat, lenses and mustache (a CSS mask, so
 # it takes the button's color). The second one has a slash through it, for when he is hidden.
@@ -138,11 +166,13 @@ _BUTTON_CSS = """<style>
     }
 </style>"""
 
-# A click reruns the script, which would interrupt a running question and ask the agent again, so both
-# switches rest while the agent answers. Gated on the script state: a failed query can't leave them stuck.
+# A click reruns the script, which would interrupt a running question and ask the agent again, so his
+# button and settings rest while the agent answers. Gated on the script state: a failed query can't leave
+# them stuck.
 _BUSY_CSS = """<style>
-    [data-testid="stApp"][data-test-script-state="running"] .st-key-TOGGLE button,
-    [data-testid="stApp"][data-test-script-state="running"] .st-key-georgory_on {
+    [data-testid="stApp"][data-test-script-state="running"] :is(.st-key-TOGGLE button, .st-key-georgory_on,
+        .st-key-georgory_place, .st-key-georgory_mode, .st-key-georgory_tour, .st-key-georgory_pitch,
+        .st-key-georgory_rate, .st-key-georgory_accent) {
         opacity: .45;
         pointer-events: none;
     }
@@ -387,12 +417,16 @@ def _setting(name: str) -> Any:
 
 
 def sidebar() -> None:
-    """The sidebar section. Hidden widgets lose their state, so defaults are restored on every run."""
+    """The sidebar section. Streamlit drops the state of a widget that isn't drawn, so each setting is
+    written back on every run: hiding him must not reset the narration or voice.
+    """
     for name, value in DEFAULTS.items():
-        st.session_state.setdefault(name, value)
+        st.session_state[name] = st.session_state.get(name, value)
     st.subheader("🕵️ Agent Geo-rgory")
     st.toggle("Show Agent Geo-rgory", key="georgory_on",
-              help="A talking agent in the map's corner who reads each answer aloud and points at the places on the map.")
+              help="A talking agent who reads each answer aloud and points at the places on the map.")
+    st.radio("Where he stands", [BESIDE_MAP, ON_MAP], key="georgory_place", horizontal=True,
+             help="Beside the map: the map narrows while he is showing. On the map: he covers its left edge.")
     if st.session_state.georgory_on:
         st.radio("Narration", ["Brief", "Full answer"], key="georgory_mode", horizontal=True,
                  help="Brief: the first few sentences and the main places. The full text is always in the chat.")
@@ -478,17 +512,23 @@ def _button_css(showing: bool, busy: bool) -> str:
     return css + _BUSY_CSS.replace("TOGGLE", TOGGLE_KEY) if busy else css
 
 
+def _placement_css(showing: bool) -> str:
+    if not showing:
+        return _CSS + _HIDDEN_CSS
+    return _CSS + _BESIDE_CSS if _setting("georgory_place") == BESIDE_MAP else _CSS
+
+
 def render(messages: Sequence[Mapping[str, Any]], *, busy: bool = False) -> None:
     """Render the avatar for the latest answer (or his introduction). Call it on every run.
 
-    He stays mounted while hidden: the map keeps its position and doesn't reload, and the browser's
+    He stays mounted while hidden: the map gets its full width back without reloading, and the browser's
     audio unlock survives, so he can answer as soon as he reappears. Any failure in here is logged
     and costs only the avatar.
     """
     with st.container(key=PIP_KEY):
         try:
             showing = _setting("georgory_on")
-            st.markdown((_CSS if showing else _CSS + _HIDDEN_CSS) + _button_css(showing, busy), unsafe_allow_html=True)
+            st.markdown(_placement_css(showing) + _button_css(showing, busy), unsafe_allow_html=True)
             st.html(_ASK_SCRIPT, unsafe_allow_javascript=True)
             _speak_latest(messages, busy, hidden=not showing)
         except Exception as err:
