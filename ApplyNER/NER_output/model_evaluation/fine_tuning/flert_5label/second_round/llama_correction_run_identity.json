@@ -1,8 +1,0 @@
-{
-  "version": "flertdate_v2_llama_edits_v1",
-  "model": "AtlaAI/Selene-1-Mini-Llama-3.1-8B",
-  "requests_sha256": "9f332c05d665ea18b3938f8e1bd804df1812569c5304fe7424d831268c771400",
-  "system_prompt_sha256": "652d426e9a004479911d97227811558576dc5f035e8af291b8680d687bada302",
-  "max_input_tokens": 6000,
-  "max_new_tokens": 768
-}
