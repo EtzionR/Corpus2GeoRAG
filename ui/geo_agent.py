@@ -22,6 +22,7 @@ import os
 import sys
 import logging
 import functools
+import concurrent.futures
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -33,6 +34,7 @@ __all__ = [
     "AgentResponse",
     "to_bounding_box",
     "get_source_text",
+    "extract_answer_subgraph",
     "get_agent_env_path",
     "persist_openrouter_api_key",
     "query_geo_agent",
@@ -59,6 +61,8 @@ _potential_agent_dirs = [
     _current_dir.parent,                                          # AgentRag/ui_mvp: the agent is the parent folder
     _current_dir / "AgentRag",                                    # Local vendored copy
     _current_dir.parent / "Corpus2GeoRAG" / "AgentRag",           # Sibling project directory
+    _current_dir.parent.parent / "Corpus2GeoRAG" / "AgentRag",    # Sibling repository from nested sandbox or ui subfolder
+    _current_dir.parent.parent / "AgentRag",                      # Parent root from nested subfolder
 ]
 if "AGENT_RAG_PATH" in os.environ:
     _potential_agent_dirs.insert(0, Path(os.environ["AGENT_RAG_PATH"]))
@@ -184,6 +188,7 @@ class AgentResponse:
     follow_ups: List[str] = field(default_factory=list)
     regions: Any = field(default_factory=list)
     did_you_mean: Any = field(default_factory=list)
+    subgraph: Dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self):
         if not self.answer_plain:
@@ -296,6 +301,548 @@ def get_source_text(pointer: str) -> Optional[Dict[str, Any]]:
     return None
 
 
+def extract_answer_subgraph(
+    response_or_msg: Optional[Any] = None,
+    *,
+    raw_response: Optional[Dict[str, Any]] = None,
+    sources: Optional[List[str]] = None,
+    citations: Optional[List[Dict[str, Any]]] = None,
+    layers: Optional[List[Any]] = None,
+    regions: Optional[Any] = None,
+    answer_text: Optional[str] = None,
+    nx_graph: Optional[Any] = None,
+) -> Dict[str, Any]:
+    """
+    Extract an induced knowledge subgraph (nodes and edges) containing strictly the
+    locations (LOC), organizations (ORG), persons (PER), and source passages (TEXT)
+    that grounded a specific RAG answer.
+
+    Returns:
+        Dict[str, Any]: {"nodes": [...], "edges": [...]}
+    """
+    if isinstance(response_or_msg, AgentResponse):
+        raw_response = raw_response if raw_response is not None else (response_or_msg.raw_response or {})
+        sources = sources if sources is not None else list(response_or_msg.sources or [])
+        citations = citations if citations is not None else list(response_or_msg.citations or [])
+        layers = layers if layers is not None else list(response_or_msg.layers or [])
+        regions = regions if regions is not None else response_or_msg.regions
+        answer_text = answer_text if answer_text is not None else (response_or_msg.answer_plain or response_or_msg.answer or "")
+    elif isinstance(response_or_msg, dict):
+        if "subgraph" in response_or_msg and isinstance(response_or_msg["subgraph"], dict):
+            existing = response_or_msg["subgraph"]
+            if existing.get("nodes"):
+                return existing
+        raw_response = raw_response if raw_response is not None else (response_or_msg.get("raw_response") or response_or_msg)
+        sources = sources if sources is not None else list(response_or_msg.get("sources") or [])
+        citations = citations if citations is not None else list(response_or_msg.get("citations") or [])
+        layers = layers if layers is not None else list(response_or_msg.get("layers") or [])
+        regions = regions if regions is not None else response_or_msg.get("regions")
+        answer_text = (
+            answer_text
+            if answer_text is not None
+            else (
+                response_or_msg.get("content_plain")
+                or response_or_msg.get("answer_plain")
+                or response_or_msg.get("content")
+                or response_or_msg.get("answer")
+                or ""
+            )
+        )
+
+    raw_response = raw_response if isinstance(raw_response, dict) else {}
+    sources = list(sources or raw_response.get("sources") or [])
+    citations = list(citations or raw_response.get("citations") or [])
+    layers = list(layers or [])
+    regions = regions if regions is not None else raw_response.get("regions")
+    answer_text = str(answer_text or raw_response.get("answer_plain") or raw_response.get("answer") or "")
+
+    nodes_by_id: Dict[str, Dict[str, Any]] = {}
+    edges_by_key: Dict[Tuple[str, str, str], Dict[str, Any]] = {}
+
+    def _add_node(
+        node_id: str,
+        label: str,
+        ntype: str,
+        role: str = "entity",
+        subtitle: str = "",
+        summary: str = "",
+        evidence: str = "",
+        pin_number: Optional[int] = None,
+    ) -> None:
+        nid = str(node_id).strip()
+        if not nid:
+            return
+        if nid in nodes_by_id:
+            existing = nodes_by_id[nid]
+            if pin_number is not None and existing.get("pin_number") is None:
+                existing["pin_number"] = pin_number
+                existing["label"] = label
+            if role == "primary" and existing.get("role") != "primary":
+                existing["role"] = "primary"
+            if subtitle and not existing.get("subtitle"):
+                existing["subtitle"] = subtitle
+            if summary and not existing.get("summary"):
+                existing["summary"] = summary
+            if evidence and not existing.get("evidence"):
+                existing["evidence"] = evidence
+            return
+        nodes_by_id[nid] = {
+            "id": nid,
+            "label": str(label or nid),
+            "type": ntype if ntype in ("LOC", "ORG", "PER", "TEXT") else "LOC",
+            "role": role,
+            "subtitle": str(subtitle or ""),
+            "summary": str(summary or ""),
+            "evidence": str(evidence or ""),
+            "pin_number": pin_number,
+        }
+
+    def _add_edge(u: str, v: str, label: str, kind: str = "relation") -> None:
+        u_id, v_id = str(u).strip(), str(v).strip()
+        if not u_id or not v_id or u_id == v_id:
+            return
+        lbl = str(label or "related").strip()
+        # Avoid duplicate undirected pairs with identical label
+        rev_key = (v_id, u_id, lbl)
+        if rev_key in edges_by_key and kind != "hierarchy":
+            return
+        key = (u_id, v_id, lbl)
+        if key not in edges_by_key:
+            edges_by_key[key] = {
+                "from": u_id,
+                "to": v_id,
+                "label": lbl,
+                "kind": kind,
+            }
+
+    # 1. Build citation lookup and active TEXT_* pointers
+    tag_by_ptr: Dict[str, str] = {}
+    cit_by_ptr: Dict[str, Dict[str, Any]] = {}
+    for c in citations:
+        if isinstance(c, dict) and c.get("pointer"):
+            ptr = str(c["pointer"])
+            cit_by_ptr[ptr] = c
+            if c.get("id"):
+                tag_by_ptr[ptr] = str(c["id"])
+
+    active_text_ptrs: List[str] = []
+    seen_ptrs = set()
+    for ptr in sources:
+        if isinstance(ptr, str) and ptr.startswith("TEXT_") and ptr not in seen_ptrs:
+            seen_ptrs.add(ptr)
+            active_text_ptrs.append(ptr)
+            if len(active_text_ptrs) >= 12:
+                break
+
+    for c in citations:
+        if isinstance(c, dict):
+            ptr = c.get("pointer")
+            if isinstance(ptr, str) and ptr.startswith("TEXT_") and ptr not in seen_ptrs and len(active_text_ptrs) < 12:
+                seen_ptrs.add(ptr)
+                active_text_ptrs.append(ptr)
+
+    # 2. Extract LOC nodes from geo_locations (capped to keep subgraph legible)
+    geo_locs = [loc for loc in (raw_response.get("geo_locations") or []) if isinstance(loc, dict)]
+
+    # 2a. Session-state recovery if response_or_msg was an unhydrated message dictionary
+    if not geo_locs:
+        try:
+            import streamlit as _st
+            for turn in reversed(_st.session_state.get("agent_turns", [])):
+                resp_d = (turn.get("response") or {}) if isinstance(turn, dict) else {}
+                if resp_d.get("geo_locations"):
+                    t_sources = set(resp_d.get("sources", []))
+                    if not sources or (t_sources & set(sources)):
+                        geo_locs = resp_d.get("geo_locations") or []
+                        raw_response = resp_d
+                        break
+            if not geo_locs:
+                for log_e in reversed(_st.session_state.get("rag_logs", [])):
+                    resp_d = (log_e.get("raw_response") or {}) if isinstance(log_e, dict) else {}
+                    if resp_d.get("geo_locations"):
+                        t_sources = set(resp_d.get("sources", []))
+                        if not sources or (t_sources & set(sources)):
+                            geo_locs = resp_d.get("geo_locations") or []
+                            raw_response = resp_d
+                            break
+        except Exception:
+            pass
+
+    primary_locs = [loc for loc in geo_locs if loc.get("role", "primary") != "context"]
+    context_locs = [loc for loc in geo_locs if loc.get("role") == "context"]
+    selected_locs = primary_locs[:12] + context_locs[: max(0, min(6, 14 - len(primary_locs[:12])))]
+
+    loc_id_by_pin: Dict[int, str] = {}
+    loc_sources_map: Dict[str, List[str]] = {}
+
+    for loc in selected_locs:
+        loc_id = str(loc.get("id") or loc.get("name") or loc.get("label") or "").strip()
+        if not loc_id:
+            continue
+        loc_label = str(loc.get("label") or loc.get("name") or loc_id).strip()
+        pin_num = loc.get("number")
+        role = str(loc.get("role") or "primary")
+        kind = str(loc.get("kind") or "place")
+        why = str(loc.get("why") or "").strip()
+        uncertain = loc.get("uncertain")
+
+        geom = loc.get("geometry") if isinstance(loc.get("geometry"), dict) else {}
+        coords = geom.get("coordinates") if isinstance(geom.get("coordinates"), (list, tuple)) else []
+        coord_str = ""
+        if len(coords) >= 2:
+            try:
+                coord_str = f"{float(coords[1]):.4f}° N, {float(coords[0]):.4f}° E"
+            except (TypeError, ValueError):
+                coord_str = ""
+        elif "lat" in loc and ("lng" in loc or "lon" in loc):
+            try:
+                lat_v = float(loc["lat"])
+                lon_v = float(loc.get("lng", loc.get("lon")))
+                coord_str = f"{lat_v:.4f}° N, {lon_v:.4f}° E"
+            except (TypeError, ValueError):
+                coord_str = ""
+
+        disp_label = f"#{pin_num} {loc_label}" if pin_num is not None else loc_label
+        subtitle_parts = [p for p in [coord_str, f"{kind.upper()} ({role})"] if p]
+        loc_srcs = [s for s in (loc.get("sources") or []) if isinstance(s, str)]
+        loc_sources_map[loc_id] = loc_srcs
+
+        for s_idx, s_ptr in enumerate(loc_srcs[:3]):
+            if s_ptr.startswith("TEXT_"):
+                if s_ptr not in tag_by_ptr:
+                    tag_by_ptr[s_ptr] = f"P{pin_num}-S{s_idx + 1}" if pin_num is not None else f"S{len(tag_by_ptr) + 1}"
+                if s_ptr not in seen_ptrs and len(active_text_ptrs) < 12:
+                    seen_ptrs.add(s_ptr)
+                    active_text_ptrs.append(s_ptr)
+
+        summary_str = f"{'Primary focal' if role != 'context' else 'Context'} {kind} node in the answer."
+        if uncertain:
+            summary_str += f" (Uncertain: {uncertain})"
+        evidence_str = why if why else (
+            f"Grounded by {len(loc_srcs)} source passage(s)." if loc_srcs else "Identified in spatial query response."
+        )
+
+        _add_node(
+            node_id=loc_id,
+            label=disp_label,
+            ntype="LOC",
+            role="primary" if role != "context" else "context",
+            subtitle=" • ".join(subtitle_parts),
+            summary=summary_str,
+            evidence=evidence_str,
+            pin_number=pin_num if isinstance(pin_num, int) else None,
+        )
+        if isinstance(pin_num, int):
+            loc_id_by_pin[pin_num] = loc_id
+
+    # 2b. Extract cited locations from citations if geo_locations was sparse
+    for c in citations:
+        if isinstance(c, dict) and c.get("place_label"):
+            p_lbl = str(c["place_label"]).strip()
+            p_num = c.get("place_number")
+            if p_lbl and p_lbl not in nodes_by_id:
+                disp_lbl = f"#{p_num} {p_lbl}" if p_num is not None else p_lbl
+                _add_node(
+                    node_id=p_lbl,
+                    label=disp_lbl,
+                    ntype="LOC",
+                    role="primary",
+                    subtitle="Cited Place",
+                    summary=f"Location cited in answer evidence ({f'Pin #{p_num}' if p_num is not None else ''}).",
+                    evidence=f"Grounds citation [{c.get('id', '')}].",
+                    pin_number=p_num if isinstance(p_num, int) else None,
+                )
+                if isinstance(p_num, int):
+                    loc_id_by_pin[p_num] = p_lbl
+
+    # Fallback to MapLayer markers if geo_locations was empty (e.g. Mock mode)
+    if not nodes_by_id and layers:
+        for idx, ly in enumerate(layers):
+            l_type = getattr(ly, "layer_type", None) or (ly.get("layer_type") if isinstance(ly, dict) else None)
+            l_name = getattr(ly, "name", None) or (ly.get("name") if isinstance(ly, dict) else f"Layer {idx + 1}")
+            l_data = getattr(ly, "data", None) or (ly.get("data") if isinstance(ly, dict) else {})
+            l_tooltip = getattr(ly, "tooltip", "") or (ly.get("tooltip", "") if isinstance(ly, dict) else "")
+            if not isinstance(l_data, dict):
+                continue
+            if l_type == "marker" and "lat" in l_data and "lng" in l_data:
+                role = str(l_data.get("role") or "primary")
+                lat_v, lng_v = float(l_data["lat"]), float(l_data["lng"])
+                nid = str(l_data.get("id") or l_name)
+                _add_node(
+                    node_id=nid,
+                    label=str(l_name),
+                    ntype="LOC",
+                    role="context" if role == "context" else "primary",
+                    subtitle=f"{lat_v:.4f}° N, {lng_v:.4f}° E",
+                    summary=f"Spatial marker layer ({role}).",
+                    evidence=str(l_tooltip or f"Plotted at ({lat_v:.4f}°, {lng_v:.4f}°)."),
+                    pin_number=l_data.get("number"),
+                )
+
+    # 3. Extract regional hierarchy (INSIDE edges) from `regions`
+    if isinstance(regions, list):
+        for reg in regions[:6]:
+            if not isinstance(reg, dict) or not reg.get("id"):
+                continue
+            r_id = str(reg["id"])
+            r_type = str(reg.get("place_type") or "region")
+            r_cnt = reg.get("count", 0)
+            r_places = [p for p in (reg.get("places") or []) if isinstance(p, int)]
+            children = [c for c in (reg.get("children") or []) if isinstance(c, dict) and c.get("id")]
+
+            # Include region if it contains any displayed pin, if few regions exist, or if no LOC nodes exist yet
+            has_matched_pin = any(p in loc_id_by_pin for p in r_places) or any(
+                any(cp in loc_id_by_pin for cp in (c.get("places") or [])) for c in children
+            )
+            has_other_locs = any(nd["type"] == "LOC" and nd["role"] != "region" for nd in nodes_by_id.values())
+            if not has_matched_pin and len(regions) > 4 and has_other_locs:
+                continue
+
+            _add_node(
+                node_id=r_id,
+                label=r_id,
+                ntype="LOC",
+                role="region",
+                subtitle=f" Hierarchy ({r_type.upper()})",
+                summary=f"Administrative parent region containing {r_cnt} place(s) in this result.",
+                evidence=f"Regional container for pins: {', '.join(f'#{p}' for p in r_places[:8])}" if r_places else "Administrative container.",
+            )
+            child_covered_pins = set()
+            for child in children[:6]:
+                c_id = str(child["id"])
+                c_type = str(child.get("place_type") or "region")
+                c_cnt = child.get("count", 0)
+                c_places = [p for p in (child.get("places") or []) if isinstance(p, int)]
+                if not any(p in loc_id_by_pin for p in c_places) and len(children) > 3:
+                    continue
+                _add_node(
+                    node_id=c_id,
+                    label=c_id,
+                    ntype="LOC",
+                    role="region",
+                    subtitle=f"Hierarchy ({c_type.upper()})",
+                    summary=f"Sub-region inside {r_id} ({c_cnt} place(s)).",
+                    evidence=f"Contains pins: {', '.join(f'#{p}' for p in c_places[:8])}" if c_places else f"Part of {r_id}.",
+                )
+                _add_edge(c_id, r_id, "INSIDE", kind="hierarchy")
+                for p_num in c_places:
+                    if p_num in loc_id_by_pin:
+                        child_covered_pins.add(p_num)
+                        _add_edge(loc_id_by_pin[p_num], c_id, "INSIDE", kind="hierarchy")
+
+            for p_num in r_places:
+                if p_num in loc_id_by_pin and p_num not in child_covered_pins:
+                    _add_edge(loc_id_by_pin[p_num], r_id, "INSIDE", kind="hierarchy")
+
+    # 4. Enrich with in-memory NetworkX knowledge graph (if loaded)
+    active_text_ids = set()
+    for ptr in active_text_ptrs:
+        tid_str = ptr.removeprefix("TEXT_")
+        if tid_str.isdigit():
+            active_text_ids.add(int(tid_str))
+
+    G = nx_graph
+    if G is None:
+        georag_mod = sys.modules.get("georag_agent")
+        gi = getattr(georag_mod, "_graph", None) if georag_mod is not None else None
+        if gi is not None and hasattr(gi, "G"):
+            G = gi.G
+
+    if G is not None:
+        try:
+            current_loc_ids = [nid for nid, nd in list(nodes_by_id.items()) if nd["type"] == "LOC"]
+            ans_lower = answer_text.lower()
+            added_entities = 0
+
+            # 4a. Check direct edges between already-selected LOC nodes and their INSIDE parents or co-cited entities
+            for loc_id in current_loc_ids:
+                if loc_id not in G:
+                    continue
+                for nbr in G.neighbors(loc_id):
+                    nbr_data = G.nodes[nbr]
+                    nbr_type = nbr_data.get("type")
+                    if nbr_type == "TEXT":
+                        continue
+                    edge_data = G[loc_id][nbr]
+                    rels = edge_data.get("relations") or {}
+
+                    # Check INSIDE parent in graph
+                    if "INSIDE" in rels:
+                        for r_rec in rels["INSIDE"]:
+                            if isinstance(r_rec, dict) and r_rec.get("subject") == loc_id:
+                                if nbr not in nodes_by_id and len(nodes_by_id) < 28:
+                                    _add_node(
+                                        node_id=nbr,
+                                        label=nbr,
+                                        ntype="LOC",
+                                        role="region",
+                                        subtitle=str(nbr_data.get("place_type") or "region").upper(),
+                                        summary=f"Administrative parent of {loc_id} in the knowledge graph.",
+                                        evidence=f"{loc_id} is located INSIDE {nbr}.",
+                                    )
+                                if nbr in nodes_by_id:
+                                    _add_edge(loc_id, nbr, "INSIDE", kind="hierarchy")
+
+                    # Check semantic relations backed by the answer's TEXT_ paragraphs (or between two selected nodes)
+                    for rel_name, recs in rels.items():
+                        if rel_name == "INSIDE" or not isinstance(recs, list):
+                            continue
+                        matched_recs = [
+                            r for r in recs
+                            if isinstance(r, dict) and (
+                                r.get("text_id") in active_text_ids
+                                or (not active_text_ids and len(str(nbr)) >= 3 and str(nbr).lower() in ans_lower)
+                            )
+                        ]
+                        if matched_recs or nbr in nodes_by_id:
+                            if nbr not in nodes_by_id:
+                                if added_entities >= 10:
+                                    continue
+                                added_entities += 1
+                                sample_rec = matched_recs[0] if matched_recs else (recs[0] if recs else {})
+                                ev_tid = sample_rec.get("text_id")
+                                ev_ptr = f"TEXT_{ev_tid}" if ev_tid is not None else ""
+                                _add_node(
+                                    node_id=nbr,
+                                    label=nbr,
+                                    ntype=nbr_type if nbr_type in ("PER", "ORG", "LOC") else "ORG",
+                                    role="entity",
+                                    subtitle=f"{nbr_type or 'ENTITY'} Node",
+                                    summary=f"Connected to {loc_id} via '{rel_name}' relation in the knowledge graph.",
+                                    evidence=f"Relation: {sample_rec.get('subject', nbr)} —[{rel_name}]→ {sample_rec.get('object', loc_id)}"
+                                    + (f" ({ev_ptr})" if ev_ptr else ""),
+                                )
+                            if nbr in nodes_by_id:
+                                sample_rec = matched_recs[0] if matched_recs else (recs[0] if recs else {})
+                                subj = sample_rec.get("subject") if isinstance(sample_rec, dict) else None
+                                if subj == nbr:
+                                    _add_edge(nbr, loc_id, rel_name, kind="relation")
+                                else:
+                                    _add_edge(loc_id, nbr, rel_name, kind="relation")
+                                for mr in matched_recs[:2]:
+                                    mtid = mr.get("text_id")
+                                    mptr = f"TEXT_{mtid}" if mtid is not None else ""
+                                    if mptr and mptr in seen_ptrs:
+                                        tag = tag_by_ptr.get(mptr, mptr)
+                                        _add_edge(nbr, mptr, f"cited_in [{tag}]", kind="provenance")
+
+            # 4b. Check PER / ORG entities linked to the answer's TEXT_ nodes and mentioned in the answer text
+            if ans_lower and added_entities < 10:
+                for ptr in active_text_ptrs:
+                    if ptr not in G:
+                        continue
+                    tag = tag_by_ptr.get(ptr, ptr)
+                    for nbr in G.neighbors(ptr):
+                        if added_entities >= 10:
+                            break
+                        nbr_data = G.nodes[nbr]
+                        nbr_type = nbr_data.get("type")
+                        if nbr_type in ("PER", "ORG") and len(str(nbr)) >= 3 and str(nbr).lower() in ans_lower:
+                            if nbr not in nodes_by_id:
+                                added_entities += 1
+                                _add_node(
+                                    node_id=nbr,
+                                    label=nbr,
+                                    ntype=nbr_type,
+                                    role="entity",
+                                    subtitle=f"{'Person (PER)' if nbr_type == 'PER' else 'Organization (ORG)'}",
+                                    summary=f"Entity mentioned in the answer and grounded in [{tag}] ({ptr}).",
+                                    evidence=f"Co-mentioned in paragraph {ptr}.",
+                                )
+                            _add_edge(nbr, ptr, f"cited_in [{tag}]", kind="provenance")
+                            # Link to any existing nodes in our subgraph that share an edge in G
+                            for existing_id in list(nodes_by_id.keys()):
+                                if existing_id != nbr and existing_id != ptr and G.has_edge(nbr, existing_id):
+                                    rels = G[nbr][existing_id].get("relations") or {}
+                                    rel_lbl = next((k for k in rels.keys() if k != "INSIDE"), "co_mentioned")
+                                    _add_edge(nbr, existing_id, rel_lbl, kind="relation")
+        except Exception as exc:
+            logger.debug("Subgraph enrichment from NetworkX G skipped: %s", exc)
+
+    # 5. Add TEXT_* source passage nodes and provenance edges
+    for s_idx, ptr in enumerate(active_text_ptrs):
+        tag = tag_by_ptr.get(ptr) or f"S{s_idx + 1}"
+        cit = cit_by_ptr.get(ptr, {})
+        passage = get_source_text(ptr) or {}
+        doc_title = str(passage.get("document") or cit.get("article") or ptr).replace("\ufffd", " - ").strip()
+        sec_title = str(passage.get("section") or cit.get("section") or "").replace("\ufffd", " - ").strip()
+        raw_txt = str(passage.get("text") or "").strip()
+        snippet = (raw_txt[:240] + "...") if len(raw_txt) > 240 else (
+            raw_txt or f"Verbatim corpus source passage {ptr} from '{doc_title}'."
+        )
+        short_doc = (doc_title[:20] + "…") if len(doc_title) > 21 else doc_title
+
+        _add_node(
+            node_id=ptr,
+            label=f"[{tag}] {short_doc}",
+            ntype="TEXT",
+            role="source",
+            subtitle=f"{ptr}" + (f" • § {sec_title}" if sec_title else ""),
+            summary=f"Source passage [{tag}] from article '{doc_title}'" + (f" ({sec_title})" if sec_title else ""),
+            evidence=snippet,
+        )
+
+        # Link from citation place_number / place_label if specified
+        linked_any = False
+        p_num = cit.get("place_number")
+        if isinstance(p_num, int) and p_num in loc_id_by_pin:
+            _add_edge(loc_id_by_pin[p_num], ptr, f"cited_in [{tag}]", kind="provenance")
+            linked_any = True
+
+        # Link from any selected LOC whose sources list includes ptr
+        for loc_id, l_srcs in loc_sources_map.items():
+            if ptr in l_srcs and loc_id in nodes_by_id:
+                _add_edge(loc_id, ptr, f"cited_in [{tag}]", kind="provenance")
+                linked_any = True
+
+        # Link from G if available
+        if G is not None and ptr in G:
+            for existing_id, nd in list(nodes_by_id.items()):
+                if nd["type"] != "TEXT" and existing_id in G and G.has_edge(existing_id, ptr):
+                    _add_edge(existing_id, ptr, f"cited_in [{tag}]", kind="provenance")
+                    linked_any = True
+
+        # If this TEXT_ pointer is a general citation ([S1], [L1]) not yet tied to a specific pin, link to primary LOC(s)
+        if not linked_any:
+            prim_ids = [nid for nid, nd in nodes_by_id.items() if nd["type"] == "LOC" and nd["role"] == "primary"]
+            for pid in prim_ids[:3]:
+                _add_edge(pid, ptr, f"cited_in [{tag}]", kind="provenance")
+
+    # 6. Ensure cohesive connectivity for Mock Mode / standalone spatial scans
+    loc_nodes = [nid for nid, nd in nodes_by_id.items() if nd["type"] == "LOC"]
+    text_nodes = [nid for nid, nd in nodes_by_id.items() if nd["type"] == "TEXT"]
+    if loc_nodes and not edges_by_key:
+        # Synthesize a grounding source node & operational hub if in Offline Mock mode
+        synth_src_id = sources[0] if sources else "TEXT_MOCK_KB"
+        if synth_src_id not in nodes_by_id:
+            _add_node(
+                node_id=synth_src_id,
+                label="[S1] Spatial KB Feed",
+                ntype="TEXT",
+                role="source",
+                subtitle="GeoAI Tactical Knowledge Base",
+                summary="Grounding spatial intelligence record for this query.",
+                evidence=answer_text[:220] + ("..." if len(answer_text) > 220 else ""),
+            )
+        for lid in loc_nodes:
+            _add_edge(lid, synth_src_id, "grounded_by [S1]", kind="provenance")
+        if len(loc_nodes) >= 2:
+            for i in range(len(loc_nodes) - 1):
+                _add_edge(loc_nodes[i], loc_nodes[i + 1], "tactical_corridor", kind="relation")
+    elif len(loc_nodes) > 1 and not text_nodes:
+        # Connect disconnected LOC components to the first primary LOC
+        root_loc = loc_nodes[0]
+        connected_ids = {e["from"] for e in edges_by_key.values()} | {e["to"] for e in edges_by_key.values()}
+        for lid in loc_nodes[1:]:
+            if lid not in connected_ids:
+                _add_edge(lid, root_loc, "co_located_in_query", kind="relation")
+
+    return {
+        "nodes": list(nodes_by_id.values()),
+        "edges": list(edges_by_key.values()),
+    }
+
+
 # ==============================================================================
 # 3. GeoAI Routing Entrypoint (Adapter with Mock Fallback)
 # ==============================================================================
@@ -357,15 +904,88 @@ def query_geo_agent(
         # 3. Prepare chat turns if passed
         turns = agent_turns if isinstance(agent_turns, list) else []
 
-        # 4. Invoke backend query
-        raw_result = _backend_query(
-            text_prompt=query_text,
-            geo_location=geo_location,
-            chat_history=turns,
-            api_key=effective_key
-        )
+        # 4. Invoke backend query with configurable timeout boundary
+        timeout_sec = float(os.environ.get("GEOAI_BACKEND_TIMEOUT", "45.0"))
+        try:
+            if timeout_sec > 0:
+                with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+                    future = executor.submit(
+                        _backend_query,
+                        text_prompt=query_text,
+                        geo_location=geo_location,
+                        chat_history=turns,
+                        api_key=effective_key
+                    )
+                    raw_result = future.result(timeout=timeout_sec)
+            else:
+                raw_result = _backend_query(
+                    text_prompt=query_text,
+                    geo_location=geo_location,
+                    chat_history=turns,
+                    api_key=effective_key
+                )
+        except concurrent.futures.TimeoutError:
+            raise AgentError(f"GeoRAG backend query timed out after {timeout_sec:.1f}s")
+        except Exception as e:
+            if isinstance(e, AgentError):
+                raise
+            raise AgentError(f"Backend query execution failed: {e}") from e
 
-        # 5. Hydrate MapLayers from backend geo_locations (converting [lon, lat] -> [lat, lon])
+        # 5. Build source and citation mappings with structured place tags (e.g. [P1-S1], [S1])
+        raw_citations = list(raw_result.get("citations", []))
+        tag_by_pointer: Dict[str, str] = {}
+        for c in raw_citations:
+            if isinstance(c, dict) and c.get("pointer") and c.get("id"):
+                tag_by_pointer[c["pointer"]] = c["id"]
+
+        ans_text = raw_result.get("answer", "")
+        top_sources = list(raw_result.get("sources", []))
+        if not top_sources:
+            # In Vr6, 'list' and 'place_lookup' answers store TEXT_ pointers on each place in geo_locations
+            seen_ptrs = set()
+            geo_locs = raw_result.get("geo_locations", [])
+            for loc in geo_locs:
+                if loc.get("role", "primary") == "primary" or len(geo_locs) <= 10:
+                    for ptr in loc.get("sources", [])[:3]:
+                        if ptr not in seen_ptrs:
+                            seen_ptrs.add(ptr)
+                            top_sources.append(ptr)
+                        if len(top_sources) >= 15:
+                            break
+                if len(top_sources) >= 15:
+                    break
+
+        # Register place-source tags [P{pin}-S{idx}] so point info bubbles connect to grounding sources
+        synthetic_citations: List[Dict[str, Any]] = []
+        seen_synthetic_ptrs = set()
+
+        for loc in raw_result.get("geo_locations", []):
+            loc_num = loc.get("number")
+            loc_label = loc.get("label") or loc.get("name") or loc.get("id") or ""
+            for s_idx, s_ptr in enumerate(loc.get("sources", [])):
+                if s_ptr not in tag_by_pointer:
+                    if loc_num is not None:
+                        tag = f"P{loc_num}-S{s_idx + 1}"
+                    else:
+                        tag = f"S{len(tag_by_pointer) + 1}"
+                    tag_by_pointer[s_ptr] = tag
+
+                if not raw_citations and s_ptr in top_sources and s_ptr not in seen_synthetic_ptrs:
+                    seen_synthetic_ptrs.add(s_ptr)
+                    text_data = get_source_text(s_ptr) or {}
+                    synthetic_citations.append({
+                        "id": tag_by_pointer[s_ptr],
+                        "pointer": s_ptr,
+                        "article": text_data.get("document", ""),
+                        "section": text_data.get("section", ""),
+                        "place_number": loc_num,
+                        "place_label": loc_label,
+                        "spans": []
+                    })
+
+        final_citations = raw_citations if raw_citations else synthetic_citations
+
+        # 6. Hydrate MapLayers from backend geo_locations (converting [lon, lat] -> [lat, lon])
         layers: List[MapLayer] = []
         for loc in raw_result.get("geo_locations", []):
             geom = loc.get("geometry", {})
@@ -408,15 +1028,26 @@ def query_geo_agent(
             uncertain_html = f"<br><span style='color:#ff9800;'><b>⚠️ Uncertain:</b> {uncertain}</span>" if uncertain else ""
             src_html = ""
             if sources_list:
-                src_titles = []
-                for s_ptr in sources_list[:3]:
+                src_lines = []
+                for s_idx, s_ptr in enumerate(sources_list[:3]):
+                    tag = tag_by_pointer.get(s_ptr)
+                    if not tag:
+                        tag = f"P{number}-S{s_idx + 1}" if number is not None else f"S{s_idx + 1}"
                     s_text = get_source_text(s_ptr)
                     if s_text and s_text.get("document"):
                         doc_clean = str(s_text["document"]).replace("\ufffd", " - ")
-                        src_titles.append(doc_clean)
                     else:
-                        src_titles.append(s_ptr)
-                src_html = f"<br><b>Sources:</b> {', '.join(src_titles)}{'...' if len(sources_list) > 3 else ''}"
+                        doc_clean = s_ptr
+                    src_lines.append(f"<div style='margin-bottom:2px;'>• <b style='color:#00e5ff;'>[{tag}]</b> {doc_clean}</div>")
+                more_count = len(sources_list) - 3
+                more_html = f"<div style='color:#94a3b8; font-size:0.85em; margin-top:2px;'><i>(+{more_count} more sources)</i></div>" if more_count > 0 else ""
+                src_html = (
+                    f"<div style='margin-top:6px; padding-top:4px; border-top:1px solid rgba(255,255,255,0.15); font-size:0.95em;'>"
+                    f"<b>Sources:</b><br/>"
+                    f"{''.join(src_lines)}"
+                    f"{more_html}"
+                    f"</div>"
+                )
             header_title = f"#{number} {label}" if number is not None else label
             popup_content = (
                 f"<div style='font-family:monospace; padding:6px;'>"
@@ -487,23 +1118,6 @@ def query_geo_agent(
                 popup=f"<b>Target Coordinate:</b> ({selected_point[0]:.4f}°, {selected_point[1]:.4f}°)"
             ))
 
-        ans_text = raw_result.get("answer", "")
-        top_sources = list(raw_result.get("sources", []))
-        if not top_sources:
-            # In Vr6, 'list' and 'place_lookup' answers store TEXT_ pointers on each place in geo_locations
-            seen_ptrs = set()
-            geo_locs = raw_result.get("geo_locations", [])
-            for loc in geo_locs:
-                if loc.get("role", "primary") == "primary" or len(geo_locs) <= 10:
-                    for ptr in loc.get("sources", [])[:3]:
-                        if ptr not in seen_ptrs:
-                            seen_ptrs.add(ptr)
-                            top_sources.append(ptr)
-                        if len(top_sources) >= 15:
-                            break
-                if len(top_sources) >= 15:
-                    break
-
         map_meta = raw_result.get("map", {})
         map_bbox = map_meta.get("bbox") if isinstance(map_meta, dict) else None
         map_showing = str(map_meta.get("showing", "all") or "all") if isinstance(map_meta, dict) else "all"
@@ -518,14 +1132,24 @@ def query_geo_agent(
         else:
             parsed_regions = []
 
+        ans_plain_text = raw_result.get("answer_plain", ans_text)
+        subgraph_data = extract_answer_subgraph(
+            raw_response=raw_result,
+            sources=top_sources,
+            citations=final_citations,
+            layers=layers,
+            regions=parsed_regions,
+            answer_text=ans_plain_text,
+        )
+
         return AgentResponse(
             answer=ans_text,
             layers=layers,
             sources=top_sources,
             raw_response=raw_result,
             is_live_backend=True,
-            answer_plain=raw_result.get("answer_plain", ans_text),
-            citations=raw_result.get("citations", []),
+            answer_plain=ans_plain_text,
+            citations=final_citations,
             grounded=raw_result.get("grounded", True),
             status=raw_result.get("status", "answered"),
             shape=raw_result.get("shape", "fact"),
@@ -535,6 +1159,7 @@ def query_geo_agent(
             follow_ups=list(raw_result.get("follow_ups") or raw_result.get("follow_up_questions") or []),
             regions=parsed_regions,
             did_you_mean=raw_result.get("did_you_mean") or None,
+            subgraph=subgraph_data,
         )
 
     # Fallback to deterministic mock routing
@@ -548,7 +1173,7 @@ def query_geo_agent(
     if mock_resp.raw_response is None:
         mock_geo_locs = []
         for ly in mock_resp.layers:
-            if isinstance(ly.data, dict) and "lat" in ly.data and "lng" in ly.data:
+            if isinstance(ly.data, dict) and "lat" in ly.data and "lng" in ly.data and ly.layer_type == "marker":
                 mock_geo_locs.append({
                     "id": ly.data.get("id", ly.name),
                     "label": ly.name,
@@ -557,6 +1182,7 @@ def query_geo_agent(
                         "coordinates": [ly.data["lng"], ly.data["lat"]]
                     },
                     "kind": ly.data.get("kind", "place"),
+                    "role": ly.data.get("role", "primary"),
                     "sources": mock_resp.sources
                 })
         mock_resp.raw_response = {
@@ -564,6 +1190,8 @@ def query_geo_agent(
             "geo_locations": mock_geo_locs,
             "sources": mock_resp.sources
         }
+    if not mock_resp.subgraph:
+        mock_resp.subgraph = extract_answer_subgraph(mock_resp)
     return mock_resp
 
 
