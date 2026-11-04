@@ -35,6 +35,15 @@ flowchart LR
 
 On Windows, double-click **`RUN_GEORAG.bat`**. The first run installs everything and asks once for an [OpenRouter API key](https://openrouter.ai/keys), which is saved locally and never uploaded. Clone the repo into a short folder such as `C:\GeoAi`, because some paths are long.
 
+If you want to run the app using your CMD, you can run the following commands:
+
+``` sh
+git clone https://github.com/EtzionR/Corpus2GeoRAG.git
+cd Corpus2GeoRAG\ui
+pip install -r requirements.txt
+streamlit run app.py
+```
+
 ## 1. Corpus
 
 The corpus is built from Wikipedia category trees and seed pages, then expanded through page links.
