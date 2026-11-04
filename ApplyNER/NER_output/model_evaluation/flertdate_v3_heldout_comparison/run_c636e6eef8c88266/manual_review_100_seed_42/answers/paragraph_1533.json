@@ -1,0 +1,144 @@
+{
+  "comparison_row_id": 1533,
+  "Source": "Freedom of Russia Legion",
+  "Index": 31,
+  "Text": "The Legion's spokesperson Caesar said in December 2022 that the Legion had \"several hundred\" members. He said the unit's recruitment process involves multiple rounds of interviews, psychological testing, a polygraph test, and two months of training. He claimed in February 2023 that the legion consisted of two battalions and was raising two more.",
+  "reviewed_at_utc": "2026-11-04T06:39:54.600962+00:00",
+  "original_predictions": [
+    {
+      "entity": "Legion",
+      "label": "ORG",
+      "start": 4,
+      "end": 10
+    },
+    {
+      "entity": "Caesar",
+      "label": "PER",
+      "start": 26,
+      "end": 32
+    },
+    {
+      "entity": "Legion",
+      "label": "ORG",
+      "start": 64,
+      "end": 70
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Legion",
+      "label": "ORG",
+      "start": 4,
+      "end": 10
+    },
+    {
+      "entity": "Caesar",
+      "label": "PER",
+      "start": 26,
+      "end": 32
+    },
+    {
+      "entity": "December 2022",
+      "label": "DATE",
+      "start": 41,
+      "end": 54
+    },
+    {
+      "entity": "Legion",
+      "label": "ORG",
+      "start": 64,
+      "end": 70
+    },
+    {
+      "entity": "February 2023",
+      "label": "DATE",
+      "start": 264,
+      "end": 277
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Legion",
+      "label": "ORG",
+      "start": 4,
+      "end": 10
+    },
+    {
+      "entity": "Caesar",
+      "label": "PER",
+      "start": 26,
+      "end": 32
+    },
+    {
+      "entity": "Legion",
+      "label": "ORG",
+      "start": 64,
+      "end": 70
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Legion",
+      "label": "ORG",
+      "start": 4,
+      "end": 10
+    },
+    {
+      "entity": "Caesar",
+      "label": "PER",
+      "start": 26,
+      "end": 32
+    },
+    {
+      "entity": "December 2022",
+      "label": "DATE",
+      "start": 41,
+      "end": 54
+    },
+    {
+      "entity": "Legion",
+      "label": "ORG",
+      "start": 64,
+      "end": 70
+    },
+    {
+      "entity": "February 2023",
+      "label": "DATE",
+      "start": 264,
+      "end": 277
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Legion",
+      "label": "ORG",
+      "start": 4,
+      "end": 10
+    },
+    {
+      "entity": "Caesar",
+      "label": "PER",
+      "start": 26,
+      "end": 32
+    },
+    {
+      "entity": "December 2022",
+      "label": "DATE",
+      "start": 41,
+      "end": 54
+    },
+    {
+      "entity": "Legion",
+      "label": "ORG",
+      "start": 64,
+      "end": 70
+    },
+    {
+      "entity": "February 2023",
+      "label": "DATE",
+      "start": 264,
+      "end": 277
+    }
+  ],
+  "history": []
+}

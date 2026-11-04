@@ -1,0 +1,1693 @@
+{
+  "comparison_row_id": 3256,
+  "Source": "Russia–Ukraine gas disputes",
+  "Index": 29,
+  "Text": "On 3 March, Gazprom cut its shipments to Ukraine by 25% and an additional 25% the next day, claiming that the $1.5 billion debt still was not paid, although Ukrainian officials stated it had indeed been paid. Gas supplies were restored on 5 March after Gazprom CEO Alexei Miller and Naftohaz CEO Oleh Dubyna agreed during negotiations by phone on a settlement. On 6 March, the Ukrainian cabinet refused to execute the gas agreements made by presidents Yushchenko and Putin. The Ukrainian cabinet did not want to pay in advance for 2008, and it opposed the creation of a Naftohaz–Gazprom venture that would sell gas in Ukraine. Prime Minister Yulia Tymoshenko stated that Ukraine did not need any additional joint ventures, and as of 1 March 2008, UkrGazEnergo is no longer operating in Ukraine's domestic gas market.",
+  "reviewed_at_utc": "2026-11-04T07:51:30.285073+00:00",
+  "original_predictions": [
+    {
+      "entity": "Gazprom",
+      "label": "ORG",
+      "start": 12,
+      "end": 19
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 41,
+      "end": 48
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 157,
+      "end": 166
+    },
+    {
+      "entity": "Gazprom",
+      "label": "ORG",
+      "start": 253,
+      "end": 260
+    },
+    {
+      "entity": "Alexei Miller",
+      "label": "PER",
+      "start": 265,
+      "end": 278
+    },
+    {
+      "entity": "Naftohaz",
+      "label": "ORG",
+      "start": 283,
+      "end": 291
+    },
+    {
+      "entity": "Oleh Dubyna",
+      "label": "PER",
+      "start": 296,
+      "end": 307
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 377,
+      "end": 386
+    },
+    {
+      "entity": "Yushchenko",
+      "label": "PER",
+      "start": 452,
+      "end": 462
+    },
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 467,
+      "end": 472
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 478,
+      "end": 487
+    },
+    {
+      "entity": "Naftohaz",
+      "label": "ORG",
+      "start": 570,
+      "end": 578
+    },
+    {
+      "entity": "Gazprom",
+      "label": "ORG",
+      "start": 579,
+      "end": 586
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 618,
+      "end": 625
+    },
+    {
+      "entity": "Yulia Tymoshenko",
+      "label": "PER",
+      "start": 642,
+      "end": 658
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 671,
+      "end": 678
+    },
+    {
+      "entity": "UkrGazEnergo",
+      "label": "ORG",
+      "start": 747,
+      "end": 759
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 786,
+      "end": 793
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "3 March",
+      "label": "DATE",
+      "start": 3,
+      "end": 10
+    },
+    {
+      "entity": "Gazprom",
+      "label": "ORG",
+      "start": 12,
+      "end": 19
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 41,
+      "end": 48
+    },
+    {
+      "entity": "5 March",
+      "label": "DATE",
+      "start": 239,
+      "end": 246
+    },
+    {
+      "entity": "Gazprom",
+      "label": "ORG",
+      "start": 253,
+      "end": 260
+    },
+    {
+      "entity": "Alexei Miller",
+      "label": "PER",
+      "start": 265,
+      "end": 278
+    },
+    {
+      "entity": "Naftohaz",
+      "label": "ORG",
+      "start": 283,
+      "end": 291
+    },
+    {
+      "entity": "Oleh Dubyna",
+      "label": "PER",
+      "start": 296,
+      "end": 307
+    },
+    {
+      "entity": "6 March",
+      "label": "DATE",
+      "start": 364,
+      "end": 371
+    },
+    {
+      "entity": "Yushchenko",
+      "label": "PER",
+      "start": 452,
+      "end": 462
+    },
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 467,
+      "end": 472
+    },
+    {
+      "entity": "2008",
+      "label": "DATE",
+      "start": 531,
+      "end": 535
+    },
+    {
+      "entity": "Naftohaz",
+      "label": "ORG",
+      "start": 570,
+      "end": 578
+    },
+    {
+      "entity": "Gazprom",
+      "label": "ORG",
+      "start": 579,
+      "end": 586
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 618,
+      "end": 625
+    },
+    {
+      "entity": "Yulia Tymoshenko",
+      "label": "PER",
+      "start": 642,
+      "end": 658
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 671,
+      "end": 678
+    },
+    {
+      "entity": ",",
+      "label": "ORG",
+      "start": 721,
+      "end": 722
+    },
+    {
+      "entity": "1 March 2008",
+      "label": "DATE",
+      "start": 733,
+      "end": 745
+    },
+    {
+      "entity": "UkrGazEnergo",
+      "label": "ORG",
+      "start": 747,
+      "end": 759
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 786,
+      "end": 793
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Gazprom",
+      "label": "ORG",
+      "start": 12,
+      "end": 19
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 41,
+      "end": 48
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 157,
+      "end": 166
+    },
+    {
+      "entity": "Gazprom",
+      "label": "ORG",
+      "start": 253,
+      "end": 260
+    },
+    {
+      "entity": "Alexei Miller",
+      "label": "PER",
+      "start": 265,
+      "end": 278
+    },
+    {
+      "entity": "Naftohaz",
+      "label": "ORG",
+      "start": 283,
+      "end": 291
+    },
+    {
+      "entity": "Oleh Dubyna",
+      "label": "PER",
+      "start": 296,
+      "end": 307
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 377,
+      "end": 386
+    },
+    {
+      "entity": "Yushchenko",
+      "label": "PER",
+      "start": 452,
+      "end": 462
+    },
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 467,
+      "end": 472
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 478,
+      "end": 487
+    },
+    {
+      "entity": "Naftohaz",
+      "label": "ORG",
+      "start": 570,
+      "end": 578
+    },
+    {
+      "entity": "Gazprom",
+      "label": "ORG",
+      "start": 579,
+      "end": 586
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 618,
+      "end": 625
+    },
+    {
+      "entity": "Yulia Tymoshenko",
+      "label": "PER",
+      "start": 642,
+      "end": 658
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 671,
+      "end": 678
+    },
+    {
+      "entity": "UkrGazEnergo",
+      "label": "ORG",
+      "start": 747,
+      "end": 759
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 786,
+      "end": 793
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "3 March",
+      "label": "DATE",
+      "start": 3,
+      "end": 10
+    },
+    {
+      "entity": "Gazprom",
+      "label": "ORG",
+      "start": 12,
+      "end": 19
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 41,
+      "end": 48
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 157,
+      "end": 166
+    },
+    {
+      "entity": "5 March",
+      "label": "DATE",
+      "start": 239,
+      "end": 246
+    },
+    {
+      "entity": "Gazprom",
+      "label": "ORG",
+      "start": 253,
+      "end": 260
+    },
+    {
+      "entity": "Alexei Miller",
+      "label": "PER",
+      "start": 265,
+      "end": 278
+    },
+    {
+      "entity": "Naftohaz",
+      "label": "ORG",
+      "start": 283,
+      "end": 291
+    },
+    {
+      "entity": "Oleh Dubyna",
+      "label": "PER",
+      "start": 296,
+      "end": 307
+    },
+    {
+      "entity": "6 March",
+      "label": "DATE",
+      "start": 364,
+      "end": 371
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 377,
+      "end": 386
+    },
+    {
+      "entity": "Yushchenko",
+      "label": "PER",
+      "start": 452,
+      "end": 462
+    },
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 467,
+      "end": 472
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 478,
+      "end": 487
+    },
+    {
+      "entity": "2008",
+      "label": "DATE",
+      "start": 531,
+      "end": 535
+    },
+    {
+      "entity": "Naftohaz",
+      "label": "ORG",
+      "start": 570,
+      "end": 578
+    },
+    {
+      "entity": "Gazprom",
+      "label": "ORG",
+      "start": 579,
+      "end": 586
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 618,
+      "end": 625
+    },
+    {
+      "entity": "Yulia Tymoshenko",
+      "label": "PER",
+      "start": 642,
+      "end": 658
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 671,
+      "end": 678
+    },
+    {
+      "entity": "1 March 2008",
+      "label": "DATE",
+      "start": 733,
+      "end": 745
+    },
+    {
+      "entity": "UkrGazEnergo",
+      "label": "ORG",
+      "start": 747,
+      "end": 759
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 786,
+      "end": 793
+    }
+  ],
+  "gold": [
+    {
+      "entity": "3 March",
+      "label": "DATE",
+      "start": 3,
+      "end": 10
+    },
+    {
+      "entity": "Gazprom",
+      "label": "ORG",
+      "start": 12,
+      "end": 19
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 41,
+      "end": 48
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 157,
+      "end": 166
+    },
+    {
+      "entity": "5 March",
+      "label": "DATE",
+      "start": 239,
+      "end": 246
+    },
+    {
+      "entity": "Gazprom",
+      "label": "ORG",
+      "start": 253,
+      "end": 260
+    },
+    {
+      "entity": "Alexei Miller",
+      "label": "PER",
+      "start": 265,
+      "end": 278
+    },
+    {
+      "entity": "Naftohaz",
+      "label": "ORG",
+      "start": 283,
+      "end": 291
+    },
+    {
+      "entity": "Oleh Dubyna",
+      "label": "PER",
+      "start": 296,
+      "end": 307
+    },
+    {
+      "entity": "6 March",
+      "label": "DATE",
+      "start": 364,
+      "end": 371
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 377,
+      "end": 386
+    },
+    {
+      "entity": "Yushchenko",
+      "label": "PER",
+      "start": 452,
+      "end": 462
+    },
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 467,
+      "end": 472
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 478,
+      "end": 487
+    },
+    {
+      "entity": "2008",
+      "label": "DATE",
+      "start": 531,
+      "end": 535
+    },
+    {
+      "entity": "Naftohaz",
+      "label": "ORG",
+      "start": 570,
+      "end": 578
+    },
+    {
+      "entity": "Gazprom",
+      "label": "ORG",
+      "start": 579,
+      "end": 586
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 618,
+      "end": 625
+    },
+    {
+      "entity": "Yulia Tymoshenko",
+      "label": "PER",
+      "start": 642,
+      "end": 658
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 671,
+      "end": 678
+    },
+    {
+      "entity": "1 March 2008",
+      "label": "DATE",
+      "start": 733,
+      "end": 745
+    },
+    {
+      "entity": "UkrGazEnergo",
+      "label": "ORG",
+      "start": 747,
+      "end": 759
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 786,
+      "end": 793
+    }
+  ],
+  "history": [
+    {
+      "model": "v3",
+      "command": "del 18",
+      "before": [
+        {
+          "entity": "3 March",
+          "label": "DATE",
+          "start": 3,
+          "end": 10
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 12,
+          "end": 19
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 41,
+          "end": 48
+        },
+        {
+          "entity": "5 March",
+          "label": "DATE",
+          "start": 239,
+          "end": 246
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 253,
+          "end": 260
+        },
+        {
+          "entity": "Alexei Miller",
+          "label": "PER",
+          "start": 265,
+          "end": 278
+        },
+        {
+          "entity": "Naftohaz",
+          "label": "ORG",
+          "start": 283,
+          "end": 291
+        },
+        {
+          "entity": "Oleh Dubyna",
+          "label": "PER",
+          "start": 296,
+          "end": 307
+        },
+        {
+          "entity": "6 March",
+          "label": "DATE",
+          "start": 364,
+          "end": 371
+        },
+        {
+          "entity": "Yushchenko",
+          "label": "PER",
+          "start": 452,
+          "end": 462
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 467,
+          "end": 472
+        },
+        {
+          "entity": "2008",
+          "label": "DATE",
+          "start": 531,
+          "end": 535
+        },
+        {
+          "entity": "Naftohaz",
+          "label": "ORG",
+          "start": 570,
+          "end": 578
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 579,
+          "end": 586
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 618,
+          "end": 625
+        },
+        {
+          "entity": "Yulia Tymoshenko",
+          "label": "PER",
+          "start": 642,
+          "end": 658
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 671,
+          "end": 678
+        },
+        {
+          "entity": ",",
+          "label": "ORG",
+          "start": 721,
+          "end": 722
+        },
+        {
+          "entity": "1 March 2008",
+          "label": "DATE",
+          "start": 733,
+          "end": 745
+        },
+        {
+          "entity": "UkrGazEnergo",
+          "label": "ORG",
+          "start": 747,
+          "end": 759
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 786,
+          "end": 793
+        }
+      ],
+      "after": [
+        {
+          "entity": "3 March",
+          "label": "DATE",
+          "start": 3,
+          "end": 10
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 12,
+          "end": 19
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 41,
+          "end": 48
+        },
+        {
+          "entity": "5 March",
+          "label": "DATE",
+          "start": 239,
+          "end": 246
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 253,
+          "end": 260
+        },
+        {
+          "entity": "Alexei Miller",
+          "label": "PER",
+          "start": 265,
+          "end": 278
+        },
+        {
+          "entity": "Naftohaz",
+          "label": "ORG",
+          "start": 283,
+          "end": 291
+        },
+        {
+          "entity": "Oleh Dubyna",
+          "label": "PER",
+          "start": 296,
+          "end": 307
+        },
+        {
+          "entity": "6 March",
+          "label": "DATE",
+          "start": 364,
+          "end": 371
+        },
+        {
+          "entity": "Yushchenko",
+          "label": "PER",
+          "start": 452,
+          "end": 462
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 467,
+          "end": 472
+        },
+        {
+          "entity": "2008",
+          "label": "DATE",
+          "start": 531,
+          "end": 535
+        },
+        {
+          "entity": "Naftohaz",
+          "label": "ORG",
+          "start": 570,
+          "end": 578
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 579,
+          "end": 586
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 618,
+          "end": 625
+        },
+        {
+          "entity": "Yulia Tymoshenko",
+          "label": "PER",
+          "start": 642,
+          "end": 658
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 671,
+          "end": 678
+        },
+        {
+          "entity": "1 March 2008",
+          "label": "DATE",
+          "start": 733,
+          "end": 745
+        },
+        {
+          "entity": "UkrGazEnergo",
+          "label": "ORG",
+          "start": 747,
+          "end": 759
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 786,
+          "end": 793
+        }
+      ],
+      "at_utc": "2026-11-04T07:51:14.860326+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add MISC | Ukrainian | 1",
+      "before": [
+        {
+          "entity": "3 March",
+          "label": "DATE",
+          "start": 3,
+          "end": 10
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 12,
+          "end": 19
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 41,
+          "end": 48
+        },
+        {
+          "entity": "5 March",
+          "label": "DATE",
+          "start": 239,
+          "end": 246
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 253,
+          "end": 260
+        },
+        {
+          "entity": "Alexei Miller",
+          "label": "PER",
+          "start": 265,
+          "end": 278
+        },
+        {
+          "entity": "Naftohaz",
+          "label": "ORG",
+          "start": 283,
+          "end": 291
+        },
+        {
+          "entity": "Oleh Dubyna",
+          "label": "PER",
+          "start": 296,
+          "end": 307
+        },
+        {
+          "entity": "6 March",
+          "label": "DATE",
+          "start": 364,
+          "end": 371
+        },
+        {
+          "entity": "Yushchenko",
+          "label": "PER",
+          "start": 452,
+          "end": 462
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 467,
+          "end": 472
+        },
+        {
+          "entity": "2008",
+          "label": "DATE",
+          "start": 531,
+          "end": 535
+        },
+        {
+          "entity": "Naftohaz",
+          "label": "ORG",
+          "start": 570,
+          "end": 578
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 579,
+          "end": 586
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 618,
+          "end": 625
+        },
+        {
+          "entity": "Yulia Tymoshenko",
+          "label": "PER",
+          "start": 642,
+          "end": 658
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 671,
+          "end": 678
+        },
+        {
+          "entity": "1 March 2008",
+          "label": "DATE",
+          "start": 733,
+          "end": 745
+        },
+        {
+          "entity": "UkrGazEnergo",
+          "label": "ORG",
+          "start": 747,
+          "end": 759
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 786,
+          "end": 793
+        }
+      ],
+      "after": [
+        {
+          "entity": "3 March",
+          "label": "DATE",
+          "start": 3,
+          "end": 10
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 12,
+          "end": 19
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 41,
+          "end": 48
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 157,
+          "end": 166
+        },
+        {
+          "entity": "5 March",
+          "label": "DATE",
+          "start": 239,
+          "end": 246
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 253,
+          "end": 260
+        },
+        {
+          "entity": "Alexei Miller",
+          "label": "PER",
+          "start": 265,
+          "end": 278
+        },
+        {
+          "entity": "Naftohaz",
+          "label": "ORG",
+          "start": 283,
+          "end": 291
+        },
+        {
+          "entity": "Oleh Dubyna",
+          "label": "PER",
+          "start": 296,
+          "end": 307
+        },
+        {
+          "entity": "6 March",
+          "label": "DATE",
+          "start": 364,
+          "end": 371
+        },
+        {
+          "entity": "Yushchenko",
+          "label": "PER",
+          "start": 452,
+          "end": 462
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 467,
+          "end": 472
+        },
+        {
+          "entity": "2008",
+          "label": "DATE",
+          "start": 531,
+          "end": 535
+        },
+        {
+          "entity": "Naftohaz",
+          "label": "ORG",
+          "start": 570,
+          "end": 578
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 579,
+          "end": 586
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 618,
+          "end": 625
+        },
+        {
+          "entity": "Yulia Tymoshenko",
+          "label": "PER",
+          "start": 642,
+          "end": 658
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 671,
+          "end": 678
+        },
+        {
+          "entity": "1 March 2008",
+          "label": "DATE",
+          "start": 733,
+          "end": 745
+        },
+        {
+          "entity": "UkrGazEnergo",
+          "label": "ORG",
+          "start": 747,
+          "end": 759
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 786,
+          "end": 793
+        }
+      ],
+      "at_utc": "2026-11-04T07:51:19.219708+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add MISC | Ukrainian | 2",
+      "before": [
+        {
+          "entity": "3 March",
+          "label": "DATE",
+          "start": 3,
+          "end": 10
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 12,
+          "end": 19
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 41,
+          "end": 48
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 157,
+          "end": 166
+        },
+        {
+          "entity": "5 March",
+          "label": "DATE",
+          "start": 239,
+          "end": 246
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 253,
+          "end": 260
+        },
+        {
+          "entity": "Alexei Miller",
+          "label": "PER",
+          "start": 265,
+          "end": 278
+        },
+        {
+          "entity": "Naftohaz",
+          "label": "ORG",
+          "start": 283,
+          "end": 291
+        },
+        {
+          "entity": "Oleh Dubyna",
+          "label": "PER",
+          "start": 296,
+          "end": 307
+        },
+        {
+          "entity": "6 March",
+          "label": "DATE",
+          "start": 364,
+          "end": 371
+        },
+        {
+          "entity": "Yushchenko",
+          "label": "PER",
+          "start": 452,
+          "end": 462
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 467,
+          "end": 472
+        },
+        {
+          "entity": "2008",
+          "label": "DATE",
+          "start": 531,
+          "end": 535
+        },
+        {
+          "entity": "Naftohaz",
+          "label": "ORG",
+          "start": 570,
+          "end": 578
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 579,
+          "end": 586
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 618,
+          "end": 625
+        },
+        {
+          "entity": "Yulia Tymoshenko",
+          "label": "PER",
+          "start": 642,
+          "end": 658
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 671,
+          "end": 678
+        },
+        {
+          "entity": "1 March 2008",
+          "label": "DATE",
+          "start": 733,
+          "end": 745
+        },
+        {
+          "entity": "UkrGazEnergo",
+          "label": "ORG",
+          "start": 747,
+          "end": 759
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 786,
+          "end": 793
+        }
+      ],
+      "after": [
+        {
+          "entity": "3 March",
+          "label": "DATE",
+          "start": 3,
+          "end": 10
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 12,
+          "end": 19
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 41,
+          "end": 48
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 157,
+          "end": 166
+        },
+        {
+          "entity": "5 March",
+          "label": "DATE",
+          "start": 239,
+          "end": 246
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 253,
+          "end": 260
+        },
+        {
+          "entity": "Alexei Miller",
+          "label": "PER",
+          "start": 265,
+          "end": 278
+        },
+        {
+          "entity": "Naftohaz",
+          "label": "ORG",
+          "start": 283,
+          "end": 291
+        },
+        {
+          "entity": "Oleh Dubyna",
+          "label": "PER",
+          "start": 296,
+          "end": 307
+        },
+        {
+          "entity": "6 March",
+          "label": "DATE",
+          "start": 364,
+          "end": 371
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 377,
+          "end": 386
+        },
+        {
+          "entity": "Yushchenko",
+          "label": "PER",
+          "start": 452,
+          "end": 462
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 467,
+          "end": 472
+        },
+        {
+          "entity": "2008",
+          "label": "DATE",
+          "start": 531,
+          "end": 535
+        },
+        {
+          "entity": "Naftohaz",
+          "label": "ORG",
+          "start": 570,
+          "end": 578
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 579,
+          "end": 586
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 618,
+          "end": 625
+        },
+        {
+          "entity": "Yulia Tymoshenko",
+          "label": "PER",
+          "start": 642,
+          "end": 658
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 671,
+          "end": 678
+        },
+        {
+          "entity": "1 March 2008",
+          "label": "DATE",
+          "start": 733,
+          "end": 745
+        },
+        {
+          "entity": "UkrGazEnergo",
+          "label": "ORG",
+          "start": 747,
+          "end": 759
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 786,
+          "end": 793
+        }
+      ],
+      "at_utc": "2026-11-04T07:51:23.698690+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add MISC | Ukrainian | 3",
+      "before": [
+        {
+          "entity": "3 March",
+          "label": "DATE",
+          "start": 3,
+          "end": 10
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 12,
+          "end": 19
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 41,
+          "end": 48
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 157,
+          "end": 166
+        },
+        {
+          "entity": "5 March",
+          "label": "DATE",
+          "start": 239,
+          "end": 246
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 253,
+          "end": 260
+        },
+        {
+          "entity": "Alexei Miller",
+          "label": "PER",
+          "start": 265,
+          "end": 278
+        },
+        {
+          "entity": "Naftohaz",
+          "label": "ORG",
+          "start": 283,
+          "end": 291
+        },
+        {
+          "entity": "Oleh Dubyna",
+          "label": "PER",
+          "start": 296,
+          "end": 307
+        },
+        {
+          "entity": "6 March",
+          "label": "DATE",
+          "start": 364,
+          "end": 371
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 377,
+          "end": 386
+        },
+        {
+          "entity": "Yushchenko",
+          "label": "PER",
+          "start": 452,
+          "end": 462
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 467,
+          "end": 472
+        },
+        {
+          "entity": "2008",
+          "label": "DATE",
+          "start": 531,
+          "end": 535
+        },
+        {
+          "entity": "Naftohaz",
+          "label": "ORG",
+          "start": 570,
+          "end": 578
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 579,
+          "end": 586
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 618,
+          "end": 625
+        },
+        {
+          "entity": "Yulia Tymoshenko",
+          "label": "PER",
+          "start": 642,
+          "end": 658
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 671,
+          "end": 678
+        },
+        {
+          "entity": "1 March 2008",
+          "label": "DATE",
+          "start": 733,
+          "end": 745
+        },
+        {
+          "entity": "UkrGazEnergo",
+          "label": "ORG",
+          "start": 747,
+          "end": 759
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 786,
+          "end": 793
+        }
+      ],
+      "after": [
+        {
+          "entity": "3 March",
+          "label": "DATE",
+          "start": 3,
+          "end": 10
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 12,
+          "end": 19
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 41,
+          "end": 48
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 157,
+          "end": 166
+        },
+        {
+          "entity": "5 March",
+          "label": "DATE",
+          "start": 239,
+          "end": 246
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 253,
+          "end": 260
+        },
+        {
+          "entity": "Alexei Miller",
+          "label": "PER",
+          "start": 265,
+          "end": 278
+        },
+        {
+          "entity": "Naftohaz",
+          "label": "ORG",
+          "start": 283,
+          "end": 291
+        },
+        {
+          "entity": "Oleh Dubyna",
+          "label": "PER",
+          "start": 296,
+          "end": 307
+        },
+        {
+          "entity": "6 March",
+          "label": "DATE",
+          "start": 364,
+          "end": 371
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 377,
+          "end": 386
+        },
+        {
+          "entity": "Yushchenko",
+          "label": "PER",
+          "start": 452,
+          "end": 462
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 467,
+          "end": 472
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 478,
+          "end": 487
+        },
+        {
+          "entity": "2008",
+          "label": "DATE",
+          "start": 531,
+          "end": 535
+        },
+        {
+          "entity": "Naftohaz",
+          "label": "ORG",
+          "start": 570,
+          "end": 578
+        },
+        {
+          "entity": "Gazprom",
+          "label": "ORG",
+          "start": 579,
+          "end": 586
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 618,
+          "end": 625
+        },
+        {
+          "entity": "Yulia Tymoshenko",
+          "label": "PER",
+          "start": 642,
+          "end": 658
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 671,
+          "end": 678
+        },
+        {
+          "entity": "1 March 2008",
+          "label": "DATE",
+          "start": 733,
+          "end": 745
+        },
+        {
+          "entity": "UkrGazEnergo",
+          "label": "ORG",
+          "start": 747,
+          "end": 759
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 786,
+          "end": 793
+        }
+      ],
+      "at_utc": "2026-11-04T07:51:27.553426+00:00"
+    }
+  ]
+}

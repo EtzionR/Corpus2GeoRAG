@@ -1,0 +1,349 @@
+{
+  "comparison_row_id": 4863,
+  "Source": "Velyka Novosilka offensive",
+  "Index": 23,
+  "Text": "On 16 November, Russian media claimed that the Russian military successfully repelled a counterattack by assault groups from the Armed Forces of Ukraine, resulting in Ukrainian armed forces losses of up to 140 personnel, two tanks, two armored combat vehicles, six vehicles, and two 2S3 Akatsiya self-propelled artillery units.",
+  "reviewed_at_utc": "2026-11-04T07:14:03.073652+00:00",
+  "original_predictions": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 16,
+      "end": 23
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 47,
+      "end": 54
+    },
+    {
+      "entity": "Armed Forces of Ukraine",
+      "label": "ORG",
+      "start": 129,
+      "end": 152
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 167,
+      "end": 176
+    },
+    {
+      "entity": "2S3 Akatsiya",
+      "label": "MISC",
+      "start": 283,
+      "end": 295
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "16 November",
+      "label": "DATE",
+      "start": 3,
+      "end": 14
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 16,
+      "end": 23
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 47,
+      "end": 54
+    },
+    {
+      "entity": "Armed Forces of Ukraine",
+      "label": "ORG",
+      "start": 129,
+      "end": 152
+    },
+    {
+      "entity": "Ukrainian armed forces",
+      "label": "ORG",
+      "start": 167,
+      "end": 189
+    },
+    {
+      "entity": "2S3 Akatsiya",
+      "label": "MISC",
+      "start": 283,
+      "end": 295
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 16,
+      "end": 23
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 47,
+      "end": 54
+    },
+    {
+      "entity": "Armed Forces of Ukraine",
+      "label": "ORG",
+      "start": 129,
+      "end": 152
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 167,
+      "end": 176
+    },
+    {
+      "entity": "2S3 Akatsiya",
+      "label": "MISC",
+      "start": 283,
+      "end": 295
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "16 November",
+      "label": "DATE",
+      "start": 3,
+      "end": 14
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 16,
+      "end": 23
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 47,
+      "end": 54
+    },
+    {
+      "entity": "Armed Forces of Ukraine",
+      "label": "ORG",
+      "start": 129,
+      "end": 152
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 167,
+      "end": 176
+    },
+    {
+      "entity": "2S3 Akatsiya",
+      "label": "MISC",
+      "start": 283,
+      "end": 295
+    }
+  ],
+  "gold": [
+    {
+      "entity": "16 November",
+      "label": "DATE",
+      "start": 3,
+      "end": 14
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 16,
+      "end": 23
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 47,
+      "end": 54
+    },
+    {
+      "entity": "Armed Forces of Ukraine",
+      "label": "ORG",
+      "start": 129,
+      "end": 152
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 167,
+      "end": 176
+    },
+    {
+      "entity": "2S3 Akatsiya",
+      "label": "MISC",
+      "start": 283,
+      "end": 295
+    }
+  ],
+  "history": [
+    {
+      "model": "v3",
+      "command": "span 5 | Ukrainian | 1",
+      "before": [
+        {
+          "entity": "16 November",
+          "label": "DATE",
+          "start": 3,
+          "end": 14
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 16,
+          "end": 23
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 47,
+          "end": 54
+        },
+        {
+          "entity": "Armed Forces of Ukraine",
+          "label": "ORG",
+          "start": 129,
+          "end": 152
+        },
+        {
+          "entity": "Ukrainian armed forces",
+          "label": "ORG",
+          "start": 167,
+          "end": 189
+        },
+        {
+          "entity": "2S3 Akatsiya",
+          "label": "MISC",
+          "start": 283,
+          "end": 295
+        }
+      ],
+      "after": [
+        {
+          "entity": "16 November",
+          "label": "DATE",
+          "start": 3,
+          "end": 14
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 16,
+          "end": 23
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 47,
+          "end": 54
+        },
+        {
+          "entity": "Armed Forces of Ukraine",
+          "label": "ORG",
+          "start": 129,
+          "end": 152
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "ORG",
+          "start": 167,
+          "end": 176
+        },
+        {
+          "entity": "2S3 Akatsiya",
+          "label": "MISC",
+          "start": 283,
+          "end": 295
+        }
+      ],
+      "at_utc": "2026-11-04T07:13:56.302247+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "label 5 MISC",
+      "before": [
+        {
+          "entity": "16 November",
+          "label": "DATE",
+          "start": 3,
+          "end": 14
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 16,
+          "end": 23
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 47,
+          "end": 54
+        },
+        {
+          "entity": "Armed Forces of Ukraine",
+          "label": "ORG",
+          "start": 129,
+          "end": 152
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "ORG",
+          "start": 167,
+          "end": 176
+        },
+        {
+          "entity": "2S3 Akatsiya",
+          "label": "MISC",
+          "start": 283,
+          "end": 295
+        }
+      ],
+      "after": [
+        {
+          "entity": "16 November",
+          "label": "DATE",
+          "start": 3,
+          "end": 14
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 16,
+          "end": 23
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 47,
+          "end": 54
+        },
+        {
+          "entity": "Armed Forces of Ukraine",
+          "label": "ORG",
+          "start": 129,
+          "end": 152
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 167,
+          "end": 176
+        },
+        {
+          "entity": "2S3 Akatsiya",
+          "label": "MISC",
+          "start": 283,
+          "end": 295
+        }
+      ],
+      "at_utc": "2026-11-04T07:14:00.614681+00:00"
+    }
+  ]
+}

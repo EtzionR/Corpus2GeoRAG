@@ -1,0 +1,101 @@
+﻿comparison_row_id,Source,Index,Gold entities (4 labels),Gold DATE entities,Original FLERT corrections (4 labels),FlertDate_v3 corrections (4 labels),FlertDate_v3 corrections (5 labels),Winner (4 labels)
+2680,Mejlis of the Crimean Tatar People,9,5,2,0,1,1,Original FLERT
+3203,Russian strikes on religious sites during the invasion of Ukraine,4,7,1,1,0,0,FlertDate_v3
+4454,Timeline of the Russo-Ukrainian war (12 November 2022 – 7 June 2023),250,9,0,0,1,1,Original FLERT
+893,Anti-Russian sentiment,177,1,0,1,0,0,FlertDate_v3
+1090,Bridge over Saint Volodymyr Descent,2,6,3,1,1,1,Tie
+80,127th Motor Rifle Division (Russia),20,2,1,0,0,0,Tie
+1618,HESA Shahed 136,25,13,1,0,0,0,Tie
+4088,Timeline of the Russo-Ukrainian war (1 August – 31 December 2024),510,5,0,0,0,0,Tie
+1606,HESA Shahed 136,11,3,0,0,1,1,Original FLERT
+3603,Timeline of the Russo-Ukrainian war (1 August – 31 December 2024),21,8,1,0,0,0,Tie
+3989,Timeline of the Russo-Ukrainian war (1 August – 31 December 2024),409,7,0,0,1,1,Original FLERT
+2648,Malaysia Airlines Flight 17,114,3,0,1,1,1,Tie
+1533,Freedom of Russia Legion,31,3,2,0,0,0,Tie
+3353,Siege of the Luhansk border base,4,0,0,1,1,1,Tie
+3519,Special Operations Forces (Russia),145,1,0,0,0,0,Tie
+2922,Moldovan protests (2022–2023),40,9,1,2,1,1,FlertDate_v3
+23,118th Mechanized Brigade (Ukraine),0,4,1,1,1,1,Tie
+3458,Special Operations Forces (Russia),83,1,0,1,0,0,FlertDate_v3
+3617,Timeline of the Russo-Ukrainian war (1 August – 31 December 2024),35,3,0,0,0,0,Tie
+1001,Battle of Kherson,33,9,1,1,0,0,FlertDate_v3
+1115,Bridge over Saint Volodymyr Descent,29,0,2,0,0,0,Tie
+3165,Russian armoured train Baikal,13,1,0,0,0,0,Tie
+4596,Timeline of the Russo-Ukrainian war (12 November 2022 – 7 June 2023),394,10,0,1,0,0,FlertDate_v3
+3034,Republic of Stakhanov,6,1,0,0,1,1,Original FLERT
+3951,Timeline of the Russo-Ukrainian war (1 August – 31 December 2024),371,5,0,0,0,0,Tie
+577,54th Reconnaissance Battalion (Ukraine),16,1,0,0,0,0,Tie
+2439,Luhansk People's Republic,54,4,2,0,0,0,Tie
+4112,Timeline of the Russo-Ukrainian war (1 August – 31 December 2024),534,3,0,0,0,0,Tie
+373,203rd Training Aviation Brigade,1,7,4,3,1,1,FlertDate_v3
+4342,Timeline of the Russo-Ukrainian war (12 November 2022 – 7 June 2023),138,4,0,1,2,2,Original FLERT
+3684,Timeline of the Russo-Ukrainian war (1 August – 31 December 2024),102,5,0,1,1,1,Tie
+168,1st Center of the Unmanned Systems Forces,3,7,3,0,1,2,Original FLERT
+239,2014 Russian sabotage activities in Ukraine,3,4,1,1,0,0,FlertDate_v3
+505,412th Unmanned Systems Brigade,6,3,1,0,0,2,Tie
+2423,Luhansk People's Republic,36,13,3,1,2,2,Original FLERT
+2298,List of military aid to Ukraine during the Russo-Ukrainian war,100,3,1,0,0,1,Tie
+4284,Timeline of the Russo-Ukrainian war (12 November 2022 – 7 June 2023),79,5,0,0,0,0,Tie
+2346,List of military aid to Ukraine during the Russo-Ukrainian war,150,1,0,0,0,0,Tie
+3088,Right Sector,49,9,1,2,1,1,FlertDate_v3
+3957,Timeline of the Russo-Ukrainian war (1 August – 31 December 2024),377,2,0,0,0,0,Tie
+2842,Minsk agreements,82,17,2,2,3,3,Original FLERT
+1609,HESA Shahed 136,16,13,3,1,3,4,Original FLERT
+4022,Timeline of the Russo-Ukrainian war (1 August – 31 December 2024),443,4,0,0,0,0,Tie
+3482,Special Operations Forces (Russia),108,1,0,1,1,1,Tie
+932,Battle of Antonov Airport,38,1,0,0,0,0,Tie
+5102,Wagner Group rebellion,83,12,1,2,2,2,Tie
+907,Battle of Antonov Airport,12,28,0,0,0,0,Tie
+4220,Timeline of the Russo-Ukrainian war (12 November 2022 – 7 June 2023),15,3,2,0,0,1,Tie
+4863,Velyka Novosilka offensive,23,5,1,0,1,1,Original FLERT
+3063,Right Sector,24,3,1,2,1,1,FlertDate_v3
+227,2014 Novosvitlivka refugee convoy attack,0,7,1,0,1,1,Original FLERT
+734,Anti-Russian sentiment,11,14,2,3,3,4,Tie
+79,127th Motor Rifle Division (Russia),19,2,0,0,0,0,Tie
+1888,Ivano-Frankivsk Oblast,134,2,0,0,0,0,Tie
+4377,Timeline of the Russo-Ukrainian war (12 November 2022 – 7 June 2023),173,3,0,0,0,0,Tie
+290,2023 Belgorod Oblast incursions,30,12,1,5,2,2,FlertDate_v3
+1095,Bridge over Saint Volodymyr Descent,7,0,1,0,0,0,Tie
+3334,Serhiy Kunitsyn,12,7,2,0,1,1,Original FLERT
+351,2026 Ukrainian counteroffensive order of battle,2,0,0,1,1,1,Tie
+465,39th Tactical Aviation Brigade,5,11,4,2,0,3,FlertDate_v3
+4892,Vladimir Putin speech on invading Ukraine,8,11,0,3,4,4,Original FLERT
+4251,Timeline of the Russo-Ukrainian war (12 November 2022 – 7 June 2023),46,8,0,0,0,0,Tie
+3153,Russian armoured train Amur,12,1,0,2,0,0,FlertDate_v3
+4581,Timeline of the Russo-Ukrainian war (12 November 2022 – 7 June 2023),379,8,0,0,0,0,Tie
+5222,Yurii Lubkovych,3,4,0,0,0,0,Tie
+132,150th Guards Motor Rifle Division,44,1,1,0,0,0,Tie
+1972,Kastuś Kalinoŭski Regiment,10,9,1,1,0,0,FlertDate_v3
+3635,Timeline of the Russo-Ukrainian war (1 August – 31 December 2024),53,6,0,0,0,0,Tie
+1652,HESA Shahed 136,61,7,0,2,2,2,Tie
+1049,Battle of Pisky,1,10,1,0,2,2,Original FLERT
+3946,Timeline of the Russo-Ukrainian war (1 August – 31 December 2024),366,3,0,0,0,0,Tie
+1583,Great Construction,2,3,3,0,0,0,Tie
+333,2025 MT Orinda fire,12,2,0,2,1,1,FlertDate_v3
+4411,Timeline of the Russo-Ukrainian war (12 November 2022 – 7 June 2023),207,13,0,1,0,0,FlertDate_v3
+29,125th Heavy Mechanized Brigade,4,3,2,0,0,0,Tie
+3182,Russian military commissariats attacks,2,5,0,3,2,2,FlertDate_v3
+2654,Malaysia Airlines Flight 17,120,12,0,0,0,0,Tie
+1934,Kamianka Sich,42,15,3,4,2,3,FlertDate_v3
+2916,Moldovan protests (2022–2023),32,3,1,3,0,0,FlertDate_v3
+3563,Sypaq Corvo Precision Payload Delivery System,1,1,0,0,0,0,Tie
+911,Battle of Antonov Airport,16,9,0,4,0,0,FlertDate_v3
+915,Battle of Antonov Airport,21,15,0,0,0,0,Tie
+2602,Malaysia Airlines Flight 17,67,4,1,0,0,0,Tie
+4560,Timeline of the Russo-Ukrainian war (12 November 2022 – 7 June 2023),358,6,0,2,0,0,FlertDate_v3
+3443,Special Operations Forces (Russia),68,1,0,1,0,0,FlertDate_v3
+5193,Yevgeny Prigozhin,48,6,0,2,0,0,FlertDate_v3
+4569,Timeline of the Russo-Ukrainian war (12 November 2022 – 7 June 2023),367,7,1,3,3,3,Tie
+4938,Vladimir Putin speech on invading Ukraine,56,0,0,1,0,0,FlertDate_v3
+4969,Volyn Oblast,14,3,1,0,1,1,Original FLERT
+2640,Malaysia Airlines Flight 17,106,27,4,1,5,7,Original FLERT
+1272,Combat Organization of Anarcho-Communists,9,3,1,1,0,0,FlertDate_v3
+3256,Russia–Ukraine gas disputes,29,18,5,0,4,4,Original FLERT
+3523,Special Operations Forces (Russia),149,2,0,2,2,2,Tie
+497,3rd Heavy Mechanized Brigade,7,4,1,0,0,0,Tie
+2351,Liut Brigade,0,10,1,9,9,10,Tie
+2157,List of journalists killed during the Russo-Ukrainian war,26,2,0,0,0,0,Tie
+3109,Russian Action Committee,4,2,1,0,1,2,Original FLERT
+5094,Wagner Group rebellion,75,7,1,0,0,0,Tie
+2977,"Palace ""Ukraine""",2,4,2,1,1,1,Tie
+1220,Chernobyl exclusion zone,95,4,0,0,0,0,Tie

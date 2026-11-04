@@ -1,0 +1,858 @@
+{
+  "comparison_row_id": 907,
+  "Source": "Battle of Antonov Airport",
+  "Index": 12,
+  "Text": "Despite overcoming the initial Ukrainian resistance, the paratroops continued to be engaged by local armed civilians and the 3rd Special Purpose Regiment. The Ukrainians also began to bombard the airport with heavy artillery. Ukrainian Gen. Valery Zaluzhny recognized the danger of the Russian bridgehead at Hostomel, and ordered the 72nd Mechanized Brigade under Col. Oleksandr Vdovychenko to organize a counter-attack. At the \"critical moment\" of the battle, a large Ukrainian counterattack was launched by the 4th Rapid Reaction Brigade, backed by the Ukrainian Air Force. Lacking armored vehicles, the Russian forces were dependent on air support to stave off the Ukrainian advances. Two Russian Su-25s were witnessed attacking Ukrainian positions. Ukrainian warplanes which survived the opening Russian missile strikes took part in providing air support for the National Guard units; these included at least two Su-24s and a MiG-29. The Ukrainians were swift in rushing more troops to the airport to support the counter-attack. These reinforcements included the Georgian Legion, and a unit of the Ukrainian Air Assault Forces. The Russian Il-76s carrying reinforcements could not land; they were possibly forced to return to Russia.",
+  "reviewed_at_utc": "2026-11-04T07:12:45.272934+00:00",
+  "original_predictions": [
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 31,
+      "end": 40
+    },
+    {
+      "entity": "3rd Special Purpose Regiment",
+      "label": "ORG",
+      "start": 125,
+      "end": 153
+    },
+    {
+      "entity": "Ukrainians",
+      "label": "MISC",
+      "start": 159,
+      "end": 169
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 226,
+      "end": 235
+    },
+    {
+      "entity": "Valery Zaluzhny",
+      "label": "PER",
+      "start": 241,
+      "end": 256
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 286,
+      "end": 293
+    },
+    {
+      "entity": "Hostomel",
+      "label": "LOC",
+      "start": 308,
+      "end": 316
+    },
+    {
+      "entity": "72nd Mechanized Brigade",
+      "label": "ORG",
+      "start": 334,
+      "end": 357
+    },
+    {
+      "entity": "Oleksandr Vdovychenko",
+      "label": "PER",
+      "start": 369,
+      "end": 390
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 469,
+      "end": 478
+    },
+    {
+      "entity": "4th Rapid Reaction Brigade",
+      "label": "ORG",
+      "start": 513,
+      "end": 539
+    },
+    {
+      "entity": "Ukrainian Air Force",
+      "label": "ORG",
+      "start": 555,
+      "end": 574
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 606,
+      "end": 613
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 668,
+      "end": 677
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 692,
+      "end": 699
+    },
+    {
+      "entity": "Su-25s",
+      "label": "MISC",
+      "start": 700,
+      "end": 706
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 732,
+      "end": 741
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 753,
+      "end": 762
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 800,
+      "end": 807
+    },
+    {
+      "entity": "National Guard",
+      "label": "ORG",
+      "start": 867,
+      "end": 881
+    },
+    {
+      "entity": "Su-24s",
+      "label": "MISC",
+      "start": 917,
+      "end": 923
+    },
+    {
+      "entity": "MiG-29",
+      "label": "MISC",
+      "start": 930,
+      "end": 936
+    },
+    {
+      "entity": "Ukrainians",
+      "label": "MISC",
+      "start": 942,
+      "end": 952
+    },
+    {
+      "entity": "Georgian Legion",
+      "label": "ORG",
+      "start": 1067,
+      "end": 1082
+    },
+    {
+      "entity": "Ukrainian Air Assault Forces",
+      "label": "ORG",
+      "start": 1102,
+      "end": 1130
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 1136,
+      "end": 1143
+    },
+    {
+      "entity": "Il-76s",
+      "label": "MISC",
+      "start": 1144,
+      "end": 1150
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 1230,
+      "end": 1236
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 31,
+      "end": 40
+    },
+    {
+      "entity": "3rd Special Purpose Regiment",
+      "label": "ORG",
+      "start": 125,
+      "end": 153
+    },
+    {
+      "entity": "Ukrainians",
+      "label": "MISC",
+      "start": 159,
+      "end": 169
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 226,
+      "end": 235
+    },
+    {
+      "entity": "Valery Zaluzhny",
+      "label": "PER",
+      "start": 241,
+      "end": 256
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 286,
+      "end": 293
+    },
+    {
+      "entity": "Hostomel",
+      "label": "LOC",
+      "start": 308,
+      "end": 316
+    },
+    {
+      "entity": "72nd Mechanized Brigade",
+      "label": "ORG",
+      "start": 334,
+      "end": 357
+    },
+    {
+      "entity": "Oleksandr Vdovychenko",
+      "label": "PER",
+      "start": 369,
+      "end": 390
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 469,
+      "end": 478
+    },
+    {
+      "entity": "4th Rapid Reaction Brigade",
+      "label": "ORG",
+      "start": 513,
+      "end": 539
+    },
+    {
+      "entity": "Ukrainian Air Force",
+      "label": "ORG",
+      "start": 555,
+      "end": 574
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 606,
+      "end": 613
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 668,
+      "end": 677
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 692,
+      "end": 699
+    },
+    {
+      "entity": "Su-25s",
+      "label": "MISC",
+      "start": 700,
+      "end": 706
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 732,
+      "end": 741
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 753,
+      "end": 762
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 800,
+      "end": 807
+    },
+    {
+      "entity": "National Guard",
+      "label": "ORG",
+      "start": 867,
+      "end": 881
+    },
+    {
+      "entity": "Su-24s",
+      "label": "MISC",
+      "start": 917,
+      "end": 923
+    },
+    {
+      "entity": "MiG-29",
+      "label": "MISC",
+      "start": 930,
+      "end": 936
+    },
+    {
+      "entity": "Ukrainians",
+      "label": "MISC",
+      "start": 942,
+      "end": 952
+    },
+    {
+      "entity": "Georgian Legion",
+      "label": "ORG",
+      "start": 1067,
+      "end": 1082
+    },
+    {
+      "entity": "Ukrainian Air Assault Forces",
+      "label": "ORG",
+      "start": 1102,
+      "end": 1130
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 1136,
+      "end": 1143
+    },
+    {
+      "entity": "Il-76s",
+      "label": "MISC",
+      "start": 1144,
+      "end": 1150
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 1230,
+      "end": 1236
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 31,
+      "end": 40
+    },
+    {
+      "entity": "3rd Special Purpose Regiment",
+      "label": "ORG",
+      "start": 125,
+      "end": 153
+    },
+    {
+      "entity": "Ukrainians",
+      "label": "MISC",
+      "start": 159,
+      "end": 169
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 226,
+      "end": 235
+    },
+    {
+      "entity": "Valery Zaluzhny",
+      "label": "PER",
+      "start": 241,
+      "end": 256
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 286,
+      "end": 293
+    },
+    {
+      "entity": "Hostomel",
+      "label": "LOC",
+      "start": 308,
+      "end": 316
+    },
+    {
+      "entity": "72nd Mechanized Brigade",
+      "label": "ORG",
+      "start": 334,
+      "end": 357
+    },
+    {
+      "entity": "Oleksandr Vdovychenko",
+      "label": "PER",
+      "start": 369,
+      "end": 390
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 469,
+      "end": 478
+    },
+    {
+      "entity": "4th Rapid Reaction Brigade",
+      "label": "ORG",
+      "start": 513,
+      "end": 539
+    },
+    {
+      "entity": "Ukrainian Air Force",
+      "label": "ORG",
+      "start": 555,
+      "end": 574
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 606,
+      "end": 613
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 668,
+      "end": 677
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 692,
+      "end": 699
+    },
+    {
+      "entity": "Su-25s",
+      "label": "MISC",
+      "start": 700,
+      "end": 706
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 732,
+      "end": 741
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 753,
+      "end": 762
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 800,
+      "end": 807
+    },
+    {
+      "entity": "National Guard",
+      "label": "ORG",
+      "start": 867,
+      "end": 881
+    },
+    {
+      "entity": "Su-24s",
+      "label": "MISC",
+      "start": 917,
+      "end": 923
+    },
+    {
+      "entity": "MiG-29",
+      "label": "MISC",
+      "start": 930,
+      "end": 936
+    },
+    {
+      "entity": "Ukrainians",
+      "label": "MISC",
+      "start": 942,
+      "end": 952
+    },
+    {
+      "entity": "Georgian Legion",
+      "label": "ORG",
+      "start": 1067,
+      "end": 1082
+    },
+    {
+      "entity": "Ukrainian Air Assault Forces",
+      "label": "ORG",
+      "start": 1102,
+      "end": 1130
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 1136,
+      "end": 1143
+    },
+    {
+      "entity": "Il-76s",
+      "label": "MISC",
+      "start": 1144,
+      "end": 1150
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 1230,
+      "end": 1236
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 31,
+      "end": 40
+    },
+    {
+      "entity": "3rd Special Purpose Regiment",
+      "label": "ORG",
+      "start": 125,
+      "end": 153
+    },
+    {
+      "entity": "Ukrainians",
+      "label": "MISC",
+      "start": 159,
+      "end": 169
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 226,
+      "end": 235
+    },
+    {
+      "entity": "Valery Zaluzhny",
+      "label": "PER",
+      "start": 241,
+      "end": 256
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 286,
+      "end": 293
+    },
+    {
+      "entity": "Hostomel",
+      "label": "LOC",
+      "start": 308,
+      "end": 316
+    },
+    {
+      "entity": "72nd Mechanized Brigade",
+      "label": "ORG",
+      "start": 334,
+      "end": 357
+    },
+    {
+      "entity": "Oleksandr Vdovychenko",
+      "label": "PER",
+      "start": 369,
+      "end": 390
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 469,
+      "end": 478
+    },
+    {
+      "entity": "4th Rapid Reaction Brigade",
+      "label": "ORG",
+      "start": 513,
+      "end": 539
+    },
+    {
+      "entity": "Ukrainian Air Force",
+      "label": "ORG",
+      "start": 555,
+      "end": 574
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 606,
+      "end": 613
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 668,
+      "end": 677
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 692,
+      "end": 699
+    },
+    {
+      "entity": "Su-25s",
+      "label": "MISC",
+      "start": 700,
+      "end": 706
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 732,
+      "end": 741
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 753,
+      "end": 762
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 800,
+      "end": 807
+    },
+    {
+      "entity": "National Guard",
+      "label": "ORG",
+      "start": 867,
+      "end": 881
+    },
+    {
+      "entity": "Su-24s",
+      "label": "MISC",
+      "start": 917,
+      "end": 923
+    },
+    {
+      "entity": "MiG-29",
+      "label": "MISC",
+      "start": 930,
+      "end": 936
+    },
+    {
+      "entity": "Ukrainians",
+      "label": "MISC",
+      "start": 942,
+      "end": 952
+    },
+    {
+      "entity": "Georgian Legion",
+      "label": "ORG",
+      "start": 1067,
+      "end": 1082
+    },
+    {
+      "entity": "Ukrainian Air Assault Forces",
+      "label": "ORG",
+      "start": 1102,
+      "end": 1130
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 1136,
+      "end": 1143
+    },
+    {
+      "entity": "Il-76s",
+      "label": "MISC",
+      "start": 1144,
+      "end": 1150
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 1230,
+      "end": 1236
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 31,
+      "end": 40
+    },
+    {
+      "entity": "3rd Special Purpose Regiment",
+      "label": "ORG",
+      "start": 125,
+      "end": 153
+    },
+    {
+      "entity": "Ukrainians",
+      "label": "MISC",
+      "start": 159,
+      "end": 169
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 226,
+      "end": 235
+    },
+    {
+      "entity": "Valery Zaluzhny",
+      "label": "PER",
+      "start": 241,
+      "end": 256
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 286,
+      "end": 293
+    },
+    {
+      "entity": "Hostomel",
+      "label": "LOC",
+      "start": 308,
+      "end": 316
+    },
+    {
+      "entity": "72nd Mechanized Brigade",
+      "label": "ORG",
+      "start": 334,
+      "end": 357
+    },
+    {
+      "entity": "Oleksandr Vdovychenko",
+      "label": "PER",
+      "start": 369,
+      "end": 390
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 469,
+      "end": 478
+    },
+    {
+      "entity": "4th Rapid Reaction Brigade",
+      "label": "ORG",
+      "start": 513,
+      "end": 539
+    },
+    {
+      "entity": "Ukrainian Air Force",
+      "label": "ORG",
+      "start": 555,
+      "end": 574
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 606,
+      "end": 613
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 668,
+      "end": 677
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 692,
+      "end": 699
+    },
+    {
+      "entity": "Su-25s",
+      "label": "MISC",
+      "start": 700,
+      "end": 706
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 732,
+      "end": 741
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 753,
+      "end": 762
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 800,
+      "end": 807
+    },
+    {
+      "entity": "National Guard",
+      "label": "ORG",
+      "start": 867,
+      "end": 881
+    },
+    {
+      "entity": "Su-24s",
+      "label": "MISC",
+      "start": 917,
+      "end": 923
+    },
+    {
+      "entity": "MiG-29",
+      "label": "MISC",
+      "start": 930,
+      "end": 936
+    },
+    {
+      "entity": "Ukrainians",
+      "label": "MISC",
+      "start": 942,
+      "end": 952
+    },
+    {
+      "entity": "Georgian Legion",
+      "label": "ORG",
+      "start": 1067,
+      "end": 1082
+    },
+    {
+      "entity": "Ukrainian Air Assault Forces",
+      "label": "ORG",
+      "start": 1102,
+      "end": 1130
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 1136,
+      "end": 1143
+    },
+    {
+      "entity": "Il-76s",
+      "label": "MISC",
+      "start": 1144,
+      "end": 1150
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 1230,
+      "end": 1236
+    }
+  ],
+  "history": []
+}

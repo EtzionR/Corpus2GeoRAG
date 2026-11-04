@@ -1,0 +1,162 @@
+{
+  "comparison_row_id": 1583,
+  "Source": "Great Construction",
+  "Index": 2,
+  "Text": "The program was initiated by the President of Ukraine, Volodymyr Zelenskyy, in March 2020, and its implementation began under the Ministry for Communities and Territories Development. The program involves the reconstruction and construction of schools, kindergartens, and sports infrastructure. In 2020, it was planned to complete 10 long-term construction projects. Throughout 2020, 150 km of roads leading to international border checkpoints were repaired, and 216 bridges were built or renovated.",
+  "reviewed_at_utc": "2026-11-04T07:32:28.203161+00:00",
+  "original_predictions": [
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 46,
+      "end": 53
+    },
+    {
+      "entity": "Volodymyr Zelenskyy",
+      "label": "PER",
+      "start": 55,
+      "end": 74
+    },
+    {
+      "entity": "Ministry for Communities and Territories Development",
+      "label": "ORG",
+      "start": 130,
+      "end": 182
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 46,
+      "end": 53
+    },
+    {
+      "entity": "Volodymyr Zelenskyy",
+      "label": "PER",
+      "start": 55,
+      "end": 74
+    },
+    {
+      "entity": "March 2020",
+      "label": "DATE",
+      "start": 79,
+      "end": 89
+    },
+    {
+      "entity": "Ministry for Communities and Territories Development",
+      "label": "ORG",
+      "start": 130,
+      "end": 182
+    },
+    {
+      "entity": "2020",
+      "label": "DATE",
+      "start": 298,
+      "end": 302
+    },
+    {
+      "entity": "2020",
+      "label": "DATE",
+      "start": 378,
+      "end": 382
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 46,
+      "end": 53
+    },
+    {
+      "entity": "Volodymyr Zelenskyy",
+      "label": "PER",
+      "start": 55,
+      "end": 74
+    },
+    {
+      "entity": "Ministry for Communities and Territories Development",
+      "label": "ORG",
+      "start": 130,
+      "end": 182
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 46,
+      "end": 53
+    },
+    {
+      "entity": "Volodymyr Zelenskyy",
+      "label": "PER",
+      "start": 55,
+      "end": 74
+    },
+    {
+      "entity": "March 2020",
+      "label": "DATE",
+      "start": 79,
+      "end": 89
+    },
+    {
+      "entity": "Ministry for Communities and Territories Development",
+      "label": "ORG",
+      "start": 130,
+      "end": 182
+    },
+    {
+      "entity": "2020",
+      "label": "DATE",
+      "start": 298,
+      "end": 302
+    },
+    {
+      "entity": "2020",
+      "label": "DATE",
+      "start": 378,
+      "end": 382
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 46,
+      "end": 53
+    },
+    {
+      "entity": "Volodymyr Zelenskyy",
+      "label": "PER",
+      "start": 55,
+      "end": 74
+    },
+    {
+      "entity": "March 2020",
+      "label": "DATE",
+      "start": 79,
+      "end": 89
+    },
+    {
+      "entity": "Ministry for Communities and Territories Development",
+      "label": "ORG",
+      "start": 130,
+      "end": 182
+    },
+    {
+      "entity": "2020",
+      "label": "DATE",
+      "start": 298,
+      "end": 302
+    },
+    {
+      "entity": "2020",
+      "label": "DATE",
+      "start": 378,
+      "end": 382
+    }
+  ],
+  "history": []
+}

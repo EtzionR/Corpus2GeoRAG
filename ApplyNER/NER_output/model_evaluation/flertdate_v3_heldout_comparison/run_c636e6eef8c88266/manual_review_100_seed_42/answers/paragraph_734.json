@@ -1,0 +1,1126 @@
+{
+  "comparison_row_id": 734,
+  "Source": "Anti-Russian sentiment",
+  "Index": 11,
+  "Text": "Contemporaries described the Tsardom of Russia and early Russian Empire as a barbaric enemy of Christianity. Accounts by Western travelers like Austrian Ambassador Sigismund von Herberstein and English Ambassador Giles Fletcher in the 16th century portrayed Russia in a negative light, focusing on aspects like superstition, brutality, and backwardness. Negative views persisted into the 17th and 18th centuries, with Western observers continuing to highlight aspects like superstition, drunkenness, and \"barbaric\" practices in Russian society. Notable figures like Captain John Perry and French travelers Jacques Margeret and Jean Chappe d'Auteroche contributed to these perceptions, often comparing Russian society unfavorably with Western standards.",
+  "reviewed_at_utc": "2026-11-04T07:18:04.554698+00:00",
+  "original_predictions": [
+    {
+      "entity": "Tsardom of Russia",
+      "label": "LOC",
+      "start": 29,
+      "end": 46
+    },
+    {
+      "entity": "Russian Empire",
+      "label": "LOC",
+      "start": 57,
+      "end": 71
+    },
+    {
+      "entity": "Christianity",
+      "label": "MISC",
+      "start": 95,
+      "end": 107
+    },
+    {
+      "entity": "Western",
+      "label": "MISC",
+      "start": 121,
+      "end": 128
+    },
+    {
+      "entity": "Austrian",
+      "label": "MISC",
+      "start": 144,
+      "end": 152
+    },
+    {
+      "entity": "Sigismund von Herberstein",
+      "label": "PER",
+      "start": 164,
+      "end": 189
+    },
+    {
+      "entity": "English",
+      "label": "MISC",
+      "start": 194,
+      "end": 201
+    },
+    {
+      "entity": "Giles Fletcher",
+      "label": "PER",
+      "start": 213,
+      "end": 227
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 258,
+      "end": 264
+    },
+    {
+      "entity": "Western",
+      "label": "MISC",
+      "start": 418,
+      "end": 425
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 528,
+      "end": 535
+    },
+    {
+      "entity": "John Perry",
+      "label": "PER",
+      "start": 574,
+      "end": 584
+    },
+    {
+      "entity": "French",
+      "label": "MISC",
+      "start": 589,
+      "end": 595
+    },
+    {
+      "entity": "Jacques Margeret",
+      "label": "PER",
+      "start": 606,
+      "end": 622
+    },
+    {
+      "entity": "Jean Chappe d'Auteroche",
+      "label": "PER",
+      "start": 627,
+      "end": 650
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 701,
+      "end": 708
+    },
+    {
+      "entity": "Western",
+      "label": "MISC",
+      "start": 734,
+      "end": 741
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Tsardom of Russia",
+      "label": "LOC",
+      "start": 29,
+      "end": 46
+    },
+    {
+      "entity": "Russian Empire",
+      "label": "LOC",
+      "start": 57,
+      "end": 71
+    },
+    {
+      "entity": "Christianity",
+      "label": "MISC",
+      "start": 95,
+      "end": 107
+    },
+    {
+      "entity": "Western",
+      "label": "MISC",
+      "start": 121,
+      "end": 128
+    },
+    {
+      "entity": "Austrian",
+      "label": "MISC",
+      "start": 144,
+      "end": 152
+    },
+    {
+      "entity": "Sigismund von Herberstein",
+      "label": "PER",
+      "start": 164,
+      "end": 189
+    },
+    {
+      "entity": "English",
+      "label": "MISC",
+      "start": 194,
+      "end": 201
+    },
+    {
+      "entity": "Giles Fletcher",
+      "label": "PER",
+      "start": 213,
+      "end": 227
+    },
+    {
+      "entity": "16th century",
+      "label": "DATE",
+      "start": 235,
+      "end": 247
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 258,
+      "end": 264
+    },
+    {
+      "entity": "17th",
+      "label": "DATE",
+      "start": 388,
+      "end": 392
+    },
+    {
+      "entity": "Western",
+      "label": "MISC",
+      "start": 418,
+      "end": 425
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 528,
+      "end": 535
+    },
+    {
+      "entity": "John Perry",
+      "label": "PER",
+      "start": 574,
+      "end": 584
+    },
+    {
+      "entity": "French",
+      "label": "MISC",
+      "start": 589,
+      "end": 595
+    },
+    {
+      "entity": "Jacques Margeret",
+      "label": "PER",
+      "start": 606,
+      "end": 622
+    },
+    {
+      "entity": "Jean Chappe d'Auteroche",
+      "label": "PER",
+      "start": 627,
+      "end": 650
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 701,
+      "end": 708
+    },
+    {
+      "entity": "Western",
+      "label": "MISC",
+      "start": 734,
+      "end": 741
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Tsardom of Russia",
+      "label": "LOC",
+      "start": 29,
+      "end": 46
+    },
+    {
+      "entity": "Russian Empire",
+      "label": "LOC",
+      "start": 57,
+      "end": 71
+    },
+    {
+      "entity": "Christianity",
+      "label": "MISC",
+      "start": 95,
+      "end": 107
+    },
+    {
+      "entity": "Austrian",
+      "label": "MISC",
+      "start": 144,
+      "end": 152
+    },
+    {
+      "entity": "Sigismund von Herberstein",
+      "label": "PER",
+      "start": 164,
+      "end": 189
+    },
+    {
+      "entity": "English",
+      "label": "MISC",
+      "start": 194,
+      "end": 201
+    },
+    {
+      "entity": "Giles Fletcher",
+      "label": "PER",
+      "start": 213,
+      "end": 227
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 258,
+      "end": 264
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 528,
+      "end": 535
+    },
+    {
+      "entity": "John Perry",
+      "label": "PER",
+      "start": 574,
+      "end": 584
+    },
+    {
+      "entity": "French",
+      "label": "MISC",
+      "start": 589,
+      "end": 595
+    },
+    {
+      "entity": "Jacques Margeret",
+      "label": "PER",
+      "start": 606,
+      "end": 622
+    },
+    {
+      "entity": "Jean Chappe d'Auteroche",
+      "label": "PER",
+      "start": 627,
+      "end": 650
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 701,
+      "end": 708
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Tsardom of Russia",
+      "label": "LOC",
+      "start": 29,
+      "end": 46
+    },
+    {
+      "entity": "Russian Empire",
+      "label": "LOC",
+      "start": 57,
+      "end": 71
+    },
+    {
+      "entity": "Christianity",
+      "label": "MISC",
+      "start": 95,
+      "end": 107
+    },
+    {
+      "entity": "Austrian",
+      "label": "MISC",
+      "start": 144,
+      "end": 152
+    },
+    {
+      "entity": "Sigismund von Herberstein",
+      "label": "PER",
+      "start": 164,
+      "end": 189
+    },
+    {
+      "entity": "English",
+      "label": "MISC",
+      "start": 194,
+      "end": 201
+    },
+    {
+      "entity": "Giles Fletcher",
+      "label": "PER",
+      "start": 213,
+      "end": 227
+    },
+    {
+      "entity": "16th century",
+      "label": "DATE",
+      "start": 235,
+      "end": 247
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 258,
+      "end": 264
+    },
+    {
+      "entity": "17th and 18th centuries",
+      "label": "DATE",
+      "start": 388,
+      "end": 411
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 528,
+      "end": 535
+    },
+    {
+      "entity": "John Perry",
+      "label": "PER",
+      "start": 574,
+      "end": 584
+    },
+    {
+      "entity": "French",
+      "label": "MISC",
+      "start": 589,
+      "end": 595
+    },
+    {
+      "entity": "Jacques Margeret",
+      "label": "PER",
+      "start": 606,
+      "end": 622
+    },
+    {
+      "entity": "Jean Chappe d'Auteroche",
+      "label": "PER",
+      "start": 627,
+      "end": 650
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 701,
+      "end": 708
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Tsardom of Russia",
+      "label": "LOC",
+      "start": 29,
+      "end": 46
+    },
+    {
+      "entity": "Russian Empire",
+      "label": "LOC",
+      "start": 57,
+      "end": 71
+    },
+    {
+      "entity": "Christianity",
+      "label": "MISC",
+      "start": 95,
+      "end": 107
+    },
+    {
+      "entity": "Austrian",
+      "label": "MISC",
+      "start": 144,
+      "end": 152
+    },
+    {
+      "entity": "Sigismund von Herberstein",
+      "label": "PER",
+      "start": 164,
+      "end": 189
+    },
+    {
+      "entity": "English",
+      "label": "MISC",
+      "start": 194,
+      "end": 201
+    },
+    {
+      "entity": "Giles Fletcher",
+      "label": "PER",
+      "start": 213,
+      "end": 227
+    },
+    {
+      "entity": "16th century",
+      "label": "DATE",
+      "start": 235,
+      "end": 247
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 258,
+      "end": 264
+    },
+    {
+      "entity": "17th and 18th centuries",
+      "label": "DATE",
+      "start": 388,
+      "end": 411
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 528,
+      "end": 535
+    },
+    {
+      "entity": "John Perry",
+      "label": "PER",
+      "start": 574,
+      "end": 584
+    },
+    {
+      "entity": "French",
+      "label": "MISC",
+      "start": 589,
+      "end": 595
+    },
+    {
+      "entity": "Jacques Margeret",
+      "label": "PER",
+      "start": 606,
+      "end": 622
+    },
+    {
+      "entity": "Jean Chappe d'Auteroche",
+      "label": "PER",
+      "start": 627,
+      "end": 650
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 701,
+      "end": 708
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "del 4,10,17",
+      "before": [
+        {
+          "entity": "Tsardom of Russia",
+          "label": "LOC",
+          "start": 29,
+          "end": 46
+        },
+        {
+          "entity": "Russian Empire",
+          "label": "LOC",
+          "start": 57,
+          "end": 71
+        },
+        {
+          "entity": "Christianity",
+          "label": "MISC",
+          "start": 95,
+          "end": 107
+        },
+        {
+          "entity": "Western",
+          "label": "MISC",
+          "start": 121,
+          "end": 128
+        },
+        {
+          "entity": "Austrian",
+          "label": "MISC",
+          "start": 144,
+          "end": 152
+        },
+        {
+          "entity": "Sigismund von Herberstein",
+          "label": "PER",
+          "start": 164,
+          "end": 189
+        },
+        {
+          "entity": "English",
+          "label": "MISC",
+          "start": 194,
+          "end": 201
+        },
+        {
+          "entity": "Giles Fletcher",
+          "label": "PER",
+          "start": 213,
+          "end": 227
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 258,
+          "end": 264
+        },
+        {
+          "entity": "Western",
+          "label": "MISC",
+          "start": 418,
+          "end": 425
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 528,
+          "end": 535
+        },
+        {
+          "entity": "John Perry",
+          "label": "PER",
+          "start": 574,
+          "end": 584
+        },
+        {
+          "entity": "French",
+          "label": "MISC",
+          "start": 589,
+          "end": 595
+        },
+        {
+          "entity": "Jacques Margeret",
+          "label": "PER",
+          "start": 606,
+          "end": 622
+        },
+        {
+          "entity": "Jean Chappe d'Auteroche",
+          "label": "PER",
+          "start": 627,
+          "end": 650
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 701,
+          "end": 708
+        },
+        {
+          "entity": "Western",
+          "label": "MISC",
+          "start": 734,
+          "end": 741
+        }
+      ],
+      "after": [
+        {
+          "entity": "Tsardom of Russia",
+          "label": "LOC",
+          "start": 29,
+          "end": 46
+        },
+        {
+          "entity": "Russian Empire",
+          "label": "LOC",
+          "start": 57,
+          "end": 71
+        },
+        {
+          "entity": "Christianity",
+          "label": "MISC",
+          "start": 95,
+          "end": 107
+        },
+        {
+          "entity": "Austrian",
+          "label": "MISC",
+          "start": 144,
+          "end": 152
+        },
+        {
+          "entity": "Sigismund von Herberstein",
+          "label": "PER",
+          "start": 164,
+          "end": 189
+        },
+        {
+          "entity": "English",
+          "label": "MISC",
+          "start": 194,
+          "end": 201
+        },
+        {
+          "entity": "Giles Fletcher",
+          "label": "PER",
+          "start": 213,
+          "end": 227
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 258,
+          "end": 264
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 528,
+          "end": 535
+        },
+        {
+          "entity": "John Perry",
+          "label": "PER",
+          "start": 574,
+          "end": 584
+        },
+        {
+          "entity": "French",
+          "label": "MISC",
+          "start": 589,
+          "end": 595
+        },
+        {
+          "entity": "Jacques Margeret",
+          "label": "PER",
+          "start": 606,
+          "end": 622
+        },
+        {
+          "entity": "Jean Chappe d'Auteroche",
+          "label": "PER",
+          "start": 627,
+          "end": 650
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 701,
+          "end": 708
+        }
+      ],
+      "at_utc": "2026-11-04T07:17:46.655926+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "del 4,12,19",
+      "before": [
+        {
+          "entity": "Tsardom of Russia",
+          "label": "LOC",
+          "start": 29,
+          "end": 46
+        },
+        {
+          "entity": "Russian Empire",
+          "label": "LOC",
+          "start": 57,
+          "end": 71
+        },
+        {
+          "entity": "Christianity",
+          "label": "MISC",
+          "start": 95,
+          "end": 107
+        },
+        {
+          "entity": "Western",
+          "label": "MISC",
+          "start": 121,
+          "end": 128
+        },
+        {
+          "entity": "Austrian",
+          "label": "MISC",
+          "start": 144,
+          "end": 152
+        },
+        {
+          "entity": "Sigismund von Herberstein",
+          "label": "PER",
+          "start": 164,
+          "end": 189
+        },
+        {
+          "entity": "English",
+          "label": "MISC",
+          "start": 194,
+          "end": 201
+        },
+        {
+          "entity": "Giles Fletcher",
+          "label": "PER",
+          "start": 213,
+          "end": 227
+        },
+        {
+          "entity": "16th century",
+          "label": "DATE",
+          "start": 235,
+          "end": 247
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 258,
+          "end": 264
+        },
+        {
+          "entity": "17th",
+          "label": "DATE",
+          "start": 388,
+          "end": 392
+        },
+        {
+          "entity": "Western",
+          "label": "MISC",
+          "start": 418,
+          "end": 425
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 528,
+          "end": 535
+        },
+        {
+          "entity": "John Perry",
+          "label": "PER",
+          "start": 574,
+          "end": 584
+        },
+        {
+          "entity": "French",
+          "label": "MISC",
+          "start": 589,
+          "end": 595
+        },
+        {
+          "entity": "Jacques Margeret",
+          "label": "PER",
+          "start": 606,
+          "end": 622
+        },
+        {
+          "entity": "Jean Chappe d'Auteroche",
+          "label": "PER",
+          "start": 627,
+          "end": 650
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 701,
+          "end": 708
+        },
+        {
+          "entity": "Western",
+          "label": "MISC",
+          "start": 734,
+          "end": 741
+        }
+      ],
+      "after": [
+        {
+          "entity": "Tsardom of Russia",
+          "label": "LOC",
+          "start": 29,
+          "end": 46
+        },
+        {
+          "entity": "Russian Empire",
+          "label": "LOC",
+          "start": 57,
+          "end": 71
+        },
+        {
+          "entity": "Christianity",
+          "label": "MISC",
+          "start": 95,
+          "end": 107
+        },
+        {
+          "entity": "Austrian",
+          "label": "MISC",
+          "start": 144,
+          "end": 152
+        },
+        {
+          "entity": "Sigismund von Herberstein",
+          "label": "PER",
+          "start": 164,
+          "end": 189
+        },
+        {
+          "entity": "English",
+          "label": "MISC",
+          "start": 194,
+          "end": 201
+        },
+        {
+          "entity": "Giles Fletcher",
+          "label": "PER",
+          "start": 213,
+          "end": 227
+        },
+        {
+          "entity": "16th century",
+          "label": "DATE",
+          "start": 235,
+          "end": 247
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 258,
+          "end": 264
+        },
+        {
+          "entity": "17th",
+          "label": "DATE",
+          "start": 388,
+          "end": 392
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 528,
+          "end": 535
+        },
+        {
+          "entity": "John Perry",
+          "label": "PER",
+          "start": 574,
+          "end": 584
+        },
+        {
+          "entity": "French",
+          "label": "MISC",
+          "start": 589,
+          "end": 595
+        },
+        {
+          "entity": "Jacques Margeret",
+          "label": "PER",
+          "start": 606,
+          "end": 622
+        },
+        {
+          "entity": "Jean Chappe d'Auteroche",
+          "label": "PER",
+          "start": 627,
+          "end": 650
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 701,
+          "end": 708
+        }
+      ],
+      "at_utc": "2026-11-04T07:17:55.616039+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "span 10 | 17th and 18th centuries | 1",
+      "before": [
+        {
+          "entity": "Tsardom of Russia",
+          "label": "LOC",
+          "start": 29,
+          "end": 46
+        },
+        {
+          "entity": "Russian Empire",
+          "label": "LOC",
+          "start": 57,
+          "end": 71
+        },
+        {
+          "entity": "Christianity",
+          "label": "MISC",
+          "start": 95,
+          "end": 107
+        },
+        {
+          "entity": "Austrian",
+          "label": "MISC",
+          "start": 144,
+          "end": 152
+        },
+        {
+          "entity": "Sigismund von Herberstein",
+          "label": "PER",
+          "start": 164,
+          "end": 189
+        },
+        {
+          "entity": "English",
+          "label": "MISC",
+          "start": 194,
+          "end": 201
+        },
+        {
+          "entity": "Giles Fletcher",
+          "label": "PER",
+          "start": 213,
+          "end": 227
+        },
+        {
+          "entity": "16th century",
+          "label": "DATE",
+          "start": 235,
+          "end": 247
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 258,
+          "end": 264
+        },
+        {
+          "entity": "17th",
+          "label": "DATE",
+          "start": 388,
+          "end": 392
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 528,
+          "end": 535
+        },
+        {
+          "entity": "John Perry",
+          "label": "PER",
+          "start": 574,
+          "end": 584
+        },
+        {
+          "entity": "French",
+          "label": "MISC",
+          "start": 589,
+          "end": 595
+        },
+        {
+          "entity": "Jacques Margeret",
+          "label": "PER",
+          "start": 606,
+          "end": 622
+        },
+        {
+          "entity": "Jean Chappe d'Auteroche",
+          "label": "PER",
+          "start": 627,
+          "end": 650
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 701,
+          "end": 708
+        }
+      ],
+      "after": [
+        {
+          "entity": "Tsardom of Russia",
+          "label": "LOC",
+          "start": 29,
+          "end": 46
+        },
+        {
+          "entity": "Russian Empire",
+          "label": "LOC",
+          "start": 57,
+          "end": 71
+        },
+        {
+          "entity": "Christianity",
+          "label": "MISC",
+          "start": 95,
+          "end": 107
+        },
+        {
+          "entity": "Austrian",
+          "label": "MISC",
+          "start": 144,
+          "end": 152
+        },
+        {
+          "entity": "Sigismund von Herberstein",
+          "label": "PER",
+          "start": 164,
+          "end": 189
+        },
+        {
+          "entity": "English",
+          "label": "MISC",
+          "start": 194,
+          "end": 201
+        },
+        {
+          "entity": "Giles Fletcher",
+          "label": "PER",
+          "start": 213,
+          "end": 227
+        },
+        {
+          "entity": "16th century",
+          "label": "DATE",
+          "start": 235,
+          "end": 247
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 258,
+          "end": 264
+        },
+        {
+          "entity": "17th and 18th centuries",
+          "label": "DATE",
+          "start": 388,
+          "end": 411
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 528,
+          "end": 535
+        },
+        {
+          "entity": "John Perry",
+          "label": "PER",
+          "start": 574,
+          "end": 584
+        },
+        {
+          "entity": "French",
+          "label": "MISC",
+          "start": 589,
+          "end": 595
+        },
+        {
+          "entity": "Jacques Margeret",
+          "label": "PER",
+          "start": 606,
+          "end": 622
+        },
+        {
+          "entity": "Jean Chappe d'Auteroche",
+          "label": "PER",
+          "start": 627,
+          "end": 650
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 701,
+          "end": 708
+        }
+      ],
+      "at_utc": "2026-11-04T07:18:01.874284+00:00"
+    }
+  ]
+}

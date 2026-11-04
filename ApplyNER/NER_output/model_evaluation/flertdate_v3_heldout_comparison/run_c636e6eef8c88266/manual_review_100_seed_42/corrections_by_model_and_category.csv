@@ -1,0 +1,3 @@
+﻿Model,PER,ORG,LOC,MISC,DATE,Total (4 labels),Total (5 labels)
+Original FLERT,2,37,9,39,N/A,87,N/A
+FlertDate_v3,4,21,12,39,15,76,91

@@ -1,0 +1,48 @@
+{
+  "comparison_row_id": 3165,
+  "Source": "Russian armoured train Baikal",
+  "Index": 13,
+  "Text": "Russo-Ukrainian War",
+  "reviewed_at_utc": "2026-11-04T06:47:31.400695+00:00",
+  "original_predictions": [
+    {
+      "entity": "Russo-Ukrainian War",
+      "label": "MISC",
+      "start": 0,
+      "end": 19
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Russo-Ukrainian War",
+      "label": "MISC",
+      "start": 0,
+      "end": 19
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Russo-Ukrainian War",
+      "label": "MISC",
+      "start": 0,
+      "end": 19
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Russo-Ukrainian War",
+      "label": "MISC",
+      "start": 0,
+      "end": 19
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Russo-Ukrainian War",
+      "label": "MISC",
+      "start": 0,
+      "end": 19
+    }
+  ],
+  "history": []
+}

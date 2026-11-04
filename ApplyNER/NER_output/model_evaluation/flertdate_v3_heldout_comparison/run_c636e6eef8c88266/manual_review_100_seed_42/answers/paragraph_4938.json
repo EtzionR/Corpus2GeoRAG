@@ -1,0 +1,35 @@
+{
+  "comparison_row_id": 4938,
+  "Source": "Vladimir Putin speech on invading Ukraine",
+  "Index": 56,
+  "Text": "Russian nationalism",
+  "reviewed_at_utc": "2026-11-04T07:46:56.096554+00:00",
+  "original_predictions": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 0,
+      "end": 7
+    }
+  ],
+  "v3_predictions": [],
+  "corrected_original": [],
+  "corrected_v3": [],
+  "gold": [],
+  "history": [
+    {
+      "model": "original",
+      "command": "del 1",
+      "before": [
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 0,
+          "end": 7
+        }
+      ],
+      "after": [],
+      "at_utc": "2026-11-04T07:46:49.093244+00:00"
+    }
+  ]
+}

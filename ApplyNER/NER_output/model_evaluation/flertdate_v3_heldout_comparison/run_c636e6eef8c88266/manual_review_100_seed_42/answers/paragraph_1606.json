@@ -1,0 +1,142 @@
+{
+  "comparison_row_id": 1606,
+  "Source": "HESA Shahed 136",
+  "Index": 11,
+  "Text": "The Russian-manufactured Geran-2 is believed to have a \"state-of-art antenna interference suppression\" system that suppresses jamming of the satellite navigation position signal, designed by Iran using seven transceivers for input and an FPGA and three microcontrollers to analyse and suppress any electronic warfare emissions.",
+  "reviewed_at_utc": "2026-11-04T06:37:26.824157+00:00",
+  "original_predictions": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 4,
+      "end": 11
+    },
+    {
+      "entity": "Geran-2",
+      "label": "MISC",
+      "start": 25,
+      "end": 32
+    },
+    {
+      "entity": "Iran",
+      "label": "LOC",
+      "start": 191,
+      "end": 195
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Geran-2",
+      "label": "MISC",
+      "start": 25,
+      "end": 32
+    },
+    {
+      "entity": "Iran",
+      "label": "LOC",
+      "start": 191,
+      "end": 195
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 4,
+      "end": 11
+    },
+    {
+      "entity": "Geran-2",
+      "label": "MISC",
+      "start": 25,
+      "end": 32
+    },
+    {
+      "entity": "Iran",
+      "label": "LOC",
+      "start": 191,
+      "end": 195
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 4,
+      "end": 11
+    },
+    {
+      "entity": "Geran-2",
+      "label": "MISC",
+      "start": 25,
+      "end": 32
+    },
+    {
+      "entity": "Iran",
+      "label": "LOC",
+      "start": 191,
+      "end": 195
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 4,
+      "end": 11
+    },
+    {
+      "entity": "Geran-2",
+      "label": "MISC",
+      "start": 25,
+      "end": 32
+    },
+    {
+      "entity": "Iran",
+      "label": "LOC",
+      "start": 191,
+      "end": 195
+    }
+  ],
+  "history": [
+    {
+      "model": "v3",
+      "command": "add MISC | Russian | 1",
+      "before": [
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 25,
+          "end": 32
+        },
+        {
+          "entity": "Iran",
+          "label": "LOC",
+          "start": 191,
+          "end": 195
+        }
+      ],
+      "after": [
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 4,
+          "end": 11
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 25,
+          "end": 32
+        },
+        {
+          "entity": "Iran",
+          "label": "LOC",
+          "start": 191,
+          "end": 195
+        }
+      ],
+      "at_utc": "2026-11-04T06:37:24.267383+00:00"
+    }
+  ]
+}

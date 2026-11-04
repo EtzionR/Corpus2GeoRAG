@@ -1,0 +1,108 @@
+{
+  "comparison_row_id": 3946,
+  "Source": "Timeline of the Russo-Ukrainian war (1 August – 31 December 2024)",
+  "Index": 366,
+  "Text": "Ukrainian National Security and Defense Council Secretary Oleksandr Lytvynenko indicated that Ukraine would mobilise another 160,000 soldiers. One million and fifty citizens have been drafted since the full-scale invasion started.",
+  "reviewed_at_utc": "2026-11-04T07:32:05.365376+00:00",
+  "original_predictions": [
+    {
+      "entity": "Ukrainian National Security and Defense Council",
+      "label": "ORG",
+      "start": 0,
+      "end": 47
+    },
+    {
+      "entity": "Oleksandr Lytvynenko",
+      "label": "PER",
+      "start": 58,
+      "end": 78
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 94,
+      "end": 101
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Ukrainian National Security and Defense Council",
+      "label": "ORG",
+      "start": 0,
+      "end": 47
+    },
+    {
+      "entity": "Oleksandr Lytvynenko",
+      "label": "PER",
+      "start": 58,
+      "end": 78
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 94,
+      "end": 101
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Ukrainian National Security and Defense Council",
+      "label": "ORG",
+      "start": 0,
+      "end": 47
+    },
+    {
+      "entity": "Oleksandr Lytvynenko",
+      "label": "PER",
+      "start": 58,
+      "end": 78
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 94,
+      "end": 101
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Ukrainian National Security and Defense Council",
+      "label": "ORG",
+      "start": 0,
+      "end": 47
+    },
+    {
+      "entity": "Oleksandr Lytvynenko",
+      "label": "PER",
+      "start": 58,
+      "end": 78
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 94,
+      "end": 101
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Ukrainian National Security and Defense Council",
+      "label": "ORG",
+      "start": 0,
+      "end": 47
+    },
+    {
+      "entity": "Oleksandr Lytvynenko",
+      "label": "PER",
+      "start": 58,
+      "end": 78
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 94,
+      "end": 101
+    }
+  ],
+  "history": []
+}

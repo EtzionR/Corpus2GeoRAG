@@ -1,0 +1,1210 @@
+{
+  "comparison_row_id": 465,
+  "Source": "39th Tactical Aviation Brigade",
+  "Index": 5,
+  "Text": "In 2011, the brigade was reorganized into the 37th Separate Fighter Squadron, a part of the 40th Tactical Aviation Brigade. In February 2013, the squadron took part in air exercises in Crimea, using Su-27s which repelled an air attack by two MiG-29 aircraft of the Sevastopol Tactical Aviation Brigade. In April 2013, the Su-27 and L-39 aircraft, the pilots made 45 sorties, spending about 40 hours in the sky. The purpose of the event was to prepare the flight crew to perform air defense and combat duty tasks, perform regular inspections, flight training and maintenance of training in difficult weather conditions, during day and at night. In August, the squadron took part in the international air show \"International air show-2013\" in the city of Radom, Poland.",
+  "reviewed_at_utc": "2026-11-04T07:23:43.735744+00:00",
+  "original_predictions": [
+    {
+      "entity": "37th Separate Fighter Squadron",
+      "label": "ORG",
+      "start": 46,
+      "end": 76
+    },
+    {
+      "entity": "40th Tactical Aviation Brigade",
+      "label": "ORG",
+      "start": 92,
+      "end": 122
+    },
+    {
+      "entity": "Crimea",
+      "label": "LOC",
+      "start": 185,
+      "end": 191
+    },
+    {
+      "entity": "Su-27s",
+      "label": "MISC",
+      "start": 199,
+      "end": 205
+    },
+    {
+      "entity": "MiG-29",
+      "label": "MISC",
+      "start": 242,
+      "end": 248
+    },
+    {
+      "entity": "Sevastopol Tactical Aviation Brigade",
+      "label": "ORG",
+      "start": 265,
+      "end": 301
+    },
+    {
+      "entity": "Su-27",
+      "label": "MISC",
+      "start": 322,
+      "end": 327
+    },
+    {
+      "entity": "L-39",
+      "label": "MISC",
+      "start": 332,
+      "end": 336
+    },
+    {
+      "entity": "International air show",
+      "label": "MISC",
+      "start": 709,
+      "end": 731
+    },
+    {
+      "entity": "2013",
+      "label": "MISC",
+      "start": 732,
+      "end": 736
+    },
+    {
+      "entity": "Radom",
+      "label": "LOC",
+      "start": 753,
+      "end": 758
+    },
+    {
+      "entity": "Poland",
+      "label": "LOC",
+      "start": 760,
+      "end": 766
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "37th Separate Fighter Squadron",
+      "label": "ORG",
+      "start": 46,
+      "end": 76
+    },
+    {
+      "entity": "40th Tactical Aviation Brigade",
+      "label": "ORG",
+      "start": 92,
+      "end": 122
+    },
+    {
+      "entity": "February 2013",
+      "label": "DATE",
+      "start": 127,
+      "end": 140
+    },
+    {
+      "entity": "Crimea",
+      "label": "LOC",
+      "start": 185,
+      "end": 191
+    },
+    {
+      "entity": "Su-27s",
+      "label": "MISC",
+      "start": 199,
+      "end": 205
+    },
+    {
+      "entity": "MiG-29",
+      "label": "MISC",
+      "start": 242,
+      "end": 248
+    },
+    {
+      "entity": "Sevastopol Tactical Aviation Brigade",
+      "label": "ORG",
+      "start": 265,
+      "end": 301
+    },
+    {
+      "entity": "Su-27",
+      "label": "MISC",
+      "start": 322,
+      "end": 327
+    },
+    {
+      "entity": "L-39",
+      "label": "MISC",
+      "start": 332,
+      "end": 336
+    },
+    {
+      "entity": "International air show-2013",
+      "label": "MISC",
+      "start": 709,
+      "end": 736
+    },
+    {
+      "entity": "Radom",
+      "label": "LOC",
+      "start": 753,
+      "end": 758
+    },
+    {
+      "entity": "Poland",
+      "label": "LOC",
+      "start": 760,
+      "end": 766
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "37th Separate Fighter Squadron",
+      "label": "ORG",
+      "start": 46,
+      "end": 76
+    },
+    {
+      "entity": "40th Tactical Aviation Brigade",
+      "label": "ORG",
+      "start": 92,
+      "end": 122
+    },
+    {
+      "entity": "Crimea",
+      "label": "LOC",
+      "start": 185,
+      "end": 191
+    },
+    {
+      "entity": "Su-27s",
+      "label": "MISC",
+      "start": 199,
+      "end": 205
+    },
+    {
+      "entity": "MiG-29",
+      "label": "MISC",
+      "start": 242,
+      "end": 248
+    },
+    {
+      "entity": "Sevastopol Tactical Aviation Brigade",
+      "label": "ORG",
+      "start": 265,
+      "end": 301
+    },
+    {
+      "entity": "Su-27",
+      "label": "MISC",
+      "start": 322,
+      "end": 327
+    },
+    {
+      "entity": "L-39",
+      "label": "MISC",
+      "start": 332,
+      "end": 336
+    },
+    {
+      "entity": "International air show-2013",
+      "label": "MISC",
+      "start": 709,
+      "end": 736
+    },
+    {
+      "entity": "Radom",
+      "label": "LOC",
+      "start": 753,
+      "end": 758
+    },
+    {
+      "entity": "Poland",
+      "label": "LOC",
+      "start": 760,
+      "end": 766
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "2011",
+      "label": "DATE",
+      "start": 3,
+      "end": 7
+    },
+    {
+      "entity": "37th Separate Fighter Squadron",
+      "label": "ORG",
+      "start": 46,
+      "end": 76
+    },
+    {
+      "entity": "40th Tactical Aviation Brigade",
+      "label": "ORG",
+      "start": 92,
+      "end": 122
+    },
+    {
+      "entity": "February 2013",
+      "label": "DATE",
+      "start": 127,
+      "end": 140
+    },
+    {
+      "entity": "Crimea",
+      "label": "LOC",
+      "start": 185,
+      "end": 191
+    },
+    {
+      "entity": "Su-27s",
+      "label": "MISC",
+      "start": 199,
+      "end": 205
+    },
+    {
+      "entity": "MiG-29",
+      "label": "MISC",
+      "start": 242,
+      "end": 248
+    },
+    {
+      "entity": "Sevastopol Tactical Aviation Brigade",
+      "label": "ORG",
+      "start": 265,
+      "end": 301
+    },
+    {
+      "entity": "April 2013",
+      "label": "DATE",
+      "start": 306,
+      "end": 316
+    },
+    {
+      "entity": "Su-27",
+      "label": "MISC",
+      "start": 322,
+      "end": 327
+    },
+    {
+      "entity": "L-39",
+      "label": "MISC",
+      "start": 332,
+      "end": 336
+    },
+    {
+      "entity": "August",
+      "label": "DATE",
+      "start": 647,
+      "end": 653
+    },
+    {
+      "entity": "International air show-2013",
+      "label": "MISC",
+      "start": 709,
+      "end": 736
+    },
+    {
+      "entity": "Radom",
+      "label": "LOC",
+      "start": 753,
+      "end": 758
+    },
+    {
+      "entity": "Poland",
+      "label": "LOC",
+      "start": 760,
+      "end": 766
+    }
+  ],
+  "gold": [
+    {
+      "entity": "2011",
+      "label": "DATE",
+      "start": 3,
+      "end": 7
+    },
+    {
+      "entity": "37th Separate Fighter Squadron",
+      "label": "ORG",
+      "start": 46,
+      "end": 76
+    },
+    {
+      "entity": "40th Tactical Aviation Brigade",
+      "label": "ORG",
+      "start": 92,
+      "end": 122
+    },
+    {
+      "entity": "February 2013",
+      "label": "DATE",
+      "start": 127,
+      "end": 140
+    },
+    {
+      "entity": "Crimea",
+      "label": "LOC",
+      "start": 185,
+      "end": 191
+    },
+    {
+      "entity": "Su-27s",
+      "label": "MISC",
+      "start": 199,
+      "end": 205
+    },
+    {
+      "entity": "MiG-29",
+      "label": "MISC",
+      "start": 242,
+      "end": 248
+    },
+    {
+      "entity": "Sevastopol Tactical Aviation Brigade",
+      "label": "ORG",
+      "start": 265,
+      "end": 301
+    },
+    {
+      "entity": "April 2013",
+      "label": "DATE",
+      "start": 306,
+      "end": 316
+    },
+    {
+      "entity": "Su-27",
+      "label": "MISC",
+      "start": 322,
+      "end": 327
+    },
+    {
+      "entity": "L-39",
+      "label": "MISC",
+      "start": 332,
+      "end": 336
+    },
+    {
+      "entity": "August",
+      "label": "DATE",
+      "start": 647,
+      "end": 653
+    },
+    {
+      "entity": "International air show-2013",
+      "label": "MISC",
+      "start": 709,
+      "end": 736
+    },
+    {
+      "entity": "Radom",
+      "label": "LOC",
+      "start": 753,
+      "end": 758
+    },
+    {
+      "entity": "Poland",
+      "label": "LOC",
+      "start": 760,
+      "end": 766
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "del 10",
+      "before": [
+        {
+          "entity": "37th Separate Fighter Squadron",
+          "label": "ORG",
+          "start": 46,
+          "end": 76
+        },
+        {
+          "entity": "40th Tactical Aviation Brigade",
+          "label": "ORG",
+          "start": 92,
+          "end": 122
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 185,
+          "end": 191
+        },
+        {
+          "entity": "Su-27s",
+          "label": "MISC",
+          "start": 199,
+          "end": 205
+        },
+        {
+          "entity": "MiG-29",
+          "label": "MISC",
+          "start": 242,
+          "end": 248
+        },
+        {
+          "entity": "Sevastopol Tactical Aviation Brigade",
+          "label": "ORG",
+          "start": 265,
+          "end": 301
+        },
+        {
+          "entity": "Su-27",
+          "label": "MISC",
+          "start": 322,
+          "end": 327
+        },
+        {
+          "entity": "L-39",
+          "label": "MISC",
+          "start": 332,
+          "end": 336
+        },
+        {
+          "entity": "International air show",
+          "label": "MISC",
+          "start": 709,
+          "end": 731
+        },
+        {
+          "entity": "2013",
+          "label": "MISC",
+          "start": 732,
+          "end": 736
+        },
+        {
+          "entity": "Radom",
+          "label": "LOC",
+          "start": 753,
+          "end": 758
+        },
+        {
+          "entity": "Poland",
+          "label": "LOC",
+          "start": 760,
+          "end": 766
+        }
+      ],
+      "after": [
+        {
+          "entity": "37th Separate Fighter Squadron",
+          "label": "ORG",
+          "start": 46,
+          "end": 76
+        },
+        {
+          "entity": "40th Tactical Aviation Brigade",
+          "label": "ORG",
+          "start": 92,
+          "end": 122
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 185,
+          "end": 191
+        },
+        {
+          "entity": "Su-27s",
+          "label": "MISC",
+          "start": 199,
+          "end": 205
+        },
+        {
+          "entity": "MiG-29",
+          "label": "MISC",
+          "start": 242,
+          "end": 248
+        },
+        {
+          "entity": "Sevastopol Tactical Aviation Brigade",
+          "label": "ORG",
+          "start": 265,
+          "end": 301
+        },
+        {
+          "entity": "Su-27",
+          "label": "MISC",
+          "start": 322,
+          "end": 327
+        },
+        {
+          "entity": "L-39",
+          "label": "MISC",
+          "start": 332,
+          "end": 336
+        },
+        {
+          "entity": "International air show",
+          "label": "MISC",
+          "start": 709,
+          "end": 731
+        },
+        {
+          "entity": "Radom",
+          "label": "LOC",
+          "start": 753,
+          "end": 758
+        },
+        {
+          "entity": "Poland",
+          "label": "LOC",
+          "start": 760,
+          "end": 766
+        }
+      ],
+      "at_utc": "2026-11-04T07:23:19.446167+00:00"
+    },
+    {
+      "model": "original",
+      "command": "span 9 | International air show-2013 | 1",
+      "before": [
+        {
+          "entity": "37th Separate Fighter Squadron",
+          "label": "ORG",
+          "start": 46,
+          "end": 76
+        },
+        {
+          "entity": "40th Tactical Aviation Brigade",
+          "label": "ORG",
+          "start": 92,
+          "end": 122
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 185,
+          "end": 191
+        },
+        {
+          "entity": "Su-27s",
+          "label": "MISC",
+          "start": 199,
+          "end": 205
+        },
+        {
+          "entity": "MiG-29",
+          "label": "MISC",
+          "start": 242,
+          "end": 248
+        },
+        {
+          "entity": "Sevastopol Tactical Aviation Brigade",
+          "label": "ORG",
+          "start": 265,
+          "end": 301
+        },
+        {
+          "entity": "Su-27",
+          "label": "MISC",
+          "start": 322,
+          "end": 327
+        },
+        {
+          "entity": "L-39",
+          "label": "MISC",
+          "start": 332,
+          "end": 336
+        },
+        {
+          "entity": "International air show",
+          "label": "MISC",
+          "start": 709,
+          "end": 731
+        },
+        {
+          "entity": "Radom",
+          "label": "LOC",
+          "start": 753,
+          "end": 758
+        },
+        {
+          "entity": "Poland",
+          "label": "LOC",
+          "start": 760,
+          "end": 766
+        }
+      ],
+      "after": [
+        {
+          "entity": "37th Separate Fighter Squadron",
+          "label": "ORG",
+          "start": 46,
+          "end": 76
+        },
+        {
+          "entity": "40th Tactical Aviation Brigade",
+          "label": "ORG",
+          "start": 92,
+          "end": 122
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 185,
+          "end": 191
+        },
+        {
+          "entity": "Su-27s",
+          "label": "MISC",
+          "start": 199,
+          "end": 205
+        },
+        {
+          "entity": "MiG-29",
+          "label": "MISC",
+          "start": 242,
+          "end": 248
+        },
+        {
+          "entity": "Sevastopol Tactical Aviation Brigade",
+          "label": "ORG",
+          "start": 265,
+          "end": 301
+        },
+        {
+          "entity": "Su-27",
+          "label": "MISC",
+          "start": 322,
+          "end": 327
+        },
+        {
+          "entity": "L-39",
+          "label": "MISC",
+          "start": 332,
+          "end": 336
+        },
+        {
+          "entity": "International air show-2013",
+          "label": "MISC",
+          "start": 709,
+          "end": 736
+        },
+        {
+          "entity": "Radom",
+          "label": "LOC",
+          "start": 753,
+          "end": 758
+        },
+        {
+          "entity": "Poland",
+          "label": "LOC",
+          "start": 760,
+          "end": 766
+        }
+      ],
+      "at_utc": "2026-11-04T07:23:25.466634+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add DATE | 2011 | 1",
+      "before": [
+        {
+          "entity": "37th Separate Fighter Squadron",
+          "label": "ORG",
+          "start": 46,
+          "end": 76
+        },
+        {
+          "entity": "40th Tactical Aviation Brigade",
+          "label": "ORG",
+          "start": 92,
+          "end": 122
+        },
+        {
+          "entity": "February 2013",
+          "label": "DATE",
+          "start": 127,
+          "end": 140
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 185,
+          "end": 191
+        },
+        {
+          "entity": "Su-27s",
+          "label": "MISC",
+          "start": 199,
+          "end": 205
+        },
+        {
+          "entity": "MiG-29",
+          "label": "MISC",
+          "start": 242,
+          "end": 248
+        },
+        {
+          "entity": "Sevastopol Tactical Aviation Brigade",
+          "label": "ORG",
+          "start": 265,
+          "end": 301
+        },
+        {
+          "entity": "Su-27",
+          "label": "MISC",
+          "start": 322,
+          "end": 327
+        },
+        {
+          "entity": "L-39",
+          "label": "MISC",
+          "start": 332,
+          "end": 336
+        },
+        {
+          "entity": "International air show-2013",
+          "label": "MISC",
+          "start": 709,
+          "end": 736
+        },
+        {
+          "entity": "Radom",
+          "label": "LOC",
+          "start": 753,
+          "end": 758
+        },
+        {
+          "entity": "Poland",
+          "label": "LOC",
+          "start": 760,
+          "end": 766
+        }
+      ],
+      "after": [
+        {
+          "entity": "2011",
+          "label": "DATE",
+          "start": 3,
+          "end": 7
+        },
+        {
+          "entity": "37th Separate Fighter Squadron",
+          "label": "ORG",
+          "start": 46,
+          "end": 76
+        },
+        {
+          "entity": "40th Tactical Aviation Brigade",
+          "label": "ORG",
+          "start": 92,
+          "end": 122
+        },
+        {
+          "entity": "February 2013",
+          "label": "DATE",
+          "start": 127,
+          "end": 140
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 185,
+          "end": 191
+        },
+        {
+          "entity": "Su-27s",
+          "label": "MISC",
+          "start": 199,
+          "end": 205
+        },
+        {
+          "entity": "MiG-29",
+          "label": "MISC",
+          "start": 242,
+          "end": 248
+        },
+        {
+          "entity": "Sevastopol Tactical Aviation Brigade",
+          "label": "ORG",
+          "start": 265,
+          "end": 301
+        },
+        {
+          "entity": "Su-27",
+          "label": "MISC",
+          "start": 322,
+          "end": 327
+        },
+        {
+          "entity": "L-39",
+          "label": "MISC",
+          "start": 332,
+          "end": 336
+        },
+        {
+          "entity": "International air show-2013",
+          "label": "MISC",
+          "start": 709,
+          "end": 736
+        },
+        {
+          "entity": "Radom",
+          "label": "LOC",
+          "start": 753,
+          "end": 758
+        },
+        {
+          "entity": "Poland",
+          "label": "LOC",
+          "start": 760,
+          "end": 766
+        }
+      ],
+      "at_utc": "2026-11-04T07:23:31.495751+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add DATE | April 2013 | 1",
+      "before": [
+        {
+          "entity": "2011",
+          "label": "DATE",
+          "start": 3,
+          "end": 7
+        },
+        {
+          "entity": "37th Separate Fighter Squadron",
+          "label": "ORG",
+          "start": 46,
+          "end": 76
+        },
+        {
+          "entity": "40th Tactical Aviation Brigade",
+          "label": "ORG",
+          "start": 92,
+          "end": 122
+        },
+        {
+          "entity": "February 2013",
+          "label": "DATE",
+          "start": 127,
+          "end": 140
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 185,
+          "end": 191
+        },
+        {
+          "entity": "Su-27s",
+          "label": "MISC",
+          "start": 199,
+          "end": 205
+        },
+        {
+          "entity": "MiG-29",
+          "label": "MISC",
+          "start": 242,
+          "end": 248
+        },
+        {
+          "entity": "Sevastopol Tactical Aviation Brigade",
+          "label": "ORG",
+          "start": 265,
+          "end": 301
+        },
+        {
+          "entity": "Su-27",
+          "label": "MISC",
+          "start": 322,
+          "end": 327
+        },
+        {
+          "entity": "L-39",
+          "label": "MISC",
+          "start": 332,
+          "end": 336
+        },
+        {
+          "entity": "International air show-2013",
+          "label": "MISC",
+          "start": 709,
+          "end": 736
+        },
+        {
+          "entity": "Radom",
+          "label": "LOC",
+          "start": 753,
+          "end": 758
+        },
+        {
+          "entity": "Poland",
+          "label": "LOC",
+          "start": 760,
+          "end": 766
+        }
+      ],
+      "after": [
+        {
+          "entity": "2011",
+          "label": "DATE",
+          "start": 3,
+          "end": 7
+        },
+        {
+          "entity": "37th Separate Fighter Squadron",
+          "label": "ORG",
+          "start": 46,
+          "end": 76
+        },
+        {
+          "entity": "40th Tactical Aviation Brigade",
+          "label": "ORG",
+          "start": 92,
+          "end": 122
+        },
+        {
+          "entity": "February 2013",
+          "label": "DATE",
+          "start": 127,
+          "end": 140
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 185,
+          "end": 191
+        },
+        {
+          "entity": "Su-27s",
+          "label": "MISC",
+          "start": 199,
+          "end": 205
+        },
+        {
+          "entity": "MiG-29",
+          "label": "MISC",
+          "start": 242,
+          "end": 248
+        },
+        {
+          "entity": "Sevastopol Tactical Aviation Brigade",
+          "label": "ORG",
+          "start": 265,
+          "end": 301
+        },
+        {
+          "entity": "April 2013",
+          "label": "DATE",
+          "start": 306,
+          "end": 316
+        },
+        {
+          "entity": "Su-27",
+          "label": "MISC",
+          "start": 322,
+          "end": 327
+        },
+        {
+          "entity": "L-39",
+          "label": "MISC",
+          "start": 332,
+          "end": 336
+        },
+        {
+          "entity": "International air show-2013",
+          "label": "MISC",
+          "start": 709,
+          "end": 736
+        },
+        {
+          "entity": "Radom",
+          "label": "LOC",
+          "start": 753,
+          "end": 758
+        },
+        {
+          "entity": "Poland",
+          "label": "LOC",
+          "start": 760,
+          "end": 766
+        }
+      ],
+      "at_utc": "2026-11-04T07:23:35.492863+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add DATE | August | 1",
+      "before": [
+        {
+          "entity": "2011",
+          "label": "DATE",
+          "start": 3,
+          "end": 7
+        },
+        {
+          "entity": "37th Separate Fighter Squadron",
+          "label": "ORG",
+          "start": 46,
+          "end": 76
+        },
+        {
+          "entity": "40th Tactical Aviation Brigade",
+          "label": "ORG",
+          "start": 92,
+          "end": 122
+        },
+        {
+          "entity": "February 2013",
+          "label": "DATE",
+          "start": 127,
+          "end": 140
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 185,
+          "end": 191
+        },
+        {
+          "entity": "Su-27s",
+          "label": "MISC",
+          "start": 199,
+          "end": 205
+        },
+        {
+          "entity": "MiG-29",
+          "label": "MISC",
+          "start": 242,
+          "end": 248
+        },
+        {
+          "entity": "Sevastopol Tactical Aviation Brigade",
+          "label": "ORG",
+          "start": 265,
+          "end": 301
+        },
+        {
+          "entity": "April 2013",
+          "label": "DATE",
+          "start": 306,
+          "end": 316
+        },
+        {
+          "entity": "Su-27",
+          "label": "MISC",
+          "start": 322,
+          "end": 327
+        },
+        {
+          "entity": "L-39",
+          "label": "MISC",
+          "start": 332,
+          "end": 336
+        },
+        {
+          "entity": "International air show-2013",
+          "label": "MISC",
+          "start": 709,
+          "end": 736
+        },
+        {
+          "entity": "Radom",
+          "label": "LOC",
+          "start": 753,
+          "end": 758
+        },
+        {
+          "entity": "Poland",
+          "label": "LOC",
+          "start": 760,
+          "end": 766
+        }
+      ],
+      "after": [
+        {
+          "entity": "2011",
+          "label": "DATE",
+          "start": 3,
+          "end": 7
+        },
+        {
+          "entity": "37th Separate Fighter Squadron",
+          "label": "ORG",
+          "start": 46,
+          "end": 76
+        },
+        {
+          "entity": "40th Tactical Aviation Brigade",
+          "label": "ORG",
+          "start": 92,
+          "end": 122
+        },
+        {
+          "entity": "February 2013",
+          "label": "DATE",
+          "start": 127,
+          "end": 140
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 185,
+          "end": 191
+        },
+        {
+          "entity": "Su-27s",
+          "label": "MISC",
+          "start": 199,
+          "end": 205
+        },
+        {
+          "entity": "MiG-29",
+          "label": "MISC",
+          "start": 242,
+          "end": 248
+        },
+        {
+          "entity": "Sevastopol Tactical Aviation Brigade",
+          "label": "ORG",
+          "start": 265,
+          "end": 301
+        },
+        {
+          "entity": "April 2013",
+          "label": "DATE",
+          "start": 306,
+          "end": 316
+        },
+        {
+          "entity": "Su-27",
+          "label": "MISC",
+          "start": 322,
+          "end": 327
+        },
+        {
+          "entity": "L-39",
+          "label": "MISC",
+          "start": 332,
+          "end": 336
+        },
+        {
+          "entity": "August",
+          "label": "DATE",
+          "start": 647,
+          "end": 653
+        },
+        {
+          "entity": "International air show-2013",
+          "label": "MISC",
+          "start": 709,
+          "end": 736
+        },
+        {
+          "entity": "Radom",
+          "label": "LOC",
+          "start": 753,
+          "end": 758
+        },
+        {
+          "entity": "Poland",
+          "label": "LOC",
+          "start": 760,
+          "end": 766
+        }
+      ],
+      "at_utc": "2026-11-04T07:23:40.549325+00:00"
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "comparison_row_id": 3034,
+  "Source": "Republic of Stakhanov",
+  "Index": 6,
+  "Text": "National Council of Bessarabia",
+  "reviewed_at_utc": "2026-11-04T06:48:51.270129+00:00",
+  "original_predictions": [
+    {
+      "entity": "National Council of Bessarabia",
+      "label": "ORG",
+      "start": 0,
+      "end": 30
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "National Council of Bessarabia",
+      "label": "LOC",
+      "start": 0,
+      "end": 30
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "National Council of Bessarabia",
+      "label": "ORG",
+      "start": 0,
+      "end": 30
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "National Council of Bessarabia",
+      "label": "ORG",
+      "start": 0,
+      "end": 30
+    }
+  ],
+  "gold": [
+    {
+      "entity": "National Council of Bessarabia",
+      "label": "ORG",
+      "start": 0,
+      "end": 30
+    }
+  ],
+  "history": [
+    {
+      "model": "v3",
+      "command": "label 1 ORG",
+      "before": [
+        {
+          "entity": "National Council of Bessarabia",
+          "label": "LOC",
+          "start": 0,
+          "end": 30
+        }
+      ],
+      "after": [
+        {
+          "entity": "National Council of Bessarabia",
+          "label": "ORG",
+          "start": 0,
+          "end": 30
+        }
+      ],
+      "at_utc": "2026-11-04T06:48:47.572721+00:00"
+    }
+  ]
+}

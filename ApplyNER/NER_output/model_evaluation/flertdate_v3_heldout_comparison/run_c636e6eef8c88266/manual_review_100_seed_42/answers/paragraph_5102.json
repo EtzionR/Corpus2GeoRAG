@@ -1,0 +1,1009 @@
+{
+  "comparison_row_id": 5102,
+  "Source": "Wagner Group rebellion",
+  "Index": 83,
+  "Text": "The head of the Russian National Guard, Viktor Zolotov, was described as emerging victorious from the rebellion. Zolotov claimed credit and was praised by Putin for defending the capital Moscow against the Wagner Group. On 27 June, Putin declared that the Russian National Guard would be equipped with heavy weapons, including tanks, in order to suppress any potential future uprisings and assume a more prominent position in the Russo-Ukraine conflict. According to Time magazine, Zolotov's increased authority may signify the initiation of a purge of Putin's opponents.",
+  "reviewed_at_utc": "2026-11-04T07:12:17.737024+00:00",
+  "original_predictions": [
+    {
+      "entity": "Russian National Guard",
+      "label": "ORG",
+      "start": 16,
+      "end": 38
+    },
+    {
+      "entity": "Viktor Zolotov",
+      "label": "PER",
+      "start": 40,
+      "end": 54
+    },
+    {
+      "entity": "Zolotov",
+      "label": "PER",
+      "start": 113,
+      "end": 120
+    },
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 155,
+      "end": 160
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 187,
+      "end": 193
+    },
+    {
+      "entity": "Wagner Group",
+      "label": "ORG",
+      "start": 206,
+      "end": 218
+    },
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 232,
+      "end": 237
+    },
+    {
+      "entity": "Russian National Guard",
+      "label": "ORG",
+      "start": 256,
+      "end": 278
+    },
+    {
+      "entity": "Russo",
+      "label": "MISC",
+      "start": 430,
+      "end": 435
+    },
+    {
+      "entity": "Ukraine",
+      "label": "MISC",
+      "start": 436,
+      "end": 443
+    },
+    {
+      "entity": "Time magazine",
+      "label": "ORG",
+      "start": 467,
+      "end": 480
+    },
+    {
+      "entity": "Zolotov",
+      "label": "PER",
+      "start": 482,
+      "end": 489
+    },
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 553,
+      "end": 558
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Russian National Guard",
+      "label": "ORG",
+      "start": 16,
+      "end": 38
+    },
+    {
+      "entity": "Viktor Zolotov",
+      "label": "PER",
+      "start": 40,
+      "end": 54
+    },
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 155,
+      "end": 160
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 187,
+      "end": 193
+    },
+    {
+      "entity": "Wagner Group",
+      "label": "ORG",
+      "start": 206,
+      "end": 218
+    },
+    {
+      "entity": "27 June",
+      "label": "DATE",
+      "start": 223,
+      "end": 230
+    },
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 232,
+      "end": 237
+    },
+    {
+      "entity": "Russian National Guard",
+      "label": "ORG",
+      "start": 256,
+      "end": 278
+    },
+    {
+      "entity": "Russo-Ukraine",
+      "label": "MISC",
+      "start": 430,
+      "end": 443
+    },
+    {
+      "entity": "Time magazine",
+      "label": "ORG",
+      "start": 467,
+      "end": 480
+    },
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 553,
+      "end": 558
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Russian National Guard",
+      "label": "ORG",
+      "start": 16,
+      "end": 38
+    },
+    {
+      "entity": "Viktor Zolotov",
+      "label": "PER",
+      "start": 40,
+      "end": 54
+    },
+    {
+      "entity": "Zolotov",
+      "label": "PER",
+      "start": 113,
+      "end": 120
+    },
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 155,
+      "end": 160
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 187,
+      "end": 193
+    },
+    {
+      "entity": "Wagner Group",
+      "label": "ORG",
+      "start": 206,
+      "end": 218
+    },
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 232,
+      "end": 237
+    },
+    {
+      "entity": "Russian National Guard",
+      "label": "ORG",
+      "start": 256,
+      "end": 278
+    },
+    {
+      "entity": "Russo-Ukraine",
+      "label": "MISC",
+      "start": 430,
+      "end": 443
+    },
+    {
+      "entity": "Time magazine",
+      "label": "ORG",
+      "start": 467,
+      "end": 480
+    },
+    {
+      "entity": "Zolotov",
+      "label": "PER",
+      "start": 482,
+      "end": 489
+    },
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 553,
+      "end": 558
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Russian National Guard",
+      "label": "ORG",
+      "start": 16,
+      "end": 38
+    },
+    {
+      "entity": "Viktor Zolotov",
+      "label": "PER",
+      "start": 40,
+      "end": 54
+    },
+    {
+      "entity": "Zolotov",
+      "label": "PER",
+      "start": 113,
+      "end": 120
+    },
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 155,
+      "end": 160
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 187,
+      "end": 193
+    },
+    {
+      "entity": "Wagner Group",
+      "label": "ORG",
+      "start": 206,
+      "end": 218
+    },
+    {
+      "entity": "27 June",
+      "label": "DATE",
+      "start": 223,
+      "end": 230
+    },
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 232,
+      "end": 237
+    },
+    {
+      "entity": "Russian National Guard",
+      "label": "ORG",
+      "start": 256,
+      "end": 278
+    },
+    {
+      "entity": "Russo-Ukraine",
+      "label": "MISC",
+      "start": 430,
+      "end": 443
+    },
+    {
+      "entity": "Time magazine",
+      "label": "ORG",
+      "start": 467,
+      "end": 480
+    },
+    {
+      "entity": "Zolotov",
+      "label": "PER",
+      "start": 482,
+      "end": 489
+    },
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 553,
+      "end": 558
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Russian National Guard",
+      "label": "ORG",
+      "start": 16,
+      "end": 38
+    },
+    {
+      "entity": "Viktor Zolotov",
+      "label": "PER",
+      "start": 40,
+      "end": 54
+    },
+    {
+      "entity": "Zolotov",
+      "label": "PER",
+      "start": 113,
+      "end": 120
+    },
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 155,
+      "end": 160
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 187,
+      "end": 193
+    },
+    {
+      "entity": "Wagner Group",
+      "label": "ORG",
+      "start": 206,
+      "end": 218
+    },
+    {
+      "entity": "27 June",
+      "label": "DATE",
+      "start": 223,
+      "end": 230
+    },
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 232,
+      "end": 237
+    },
+    {
+      "entity": "Russian National Guard",
+      "label": "ORG",
+      "start": 256,
+      "end": 278
+    },
+    {
+      "entity": "Russo-Ukraine",
+      "label": "MISC",
+      "start": 430,
+      "end": 443
+    },
+    {
+      "entity": "Time magazine",
+      "label": "ORG",
+      "start": 467,
+      "end": 480
+    },
+    {
+      "entity": "Zolotov",
+      "label": "PER",
+      "start": 482,
+      "end": 489
+    },
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 553,
+      "end": 558
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "del 10",
+      "before": [
+        {
+          "entity": "Russian National Guard",
+          "label": "ORG",
+          "start": 16,
+          "end": 38
+        },
+        {
+          "entity": "Viktor Zolotov",
+          "label": "PER",
+          "start": 40,
+          "end": 54
+        },
+        {
+          "entity": "Zolotov",
+          "label": "PER",
+          "start": 113,
+          "end": 120
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 155,
+          "end": 160
+        },
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 187,
+          "end": 193
+        },
+        {
+          "entity": "Wagner Group",
+          "label": "ORG",
+          "start": 206,
+          "end": 218
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 232,
+          "end": 237
+        },
+        {
+          "entity": "Russian National Guard",
+          "label": "ORG",
+          "start": 256,
+          "end": 278
+        },
+        {
+          "entity": "Russo",
+          "label": "MISC",
+          "start": 430,
+          "end": 435
+        },
+        {
+          "entity": "Ukraine",
+          "label": "MISC",
+          "start": 436,
+          "end": 443
+        },
+        {
+          "entity": "Time magazine",
+          "label": "ORG",
+          "start": 467,
+          "end": 480
+        },
+        {
+          "entity": "Zolotov",
+          "label": "PER",
+          "start": 482,
+          "end": 489
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 553,
+          "end": 558
+        }
+      ],
+      "after": [
+        {
+          "entity": "Russian National Guard",
+          "label": "ORG",
+          "start": 16,
+          "end": 38
+        },
+        {
+          "entity": "Viktor Zolotov",
+          "label": "PER",
+          "start": 40,
+          "end": 54
+        },
+        {
+          "entity": "Zolotov",
+          "label": "PER",
+          "start": 113,
+          "end": 120
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 155,
+          "end": 160
+        },
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 187,
+          "end": 193
+        },
+        {
+          "entity": "Wagner Group",
+          "label": "ORG",
+          "start": 206,
+          "end": 218
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 232,
+          "end": 237
+        },
+        {
+          "entity": "Russian National Guard",
+          "label": "ORG",
+          "start": 256,
+          "end": 278
+        },
+        {
+          "entity": "Russo",
+          "label": "MISC",
+          "start": 430,
+          "end": 435
+        },
+        {
+          "entity": "Time magazine",
+          "label": "ORG",
+          "start": 467,
+          "end": 480
+        },
+        {
+          "entity": "Zolotov",
+          "label": "PER",
+          "start": 482,
+          "end": 489
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 553,
+          "end": 558
+        }
+      ],
+      "at_utc": "2026-11-04T07:11:52.019165+00:00"
+    },
+    {
+      "model": "original",
+      "command": "span 9 | Russo-Ukraine | 1",
+      "before": [
+        {
+          "entity": "Russian National Guard",
+          "label": "ORG",
+          "start": 16,
+          "end": 38
+        },
+        {
+          "entity": "Viktor Zolotov",
+          "label": "PER",
+          "start": 40,
+          "end": 54
+        },
+        {
+          "entity": "Zolotov",
+          "label": "PER",
+          "start": 113,
+          "end": 120
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 155,
+          "end": 160
+        },
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 187,
+          "end": 193
+        },
+        {
+          "entity": "Wagner Group",
+          "label": "ORG",
+          "start": 206,
+          "end": 218
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 232,
+          "end": 237
+        },
+        {
+          "entity": "Russian National Guard",
+          "label": "ORG",
+          "start": 256,
+          "end": 278
+        },
+        {
+          "entity": "Russo",
+          "label": "MISC",
+          "start": 430,
+          "end": 435
+        },
+        {
+          "entity": "Time magazine",
+          "label": "ORG",
+          "start": 467,
+          "end": 480
+        },
+        {
+          "entity": "Zolotov",
+          "label": "PER",
+          "start": 482,
+          "end": 489
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 553,
+          "end": 558
+        }
+      ],
+      "after": [
+        {
+          "entity": "Russian National Guard",
+          "label": "ORG",
+          "start": 16,
+          "end": 38
+        },
+        {
+          "entity": "Viktor Zolotov",
+          "label": "PER",
+          "start": 40,
+          "end": 54
+        },
+        {
+          "entity": "Zolotov",
+          "label": "PER",
+          "start": 113,
+          "end": 120
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 155,
+          "end": 160
+        },
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 187,
+          "end": 193
+        },
+        {
+          "entity": "Wagner Group",
+          "label": "ORG",
+          "start": 206,
+          "end": 218
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 232,
+          "end": 237
+        },
+        {
+          "entity": "Russian National Guard",
+          "label": "ORG",
+          "start": 256,
+          "end": 278
+        },
+        {
+          "entity": "Russo-Ukraine",
+          "label": "MISC",
+          "start": 430,
+          "end": 443
+        },
+        {
+          "entity": "Time magazine",
+          "label": "ORG",
+          "start": 467,
+          "end": 480
+        },
+        {
+          "entity": "Zolotov",
+          "label": "PER",
+          "start": 482,
+          "end": 489
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 553,
+          "end": 558
+        }
+      ],
+      "at_utc": "2026-11-04T07:11:56.331244+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add PER | Zolotov | 2",
+      "before": [
+        {
+          "entity": "Russian National Guard",
+          "label": "ORG",
+          "start": 16,
+          "end": 38
+        },
+        {
+          "entity": "Viktor Zolotov",
+          "label": "PER",
+          "start": 40,
+          "end": 54
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 155,
+          "end": 160
+        },
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 187,
+          "end": 193
+        },
+        {
+          "entity": "Wagner Group",
+          "label": "ORG",
+          "start": 206,
+          "end": 218
+        },
+        {
+          "entity": "27 June",
+          "label": "DATE",
+          "start": 223,
+          "end": 230
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 232,
+          "end": 237
+        },
+        {
+          "entity": "Russian National Guard",
+          "label": "ORG",
+          "start": 256,
+          "end": 278
+        },
+        {
+          "entity": "Russo-Ukraine",
+          "label": "MISC",
+          "start": 430,
+          "end": 443
+        },
+        {
+          "entity": "Time magazine",
+          "label": "ORG",
+          "start": 467,
+          "end": 480
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 553,
+          "end": 558
+        }
+      ],
+      "after": [
+        {
+          "entity": "Russian National Guard",
+          "label": "ORG",
+          "start": 16,
+          "end": 38
+        },
+        {
+          "entity": "Viktor Zolotov",
+          "label": "PER",
+          "start": 40,
+          "end": 54
+        },
+        {
+          "entity": "Zolotov",
+          "label": "PER",
+          "start": 113,
+          "end": 120
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 155,
+          "end": 160
+        },
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 187,
+          "end": 193
+        },
+        {
+          "entity": "Wagner Group",
+          "label": "ORG",
+          "start": 206,
+          "end": 218
+        },
+        {
+          "entity": "27 June",
+          "label": "DATE",
+          "start": 223,
+          "end": 230
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 232,
+          "end": 237
+        },
+        {
+          "entity": "Russian National Guard",
+          "label": "ORG",
+          "start": 256,
+          "end": 278
+        },
+        {
+          "entity": "Russo-Ukraine",
+          "label": "MISC",
+          "start": 430,
+          "end": 443
+        },
+        {
+          "entity": "Time magazine",
+          "label": "ORG",
+          "start": 467,
+          "end": 480
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 553,
+          "end": 558
+        }
+      ],
+      "at_utc": "2026-11-04T07:12:09.851835+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add PER | Zolotov | 3",
+      "before": [
+        {
+          "entity": "Russian National Guard",
+          "label": "ORG",
+          "start": 16,
+          "end": 38
+        },
+        {
+          "entity": "Viktor Zolotov",
+          "label": "PER",
+          "start": 40,
+          "end": 54
+        },
+        {
+          "entity": "Zolotov",
+          "label": "PER",
+          "start": 113,
+          "end": 120
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 155,
+          "end": 160
+        },
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 187,
+          "end": 193
+        },
+        {
+          "entity": "Wagner Group",
+          "label": "ORG",
+          "start": 206,
+          "end": 218
+        },
+        {
+          "entity": "27 June",
+          "label": "DATE",
+          "start": 223,
+          "end": 230
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 232,
+          "end": 237
+        },
+        {
+          "entity": "Russian National Guard",
+          "label": "ORG",
+          "start": 256,
+          "end": 278
+        },
+        {
+          "entity": "Russo-Ukraine",
+          "label": "MISC",
+          "start": 430,
+          "end": 443
+        },
+        {
+          "entity": "Time magazine",
+          "label": "ORG",
+          "start": 467,
+          "end": 480
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 553,
+          "end": 558
+        }
+      ],
+      "after": [
+        {
+          "entity": "Russian National Guard",
+          "label": "ORG",
+          "start": 16,
+          "end": 38
+        },
+        {
+          "entity": "Viktor Zolotov",
+          "label": "PER",
+          "start": 40,
+          "end": 54
+        },
+        {
+          "entity": "Zolotov",
+          "label": "PER",
+          "start": 113,
+          "end": 120
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 155,
+          "end": 160
+        },
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 187,
+          "end": 193
+        },
+        {
+          "entity": "Wagner Group",
+          "label": "ORG",
+          "start": 206,
+          "end": 218
+        },
+        {
+          "entity": "27 June",
+          "label": "DATE",
+          "start": 223,
+          "end": 230
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 232,
+          "end": 237
+        },
+        {
+          "entity": "Russian National Guard",
+          "label": "ORG",
+          "start": 256,
+          "end": 278
+        },
+        {
+          "entity": "Russo-Ukraine",
+          "label": "MISC",
+          "start": 430,
+          "end": 443
+        },
+        {
+          "entity": "Time magazine",
+          "label": "ORG",
+          "start": 467,
+          "end": 480
+        },
+        {
+          "entity": "Zolotov",
+          "label": "PER",
+          "start": 482,
+          "end": 489
+        },
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 553,
+          "end": 558
+        }
+      ],
+      "at_utc": "2026-11-04T07:12:14.652193+00:00"
+    }
+  ]
+}

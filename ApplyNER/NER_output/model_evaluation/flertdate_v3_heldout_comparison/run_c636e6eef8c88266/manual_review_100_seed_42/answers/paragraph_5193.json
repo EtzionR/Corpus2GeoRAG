@@ -1,0 +1,385 @@
+{
+  "comparison_row_id": 5193,
+  "Source": "Yevgeny Prigozhin",
+  "Index": 48,
+  "Text": "A Wagner-associated Telegram channel claimed the jet was shot down by Russian air defenses over Tver Oblast. This assertion was contested due to the lack of visible missile trails in the released footage. According to US and other Western officials, \"preliminary intelligence reports led them to believe that an explosion on board likely brought down the aircraft in Russia, killing all the passengers aboard.\"",
+  "reviewed_at_utc": "2026-11-04T07:45:33.764259+00:00",
+  "original_predictions": [
+    {
+      "entity": "Wagner",
+      "label": "PER",
+      "start": 2,
+      "end": 8
+    },
+    {
+      "entity": "Telegram",
+      "label": "ORG",
+      "start": 20,
+      "end": 28
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 70,
+      "end": 77
+    },
+    {
+      "entity": "Tver Oblast",
+      "label": "LOC",
+      "start": 96,
+      "end": 107
+    },
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 218,
+      "end": 220
+    },
+    {
+      "entity": "Western",
+      "label": "MISC",
+      "start": 231,
+      "end": 238
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 367,
+      "end": 373
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Wagner",
+      "label": "ORG",
+      "start": 2,
+      "end": 8
+    },
+    {
+      "entity": "Telegram",
+      "label": "ORG",
+      "start": 20,
+      "end": 28
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 70,
+      "end": 77
+    },
+    {
+      "entity": "Tver Oblast",
+      "label": "LOC",
+      "start": 96,
+      "end": 107
+    },
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 218,
+      "end": 220
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 367,
+      "end": 373
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Wagner",
+      "label": "ORG",
+      "start": 2,
+      "end": 8
+    },
+    {
+      "entity": "Telegram",
+      "label": "ORG",
+      "start": 20,
+      "end": 28
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 70,
+      "end": 77
+    },
+    {
+      "entity": "Tver Oblast",
+      "label": "LOC",
+      "start": 96,
+      "end": 107
+    },
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 218,
+      "end": 220
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 367,
+      "end": 373
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Wagner",
+      "label": "ORG",
+      "start": 2,
+      "end": 8
+    },
+    {
+      "entity": "Telegram",
+      "label": "ORG",
+      "start": 20,
+      "end": 28
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 70,
+      "end": 77
+    },
+    {
+      "entity": "Tver Oblast",
+      "label": "LOC",
+      "start": 96,
+      "end": 107
+    },
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 218,
+      "end": 220
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 367,
+      "end": 373
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Wagner",
+      "label": "ORG",
+      "start": 2,
+      "end": 8
+    },
+    {
+      "entity": "Telegram",
+      "label": "ORG",
+      "start": 20,
+      "end": 28
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 70,
+      "end": 77
+    },
+    {
+      "entity": "Tver Oblast",
+      "label": "LOC",
+      "start": 96,
+      "end": 107
+    },
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 218,
+      "end": 220
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 367,
+      "end": 373
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "label 1 ORG",
+      "before": [
+        {
+          "entity": "Wagner",
+          "label": "PER",
+          "start": 2,
+          "end": 8
+        },
+        {
+          "entity": "Telegram",
+          "label": "ORG",
+          "start": 20,
+          "end": 28
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 70,
+          "end": 77
+        },
+        {
+          "entity": "Tver Oblast",
+          "label": "LOC",
+          "start": 96,
+          "end": 107
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 218,
+          "end": 220
+        },
+        {
+          "entity": "Western",
+          "label": "MISC",
+          "start": 231,
+          "end": 238
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 367,
+          "end": 373
+        }
+      ],
+      "after": [
+        {
+          "entity": "Wagner",
+          "label": "ORG",
+          "start": 2,
+          "end": 8
+        },
+        {
+          "entity": "Telegram",
+          "label": "ORG",
+          "start": 20,
+          "end": 28
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 70,
+          "end": 77
+        },
+        {
+          "entity": "Tver Oblast",
+          "label": "LOC",
+          "start": 96,
+          "end": 107
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 218,
+          "end": 220
+        },
+        {
+          "entity": "Western",
+          "label": "MISC",
+          "start": 231,
+          "end": 238
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 367,
+          "end": 373
+        }
+      ],
+      "at_utc": "2026-11-04T07:45:23.295471+00:00"
+    },
+    {
+      "model": "original",
+      "command": "del 6",
+      "before": [
+        {
+          "entity": "Wagner",
+          "label": "ORG",
+          "start": 2,
+          "end": 8
+        },
+        {
+          "entity": "Telegram",
+          "label": "ORG",
+          "start": 20,
+          "end": 28
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 70,
+          "end": 77
+        },
+        {
+          "entity": "Tver Oblast",
+          "label": "LOC",
+          "start": 96,
+          "end": 107
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 218,
+          "end": 220
+        },
+        {
+          "entity": "Western",
+          "label": "MISC",
+          "start": 231,
+          "end": 238
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 367,
+          "end": 373
+        }
+      ],
+      "after": [
+        {
+          "entity": "Wagner",
+          "label": "ORG",
+          "start": 2,
+          "end": 8
+        },
+        {
+          "entity": "Telegram",
+          "label": "ORG",
+          "start": 20,
+          "end": 28
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 70,
+          "end": 77
+        },
+        {
+          "entity": "Tver Oblast",
+          "label": "LOC",
+          "start": 96,
+          "end": 107
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 218,
+          "end": 220
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 367,
+          "end": 373
+        }
+      ],
+      "at_utc": "2026-11-04T07:45:27.280233+00:00"
+    }
+  ]
+}

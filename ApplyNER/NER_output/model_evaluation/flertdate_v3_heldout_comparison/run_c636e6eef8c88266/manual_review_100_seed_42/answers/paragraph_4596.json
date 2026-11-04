@@ -1,0 +1,577 @@
+{
+  "comparison_row_id": 4596,
+  "Source": "Timeline of the Russo-Ukrainian war (12 November 2022 – 7 June 2023)",
+  "Index": 394,
+  "Text": "Moscow was attacked by at least eight drones, causing minor damage to several buildings according to the Russian ministry of defence. Three lost control due to electronic warfare and the other five were shot down by a Pantsir-S system. The Mayor of Moscow Sergei Sobyanin said that \"two people had sought medical assistance\". Russia accused Ukraine of responsibility, which a Ukrainian official denied but said that the country was \"pleased\" over the attack. One person was killed and two others were injured after purported Ukrainian shelling of a centre for displaced people in Belgorod Oblast.",
+  "reviewed_at_utc": "2026-11-04T06:48:12.415821+00:00",
+  "original_predictions": [
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 0,
+      "end": 6
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 105,
+      "end": 112
+    },
+    {
+      "entity": "Pantsir-S",
+      "label": "MISC",
+      "start": 218,
+      "end": 227
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 249,
+      "end": 255
+    },
+    {
+      "entity": "Sergei Sobyanin",
+      "label": "PER",
+      "start": 256,
+      "end": 271
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 326,
+      "end": 332
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 341,
+      "end": 348
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 376,
+      "end": 385
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 525,
+      "end": 534
+    },
+    {
+      "entity": "Belgorod Oblast",
+      "label": "LOC",
+      "start": 580,
+      "end": 595
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 0,
+      "end": 6
+    },
+    {
+      "entity": "Russian ministry of defence",
+      "label": "ORG",
+      "start": 105,
+      "end": 132
+    },
+    {
+      "entity": "Pantsir-S",
+      "label": "MISC",
+      "start": 218,
+      "end": 227
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 249,
+      "end": 255
+    },
+    {
+      "entity": "Sergei Sobyanin",
+      "label": "PER",
+      "start": 256,
+      "end": 271
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 326,
+      "end": 332
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 341,
+      "end": 348
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 376,
+      "end": 385
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 525,
+      "end": 534
+    },
+    {
+      "entity": "Belgorod Oblast",
+      "label": "LOC",
+      "start": 580,
+      "end": 595
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 0,
+      "end": 6
+    },
+    {
+      "entity": "Russian ministry of defence",
+      "label": "ORG",
+      "start": 105,
+      "end": 132
+    },
+    {
+      "entity": "Pantsir-S",
+      "label": "MISC",
+      "start": 218,
+      "end": 227
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 249,
+      "end": 255
+    },
+    {
+      "entity": "Sergei Sobyanin",
+      "label": "PER",
+      "start": 256,
+      "end": 271
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 326,
+      "end": 332
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 341,
+      "end": 348
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 376,
+      "end": 385
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 525,
+      "end": 534
+    },
+    {
+      "entity": "Belgorod Oblast",
+      "label": "LOC",
+      "start": 580,
+      "end": 595
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 0,
+      "end": 6
+    },
+    {
+      "entity": "Russian ministry of defence",
+      "label": "ORG",
+      "start": 105,
+      "end": 132
+    },
+    {
+      "entity": "Pantsir-S",
+      "label": "MISC",
+      "start": 218,
+      "end": 227
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 249,
+      "end": 255
+    },
+    {
+      "entity": "Sergei Sobyanin",
+      "label": "PER",
+      "start": 256,
+      "end": 271
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 326,
+      "end": 332
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 341,
+      "end": 348
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 376,
+      "end": 385
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 525,
+      "end": 534
+    },
+    {
+      "entity": "Belgorod Oblast",
+      "label": "LOC",
+      "start": 580,
+      "end": 595
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 0,
+      "end": 6
+    },
+    {
+      "entity": "Russian ministry of defence",
+      "label": "ORG",
+      "start": 105,
+      "end": 132
+    },
+    {
+      "entity": "Pantsir-S",
+      "label": "MISC",
+      "start": 218,
+      "end": 227
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 249,
+      "end": 255
+    },
+    {
+      "entity": "Sergei Sobyanin",
+      "label": "PER",
+      "start": 256,
+      "end": 271
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 326,
+      "end": 332
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 341,
+      "end": 348
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 376,
+      "end": 385
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 525,
+      "end": 534
+    },
+    {
+      "entity": "Belgorod Oblast",
+      "label": "LOC",
+      "start": 580,
+      "end": 595
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "span 2 | Russian ministry of defence | 1",
+      "before": [
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 0,
+          "end": 6
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 105,
+          "end": 112
+        },
+        {
+          "entity": "Pantsir-S",
+          "label": "MISC",
+          "start": 218,
+          "end": 227
+        },
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 249,
+          "end": 255
+        },
+        {
+          "entity": "Sergei Sobyanin",
+          "label": "PER",
+          "start": 256,
+          "end": 271
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 326,
+          "end": 332
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 341,
+          "end": 348
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 376,
+          "end": 385
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 525,
+          "end": 534
+        },
+        {
+          "entity": "Belgorod Oblast",
+          "label": "LOC",
+          "start": 580,
+          "end": 595
+        }
+      ],
+      "after": [
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 0,
+          "end": 6
+        },
+        {
+          "entity": "Russian ministry of defence",
+          "label": "MISC",
+          "start": 105,
+          "end": 132
+        },
+        {
+          "entity": "Pantsir-S",
+          "label": "MISC",
+          "start": 218,
+          "end": 227
+        },
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 249,
+          "end": 255
+        },
+        {
+          "entity": "Sergei Sobyanin",
+          "label": "PER",
+          "start": 256,
+          "end": 271
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 326,
+          "end": 332
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 341,
+          "end": 348
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 376,
+          "end": 385
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 525,
+          "end": 534
+        },
+        {
+          "entity": "Belgorod Oblast",
+          "label": "LOC",
+          "start": 580,
+          "end": 595
+        }
+      ],
+      "at_utc": "2026-11-04T06:48:02.088277+00:00"
+    },
+    {
+      "model": "original",
+      "command": "label 2 ORG",
+      "before": [
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 0,
+          "end": 6
+        },
+        {
+          "entity": "Russian ministry of defence",
+          "label": "MISC",
+          "start": 105,
+          "end": 132
+        },
+        {
+          "entity": "Pantsir-S",
+          "label": "MISC",
+          "start": 218,
+          "end": 227
+        },
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 249,
+          "end": 255
+        },
+        {
+          "entity": "Sergei Sobyanin",
+          "label": "PER",
+          "start": 256,
+          "end": 271
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 326,
+          "end": 332
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 341,
+          "end": 348
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 376,
+          "end": 385
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 525,
+          "end": 534
+        },
+        {
+          "entity": "Belgorod Oblast",
+          "label": "LOC",
+          "start": 580,
+          "end": 595
+        }
+      ],
+      "after": [
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 0,
+          "end": 6
+        },
+        {
+          "entity": "Russian ministry of defence",
+          "label": "ORG",
+          "start": 105,
+          "end": 132
+        },
+        {
+          "entity": "Pantsir-S",
+          "label": "MISC",
+          "start": 218,
+          "end": 227
+        },
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 249,
+          "end": 255
+        },
+        {
+          "entity": "Sergei Sobyanin",
+          "label": "PER",
+          "start": 256,
+          "end": 271
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 326,
+          "end": 332
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 341,
+          "end": 348
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 376,
+          "end": 385
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 525,
+          "end": 534
+        },
+        {
+          "entity": "Belgorod Oblast",
+          "label": "LOC",
+          "start": 580,
+          "end": 595
+        }
+      ],
+      "at_utc": "2026-11-04T06:48:06.528692+00:00"
+    }
+  ]
+}

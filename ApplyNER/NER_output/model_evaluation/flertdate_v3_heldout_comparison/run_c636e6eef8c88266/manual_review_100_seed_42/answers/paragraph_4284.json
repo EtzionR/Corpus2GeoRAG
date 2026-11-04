@@ -1,0 +1,168 @@
+{
+  "comparison_row_id": 4284,
+  "Source": "Timeline of the Russo-Ukrainian war (12 November 2022 – 7 June 2023)",
+  "Index": 79,
+  "Text": "Russia announced that armed forces fighting in the regions of Donetsk, Luhansk, Kherson and Zaporizhzhia will have their income tax exempted.",
+  "reviewed_at_utc": "2026-11-04T07:04:44.033471+00:00",
+  "original_predictions": [
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 0,
+      "end": 6
+    },
+    {
+      "entity": "Donetsk",
+      "label": "LOC",
+      "start": 62,
+      "end": 69
+    },
+    {
+      "entity": "Luhansk",
+      "label": "LOC",
+      "start": 71,
+      "end": 78
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 80,
+      "end": 87
+    },
+    {
+      "entity": "Zaporizhzhia",
+      "label": "LOC",
+      "start": 92,
+      "end": 104
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 0,
+      "end": 6
+    },
+    {
+      "entity": "Donetsk",
+      "label": "LOC",
+      "start": 62,
+      "end": 69
+    },
+    {
+      "entity": "Luhansk",
+      "label": "LOC",
+      "start": 71,
+      "end": 78
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 80,
+      "end": 87
+    },
+    {
+      "entity": "Zaporizhzhia",
+      "label": "LOC",
+      "start": 92,
+      "end": 104
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 0,
+      "end": 6
+    },
+    {
+      "entity": "Donetsk",
+      "label": "LOC",
+      "start": 62,
+      "end": 69
+    },
+    {
+      "entity": "Luhansk",
+      "label": "LOC",
+      "start": 71,
+      "end": 78
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 80,
+      "end": 87
+    },
+    {
+      "entity": "Zaporizhzhia",
+      "label": "LOC",
+      "start": 92,
+      "end": 104
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 0,
+      "end": 6
+    },
+    {
+      "entity": "Donetsk",
+      "label": "LOC",
+      "start": 62,
+      "end": 69
+    },
+    {
+      "entity": "Luhansk",
+      "label": "LOC",
+      "start": 71,
+      "end": 78
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 80,
+      "end": 87
+    },
+    {
+      "entity": "Zaporizhzhia",
+      "label": "LOC",
+      "start": 92,
+      "end": 104
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 0,
+      "end": 6
+    },
+    {
+      "entity": "Donetsk",
+      "label": "LOC",
+      "start": 62,
+      "end": 69
+    },
+    {
+      "entity": "Luhansk",
+      "label": "LOC",
+      "start": 71,
+      "end": 78
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 80,
+      "end": 87
+    },
+    {
+      "entity": "Zaporizhzhia",
+      "label": "LOC",
+      "start": 92,
+      "end": 104
+    }
+  ],
+  "history": []
+}

@@ -1,0 +1,108 @@
+{
+  "comparison_row_id": 4377,
+  "Source": "Timeline of the Russo-Ukrainian war (12 November 2022 – 7 June 2023)",
+  "Index": 173,
+  "Text": "Ukraine and Russia stated that hundreds of troops from each side were killed over 24 hours at Bakhmut.",
+  "reviewed_at_utc": "2026-11-04T07:19:18.549985+00:00",
+  "original_predictions": [
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 0,
+      "end": 7
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 12,
+      "end": 18
+    },
+    {
+      "entity": "Bakhmut",
+      "label": "LOC",
+      "start": 94,
+      "end": 101
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 0,
+      "end": 7
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 12,
+      "end": 18
+    },
+    {
+      "entity": "Bakhmut",
+      "label": "LOC",
+      "start": 94,
+      "end": 101
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 0,
+      "end": 7
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 12,
+      "end": 18
+    },
+    {
+      "entity": "Bakhmut",
+      "label": "LOC",
+      "start": 94,
+      "end": 101
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 0,
+      "end": 7
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 12,
+      "end": 18
+    },
+    {
+      "entity": "Bakhmut",
+      "label": "LOC",
+      "start": 94,
+      "end": 101
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 0,
+      "end": 7
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 12,
+      "end": 18
+    },
+    {
+      "entity": "Bakhmut",
+      "label": "LOC",
+      "start": 94,
+      "end": 101
+    }
+  ],
+  "history": []
+}

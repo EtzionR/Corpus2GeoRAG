@@ -1,0 +1,670 @@
+{
+  "comparison_row_id": 3088,
+  "Source": "Right Sector",
+  "Index": 49,
+  "Text": "Tryzub is a far-right Ukrainian paramilitary organization founded in 1993 by the Congress of Ukrainian Nationalists (former Bandera faction of the Organization of Ukrainian Nationalists). Its full name is the Stepan Bandera All-Ukrainian Organization \"Tryzub\" and states that its main goal is to create a Ukrainian united independent state. According to Tryzub, its enemies in achieving this goal are ″imperialism and chauvinism, fascism and communism, cosmopolitanism and pseudo-nationalism, totalitarianism and anarchy, any evil that seeks to parasitize on the sweat and blood of Ukrainians″.",
+  "reviewed_at_utc": "2026-11-04T07:06:02.514008+00:00",
+  "original_predictions": [
+    {
+      "entity": "Tryzub",
+      "label": "ORG",
+      "start": 0,
+      "end": 6
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 22,
+      "end": 31
+    },
+    {
+      "entity": "Congress of Ukrainian Nationalists",
+      "label": "ORG",
+      "start": 81,
+      "end": 115
+    },
+    {
+      "entity": "Bandera",
+      "label": "ORG",
+      "start": 124,
+      "end": 131
+    },
+    {
+      "entity": "Organization of Ukrainian Nationalists",
+      "label": "ORG",
+      "start": 147,
+      "end": 185
+    },
+    {
+      "entity": "Stepan Bandera All-Ukrainian Organization",
+      "label": "ORG",
+      "start": 209,
+      "end": 250
+    },
+    {
+      "entity": "Tryzub",
+      "label": "ORG",
+      "start": 252,
+      "end": 258
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 305,
+      "end": 314
+    },
+    {
+      "entity": "Tryzub",
+      "label": "ORG",
+      "start": 354,
+      "end": 360
+    },
+    {
+      "entity": "Ukrainians",
+      "label": "MISC",
+      "start": 582,
+      "end": 592
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Tryzub",
+      "label": "ORG",
+      "start": 0,
+      "end": 6
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 22,
+      "end": 31
+    },
+    {
+      "entity": "1993",
+      "label": "DATE",
+      "start": 69,
+      "end": 73
+    },
+    {
+      "entity": "Congress of Ukrainian Nationalists",
+      "label": "ORG",
+      "start": 81,
+      "end": 115
+    },
+    {
+      "entity": "Bandera",
+      "label": "ORG",
+      "start": 124,
+      "end": 131
+    },
+    {
+      "entity": "Organization of Ukrainian Nationalists",
+      "label": "ORG",
+      "start": 147,
+      "end": 185
+    },
+    {
+      "entity": "Stepan Bandera All-Ukrainian Organization \"Tryzub\"",
+      "label": "ORG",
+      "start": 209,
+      "end": 259
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 305,
+      "end": 314
+    },
+    {
+      "entity": "Tryzub",
+      "label": "ORG",
+      "start": 354,
+      "end": 360
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Tryzub",
+      "label": "ORG",
+      "start": 0,
+      "end": 6
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 22,
+      "end": 31
+    },
+    {
+      "entity": "Congress of Ukrainian Nationalists",
+      "label": "ORG",
+      "start": 81,
+      "end": 115
+    },
+    {
+      "entity": "Bandera",
+      "label": "ORG",
+      "start": 124,
+      "end": 131
+    },
+    {
+      "entity": "Organization of Ukrainian Nationalists",
+      "label": "ORG",
+      "start": 147,
+      "end": 185
+    },
+    {
+      "entity": "Stepan Bandera All-Ukrainian Organization \"Tryzub\"",
+      "label": "ORG",
+      "start": 209,
+      "end": 259
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 305,
+      "end": 314
+    },
+    {
+      "entity": "Tryzub",
+      "label": "ORG",
+      "start": 354,
+      "end": 360
+    },
+    {
+      "entity": "Ukrainians",
+      "label": "MISC",
+      "start": 582,
+      "end": 592
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Tryzub",
+      "label": "ORG",
+      "start": 0,
+      "end": 6
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 22,
+      "end": 31
+    },
+    {
+      "entity": "1993",
+      "label": "DATE",
+      "start": 69,
+      "end": 73
+    },
+    {
+      "entity": "Congress of Ukrainian Nationalists",
+      "label": "ORG",
+      "start": 81,
+      "end": 115
+    },
+    {
+      "entity": "Bandera",
+      "label": "ORG",
+      "start": 124,
+      "end": 131
+    },
+    {
+      "entity": "Organization of Ukrainian Nationalists",
+      "label": "ORG",
+      "start": 147,
+      "end": 185
+    },
+    {
+      "entity": "Stepan Bandera All-Ukrainian Organization \"Tryzub\"",
+      "label": "ORG",
+      "start": 209,
+      "end": 259
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 305,
+      "end": 314
+    },
+    {
+      "entity": "Tryzub",
+      "label": "ORG",
+      "start": 354,
+      "end": 360
+    },
+    {
+      "entity": "Ukrainians",
+      "label": "MISC",
+      "start": 582,
+      "end": 592
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Tryzub",
+      "label": "ORG",
+      "start": 0,
+      "end": 6
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 22,
+      "end": 31
+    },
+    {
+      "entity": "1993",
+      "label": "DATE",
+      "start": 69,
+      "end": 73
+    },
+    {
+      "entity": "Congress of Ukrainian Nationalists",
+      "label": "ORG",
+      "start": 81,
+      "end": 115
+    },
+    {
+      "entity": "Bandera",
+      "label": "ORG",
+      "start": 124,
+      "end": 131
+    },
+    {
+      "entity": "Organization of Ukrainian Nationalists",
+      "label": "ORG",
+      "start": 147,
+      "end": 185
+    },
+    {
+      "entity": "Stepan Bandera All-Ukrainian Organization \"Tryzub\"",
+      "label": "ORG",
+      "start": 209,
+      "end": 259
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 305,
+      "end": 314
+    },
+    {
+      "entity": "Tryzub",
+      "label": "ORG",
+      "start": 354,
+      "end": 360
+    },
+    {
+      "entity": "Ukrainians",
+      "label": "MISC",
+      "start": 582,
+      "end": 592
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "del 7",
+      "before": [
+        {
+          "entity": "Tryzub",
+          "label": "ORG",
+          "start": 0,
+          "end": 6
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 22,
+          "end": 31
+        },
+        {
+          "entity": "Congress of Ukrainian Nationalists",
+          "label": "ORG",
+          "start": 81,
+          "end": 115
+        },
+        {
+          "entity": "Bandera",
+          "label": "ORG",
+          "start": 124,
+          "end": 131
+        },
+        {
+          "entity": "Organization of Ukrainian Nationalists",
+          "label": "ORG",
+          "start": 147,
+          "end": 185
+        },
+        {
+          "entity": "Stepan Bandera All-Ukrainian Organization",
+          "label": "ORG",
+          "start": 209,
+          "end": 250
+        },
+        {
+          "entity": "Tryzub",
+          "label": "ORG",
+          "start": 252,
+          "end": 258
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 305,
+          "end": 314
+        },
+        {
+          "entity": "Tryzub",
+          "label": "ORG",
+          "start": 354,
+          "end": 360
+        },
+        {
+          "entity": "Ukrainians",
+          "label": "MISC",
+          "start": 582,
+          "end": 592
+        }
+      ],
+      "after": [
+        {
+          "entity": "Tryzub",
+          "label": "ORG",
+          "start": 0,
+          "end": 6
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 22,
+          "end": 31
+        },
+        {
+          "entity": "Congress of Ukrainian Nationalists",
+          "label": "ORG",
+          "start": 81,
+          "end": 115
+        },
+        {
+          "entity": "Bandera",
+          "label": "ORG",
+          "start": 124,
+          "end": 131
+        },
+        {
+          "entity": "Organization of Ukrainian Nationalists",
+          "label": "ORG",
+          "start": 147,
+          "end": 185
+        },
+        {
+          "entity": "Stepan Bandera All-Ukrainian Organization",
+          "label": "ORG",
+          "start": 209,
+          "end": 250
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 305,
+          "end": 314
+        },
+        {
+          "entity": "Tryzub",
+          "label": "ORG",
+          "start": 354,
+          "end": 360
+        },
+        {
+          "entity": "Ukrainians",
+          "label": "MISC",
+          "start": 582,
+          "end": 592
+        }
+      ],
+      "at_utc": "2026-11-04T07:05:43.035876+00:00"
+    },
+    {
+      "model": "original",
+      "command": "span 6 | Stepan Bandera All-Ukrainian Organization \"Tryzub\" | 1",
+      "before": [
+        {
+          "entity": "Tryzub",
+          "label": "ORG",
+          "start": 0,
+          "end": 6
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 22,
+          "end": 31
+        },
+        {
+          "entity": "Congress of Ukrainian Nationalists",
+          "label": "ORG",
+          "start": 81,
+          "end": 115
+        },
+        {
+          "entity": "Bandera",
+          "label": "ORG",
+          "start": 124,
+          "end": 131
+        },
+        {
+          "entity": "Organization of Ukrainian Nationalists",
+          "label": "ORG",
+          "start": 147,
+          "end": 185
+        },
+        {
+          "entity": "Stepan Bandera All-Ukrainian Organization",
+          "label": "ORG",
+          "start": 209,
+          "end": 250
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 305,
+          "end": 314
+        },
+        {
+          "entity": "Tryzub",
+          "label": "ORG",
+          "start": 354,
+          "end": 360
+        },
+        {
+          "entity": "Ukrainians",
+          "label": "MISC",
+          "start": 582,
+          "end": 592
+        }
+      ],
+      "after": [
+        {
+          "entity": "Tryzub",
+          "label": "ORG",
+          "start": 0,
+          "end": 6
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 22,
+          "end": 31
+        },
+        {
+          "entity": "Congress of Ukrainian Nationalists",
+          "label": "ORG",
+          "start": 81,
+          "end": 115
+        },
+        {
+          "entity": "Bandera",
+          "label": "ORG",
+          "start": 124,
+          "end": 131
+        },
+        {
+          "entity": "Organization of Ukrainian Nationalists",
+          "label": "ORG",
+          "start": 147,
+          "end": 185
+        },
+        {
+          "entity": "Stepan Bandera All-Ukrainian Organization \"Tryzub\"",
+          "label": "ORG",
+          "start": 209,
+          "end": 259
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 305,
+          "end": 314
+        },
+        {
+          "entity": "Tryzub",
+          "label": "ORG",
+          "start": 354,
+          "end": 360
+        },
+        {
+          "entity": "Ukrainians",
+          "label": "MISC",
+          "start": 582,
+          "end": 592
+        }
+      ],
+      "at_utc": "2026-11-04T07:05:53.035310+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add MISC | Ukrainians | 1",
+      "before": [
+        {
+          "entity": "Tryzub",
+          "label": "ORG",
+          "start": 0,
+          "end": 6
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 22,
+          "end": 31
+        },
+        {
+          "entity": "1993",
+          "label": "DATE",
+          "start": 69,
+          "end": 73
+        },
+        {
+          "entity": "Congress of Ukrainian Nationalists",
+          "label": "ORG",
+          "start": 81,
+          "end": 115
+        },
+        {
+          "entity": "Bandera",
+          "label": "ORG",
+          "start": 124,
+          "end": 131
+        },
+        {
+          "entity": "Organization of Ukrainian Nationalists",
+          "label": "ORG",
+          "start": 147,
+          "end": 185
+        },
+        {
+          "entity": "Stepan Bandera All-Ukrainian Organization \"Tryzub\"",
+          "label": "ORG",
+          "start": 209,
+          "end": 259
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 305,
+          "end": 314
+        },
+        {
+          "entity": "Tryzub",
+          "label": "ORG",
+          "start": 354,
+          "end": 360
+        }
+      ],
+      "after": [
+        {
+          "entity": "Tryzub",
+          "label": "ORG",
+          "start": 0,
+          "end": 6
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 22,
+          "end": 31
+        },
+        {
+          "entity": "1993",
+          "label": "DATE",
+          "start": 69,
+          "end": 73
+        },
+        {
+          "entity": "Congress of Ukrainian Nationalists",
+          "label": "ORG",
+          "start": 81,
+          "end": 115
+        },
+        {
+          "entity": "Bandera",
+          "label": "ORG",
+          "start": 124,
+          "end": 131
+        },
+        {
+          "entity": "Organization of Ukrainian Nationalists",
+          "label": "ORG",
+          "start": 147,
+          "end": 185
+        },
+        {
+          "entity": "Stepan Bandera All-Ukrainian Organization \"Tryzub\"",
+          "label": "ORG",
+          "start": 209,
+          "end": 259
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 305,
+          "end": 314
+        },
+        {
+          "entity": "Tryzub",
+          "label": "ORG",
+          "start": 354,
+          "end": 360
+        },
+        {
+          "entity": "Ukrainians",
+          "label": "MISC",
+          "start": 582,
+          "end": 592
+        }
+      ],
+      "at_utc": "2026-11-04T07:05:59.253521+00:00"
+    }
+  ]
+}

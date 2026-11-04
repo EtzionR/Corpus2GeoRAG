@@ -1,0 +1,144 @@
+{
+  "comparison_row_id": 29,
+  "Source": "125th Heavy Mechanized Brigade",
+  "Index": 4,
+  "Text": "On 4 December, the brigade received its battle flag. As of December 2022, units of the brigade were deployed to Kharkiv Oblast, Sumy Oblast and Donetsk Oblast.",
+  "reviewed_at_utc": "2026-11-04T07:35:05.092894+00:00",
+  "original_predictions": [
+    {
+      "entity": "Kharkiv Oblast",
+      "label": "LOC",
+      "start": 112,
+      "end": 126
+    },
+    {
+      "entity": "Sumy Oblast",
+      "label": "LOC",
+      "start": 128,
+      "end": 139
+    },
+    {
+      "entity": "Donetsk Oblast",
+      "label": "LOC",
+      "start": 144,
+      "end": 158
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "4 December",
+      "label": "DATE",
+      "start": 3,
+      "end": 13
+    },
+    {
+      "entity": "December 2022",
+      "label": "DATE",
+      "start": 59,
+      "end": 72
+    },
+    {
+      "entity": "Kharkiv Oblast",
+      "label": "LOC",
+      "start": 112,
+      "end": 126
+    },
+    {
+      "entity": "Sumy Oblast",
+      "label": "LOC",
+      "start": 128,
+      "end": 139
+    },
+    {
+      "entity": "Donetsk Oblast",
+      "label": "LOC",
+      "start": 144,
+      "end": 158
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Kharkiv Oblast",
+      "label": "LOC",
+      "start": 112,
+      "end": 126
+    },
+    {
+      "entity": "Sumy Oblast",
+      "label": "LOC",
+      "start": 128,
+      "end": 139
+    },
+    {
+      "entity": "Donetsk Oblast",
+      "label": "LOC",
+      "start": 144,
+      "end": 158
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "4 December",
+      "label": "DATE",
+      "start": 3,
+      "end": 13
+    },
+    {
+      "entity": "December 2022",
+      "label": "DATE",
+      "start": 59,
+      "end": 72
+    },
+    {
+      "entity": "Kharkiv Oblast",
+      "label": "LOC",
+      "start": 112,
+      "end": 126
+    },
+    {
+      "entity": "Sumy Oblast",
+      "label": "LOC",
+      "start": 128,
+      "end": 139
+    },
+    {
+      "entity": "Donetsk Oblast",
+      "label": "LOC",
+      "start": 144,
+      "end": 158
+    }
+  ],
+  "gold": [
+    {
+      "entity": "4 December",
+      "label": "DATE",
+      "start": 3,
+      "end": 13
+    },
+    {
+      "entity": "December 2022",
+      "label": "DATE",
+      "start": 59,
+      "end": 72
+    },
+    {
+      "entity": "Kharkiv Oblast",
+      "label": "LOC",
+      "start": 112,
+      "end": 126
+    },
+    {
+      "entity": "Sumy Oblast",
+      "label": "LOC",
+      "start": 128,
+      "end": 139
+    },
+    {
+      "entity": "Donetsk Oblast",
+      "label": "LOC",
+      "start": 144,
+      "end": 158
+    }
+  ],
+  "history": []
+}

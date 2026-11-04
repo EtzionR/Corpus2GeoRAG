@@ -1,0 +1,258 @@
+{
+  "comparison_row_id": 4251,
+  "Source": "Timeline of the Russo-Ukrainian war (12 November 2022 – 7 June 2023)",
+  "Index": 46,
+  "Text": "Missiles were launched targeting infrastructure on Kyiv, Kharkiv, Kryvyi Rih and Zaporizhzhia. Kyiv council member Ksenia Semenova stated that approximately 60% of residents were without power and 70% were without water. Ukraine restored power and water to approximately 6 million residents in 24 hours. 37 out of the 40 missiles fired at Kyiv were intercepted.",
+  "reviewed_at_utc": "2026-11-04T07:26:55.592737+00:00",
+  "original_predictions": [
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 51,
+      "end": 55
+    },
+    {
+      "entity": "Kharkiv",
+      "label": "LOC",
+      "start": 57,
+      "end": 64
+    },
+    {
+      "entity": "Kryvyi Rih",
+      "label": "LOC",
+      "start": 66,
+      "end": 76
+    },
+    {
+      "entity": "Zaporizhzhia",
+      "label": "LOC",
+      "start": 81,
+      "end": 93
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 95,
+      "end": 99
+    },
+    {
+      "entity": "Ksenia Semenova",
+      "label": "PER",
+      "start": 115,
+      "end": 130
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 221,
+      "end": 228
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 339,
+      "end": 343
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 51,
+      "end": 55
+    },
+    {
+      "entity": "Kharkiv",
+      "label": "LOC",
+      "start": 57,
+      "end": 64
+    },
+    {
+      "entity": "Kryvyi Rih",
+      "label": "LOC",
+      "start": 66,
+      "end": 76
+    },
+    {
+      "entity": "Zaporizhzhia",
+      "label": "LOC",
+      "start": 81,
+      "end": 93
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 95,
+      "end": 99
+    },
+    {
+      "entity": "Ksenia Semenova",
+      "label": "PER",
+      "start": 115,
+      "end": 130
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 221,
+      "end": 228
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 339,
+      "end": 343
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 51,
+      "end": 55
+    },
+    {
+      "entity": "Kharkiv",
+      "label": "LOC",
+      "start": 57,
+      "end": 64
+    },
+    {
+      "entity": "Kryvyi Rih",
+      "label": "LOC",
+      "start": 66,
+      "end": 76
+    },
+    {
+      "entity": "Zaporizhzhia",
+      "label": "LOC",
+      "start": 81,
+      "end": 93
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 95,
+      "end": 99
+    },
+    {
+      "entity": "Ksenia Semenova",
+      "label": "PER",
+      "start": 115,
+      "end": 130
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 221,
+      "end": 228
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 339,
+      "end": 343
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 51,
+      "end": 55
+    },
+    {
+      "entity": "Kharkiv",
+      "label": "LOC",
+      "start": 57,
+      "end": 64
+    },
+    {
+      "entity": "Kryvyi Rih",
+      "label": "LOC",
+      "start": 66,
+      "end": 76
+    },
+    {
+      "entity": "Zaporizhzhia",
+      "label": "LOC",
+      "start": 81,
+      "end": 93
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 95,
+      "end": 99
+    },
+    {
+      "entity": "Ksenia Semenova",
+      "label": "PER",
+      "start": 115,
+      "end": 130
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 221,
+      "end": 228
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 339,
+      "end": 343
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 51,
+      "end": 55
+    },
+    {
+      "entity": "Kharkiv",
+      "label": "LOC",
+      "start": 57,
+      "end": 64
+    },
+    {
+      "entity": "Kryvyi Rih",
+      "label": "LOC",
+      "start": 66,
+      "end": 76
+    },
+    {
+      "entity": "Zaporizhzhia",
+      "label": "LOC",
+      "start": 81,
+      "end": 93
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 95,
+      "end": 99
+    },
+    {
+      "entity": "Ksenia Semenova",
+      "label": "PER",
+      "start": 115,
+      "end": 130
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 221,
+      "end": 228
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 339,
+      "end": 343
+    }
+  ],
+  "history": []
+}

@@ -1,0 +1,48 @@
+{
+  "comparison_row_id": 577,
+  "Source": "54th Reconnaissance Battalion (Ukraine)",
+  "Index": 16,
+  "Text": "Medical Platoon",
+  "reviewed_at_utc": "2026-11-04T06:50:14.846202+00:00",
+  "original_predictions": [
+    {
+      "entity": "Medical Platoon",
+      "label": "ORG",
+      "start": 0,
+      "end": 15
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Medical Platoon",
+      "label": "ORG",
+      "start": 0,
+      "end": 15
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Medical Platoon",
+      "label": "ORG",
+      "start": 0,
+      "end": 15
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Medical Platoon",
+      "label": "ORG",
+      "start": 0,
+      "end": 15
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Medical Platoon",
+      "label": "ORG",
+      "start": 0,
+      "end": 15
+    }
+  ],
+  "history": []
+}

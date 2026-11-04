@@ -1,0 +1,138 @@
+{
+  "comparison_row_id": 1220,
+  "Source": "Chernobyl exclusion zone",
+  "Index": 95,
+  "Text": "Research on the health of Chernobyl's wildlife is ongoing, and there is concern that the wildlife still suffers from some of the negative effects of the radiation exposure. Though it will be years before researchers collect the necessary data to fully understand the effects, for now, the area is essentially one of Europe's largest nature preserves. Overall, an assessment by plant biochemist Stuart Thompson concluded, \"the burden brought by radiation at Chernobyl is less severe than the benefits reaped from humans leaving the area.\" In fact, the ecosystem around the power plant \"supports more life than before\".",
+  "reviewed_at_utc": "2026-11-04T07:59:49.416729+00:00",
+  "original_predictions": [
+    {
+      "entity": "Chernobyl",
+      "label": "LOC",
+      "start": 26,
+      "end": 35
+    },
+    {
+      "entity": "Europe",
+      "label": "LOC",
+      "start": 316,
+      "end": 322
+    },
+    {
+      "entity": "Stuart Thompson",
+      "label": "PER",
+      "start": 394,
+      "end": 409
+    },
+    {
+      "entity": "Chernobyl",
+      "label": "LOC",
+      "start": 457,
+      "end": 466
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Chernobyl",
+      "label": "LOC",
+      "start": 26,
+      "end": 35
+    },
+    {
+      "entity": "Europe",
+      "label": "LOC",
+      "start": 316,
+      "end": 322
+    },
+    {
+      "entity": "Stuart Thompson",
+      "label": "PER",
+      "start": 394,
+      "end": 409
+    },
+    {
+      "entity": "Chernobyl",
+      "label": "LOC",
+      "start": 457,
+      "end": 466
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Chernobyl",
+      "label": "LOC",
+      "start": 26,
+      "end": 35
+    },
+    {
+      "entity": "Europe",
+      "label": "LOC",
+      "start": 316,
+      "end": 322
+    },
+    {
+      "entity": "Stuart Thompson",
+      "label": "PER",
+      "start": 394,
+      "end": 409
+    },
+    {
+      "entity": "Chernobyl",
+      "label": "LOC",
+      "start": 457,
+      "end": 466
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Chernobyl",
+      "label": "LOC",
+      "start": 26,
+      "end": 35
+    },
+    {
+      "entity": "Europe",
+      "label": "LOC",
+      "start": 316,
+      "end": 322
+    },
+    {
+      "entity": "Stuart Thompson",
+      "label": "PER",
+      "start": 394,
+      "end": 409
+    },
+    {
+      "entity": "Chernobyl",
+      "label": "LOC",
+      "start": 457,
+      "end": 466
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Chernobyl",
+      "label": "LOC",
+      "start": 26,
+      "end": 35
+    },
+    {
+      "entity": "Europe",
+      "label": "LOC",
+      "start": 316,
+      "end": 322
+    },
+    {
+      "entity": "Stuart Thompson",
+      "label": "PER",
+      "start": 394,
+      "end": 409
+    },
+    {
+      "entity": "Chernobyl",
+      "label": "LOC",
+      "start": 457,
+      "end": 466
+    }
+  ],
+  "history": []
+}

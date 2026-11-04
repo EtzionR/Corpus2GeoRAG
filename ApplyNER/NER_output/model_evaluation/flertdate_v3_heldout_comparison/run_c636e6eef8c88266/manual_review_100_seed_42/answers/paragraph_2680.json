@@ -1,0 +1,286 @@
+{
+  "comparison_row_id": 2680,
+  "Source": "Mejlis of the Crimean Tatar People",
+  "Index": 9,
+  "Text": "The status of Mejlis was legalized by the Ukrainian Presidential decree of 18 May 1999 \"About the council of representatives of Crimean Tatar people\". In 2010, the President of Ukraine Viktor Yanukovych reformed the council, cutting its membership almost in half and establishing control over it by having its members appointed by the president.",
+  "reviewed_at_utc": "2026-11-04T06:28:02.312278+00:00",
+  "original_predictions": [
+    {
+      "entity": "Mejlis",
+      "label": "ORG",
+      "start": 14,
+      "end": 20
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 42,
+      "end": 51
+    },
+    {
+      "entity": "Crimean Tatar",
+      "label": "MISC",
+      "start": 128,
+      "end": 141
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 177,
+      "end": 184
+    },
+    {
+      "entity": "Viktor Yanukovych",
+      "label": "PER",
+      "start": 185,
+      "end": 202
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Mejlis",
+      "label": "ORG",
+      "start": 14,
+      "end": 20
+    },
+    {
+      "entity": "18 May 1999",
+      "label": "DATE",
+      "start": 75,
+      "end": 86
+    },
+    {
+      "entity": "Crimean Tatar",
+      "label": "MISC",
+      "start": 128,
+      "end": 141
+    },
+    {
+      "entity": "2010",
+      "label": "DATE",
+      "start": 154,
+      "end": 158
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 177,
+      "end": 184
+    },
+    {
+      "entity": "Viktor Yanukovych",
+      "label": "PER",
+      "start": 185,
+      "end": 202
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Mejlis",
+      "label": "ORG",
+      "start": 14,
+      "end": 20
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 42,
+      "end": 51
+    },
+    {
+      "entity": "Crimean Tatar",
+      "label": "MISC",
+      "start": 128,
+      "end": 141
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 177,
+      "end": 184
+    },
+    {
+      "entity": "Viktor Yanukovych",
+      "label": "PER",
+      "start": 185,
+      "end": 202
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Mejlis",
+      "label": "ORG",
+      "start": 14,
+      "end": 20
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 42,
+      "end": 51
+    },
+    {
+      "entity": "18 May 1999",
+      "label": "DATE",
+      "start": 75,
+      "end": 86
+    },
+    {
+      "entity": "Crimean Tatar",
+      "label": "MISC",
+      "start": 128,
+      "end": 141
+    },
+    {
+      "entity": "2010",
+      "label": "DATE",
+      "start": 154,
+      "end": 158
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 177,
+      "end": 184
+    },
+    {
+      "entity": "Viktor Yanukovych",
+      "label": "PER",
+      "start": 185,
+      "end": 202
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Mejlis",
+      "label": "ORG",
+      "start": 14,
+      "end": 20
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 42,
+      "end": 51
+    },
+    {
+      "entity": "18 May 1999",
+      "label": "DATE",
+      "start": 75,
+      "end": 86
+    },
+    {
+      "entity": "Crimean Tatar",
+      "label": "MISC",
+      "start": 128,
+      "end": 141
+    },
+    {
+      "entity": "2010",
+      "label": "DATE",
+      "start": 154,
+      "end": 158
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 177,
+      "end": 184
+    },
+    {
+      "entity": "Viktor Yanukovych",
+      "label": "PER",
+      "start": 185,
+      "end": 202
+    }
+  ],
+  "history": [
+    {
+      "model": "v3",
+      "command": "add MISC | Ukrainian | 1",
+      "before": [
+        {
+          "entity": "Mejlis",
+          "label": "ORG",
+          "start": 14,
+          "end": 20
+        },
+        {
+          "entity": "18 May 1999",
+          "label": "DATE",
+          "start": 75,
+          "end": 86
+        },
+        {
+          "entity": "Crimean Tatar",
+          "label": "MISC",
+          "start": 128,
+          "end": 141
+        },
+        {
+          "entity": "2010",
+          "label": "DATE",
+          "start": 154,
+          "end": 158
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 177,
+          "end": 184
+        },
+        {
+          "entity": "Viktor Yanukovych",
+          "label": "PER",
+          "start": 185,
+          "end": 202
+        }
+      ],
+      "after": [
+        {
+          "entity": "Mejlis",
+          "label": "ORG",
+          "start": 14,
+          "end": 20
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 42,
+          "end": 51
+        },
+        {
+          "entity": "18 May 1999",
+          "label": "DATE",
+          "start": 75,
+          "end": 86
+        },
+        {
+          "entity": "Crimean Tatar",
+          "label": "MISC",
+          "start": 128,
+          "end": 141
+        },
+        {
+          "entity": "2010",
+          "label": "DATE",
+          "start": 154,
+          "end": 158
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 177,
+          "end": 184
+        },
+        {
+          "entity": "Viktor Yanukovych",
+          "label": "PER",
+          "start": 185,
+          "end": 202
+        }
+      ],
+      "at_utc": "2026-11-04T06:08:51.347297+00:00"
+    }
+  ]
+}

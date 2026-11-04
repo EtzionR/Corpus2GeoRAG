@@ -1,0 +1,78 @@
+{
+  "comparison_row_id": 3957,
+  "Source": "Timeline of the Russo-Ukrainian war (1 August – 31 December 2024)",
+  "Index": 377,
+  "Text": "The US announced a $425 million military aid package to Ukraine.",
+  "reviewed_at_utc": "2026-11-04T07:06:22.042106+00:00",
+  "original_predictions": [
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 4,
+      "end": 6
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 56,
+      "end": 63
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 4,
+      "end": 6
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 56,
+      "end": 63
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 4,
+      "end": 6
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 56,
+      "end": 63
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 4,
+      "end": 6
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 56,
+      "end": 63
+    }
+  ],
+  "gold": [
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 4,
+      "end": 6
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 56,
+      "end": 63
+    }
+  ],
+  "history": []
+}

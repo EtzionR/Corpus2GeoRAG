@@ -1,0 +1,394 @@
+{
+  "comparison_row_id": 4454,
+  "Source": "Timeline of the Russo-Ukrainian war (12 November 2022 – 7 June 2023)",
+  "Index": 250,
+  "Text": "Russian missiles struck Pavlohrad, destroying \"dozens\" of houses, other buildings and wounding thirty four. Kyiv also came under attack, however no damage or losses were reported. Ukraine claimed to have shot down fifteen of the eighteen missiles fired. Pavlohrad was a logistical and railway hub with a Russian-installed official, Vladimir Rogov, claiming that the attacks were aimed at railway infrastructure and fuel depots in the city. Russian shelling in Kherson killed one person.",
+  "reviewed_at_utc": "2026-11-04T06:30:43.406186+00:00",
+  "original_predictions": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 0,
+      "end": 7
+    },
+    {
+      "entity": "Pavlohrad",
+      "label": "LOC",
+      "start": 24,
+      "end": 33
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 108,
+      "end": 112
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 180,
+      "end": 187
+    },
+    {
+      "entity": "Pavlohrad",
+      "label": "LOC",
+      "start": 254,
+      "end": 263
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 304,
+      "end": 311
+    },
+    {
+      "entity": "Vladimir Rogov",
+      "label": "PER",
+      "start": 332,
+      "end": 346
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 440,
+      "end": 447
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 460,
+      "end": 467
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 0,
+      "end": 7
+    },
+    {
+      "entity": "Pavlohrad",
+      "label": "LOC",
+      "start": 24,
+      "end": 33
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 108,
+      "end": 112
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 180,
+      "end": 187
+    },
+    {
+      "entity": "Pavlohrad",
+      "label": "LOC",
+      "start": 254,
+      "end": 263
+    },
+    {
+      "entity": "Vladimir Rogov",
+      "label": "PER",
+      "start": 332,
+      "end": 346
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 440,
+      "end": 447
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 460,
+      "end": 467
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 0,
+      "end": 7
+    },
+    {
+      "entity": "Pavlohrad",
+      "label": "LOC",
+      "start": 24,
+      "end": 33
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 108,
+      "end": 112
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 180,
+      "end": 187
+    },
+    {
+      "entity": "Pavlohrad",
+      "label": "LOC",
+      "start": 254,
+      "end": 263
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 304,
+      "end": 311
+    },
+    {
+      "entity": "Vladimir Rogov",
+      "label": "PER",
+      "start": 332,
+      "end": 346
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 440,
+      "end": 447
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 460,
+      "end": 467
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 0,
+      "end": 7
+    },
+    {
+      "entity": "Pavlohrad",
+      "label": "LOC",
+      "start": 24,
+      "end": 33
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 108,
+      "end": 112
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 180,
+      "end": 187
+    },
+    {
+      "entity": "Pavlohrad",
+      "label": "LOC",
+      "start": 254,
+      "end": 263
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 304,
+      "end": 311
+    },
+    {
+      "entity": "Vladimir Rogov",
+      "label": "PER",
+      "start": 332,
+      "end": 346
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 440,
+      "end": 447
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 460,
+      "end": 467
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 0,
+      "end": 7
+    },
+    {
+      "entity": "Pavlohrad",
+      "label": "LOC",
+      "start": 24,
+      "end": 33
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 108,
+      "end": 112
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 180,
+      "end": 187
+    },
+    {
+      "entity": "Pavlohrad",
+      "label": "LOC",
+      "start": 254,
+      "end": 263
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 304,
+      "end": 311
+    },
+    {
+      "entity": "Vladimir Rogov",
+      "label": "PER",
+      "start": 332,
+      "end": 346
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 440,
+      "end": 447
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 460,
+      "end": 467
+    }
+  ],
+  "history": [
+    {
+      "model": "v3",
+      "command": "add MISC | Russian | 2",
+      "before": [
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 0,
+          "end": 7
+        },
+        {
+          "entity": "Pavlohrad",
+          "label": "LOC",
+          "start": 24,
+          "end": 33
+        },
+        {
+          "entity": "Kyiv",
+          "label": "LOC",
+          "start": 108,
+          "end": 112
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 180,
+          "end": 187
+        },
+        {
+          "entity": "Pavlohrad",
+          "label": "LOC",
+          "start": 254,
+          "end": 263
+        },
+        {
+          "entity": "Vladimir Rogov",
+          "label": "PER",
+          "start": 332,
+          "end": 346
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 440,
+          "end": 447
+        },
+        {
+          "entity": "Kherson",
+          "label": "LOC",
+          "start": 460,
+          "end": 467
+        }
+      ],
+      "after": [
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 0,
+          "end": 7
+        },
+        {
+          "entity": "Pavlohrad",
+          "label": "LOC",
+          "start": 24,
+          "end": 33
+        },
+        {
+          "entity": "Kyiv",
+          "label": "LOC",
+          "start": 108,
+          "end": 112
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 180,
+          "end": 187
+        },
+        {
+          "entity": "Pavlohrad",
+          "label": "LOC",
+          "start": 254,
+          "end": 263
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 304,
+          "end": 311
+        },
+        {
+          "entity": "Vladimir Rogov",
+          "label": "PER",
+          "start": 332,
+          "end": 346
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 440,
+          "end": 447
+        },
+        {
+          "entity": "Kherson",
+          "label": "LOC",
+          "start": 460,
+          "end": 467
+        }
+      ],
+      "at_utc": "2026-11-04T06:30:39.776912+00:00"
+    }
+  ]
+}

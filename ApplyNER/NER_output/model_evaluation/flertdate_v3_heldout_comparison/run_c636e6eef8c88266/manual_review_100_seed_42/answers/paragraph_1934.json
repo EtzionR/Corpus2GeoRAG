@@ -1,0 +1,1990 @@
+{
+  "comparison_row_id": 1934,
+  "Source": "Kamianka Sich",
+  "Index": 42,
+  "Text": "Горобець В. Кам'янська Січ (1709–1711, 1730–1734 рр.) // Козацькі січі (нариси з історії українського козацтва XVI–XIX ст.) [Cossack Sich (essays on the history of Ukrainian Cossacks in the 16th–19th centuries)] / Valeriy Smoliy (ed.), Vitaliy Oleksiyovych Shcherbak (scientific ed.), Taras Chukhlib (compiled), Oleksandr Ivanovych Gurzhiy, V. Matyakh, Arnold Sokulsky, Valeriy Stepanovych Stepankov. — Institute of History of Ukraine; Cossack Research Institute. Kyiv; Zaporizhzhia, 1998. pp. 109—131.",
+  "reviewed_at_utc": "2026-11-04T07:40:38.231831+00:00",
+  "original_predictions": [
+    {
+      "entity": "Горобець В",
+      "label": "PER",
+      "start": 0,
+      "end": 10
+    },
+    {
+      "entity": "Кам'янська Січ",
+      "label": "MISC",
+      "start": 12,
+      "end": 26
+    },
+    {
+      "entity": "Козацькі січі",
+      "label": "MISC",
+      "start": 57,
+      "end": 70
+    },
+    {
+      "entity": "Cossack Sich",
+      "label": "MISC",
+      "start": 125,
+      "end": 137
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 164,
+      "end": 173
+    },
+    {
+      "entity": "Valeriy Smoliy",
+      "label": "PER",
+      "start": 214,
+      "end": 228
+    },
+    {
+      "entity": "Vitaliy Oleksiyovych Shcherbak",
+      "label": "PER",
+      "start": 236,
+      "end": 266
+    },
+    {
+      "entity": "Taras Chukhlib",
+      "label": "PER",
+      "start": 285,
+      "end": 299
+    },
+    {
+      "entity": "Oleksandr Ivanovych Gurzhiy",
+      "label": "PER",
+      "start": 312,
+      "end": 339
+    },
+    {
+      "entity": "V. Matyakh",
+      "label": "PER",
+      "start": 341,
+      "end": 351
+    },
+    {
+      "entity": "Arnold Sokulsky",
+      "label": "PER",
+      "start": 353,
+      "end": 368
+    },
+    {
+      "entity": "Valeriy Stepanovych Stepankov",
+      "label": "PER",
+      "start": 370,
+      "end": 399
+    },
+    {
+      "entity": "Institute of History of Ukraine",
+      "label": "ORG",
+      "start": 403,
+      "end": 434
+    },
+    {
+      "entity": "Cossack Research Institute",
+      "label": "ORG",
+      "start": 436,
+      "end": 462
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 464,
+      "end": 468
+    },
+    {
+      "entity": "Zaporizhzhia",
+      "label": "LOC",
+      "start": 470,
+      "end": 482
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Горобець В.",
+      "label": "PER",
+      "start": 0,
+      "end": 11
+    },
+    {
+      "entity": "Кам'янська Січ",
+      "label": "MISC",
+      "start": 12,
+      "end": 26
+    },
+    {
+      "entity": "1709–1711",
+      "label": "DATE",
+      "start": 28,
+      "end": 37
+    },
+    {
+      "entity": "1730–1734 рр",
+      "label": "DATE",
+      "start": 39,
+      "end": 51
+    },
+    {
+      "entity": "Козацькі січі (нариси з історії українського козацтва XVI–XIX ст.",
+      "label": "MISC",
+      "start": 57,
+      "end": 122
+    },
+    {
+      "entity": "Cossack Sich (essays on the history of Ukrainian Cossacks in the 16th–19th centuries",
+      "label": "MISC",
+      "start": 125,
+      "end": 209
+    },
+    {
+      "entity": "Valeriy Smoliy",
+      "label": "PER",
+      "start": 214,
+      "end": 228
+    },
+    {
+      "entity": "Vitaliy Oleksiyovych Shcherbak",
+      "label": "PER",
+      "start": 236,
+      "end": 266
+    },
+    {
+      "entity": "Taras Chukhlib",
+      "label": "PER",
+      "start": 285,
+      "end": 299
+    },
+    {
+      "entity": "Oleksandr Ivanovych Gurzhiy",
+      "label": "PER",
+      "start": 312,
+      "end": 339
+    },
+    {
+      "entity": "V. Matyakh",
+      "label": "PER",
+      "start": 341,
+      "end": 351
+    },
+    {
+      "entity": "Arnold Sokulsky",
+      "label": "PER",
+      "start": 353,
+      "end": 368
+    },
+    {
+      "entity": "Valeriy Stepanovych Stepankov",
+      "label": "PER",
+      "start": 370,
+      "end": 399
+    },
+    {
+      "entity": "Institute of History of Ukraine",
+      "label": "ORG",
+      "start": 403,
+      "end": 434
+    },
+    {
+      "entity": "Cossack Research Institute",
+      "label": "ORG",
+      "start": 436,
+      "end": 462
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 464,
+      "end": 468
+    },
+    {
+      "entity": "Zaporizhzhia",
+      "label": "LOC",
+      "start": 470,
+      "end": 482
+    },
+    {
+      "entity": "1998",
+      "label": "DATE",
+      "start": 484,
+      "end": 488
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Горобець В.",
+      "label": "PER",
+      "start": 0,
+      "end": 11
+    },
+    {
+      "entity": "Кам'янська Січ",
+      "label": "MISC",
+      "start": 12,
+      "end": 26
+    },
+    {
+      "entity": "Козацькі січі (нариси з історії українського козацтва XVI–XIX ст.)",
+      "label": "MISC",
+      "start": 57,
+      "end": 123
+    },
+    {
+      "entity": "Cossack Sich (essays on the history of Ukrainian Cossacks in the 16th–19th centuries)",
+      "label": "MISC",
+      "start": 125,
+      "end": 210
+    },
+    {
+      "entity": "Valeriy Smoliy",
+      "label": "PER",
+      "start": 214,
+      "end": 228
+    },
+    {
+      "entity": "Vitaliy Oleksiyovych Shcherbak",
+      "label": "PER",
+      "start": 236,
+      "end": 266
+    },
+    {
+      "entity": "Taras Chukhlib",
+      "label": "PER",
+      "start": 285,
+      "end": 299
+    },
+    {
+      "entity": "Oleksandr Ivanovych Gurzhiy",
+      "label": "PER",
+      "start": 312,
+      "end": 339
+    },
+    {
+      "entity": "V. Matyakh",
+      "label": "PER",
+      "start": 341,
+      "end": 351
+    },
+    {
+      "entity": "Arnold Sokulsky",
+      "label": "PER",
+      "start": 353,
+      "end": 368
+    },
+    {
+      "entity": "Valeriy Stepanovych Stepankov",
+      "label": "PER",
+      "start": 370,
+      "end": 399
+    },
+    {
+      "entity": "Institute of History of Ukraine",
+      "label": "ORG",
+      "start": 403,
+      "end": 434
+    },
+    {
+      "entity": "Cossack Research Institute",
+      "label": "ORG",
+      "start": 436,
+      "end": 462
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 464,
+      "end": 468
+    },
+    {
+      "entity": "Zaporizhzhia",
+      "label": "LOC",
+      "start": 470,
+      "end": 482
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Горобець В.",
+      "label": "PER",
+      "start": 0,
+      "end": 11
+    },
+    {
+      "entity": "Кам'янська Січ",
+      "label": "MISC",
+      "start": 12,
+      "end": 26
+    },
+    {
+      "entity": "1709–1711",
+      "label": "DATE",
+      "start": 28,
+      "end": 37
+    },
+    {
+      "entity": "1730–1734 рр.",
+      "label": "DATE",
+      "start": 39,
+      "end": 52
+    },
+    {
+      "entity": "Козацькі січі (нариси з історії українського козацтва XVI–XIX ст.)",
+      "label": "MISC",
+      "start": 57,
+      "end": 123
+    },
+    {
+      "entity": "Cossack Sich (essays on the history of Ukrainian Cossacks in the 16th–19th centuries)",
+      "label": "MISC",
+      "start": 125,
+      "end": 210
+    },
+    {
+      "entity": "Valeriy Smoliy",
+      "label": "PER",
+      "start": 214,
+      "end": 228
+    },
+    {
+      "entity": "Vitaliy Oleksiyovych Shcherbak",
+      "label": "PER",
+      "start": 236,
+      "end": 266
+    },
+    {
+      "entity": "Taras Chukhlib",
+      "label": "PER",
+      "start": 285,
+      "end": 299
+    },
+    {
+      "entity": "Oleksandr Ivanovych Gurzhiy",
+      "label": "PER",
+      "start": 312,
+      "end": 339
+    },
+    {
+      "entity": "V. Matyakh",
+      "label": "PER",
+      "start": 341,
+      "end": 351
+    },
+    {
+      "entity": "Arnold Sokulsky",
+      "label": "PER",
+      "start": 353,
+      "end": 368
+    },
+    {
+      "entity": "Valeriy Stepanovych Stepankov",
+      "label": "PER",
+      "start": 370,
+      "end": 399
+    },
+    {
+      "entity": "Institute of History of Ukraine",
+      "label": "ORG",
+      "start": 403,
+      "end": 434
+    },
+    {
+      "entity": "Cossack Research Institute",
+      "label": "ORG",
+      "start": 436,
+      "end": 462
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 464,
+      "end": 468
+    },
+    {
+      "entity": "Zaporizhzhia",
+      "label": "LOC",
+      "start": 470,
+      "end": 482
+    },
+    {
+      "entity": "1998",
+      "label": "DATE",
+      "start": 484,
+      "end": 488
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Горобець В.",
+      "label": "PER",
+      "start": 0,
+      "end": 11
+    },
+    {
+      "entity": "Кам'янська Січ",
+      "label": "MISC",
+      "start": 12,
+      "end": 26
+    },
+    {
+      "entity": "1709–1711",
+      "label": "DATE",
+      "start": 28,
+      "end": 37
+    },
+    {
+      "entity": "1730–1734 рр.",
+      "label": "DATE",
+      "start": 39,
+      "end": 52
+    },
+    {
+      "entity": "Козацькі січі (нариси з історії українського козацтва XVI–XIX ст.)",
+      "label": "MISC",
+      "start": 57,
+      "end": 123
+    },
+    {
+      "entity": "Cossack Sich (essays on the history of Ukrainian Cossacks in the 16th–19th centuries)",
+      "label": "MISC",
+      "start": 125,
+      "end": 210
+    },
+    {
+      "entity": "Valeriy Smoliy",
+      "label": "PER",
+      "start": 214,
+      "end": 228
+    },
+    {
+      "entity": "Vitaliy Oleksiyovych Shcherbak",
+      "label": "PER",
+      "start": 236,
+      "end": 266
+    },
+    {
+      "entity": "Taras Chukhlib",
+      "label": "PER",
+      "start": 285,
+      "end": 299
+    },
+    {
+      "entity": "Oleksandr Ivanovych Gurzhiy",
+      "label": "PER",
+      "start": 312,
+      "end": 339
+    },
+    {
+      "entity": "V. Matyakh",
+      "label": "PER",
+      "start": 341,
+      "end": 351
+    },
+    {
+      "entity": "Arnold Sokulsky",
+      "label": "PER",
+      "start": 353,
+      "end": 368
+    },
+    {
+      "entity": "Valeriy Stepanovych Stepankov",
+      "label": "PER",
+      "start": 370,
+      "end": 399
+    },
+    {
+      "entity": "Institute of History of Ukraine",
+      "label": "ORG",
+      "start": 403,
+      "end": 434
+    },
+    {
+      "entity": "Cossack Research Institute",
+      "label": "ORG",
+      "start": 436,
+      "end": 462
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 464,
+      "end": 468
+    },
+    {
+      "entity": "Zaporizhzhia",
+      "label": "LOC",
+      "start": 470,
+      "end": 482
+    },
+    {
+      "entity": "1998",
+      "label": "DATE",
+      "start": 484,
+      "end": 488
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "span 1 | Горобець В. | 1",
+      "before": [
+        {
+          "entity": "Горобець В",
+          "label": "PER",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Кам'янська Січ",
+          "label": "MISC",
+          "start": 12,
+          "end": 26
+        },
+        {
+          "entity": "Козацькі січі",
+          "label": "MISC",
+          "start": 57,
+          "end": 70
+        },
+        {
+          "entity": "Cossack Sich",
+          "label": "MISC",
+          "start": 125,
+          "end": 137
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 164,
+          "end": 173
+        },
+        {
+          "entity": "Valeriy Smoliy",
+          "label": "PER",
+          "start": 214,
+          "end": 228
+        },
+        {
+          "entity": "Vitaliy Oleksiyovych Shcherbak",
+          "label": "PER",
+          "start": 236,
+          "end": 266
+        },
+        {
+          "entity": "Taras Chukhlib",
+          "label": "PER",
+          "start": 285,
+          "end": 299
+        },
+        {
+          "entity": "Oleksandr Ivanovych Gurzhiy",
+          "label": "PER",
+          "start": 312,
+          "end": 339
+        },
+        {
+          "entity": "V. Matyakh",
+          "label": "PER",
+          "start": 341,
+          "end": 351
+        },
+        {
+          "entity": "Arnold Sokulsky",
+          "label": "PER",
+          "start": 353,
+          "end": 368
+        },
+        {
+          "entity": "Valeriy Stepanovych Stepankov",
+          "label": "PER",
+          "start": 370,
+          "end": 399
+        },
+        {
+          "entity": "Institute of History of Ukraine",
+          "label": "ORG",
+          "start": 403,
+          "end": 434
+        },
+        {
+          "entity": "Cossack Research Institute",
+          "label": "ORG",
+          "start": 436,
+          "end": 462
+        },
+        {
+          "entity": "Kyiv",
+          "label": "LOC",
+          "start": 464,
+          "end": 468
+        },
+        {
+          "entity": "Zaporizhzhia",
+          "label": "LOC",
+          "start": 470,
+          "end": 482
+        }
+      ],
+      "after": [
+        {
+          "entity": "Горобець В.",
+          "label": "PER",
+          "start": 0,
+          "end": 11
+        },
+        {
+          "entity": "Кам'янська Січ",
+          "label": "MISC",
+          "start": 12,
+          "end": 26
+        },
+        {
+          "entity": "Козацькі січі",
+          "label": "MISC",
+          "start": 57,
+          "end": 70
+        },
+        {
+          "entity": "Cossack Sich",
+          "label": "MISC",
+          "start": 125,
+          "end": 137
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 164,
+          "end": 173
+        },
+        {
+          "entity": "Valeriy Smoliy",
+          "label": "PER",
+          "start": 214,
+          "end": 228
+        },
+        {
+          "entity": "Vitaliy Oleksiyovych Shcherbak",
+          "label": "PER",
+          "start": 236,
+          "end": 266
+        },
+        {
+          "entity": "Taras Chukhlib",
+          "label": "PER",
+          "start": 285,
+          "end": 299
+        },
+        {
+          "entity": "Oleksandr Ivanovych Gurzhiy",
+          "label": "PER",
+          "start": 312,
+          "end": 339
+        },
+        {
+          "entity": "V. Matyakh",
+          "label": "PER",
+          "start": 341,
+          "end": 351
+        },
+        {
+          "entity": "Arnold Sokulsky",
+          "label": "PER",
+          "start": 353,
+          "end": 368
+        },
+        {
+          "entity": "Valeriy Stepanovych Stepankov",
+          "label": "PER",
+          "start": 370,
+          "end": 399
+        },
+        {
+          "entity": "Institute of History of Ukraine",
+          "label": "ORG",
+          "start": 403,
+          "end": 434
+        },
+        {
+          "entity": "Cossack Research Institute",
+          "label": "ORG",
+          "start": 436,
+          "end": 462
+        },
+        {
+          "entity": "Kyiv",
+          "label": "LOC",
+          "start": 464,
+          "end": 468
+        },
+        {
+          "entity": "Zaporizhzhia",
+          "label": "LOC",
+          "start": 470,
+          "end": 482
+        }
+      ],
+      "at_utc": "2026-11-04T07:39:20.559211+00:00"
+    },
+    {
+      "model": "original",
+      "command": "span 3 | Козацькі січі (нариси з історії українського козацтва XVI–XIX ст.) | 1",
+      "before": [
+        {
+          "entity": "Горобець В.",
+          "label": "PER",
+          "start": 0,
+          "end": 11
+        },
+        {
+          "entity": "Кам'янська Січ",
+          "label": "MISC",
+          "start": 12,
+          "end": 26
+        },
+        {
+          "entity": "Козацькі січі",
+          "label": "MISC",
+          "start": 57,
+          "end": 70
+        },
+        {
+          "entity": "Cossack Sich",
+          "label": "MISC",
+          "start": 125,
+          "end": 137
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 164,
+          "end": 173
+        },
+        {
+          "entity": "Valeriy Smoliy",
+          "label": "PER",
+          "start": 214,
+          "end": 228
+        },
+        {
+          "entity": "Vitaliy Oleksiyovych Shcherbak",
+          "label": "PER",
+          "start": 236,
+          "end": 266
+        },
+        {
+          "entity": "Taras Chukhlib",
+          "label": "PER",
+          "start": 285,
+          "end": 299
+        },
+        {
+          "entity": "Oleksandr Ivanovych Gurzhiy",
+          "label": "PER",
+          "start": 312,
+          "end": 339
+        },
+        {
+          "entity": "V. Matyakh",
+          "label": "PER",
+          "start": 341,
+          "end": 351
+        },
+        {
+          "entity": "Arnold Sokulsky",
+          "label": "PER",
+          "start": 353,
+          "end": 368
+        },
+        {
+          "entity": "Valeriy Stepanovych Stepankov",
+          "label": "PER",
+          "start": 370,
+          "end": 399
+        },
+        {
+          "entity": "Institute of History of Ukraine",
+          "label": "ORG",
+          "start": 403,
+          "end": 434
+        },
+        {
+          "entity": "Cossack Research Institute",
+          "label": "ORG",
+          "start": 436,
+          "end": 462
+        },
+        {
+          "entity": "Kyiv",
+          "label": "LOC",
+          "start": 464,
+          "end": 468
+        },
+        {
+          "entity": "Zaporizhzhia",
+          "label": "LOC",
+          "start": 470,
+          "end": 482
+        }
+      ],
+      "after": [
+        {
+          "entity": "Горобець В.",
+          "label": "PER",
+          "start": 0,
+          "end": 11
+        },
+        {
+          "entity": "Кам'янська Січ",
+          "label": "MISC",
+          "start": 12,
+          "end": 26
+        },
+        {
+          "entity": "Козацькі січі (нариси з історії українського козацтва XVI–XIX ст.)",
+          "label": "MISC",
+          "start": 57,
+          "end": 123
+        },
+        {
+          "entity": "Cossack Sich",
+          "label": "MISC",
+          "start": 125,
+          "end": 137
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 164,
+          "end": 173
+        },
+        {
+          "entity": "Valeriy Smoliy",
+          "label": "PER",
+          "start": 214,
+          "end": 228
+        },
+        {
+          "entity": "Vitaliy Oleksiyovych Shcherbak",
+          "label": "PER",
+          "start": 236,
+          "end": 266
+        },
+        {
+          "entity": "Taras Chukhlib",
+          "label": "PER",
+          "start": 285,
+          "end": 299
+        },
+        {
+          "entity": "Oleksandr Ivanovych Gurzhiy",
+          "label": "PER",
+          "start": 312,
+          "end": 339
+        },
+        {
+          "entity": "V. Matyakh",
+          "label": "PER",
+          "start": 341,
+          "end": 351
+        },
+        {
+          "entity": "Arnold Sokulsky",
+          "label": "PER",
+          "start": 353,
+          "end": 368
+        },
+        {
+          "entity": "Valeriy Stepanovych Stepankov",
+          "label": "PER",
+          "start": 370,
+          "end": 399
+        },
+        {
+          "entity": "Institute of History of Ukraine",
+          "label": "ORG",
+          "start": 403,
+          "end": 434
+        },
+        {
+          "entity": "Cossack Research Institute",
+          "label": "ORG",
+          "start": 436,
+          "end": 462
+        },
+        {
+          "entity": "Kyiv",
+          "label": "LOC",
+          "start": 464,
+          "end": 468
+        },
+        {
+          "entity": "Zaporizhzhia",
+          "label": "LOC",
+          "start": 470,
+          "end": 482
+        }
+      ],
+      "at_utc": "2026-11-04T07:39:25.481176+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "span 4 | 1730–1734 рр. | 1",
+      "before": [
+        {
+          "entity": "Горобець В.",
+          "label": "PER",
+          "start": 0,
+          "end": 11
+        },
+        {
+          "entity": "Кам'янська Січ",
+          "label": "MISC",
+          "start": 12,
+          "end": 26
+        },
+        {
+          "entity": "1709–1711",
+          "label": "DATE",
+          "start": 28,
+          "end": 37
+        },
+        {
+          "entity": "1730–1734 рр",
+          "label": "DATE",
+          "start": 39,
+          "end": 51
+        },
+        {
+          "entity": "Козацькі січі (нариси з історії українського козацтва XVI–XIX ст.",
+          "label": "MISC",
+          "start": 57,
+          "end": 122
+        },
+        {
+          "entity": "Cossack Sich (essays on the history of Ukrainian Cossacks in the 16th–19th centuries",
+          "label": "MISC",
+          "start": 125,
+          "end": 209
+        },
+        {
+          "entity": "Valeriy Smoliy",
+          "label": "PER",
+          "start": 214,
+          "end": 228
+        },
+        {
+          "entity": "Vitaliy Oleksiyovych Shcherbak",
+          "label": "PER",
+          "start": 236,
+          "end": 266
+        },
+        {
+          "entity": "Taras Chukhlib",
+          "label": "PER",
+          "start": 285,
+          "end": 299
+        },
+        {
+          "entity": "Oleksandr Ivanovych Gurzhiy",
+          "label": "PER",
+          "start": 312,
+          "end": 339
+        },
+        {
+          "entity": "V. Matyakh",
+          "label": "PER",
+          "start": 341,
+          "end": 351
+        },
+        {
+          "entity": "Arnold Sokulsky",
+          "label": "PER",
+          "start": 353,
+          "end": 368
+        },
+        {
+          "entity": "Valeriy Stepanovych Stepankov",
+          "label": "PER",
+          "start": 370,
+          "end": 399
+        },
+        {
+          "entity": "Institute of History of Ukraine",
+          "label": "ORG",
+          "start": 403,
+          "end": 434
+        },
+        {
+          "entity": "Cossack Research Institute",
+          "label": "ORG",
+          "start": 436,
+          "end": 462
+        },
+        {
+          "entity": "Kyiv",
+          "label": "LOC",
+          "start": 464,
+          "end": 468
+        },
+        {
+          "entity": "Zaporizhzhia",
+          "label": "LOC",
+          "start": 470,
+          "end": 482
+        },
+        {
+          "entity": "1998",
+          "label": "DATE",
+          "start": 484,
+          "end": 488
+        }
+      ],
+      "after": [
+        {
+          "entity": "Горобець В.",
+          "label": "PER",
+          "start": 0,
+          "end": 11
+        },
+        {
+          "entity": "Кам'янська Січ",
+          "label": "MISC",
+          "start": 12,
+          "end": 26
+        },
+        {
+          "entity": "1709–1711",
+          "label": "DATE",
+          "start": 28,
+          "end": 37
+        },
+        {
+          "entity": "1730–1734 рр.",
+          "label": "DATE",
+          "start": 39,
+          "end": 52
+        },
+        {
+          "entity": "Козацькі січі (нариси з історії українського козацтва XVI–XIX ст.",
+          "label": "MISC",
+          "start": 57,
+          "end": 122
+        },
+        {
+          "entity": "Cossack Sich (essays on the history of Ukrainian Cossacks in the 16th–19th centuries",
+          "label": "MISC",
+          "start": 125,
+          "end": 209
+        },
+        {
+          "entity": "Valeriy Smoliy",
+          "label": "PER",
+          "start": 214,
+          "end": 228
+        },
+        {
+          "entity": "Vitaliy Oleksiyovych Shcherbak",
+          "label": "PER",
+          "start": 236,
+          "end": 266
+        },
+        {
+          "entity": "Taras Chukhlib",
+          "label": "PER",
+          "start": 285,
+          "end": 299
+        },
+        {
+          "entity": "Oleksandr Ivanovych Gurzhiy",
+          "label": "PER",
+          "start": 312,
+          "end": 339
+        },
+        {
+          "entity": "V. Matyakh",
+          "label": "PER",
+          "start": 341,
+          "end": 351
+        },
+        {
+          "entity": "Arnold Sokulsky",
+          "label": "PER",
+          "start": 353,
+          "end": 368
+        },
+        {
+          "entity": "Valeriy Stepanovych Stepankov",
+          "label": "PER",
+          "start": 370,
+          "end": 399
+        },
+        {
+          "entity": "Institute of History of Ukraine",
+          "label": "ORG",
+          "start": 403,
+          "end": 434
+        },
+        {
+          "entity": "Cossack Research Institute",
+          "label": "ORG",
+          "start": 436,
+          "end": 462
+        },
+        {
+          "entity": "Kyiv",
+          "label": "LOC",
+          "start": 464,
+          "end": 468
+        },
+        {
+          "entity": "Zaporizhzhia",
+          "label": "LOC",
+          "start": 470,
+          "end": 482
+        },
+        {
+          "entity": "1998",
+          "label": "DATE",
+          "start": 484,
+          "end": 488
+        }
+      ],
+      "at_utc": "2026-11-04T07:39:38.830687+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "span 5 | Козацькі січі (нариси з історії українського козацтва XVI–XIX ст.) | 1",
+      "before": [
+        {
+          "entity": "Горобець В.",
+          "label": "PER",
+          "start": 0,
+          "end": 11
+        },
+        {
+          "entity": "Кам'янська Січ",
+          "label": "MISC",
+          "start": 12,
+          "end": 26
+        },
+        {
+          "entity": "1709–1711",
+          "label": "DATE",
+          "start": 28,
+          "end": 37
+        },
+        {
+          "entity": "1730–1734 рр.",
+          "label": "DATE",
+          "start": 39,
+          "end": 52
+        },
+        {
+          "entity": "Козацькі січі (нариси з історії українського козацтва XVI–XIX ст.",
+          "label": "MISC",
+          "start": 57,
+          "end": 122
+        },
+        {
+          "entity": "Cossack Sich (essays on the history of Ukrainian Cossacks in the 16th–19th centuries",
+          "label": "MISC",
+          "start": 125,
+          "end": 209
+        },
+        {
+          "entity": "Valeriy Smoliy",
+          "label": "PER",
+          "start": 214,
+          "end": 228
+        },
+        {
+          "entity": "Vitaliy Oleksiyovych Shcherbak",
+          "label": "PER",
+          "start": 236,
+          "end": 266
+        },
+        {
+          "entity": "Taras Chukhlib",
+          "label": "PER",
+          "start": 285,
+          "end": 299
+        },
+        {
+          "entity": "Oleksandr Ivanovych Gurzhiy",
+          "label": "PER",
+          "start": 312,
+          "end": 339
+        },
+        {
+          "entity": "V. Matyakh",
+          "label": "PER",
+          "start": 341,
+          "end": 351
+        },
+        {
+          "entity": "Arnold Sokulsky",
+          "label": "PER",
+          "start": 353,
+          "end": 368
+        },
+        {
+          "entity": "Valeriy Stepanovych Stepankov",
+          "label": "PER",
+          "start": 370,
+          "end": 399
+        },
+        {
+          "entity": "Institute of History of Ukraine",
+          "label": "ORG",
+          "start": 403,
+          "end": 434
+        },
+        {
+          "entity": "Cossack Research Institute",
+          "label": "ORG",
+          "start": 436,
+          "end": 462
+        },
+        {
+          "entity": "Kyiv",
+          "label": "LOC",
+          "start": 464,
+          "end": 468
+        },
+        {
+          "entity": "Zaporizhzhia",
+          "label": "LOC",
+          "start": 470,
+          "end": 482
+        },
+        {
+          "entity": "1998",
+          "label": "DATE",
+          "start": 484,
+          "end": 488
+        }
+      ],
+      "after": [
+        {
+          "entity": "Горобець В.",
+          "label": "PER",
+          "start": 0,
+          "end": 11
+        },
+        {
+          "entity": "Кам'янська Січ",
+          "label": "MISC",
+          "start": 12,
+          "end": 26
+        },
+        {
+          "entity": "1709–1711",
+          "label": "DATE",
+          "start": 28,
+          "end": 37
+        },
+        {
+          "entity": "1730–1734 рр.",
+          "label": "DATE",
+          "start": 39,
+          "end": 52
+        },
+        {
+          "entity": "Козацькі січі (нариси з історії українського козацтва XVI–XIX ст.)",
+          "label": "MISC",
+          "start": 57,
+          "end": 123
+        },
+        {
+          "entity": "Cossack Sich (essays on the history of Ukrainian Cossacks in the 16th–19th centuries",
+          "label": "MISC",
+          "start": 125,
+          "end": 209
+        },
+        {
+          "entity": "Valeriy Smoliy",
+          "label": "PER",
+          "start": 214,
+          "end": 228
+        },
+        {
+          "entity": "Vitaliy Oleksiyovych Shcherbak",
+          "label": "PER",
+          "start": 236,
+          "end": 266
+        },
+        {
+          "entity": "Taras Chukhlib",
+          "label": "PER",
+          "start": 285,
+          "end": 299
+        },
+        {
+          "entity": "Oleksandr Ivanovych Gurzhiy",
+          "label": "PER",
+          "start": 312,
+          "end": 339
+        },
+        {
+          "entity": "V. Matyakh",
+          "label": "PER",
+          "start": 341,
+          "end": 351
+        },
+        {
+          "entity": "Arnold Sokulsky",
+          "label": "PER",
+          "start": 353,
+          "end": 368
+        },
+        {
+          "entity": "Valeriy Stepanovych Stepankov",
+          "label": "PER",
+          "start": 370,
+          "end": 399
+        },
+        {
+          "entity": "Institute of History of Ukraine",
+          "label": "ORG",
+          "start": 403,
+          "end": 434
+        },
+        {
+          "entity": "Cossack Research Institute",
+          "label": "ORG",
+          "start": 436,
+          "end": 462
+        },
+        {
+          "entity": "Kyiv",
+          "label": "LOC",
+          "start": 464,
+          "end": 468
+        },
+        {
+          "entity": "Zaporizhzhia",
+          "label": "LOC",
+          "start": 470,
+          "end": 482
+        },
+        {
+          "entity": "1998",
+          "label": "DATE",
+          "start": 484,
+          "end": 488
+        }
+      ],
+      "at_utc": "2026-11-04T07:39:44.077394+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "span 6 | Cossack Sich (essays on the history of Ukrainian Cossacks in the 16th–19th centuries) | 1",
+      "before": [
+        {
+          "entity": "Горобець В.",
+          "label": "PER",
+          "start": 0,
+          "end": 11
+        },
+        {
+          "entity": "Кам'янська Січ",
+          "label": "MISC",
+          "start": 12,
+          "end": 26
+        },
+        {
+          "entity": "1709–1711",
+          "label": "DATE",
+          "start": 28,
+          "end": 37
+        },
+        {
+          "entity": "1730–1734 рр.",
+          "label": "DATE",
+          "start": 39,
+          "end": 52
+        },
+        {
+          "entity": "Козацькі січі (нариси з історії українського козацтва XVI–XIX ст.)",
+          "label": "MISC",
+          "start": 57,
+          "end": 123
+        },
+        {
+          "entity": "Cossack Sich (essays on the history of Ukrainian Cossacks in the 16th–19th centuries",
+          "label": "MISC",
+          "start": 125,
+          "end": 209
+        },
+        {
+          "entity": "Valeriy Smoliy",
+          "label": "PER",
+          "start": 214,
+          "end": 228
+        },
+        {
+          "entity": "Vitaliy Oleksiyovych Shcherbak",
+          "label": "PER",
+          "start": 236,
+          "end": 266
+        },
+        {
+          "entity": "Taras Chukhlib",
+          "label": "PER",
+          "start": 285,
+          "end": 299
+        },
+        {
+          "entity": "Oleksandr Ivanovych Gurzhiy",
+          "label": "PER",
+          "start": 312,
+          "end": 339
+        },
+        {
+          "entity": "V. Matyakh",
+          "label": "PER",
+          "start": 341,
+          "end": 351
+        },
+        {
+          "entity": "Arnold Sokulsky",
+          "label": "PER",
+          "start": 353,
+          "end": 368
+        },
+        {
+          "entity": "Valeriy Stepanovych Stepankov",
+          "label": "PER",
+          "start": 370,
+          "end": 399
+        },
+        {
+          "entity": "Institute of History of Ukraine",
+          "label": "ORG",
+          "start": 403,
+          "end": 434
+        },
+        {
+          "entity": "Cossack Research Institute",
+          "label": "ORG",
+          "start": 436,
+          "end": 462
+        },
+        {
+          "entity": "Kyiv",
+          "label": "LOC",
+          "start": 464,
+          "end": 468
+        },
+        {
+          "entity": "Zaporizhzhia",
+          "label": "LOC",
+          "start": 470,
+          "end": 482
+        },
+        {
+          "entity": "1998",
+          "label": "DATE",
+          "start": 484,
+          "end": 488
+        }
+      ],
+      "after": [
+        {
+          "entity": "Горобець В.",
+          "label": "PER",
+          "start": 0,
+          "end": 11
+        },
+        {
+          "entity": "Кам'янська Січ",
+          "label": "MISC",
+          "start": 12,
+          "end": 26
+        },
+        {
+          "entity": "1709–1711",
+          "label": "DATE",
+          "start": 28,
+          "end": 37
+        },
+        {
+          "entity": "1730–1734 рр.",
+          "label": "DATE",
+          "start": 39,
+          "end": 52
+        },
+        {
+          "entity": "Козацькі січі (нариси з історії українського козацтва XVI–XIX ст.)",
+          "label": "MISC",
+          "start": 57,
+          "end": 123
+        },
+        {
+          "entity": "Cossack Sich (essays on the history of Ukrainian Cossacks in the 16th–19th centuries)",
+          "label": "MISC",
+          "start": 125,
+          "end": 210
+        },
+        {
+          "entity": "Valeriy Smoliy",
+          "label": "PER",
+          "start": 214,
+          "end": 228
+        },
+        {
+          "entity": "Vitaliy Oleksiyovych Shcherbak",
+          "label": "PER",
+          "start": 236,
+          "end": 266
+        },
+        {
+          "entity": "Taras Chukhlib",
+          "label": "PER",
+          "start": 285,
+          "end": 299
+        },
+        {
+          "entity": "Oleksandr Ivanovych Gurzhiy",
+          "label": "PER",
+          "start": 312,
+          "end": 339
+        },
+        {
+          "entity": "V. Matyakh",
+          "label": "PER",
+          "start": 341,
+          "end": 351
+        },
+        {
+          "entity": "Arnold Sokulsky",
+          "label": "PER",
+          "start": 353,
+          "end": 368
+        },
+        {
+          "entity": "Valeriy Stepanovych Stepankov",
+          "label": "PER",
+          "start": 370,
+          "end": 399
+        },
+        {
+          "entity": "Institute of History of Ukraine",
+          "label": "ORG",
+          "start": 403,
+          "end": 434
+        },
+        {
+          "entity": "Cossack Research Institute",
+          "label": "ORG",
+          "start": 436,
+          "end": 462
+        },
+        {
+          "entity": "Kyiv",
+          "label": "LOC",
+          "start": 464,
+          "end": 468
+        },
+        {
+          "entity": "Zaporizhzhia",
+          "label": "LOC",
+          "start": 470,
+          "end": 482
+        },
+        {
+          "entity": "1998",
+          "label": "DATE",
+          "start": 484,
+          "end": 488
+        }
+      ],
+      "at_utc": "2026-11-04T07:39:51.939848+00:00"
+    },
+    {
+      "model": "original",
+      "command": "del 5",
+      "before": [
+        {
+          "entity": "Горобець В.",
+          "label": "PER",
+          "start": 0,
+          "end": 11
+        },
+        {
+          "entity": "Кам'янська Січ",
+          "label": "MISC",
+          "start": 12,
+          "end": 26
+        },
+        {
+          "entity": "Козацькі січі (нариси з історії українського козацтва XVI–XIX ст.)",
+          "label": "MISC",
+          "start": 57,
+          "end": 123
+        },
+        {
+          "entity": "Cossack Sich",
+          "label": "MISC",
+          "start": 125,
+          "end": 137
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 164,
+          "end": 173
+        },
+        {
+          "entity": "Valeriy Smoliy",
+          "label": "PER",
+          "start": 214,
+          "end": 228
+        },
+        {
+          "entity": "Vitaliy Oleksiyovych Shcherbak",
+          "label": "PER",
+          "start": 236,
+          "end": 266
+        },
+        {
+          "entity": "Taras Chukhlib",
+          "label": "PER",
+          "start": 285,
+          "end": 299
+        },
+        {
+          "entity": "Oleksandr Ivanovych Gurzhiy",
+          "label": "PER",
+          "start": 312,
+          "end": 339
+        },
+        {
+          "entity": "V. Matyakh",
+          "label": "PER",
+          "start": 341,
+          "end": 351
+        },
+        {
+          "entity": "Arnold Sokulsky",
+          "label": "PER",
+          "start": 353,
+          "end": 368
+        },
+        {
+          "entity": "Valeriy Stepanovych Stepankov",
+          "label": "PER",
+          "start": 370,
+          "end": 399
+        },
+        {
+          "entity": "Institute of History of Ukraine",
+          "label": "ORG",
+          "start": 403,
+          "end": 434
+        },
+        {
+          "entity": "Cossack Research Institute",
+          "label": "ORG",
+          "start": 436,
+          "end": 462
+        },
+        {
+          "entity": "Kyiv",
+          "label": "LOC",
+          "start": 464,
+          "end": 468
+        },
+        {
+          "entity": "Zaporizhzhia",
+          "label": "LOC",
+          "start": 470,
+          "end": 482
+        }
+      ],
+      "after": [
+        {
+          "entity": "Горобець В.",
+          "label": "PER",
+          "start": 0,
+          "end": 11
+        },
+        {
+          "entity": "Кам'янська Січ",
+          "label": "MISC",
+          "start": 12,
+          "end": 26
+        },
+        {
+          "entity": "Козацькі січі (нариси з історії українського козацтва XVI–XIX ст.)",
+          "label": "MISC",
+          "start": 57,
+          "end": 123
+        },
+        {
+          "entity": "Cossack Sich",
+          "label": "MISC",
+          "start": 125,
+          "end": 137
+        },
+        {
+          "entity": "Valeriy Smoliy",
+          "label": "PER",
+          "start": 214,
+          "end": 228
+        },
+        {
+          "entity": "Vitaliy Oleksiyovych Shcherbak",
+          "label": "PER",
+          "start": 236,
+          "end": 266
+        },
+        {
+          "entity": "Taras Chukhlib",
+          "label": "PER",
+          "start": 285,
+          "end": 299
+        },
+        {
+          "entity": "Oleksandr Ivanovych Gurzhiy",
+          "label": "PER",
+          "start": 312,
+          "end": 339
+        },
+        {
+          "entity": "V. Matyakh",
+          "label": "PER",
+          "start": 341,
+          "end": 351
+        },
+        {
+          "entity": "Arnold Sokulsky",
+          "label": "PER",
+          "start": 353,
+          "end": 368
+        },
+        {
+          "entity": "Valeriy Stepanovych Stepankov",
+          "label": "PER",
+          "start": 370,
+          "end": 399
+        },
+        {
+          "entity": "Institute of History of Ukraine",
+          "label": "ORG",
+          "start": 403,
+          "end": 434
+        },
+        {
+          "entity": "Cossack Research Institute",
+          "label": "ORG",
+          "start": 436,
+          "end": 462
+        },
+        {
+          "entity": "Kyiv",
+          "label": "LOC",
+          "start": 464,
+          "end": 468
+        },
+        {
+          "entity": "Zaporizhzhia",
+          "label": "LOC",
+          "start": 470,
+          "end": 482
+        }
+      ],
+      "at_utc": "2026-11-04T07:40:26.296631+00:00"
+    },
+    {
+      "model": "original",
+      "command": "span 4 | Cossack Sich (essays on the history of Ukrainian Cossacks in the 16th–19th centuries) | 1",
+      "before": [
+        {
+          "entity": "Горобець В.",
+          "label": "PER",
+          "start": 0,
+          "end": 11
+        },
+        {
+          "entity": "Кам'янська Січ",
+          "label": "MISC",
+          "start": 12,
+          "end": 26
+        },
+        {
+          "entity": "Козацькі січі (нариси з історії українського козацтва XVI–XIX ст.)",
+          "label": "MISC",
+          "start": 57,
+          "end": 123
+        },
+        {
+          "entity": "Cossack Sich",
+          "label": "MISC",
+          "start": 125,
+          "end": 137
+        },
+        {
+          "entity": "Valeriy Smoliy",
+          "label": "PER",
+          "start": 214,
+          "end": 228
+        },
+        {
+          "entity": "Vitaliy Oleksiyovych Shcherbak",
+          "label": "PER",
+          "start": 236,
+          "end": 266
+        },
+        {
+          "entity": "Taras Chukhlib",
+          "label": "PER",
+          "start": 285,
+          "end": 299
+        },
+        {
+          "entity": "Oleksandr Ivanovych Gurzhiy",
+          "label": "PER",
+          "start": 312,
+          "end": 339
+        },
+        {
+          "entity": "V. Matyakh",
+          "label": "PER",
+          "start": 341,
+          "end": 351
+        },
+        {
+          "entity": "Arnold Sokulsky",
+          "label": "PER",
+          "start": 353,
+          "end": 368
+        },
+        {
+          "entity": "Valeriy Stepanovych Stepankov",
+          "label": "PER",
+          "start": 370,
+          "end": 399
+        },
+        {
+          "entity": "Institute of History of Ukraine",
+          "label": "ORG",
+          "start": 403,
+          "end": 434
+        },
+        {
+          "entity": "Cossack Research Institute",
+          "label": "ORG",
+          "start": 436,
+          "end": 462
+        },
+        {
+          "entity": "Kyiv",
+          "label": "LOC",
+          "start": 464,
+          "end": 468
+        },
+        {
+          "entity": "Zaporizhzhia",
+          "label": "LOC",
+          "start": 470,
+          "end": 482
+        }
+      ],
+      "after": [
+        {
+          "entity": "Горобець В.",
+          "label": "PER",
+          "start": 0,
+          "end": 11
+        },
+        {
+          "entity": "Кам'янська Січ",
+          "label": "MISC",
+          "start": 12,
+          "end": 26
+        },
+        {
+          "entity": "Козацькі січі (нариси з історії українського козацтва XVI–XIX ст.)",
+          "label": "MISC",
+          "start": 57,
+          "end": 123
+        },
+        {
+          "entity": "Cossack Sich (essays on the history of Ukrainian Cossacks in the 16th–19th centuries)",
+          "label": "MISC",
+          "start": 125,
+          "end": 210
+        },
+        {
+          "entity": "Valeriy Smoliy",
+          "label": "PER",
+          "start": 214,
+          "end": 228
+        },
+        {
+          "entity": "Vitaliy Oleksiyovych Shcherbak",
+          "label": "PER",
+          "start": 236,
+          "end": 266
+        },
+        {
+          "entity": "Taras Chukhlib",
+          "label": "PER",
+          "start": 285,
+          "end": 299
+        },
+        {
+          "entity": "Oleksandr Ivanovych Gurzhiy",
+          "label": "PER",
+          "start": 312,
+          "end": 339
+        },
+        {
+          "entity": "V. Matyakh",
+          "label": "PER",
+          "start": 341,
+          "end": 351
+        },
+        {
+          "entity": "Arnold Sokulsky",
+          "label": "PER",
+          "start": 353,
+          "end": 368
+        },
+        {
+          "entity": "Valeriy Stepanovych Stepankov",
+          "label": "PER",
+          "start": 370,
+          "end": 399
+        },
+        {
+          "entity": "Institute of History of Ukraine",
+          "label": "ORG",
+          "start": 403,
+          "end": 434
+        },
+        {
+          "entity": "Cossack Research Institute",
+          "label": "ORG",
+          "start": 436,
+          "end": 462
+        },
+        {
+          "entity": "Kyiv",
+          "label": "LOC",
+          "start": 464,
+          "end": 468
+        },
+        {
+          "entity": "Zaporizhzhia",
+          "label": "LOC",
+          "start": 470,
+          "end": 482
+        }
+      ],
+      "at_utc": "2026-11-04T07:40:34.021315+00:00"
+    }
+  ]
+}
