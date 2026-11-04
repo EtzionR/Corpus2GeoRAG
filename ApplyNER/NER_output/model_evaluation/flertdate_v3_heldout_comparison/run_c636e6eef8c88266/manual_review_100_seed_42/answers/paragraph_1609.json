@@ -1,0 +1,1348 @@
+{
+  "comparison_row_id": 1609,
+  "Source": "HESA Shahed 136",
+  "Index": 16,
+  "Text": "As of late spring 2025 Russia has been producing around 170 Geran-2 drones per day, with indication that a total of around 26,000 Gerans were produced by Yelabuga drone factory. Defense Intelligence of Ukraine estimates 40,000 Geran-2 and 24,000 cheaper Gerbera decoy drones are planned to be manufactured in 2025. In February 2026, the Ukrainian Main Directorate of Intelligence reported that the remains of a reconnaissance version of the Geran-2 was found to contain a Raspberry Pi 5 microcomputer and a Russian-branded Mini PC computer running Windows 11, made in China, believed to be part of a vision processing system.",
+  "reviewed_at_utc": "2026-11-04T07:08:50.585511+00:00",
+  "original_predictions": [
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 23,
+      "end": 29
+    },
+    {
+      "entity": "Geran-2",
+      "label": "MISC",
+      "start": 60,
+      "end": 67
+    },
+    {
+      "entity": "Gerans",
+      "label": "MISC",
+      "start": 130,
+      "end": 136
+    },
+    {
+      "entity": "Yelabuga",
+      "label": "LOC",
+      "start": 154,
+      "end": 162
+    },
+    {
+      "entity": "Defense Intelligence of Ukraine",
+      "label": "ORG",
+      "start": 178,
+      "end": 209
+    },
+    {
+      "entity": "Geran-2",
+      "label": "MISC",
+      "start": 227,
+      "end": 234
+    },
+    {
+      "entity": "Gerbera",
+      "label": "MISC",
+      "start": 254,
+      "end": 261
+    },
+    {
+      "entity": "Ukrainian Main Directorate of Intelligence",
+      "label": "ORG",
+      "start": 337,
+      "end": 379
+    },
+    {
+      "entity": "Geran-2",
+      "label": "MISC",
+      "start": 441,
+      "end": 448
+    },
+    {
+      "entity": "Raspberry Pi 5",
+      "label": "MISC",
+      "start": 472,
+      "end": 486
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 507,
+      "end": 514
+    },
+    {
+      "entity": "Mini PC",
+      "label": "MISC",
+      "start": 523,
+      "end": 530
+    },
+    {
+      "entity": "Windows 11",
+      "label": "MISC",
+      "start": 548,
+      "end": 558
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 568,
+      "end": 573
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 23,
+      "end": 29
+    },
+    {
+      "entity": "Geran-2",
+      "label": "MISC",
+      "start": 60,
+      "end": 67
+    },
+    {
+      "entity": "Yelabuga",
+      "label": "LOC",
+      "start": 154,
+      "end": 162
+    },
+    {
+      "entity": "Defense Intelligence of Ukraine",
+      "label": "ORG",
+      "start": 178,
+      "end": 209
+    },
+    {
+      "entity": "Geran-2",
+      "label": "MISC",
+      "start": 227,
+      "end": 234
+    },
+    {
+      "entity": "Gerbera",
+      "label": "MISC",
+      "start": 254,
+      "end": 261
+    },
+    {
+      "entity": "2025",
+      "label": "DATE",
+      "start": 309,
+      "end": 313
+    },
+    {
+      "entity": "February 2026",
+      "label": "DATE",
+      "start": 318,
+      "end": 331
+    },
+    {
+      "entity": "Ukrainian Main Directorate of Intelligence",
+      "label": "ORG",
+      "start": 337,
+      "end": 379
+    },
+    {
+      "entity": "Geran-2",
+      "label": "MISC",
+      "start": 441,
+      "end": 448
+    },
+    {
+      "entity": "Raspberry Pi 5",
+      "label": "MISC",
+      "start": 472,
+      "end": 486
+    },
+    {
+      "entity": "Mini PC",
+      "label": "MISC",
+      "start": 523,
+      "end": 530
+    },
+    {
+      "entity": "Windows 11",
+      "label": "MISC",
+      "start": 548,
+      "end": 558
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 568,
+      "end": 573
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 23,
+      "end": 29
+    },
+    {
+      "entity": "Geran-2",
+      "label": "MISC",
+      "start": 60,
+      "end": 67
+    },
+    {
+      "entity": "Gerans",
+      "label": "MISC",
+      "start": 130,
+      "end": 136
+    },
+    {
+      "entity": "Yelabuga",
+      "label": "LOC",
+      "start": 154,
+      "end": 162
+    },
+    {
+      "entity": "Defense Intelligence of Ukraine",
+      "label": "ORG",
+      "start": 178,
+      "end": 209
+    },
+    {
+      "entity": "Geran-2",
+      "label": "MISC",
+      "start": 227,
+      "end": 234
+    },
+    {
+      "entity": "Gerbera",
+      "label": "MISC",
+      "start": 254,
+      "end": 261
+    },
+    {
+      "entity": "Ukrainian Main Directorate of Intelligence",
+      "label": "ORG",
+      "start": 337,
+      "end": 379
+    },
+    {
+      "entity": "Geran-2",
+      "label": "MISC",
+      "start": 441,
+      "end": 448
+    },
+    {
+      "entity": "Raspberry Pi 5",
+      "label": "MISC",
+      "start": 472,
+      "end": 486
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 507,
+      "end": 514
+    },
+    {
+      "entity": "Windows 11",
+      "label": "MISC",
+      "start": 548,
+      "end": 558
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 568,
+      "end": 573
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "late spring 2025",
+      "label": "DATE",
+      "start": 6,
+      "end": 22
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 23,
+      "end": 29
+    },
+    {
+      "entity": "Geran-2",
+      "label": "MISC",
+      "start": 60,
+      "end": 67
+    },
+    {
+      "entity": "Gerans",
+      "label": "MISC",
+      "start": 130,
+      "end": 136
+    },
+    {
+      "entity": "Yelabuga",
+      "label": "LOC",
+      "start": 154,
+      "end": 162
+    },
+    {
+      "entity": "Defense Intelligence of Ukraine",
+      "label": "ORG",
+      "start": 178,
+      "end": 209
+    },
+    {
+      "entity": "Geran-2",
+      "label": "MISC",
+      "start": 227,
+      "end": 234
+    },
+    {
+      "entity": "Gerbera",
+      "label": "MISC",
+      "start": 254,
+      "end": 261
+    },
+    {
+      "entity": "2025",
+      "label": "DATE",
+      "start": 309,
+      "end": 313
+    },
+    {
+      "entity": "February 2026",
+      "label": "DATE",
+      "start": 318,
+      "end": 331
+    },
+    {
+      "entity": "Ukrainian Main Directorate of Intelligence",
+      "label": "ORG",
+      "start": 337,
+      "end": 379
+    },
+    {
+      "entity": "Geran-2",
+      "label": "MISC",
+      "start": 441,
+      "end": 448
+    },
+    {
+      "entity": "Raspberry Pi 5",
+      "label": "MISC",
+      "start": 472,
+      "end": 486
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 507,
+      "end": 514
+    },
+    {
+      "entity": "Windows 11",
+      "label": "MISC",
+      "start": 548,
+      "end": 558
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 568,
+      "end": 573
+    }
+  ],
+  "gold": [
+    {
+      "entity": "late spring 2025",
+      "label": "DATE",
+      "start": 6,
+      "end": 22
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 23,
+      "end": 29
+    },
+    {
+      "entity": "Geran-2",
+      "label": "MISC",
+      "start": 60,
+      "end": 67
+    },
+    {
+      "entity": "Gerans",
+      "label": "MISC",
+      "start": 130,
+      "end": 136
+    },
+    {
+      "entity": "Yelabuga",
+      "label": "LOC",
+      "start": 154,
+      "end": 162
+    },
+    {
+      "entity": "Defense Intelligence of Ukraine",
+      "label": "ORG",
+      "start": 178,
+      "end": 209
+    },
+    {
+      "entity": "Geran-2",
+      "label": "MISC",
+      "start": 227,
+      "end": 234
+    },
+    {
+      "entity": "Gerbera",
+      "label": "MISC",
+      "start": 254,
+      "end": 261
+    },
+    {
+      "entity": "2025",
+      "label": "DATE",
+      "start": 309,
+      "end": 313
+    },
+    {
+      "entity": "February 2026",
+      "label": "DATE",
+      "start": 318,
+      "end": 331
+    },
+    {
+      "entity": "Ukrainian Main Directorate of Intelligence",
+      "label": "ORG",
+      "start": 337,
+      "end": 379
+    },
+    {
+      "entity": "Geran-2",
+      "label": "MISC",
+      "start": 441,
+      "end": 448
+    },
+    {
+      "entity": "Raspberry Pi 5",
+      "label": "MISC",
+      "start": 472,
+      "end": 486
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 507,
+      "end": 514
+    },
+    {
+      "entity": "Windows 11",
+      "label": "MISC",
+      "start": 548,
+      "end": 558
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 568,
+      "end": 573
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "del 12",
+      "before": [
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 23,
+          "end": 29
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 60,
+          "end": 67
+        },
+        {
+          "entity": "Gerans",
+          "label": "MISC",
+          "start": 130,
+          "end": 136
+        },
+        {
+          "entity": "Yelabuga",
+          "label": "LOC",
+          "start": 154,
+          "end": 162
+        },
+        {
+          "entity": "Defense Intelligence of Ukraine",
+          "label": "ORG",
+          "start": 178,
+          "end": 209
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 227,
+          "end": 234
+        },
+        {
+          "entity": "Gerbera",
+          "label": "MISC",
+          "start": 254,
+          "end": 261
+        },
+        {
+          "entity": "Ukrainian Main Directorate of Intelligence",
+          "label": "ORG",
+          "start": 337,
+          "end": 379
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 441,
+          "end": 448
+        },
+        {
+          "entity": "Raspberry Pi 5",
+          "label": "MISC",
+          "start": 472,
+          "end": 486
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 507,
+          "end": 514
+        },
+        {
+          "entity": "Mini PC",
+          "label": "MISC",
+          "start": 523,
+          "end": 530
+        },
+        {
+          "entity": "Windows 11",
+          "label": "MISC",
+          "start": 548,
+          "end": 558
+        },
+        {
+          "entity": "China",
+          "label": "LOC",
+          "start": 568,
+          "end": 573
+        }
+      ],
+      "after": [
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 23,
+          "end": 29
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 60,
+          "end": 67
+        },
+        {
+          "entity": "Gerans",
+          "label": "MISC",
+          "start": 130,
+          "end": 136
+        },
+        {
+          "entity": "Yelabuga",
+          "label": "LOC",
+          "start": 154,
+          "end": 162
+        },
+        {
+          "entity": "Defense Intelligence of Ukraine",
+          "label": "ORG",
+          "start": 178,
+          "end": 209
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 227,
+          "end": 234
+        },
+        {
+          "entity": "Gerbera",
+          "label": "MISC",
+          "start": 254,
+          "end": 261
+        },
+        {
+          "entity": "Ukrainian Main Directorate of Intelligence",
+          "label": "ORG",
+          "start": 337,
+          "end": 379
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 441,
+          "end": 448
+        },
+        {
+          "entity": "Raspberry Pi 5",
+          "label": "MISC",
+          "start": 472,
+          "end": 486
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 507,
+          "end": 514
+        },
+        {
+          "entity": "Windows 11",
+          "label": "MISC",
+          "start": 548,
+          "end": 558
+        },
+        {
+          "entity": "China",
+          "label": "LOC",
+          "start": 568,
+          "end": 573
+        }
+      ],
+      "at_utc": "2026-11-04T07:08:06.893864+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "del 12",
+      "before": [
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 23,
+          "end": 29
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 60,
+          "end": 67
+        },
+        {
+          "entity": "Yelabuga",
+          "label": "LOC",
+          "start": 154,
+          "end": 162
+        },
+        {
+          "entity": "Defense Intelligence of Ukraine",
+          "label": "ORG",
+          "start": 178,
+          "end": 209
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 227,
+          "end": 234
+        },
+        {
+          "entity": "Gerbera",
+          "label": "MISC",
+          "start": 254,
+          "end": 261
+        },
+        {
+          "entity": "2025",
+          "label": "DATE",
+          "start": 309,
+          "end": 313
+        },
+        {
+          "entity": "February 2026",
+          "label": "DATE",
+          "start": 318,
+          "end": 331
+        },
+        {
+          "entity": "Ukrainian Main Directorate of Intelligence",
+          "label": "ORG",
+          "start": 337,
+          "end": 379
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 441,
+          "end": 448
+        },
+        {
+          "entity": "Raspberry Pi 5",
+          "label": "MISC",
+          "start": 472,
+          "end": 486
+        },
+        {
+          "entity": "Mini PC",
+          "label": "MISC",
+          "start": 523,
+          "end": 530
+        },
+        {
+          "entity": "Windows 11",
+          "label": "MISC",
+          "start": 548,
+          "end": 558
+        },
+        {
+          "entity": "China",
+          "label": "LOC",
+          "start": 568,
+          "end": 573
+        }
+      ],
+      "after": [
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 23,
+          "end": 29
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 60,
+          "end": 67
+        },
+        {
+          "entity": "Yelabuga",
+          "label": "LOC",
+          "start": 154,
+          "end": 162
+        },
+        {
+          "entity": "Defense Intelligence of Ukraine",
+          "label": "ORG",
+          "start": 178,
+          "end": 209
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 227,
+          "end": 234
+        },
+        {
+          "entity": "Gerbera",
+          "label": "MISC",
+          "start": 254,
+          "end": 261
+        },
+        {
+          "entity": "2025",
+          "label": "DATE",
+          "start": 309,
+          "end": 313
+        },
+        {
+          "entity": "February 2026",
+          "label": "DATE",
+          "start": 318,
+          "end": 331
+        },
+        {
+          "entity": "Ukrainian Main Directorate of Intelligence",
+          "label": "ORG",
+          "start": 337,
+          "end": 379
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 441,
+          "end": 448
+        },
+        {
+          "entity": "Raspberry Pi 5",
+          "label": "MISC",
+          "start": 472,
+          "end": 486
+        },
+        {
+          "entity": "Windows 11",
+          "label": "MISC",
+          "start": 548,
+          "end": 558
+        },
+        {
+          "entity": "China",
+          "label": "LOC",
+          "start": 568,
+          "end": 573
+        }
+      ],
+      "at_utc": "2026-11-04T07:08:32.853764+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add MISC | Gerans | 1",
+      "before": [
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 23,
+          "end": 29
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 60,
+          "end": 67
+        },
+        {
+          "entity": "Yelabuga",
+          "label": "LOC",
+          "start": 154,
+          "end": 162
+        },
+        {
+          "entity": "Defense Intelligence of Ukraine",
+          "label": "ORG",
+          "start": 178,
+          "end": 209
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 227,
+          "end": 234
+        },
+        {
+          "entity": "Gerbera",
+          "label": "MISC",
+          "start": 254,
+          "end": 261
+        },
+        {
+          "entity": "2025",
+          "label": "DATE",
+          "start": 309,
+          "end": 313
+        },
+        {
+          "entity": "February 2026",
+          "label": "DATE",
+          "start": 318,
+          "end": 331
+        },
+        {
+          "entity": "Ukrainian Main Directorate of Intelligence",
+          "label": "ORG",
+          "start": 337,
+          "end": 379
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 441,
+          "end": 448
+        },
+        {
+          "entity": "Raspberry Pi 5",
+          "label": "MISC",
+          "start": 472,
+          "end": 486
+        },
+        {
+          "entity": "Windows 11",
+          "label": "MISC",
+          "start": 548,
+          "end": 558
+        },
+        {
+          "entity": "China",
+          "label": "LOC",
+          "start": 568,
+          "end": 573
+        }
+      ],
+      "after": [
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 23,
+          "end": 29
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 60,
+          "end": 67
+        },
+        {
+          "entity": "Gerans",
+          "label": "MISC",
+          "start": 130,
+          "end": 136
+        },
+        {
+          "entity": "Yelabuga",
+          "label": "LOC",
+          "start": 154,
+          "end": 162
+        },
+        {
+          "entity": "Defense Intelligence of Ukraine",
+          "label": "ORG",
+          "start": 178,
+          "end": 209
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 227,
+          "end": 234
+        },
+        {
+          "entity": "Gerbera",
+          "label": "MISC",
+          "start": 254,
+          "end": 261
+        },
+        {
+          "entity": "2025",
+          "label": "DATE",
+          "start": 309,
+          "end": 313
+        },
+        {
+          "entity": "February 2026",
+          "label": "DATE",
+          "start": 318,
+          "end": 331
+        },
+        {
+          "entity": "Ukrainian Main Directorate of Intelligence",
+          "label": "ORG",
+          "start": 337,
+          "end": 379
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 441,
+          "end": 448
+        },
+        {
+          "entity": "Raspberry Pi 5",
+          "label": "MISC",
+          "start": 472,
+          "end": 486
+        },
+        {
+          "entity": "Windows 11",
+          "label": "MISC",
+          "start": 548,
+          "end": 558
+        },
+        {
+          "entity": "China",
+          "label": "LOC",
+          "start": 568,
+          "end": 573
+        }
+      ],
+      "at_utc": "2026-11-04T07:08:39.814874+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add MISC | Russian | 1",
+      "before": [
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 23,
+          "end": 29
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 60,
+          "end": 67
+        },
+        {
+          "entity": "Gerans",
+          "label": "MISC",
+          "start": 130,
+          "end": 136
+        },
+        {
+          "entity": "Yelabuga",
+          "label": "LOC",
+          "start": 154,
+          "end": 162
+        },
+        {
+          "entity": "Defense Intelligence of Ukraine",
+          "label": "ORG",
+          "start": 178,
+          "end": 209
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 227,
+          "end": 234
+        },
+        {
+          "entity": "Gerbera",
+          "label": "MISC",
+          "start": 254,
+          "end": 261
+        },
+        {
+          "entity": "2025",
+          "label": "DATE",
+          "start": 309,
+          "end": 313
+        },
+        {
+          "entity": "February 2026",
+          "label": "DATE",
+          "start": 318,
+          "end": 331
+        },
+        {
+          "entity": "Ukrainian Main Directorate of Intelligence",
+          "label": "ORG",
+          "start": 337,
+          "end": 379
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 441,
+          "end": 448
+        },
+        {
+          "entity": "Raspberry Pi 5",
+          "label": "MISC",
+          "start": 472,
+          "end": 486
+        },
+        {
+          "entity": "Windows 11",
+          "label": "MISC",
+          "start": 548,
+          "end": 558
+        },
+        {
+          "entity": "China",
+          "label": "LOC",
+          "start": 568,
+          "end": 573
+        }
+      ],
+      "after": [
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 23,
+          "end": 29
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 60,
+          "end": 67
+        },
+        {
+          "entity": "Gerans",
+          "label": "MISC",
+          "start": 130,
+          "end": 136
+        },
+        {
+          "entity": "Yelabuga",
+          "label": "LOC",
+          "start": 154,
+          "end": 162
+        },
+        {
+          "entity": "Defense Intelligence of Ukraine",
+          "label": "ORG",
+          "start": 178,
+          "end": 209
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 227,
+          "end": 234
+        },
+        {
+          "entity": "Gerbera",
+          "label": "MISC",
+          "start": 254,
+          "end": 261
+        },
+        {
+          "entity": "2025",
+          "label": "DATE",
+          "start": 309,
+          "end": 313
+        },
+        {
+          "entity": "February 2026",
+          "label": "DATE",
+          "start": 318,
+          "end": 331
+        },
+        {
+          "entity": "Ukrainian Main Directorate of Intelligence",
+          "label": "ORG",
+          "start": 337,
+          "end": 379
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 441,
+          "end": 448
+        },
+        {
+          "entity": "Raspberry Pi 5",
+          "label": "MISC",
+          "start": 472,
+          "end": 486
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 507,
+          "end": 514
+        },
+        {
+          "entity": "Windows 11",
+          "label": "MISC",
+          "start": 548,
+          "end": 558
+        },
+        {
+          "entity": "China",
+          "label": "LOC",
+          "start": 568,
+          "end": 573
+        }
+      ],
+      "at_utc": "2026-11-04T07:08:44.112203+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add DATE | late spring 2025 | 1",
+      "before": [
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 23,
+          "end": 29
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 60,
+          "end": 67
+        },
+        {
+          "entity": "Gerans",
+          "label": "MISC",
+          "start": 130,
+          "end": 136
+        },
+        {
+          "entity": "Yelabuga",
+          "label": "LOC",
+          "start": 154,
+          "end": 162
+        },
+        {
+          "entity": "Defense Intelligence of Ukraine",
+          "label": "ORG",
+          "start": 178,
+          "end": 209
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 227,
+          "end": 234
+        },
+        {
+          "entity": "Gerbera",
+          "label": "MISC",
+          "start": 254,
+          "end": 261
+        },
+        {
+          "entity": "2025",
+          "label": "DATE",
+          "start": 309,
+          "end": 313
+        },
+        {
+          "entity": "February 2026",
+          "label": "DATE",
+          "start": 318,
+          "end": 331
+        },
+        {
+          "entity": "Ukrainian Main Directorate of Intelligence",
+          "label": "ORG",
+          "start": 337,
+          "end": 379
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 441,
+          "end": 448
+        },
+        {
+          "entity": "Raspberry Pi 5",
+          "label": "MISC",
+          "start": 472,
+          "end": 486
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 507,
+          "end": 514
+        },
+        {
+          "entity": "Windows 11",
+          "label": "MISC",
+          "start": 548,
+          "end": 558
+        },
+        {
+          "entity": "China",
+          "label": "LOC",
+          "start": 568,
+          "end": 573
+        }
+      ],
+      "after": [
+        {
+          "entity": "late spring 2025",
+          "label": "DATE",
+          "start": 6,
+          "end": 22
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 23,
+          "end": 29
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 60,
+          "end": 67
+        },
+        {
+          "entity": "Gerans",
+          "label": "MISC",
+          "start": 130,
+          "end": 136
+        },
+        {
+          "entity": "Yelabuga",
+          "label": "LOC",
+          "start": 154,
+          "end": 162
+        },
+        {
+          "entity": "Defense Intelligence of Ukraine",
+          "label": "ORG",
+          "start": 178,
+          "end": 209
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 227,
+          "end": 234
+        },
+        {
+          "entity": "Gerbera",
+          "label": "MISC",
+          "start": 254,
+          "end": 261
+        },
+        {
+          "entity": "2025",
+          "label": "DATE",
+          "start": 309,
+          "end": 313
+        },
+        {
+          "entity": "February 2026",
+          "label": "DATE",
+          "start": 318,
+          "end": 331
+        },
+        {
+          "entity": "Ukrainian Main Directorate of Intelligence",
+          "label": "ORG",
+          "start": 337,
+          "end": 379
+        },
+        {
+          "entity": "Geran-2",
+          "label": "MISC",
+          "start": 441,
+          "end": 448
+        },
+        {
+          "entity": "Raspberry Pi 5",
+          "label": "MISC",
+          "start": 472,
+          "end": 486
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 507,
+          "end": 514
+        },
+        {
+          "entity": "Windows 11",
+          "label": "MISC",
+          "start": 548,
+          "end": 558
+        },
+        {
+          "entity": "China",
+          "label": "LOC",
+          "start": 568,
+          "end": 573
+        }
+      ],
+      "at_utc": "2026-11-04T07:08:48.299043+00:00"
+    }
+  ]
+}

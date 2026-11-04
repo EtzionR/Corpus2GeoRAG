@@ -1,0 +1,108 @@
+{
+  "comparison_row_id": 4112,
+  "Source": "Timeline of the Russo-Ukrainian war (1 August – 31 December 2024)",
+  "Index": 534,
+  "Text": "DeepState reported that Russian forces were three kilometres away from the southern edge of Pokrovsk.",
+  "reviewed_at_utc": "2026-11-04T06:51:18.741276+00:00",
+  "original_predictions": [
+    {
+      "entity": "DeepState",
+      "label": "ORG",
+      "start": 0,
+      "end": 9
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 24,
+      "end": 31
+    },
+    {
+      "entity": "Pokrovsk",
+      "label": "LOC",
+      "start": 92,
+      "end": 100
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "DeepState",
+      "label": "ORG",
+      "start": 0,
+      "end": 9
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 24,
+      "end": 31
+    },
+    {
+      "entity": "Pokrovsk",
+      "label": "LOC",
+      "start": 92,
+      "end": 100
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "DeepState",
+      "label": "ORG",
+      "start": 0,
+      "end": 9
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 24,
+      "end": 31
+    },
+    {
+      "entity": "Pokrovsk",
+      "label": "LOC",
+      "start": 92,
+      "end": 100
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "DeepState",
+      "label": "ORG",
+      "start": 0,
+      "end": 9
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 24,
+      "end": 31
+    },
+    {
+      "entity": "Pokrovsk",
+      "label": "LOC",
+      "start": 92,
+      "end": 100
+    }
+  ],
+  "gold": [
+    {
+      "entity": "DeepState",
+      "label": "ORG",
+      "start": 0,
+      "end": 9
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 24,
+      "end": 31
+    },
+    {
+      "entity": "Pokrovsk",
+      "label": "LOC",
+      "start": 92,
+      "end": 100
+    }
+  ],
+  "history": []
+}

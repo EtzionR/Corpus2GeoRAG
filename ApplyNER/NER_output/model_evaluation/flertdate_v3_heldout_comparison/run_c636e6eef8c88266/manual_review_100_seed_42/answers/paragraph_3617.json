@@ -1,0 +1,108 @@
+{
+  "comparison_row_id": 3617,
+  "Source": "Timeline of the Russo-Ukrainian war (1 August – 31 December 2024)",
+  "Index": 35,
+  "Text": "A Ka-52 helicopter was reportedly shot down by Ukrainian forces in Kursk Oblast.",
+  "reviewed_at_utc": "2026-11-04T06:45:30.606160+00:00",
+  "original_predictions": [
+    {
+      "entity": "Ka-52",
+      "label": "MISC",
+      "start": 2,
+      "end": 7
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 47,
+      "end": 56
+    },
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 67,
+      "end": 79
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Ka-52",
+      "label": "MISC",
+      "start": 2,
+      "end": 7
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 47,
+      "end": 56
+    },
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 67,
+      "end": 79
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Ka-52",
+      "label": "MISC",
+      "start": 2,
+      "end": 7
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 47,
+      "end": 56
+    },
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 67,
+      "end": 79
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Ka-52",
+      "label": "MISC",
+      "start": 2,
+      "end": 7
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 47,
+      "end": 56
+    },
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 67,
+      "end": 79
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Ka-52",
+      "label": "MISC",
+      "start": 2,
+      "end": 7
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 47,
+      "end": 56
+    },
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 67,
+      "end": 79
+    }
+  ],
+  "history": []
+}

@@ -1,0 +1,276 @@
+{
+  "comparison_row_id": 3603,
+  "Source": "Timeline of the Russo-Ukrainian war (1 August – 31 December 2024)",
+  "Index": 21,
+  "Text": "The Institute for the Study of War (ISW) estimated that Ukrainian forces had advanced up to ten kilometers into Russia's Kursk Oblast from their common border since the start of the incursion on 6 August and had seized a total area of some 45 square kilometers. The Ukrainian incursion involved some 1,000 soldiers, armoured vehicles and was supported by artillery and drones according to a Russian official. A state of emergency was declared in Kursk Oblast due to the ongoing incursion.",
+  "reviewed_at_utc": "2026-11-04T06:37:57.317839+00:00",
+  "original_predictions": [
+    {
+      "entity": "Institute for the Study of War",
+      "label": "ORG",
+      "start": 4,
+      "end": 34
+    },
+    {
+      "entity": "ISW",
+      "label": "ORG",
+      "start": 36,
+      "end": 39
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 56,
+      "end": 65
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 112,
+      "end": 118
+    },
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 121,
+      "end": 133
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 266,
+      "end": 275
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 391,
+      "end": 398
+    },
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 446,
+      "end": 458
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Institute for the Study of War",
+      "label": "ORG",
+      "start": 4,
+      "end": 34
+    },
+    {
+      "entity": "ISW",
+      "label": "ORG",
+      "start": 36,
+      "end": 39
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 56,
+      "end": 65
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 112,
+      "end": 118
+    },
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 121,
+      "end": 133
+    },
+    {
+      "entity": "6 August",
+      "label": "DATE",
+      "start": 195,
+      "end": 203
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 266,
+      "end": 275
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 391,
+      "end": 398
+    },
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 446,
+      "end": 458
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Institute for the Study of War",
+      "label": "ORG",
+      "start": 4,
+      "end": 34
+    },
+    {
+      "entity": "ISW",
+      "label": "ORG",
+      "start": 36,
+      "end": 39
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 56,
+      "end": 65
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 112,
+      "end": 118
+    },
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 121,
+      "end": 133
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 266,
+      "end": 275
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 391,
+      "end": 398
+    },
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 446,
+      "end": 458
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Institute for the Study of War",
+      "label": "ORG",
+      "start": 4,
+      "end": 34
+    },
+    {
+      "entity": "ISW",
+      "label": "ORG",
+      "start": 36,
+      "end": 39
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 56,
+      "end": 65
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 112,
+      "end": 118
+    },
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 121,
+      "end": 133
+    },
+    {
+      "entity": "6 August",
+      "label": "DATE",
+      "start": 195,
+      "end": 203
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 266,
+      "end": 275
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 391,
+      "end": 398
+    },
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 446,
+      "end": 458
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Institute for the Study of War",
+      "label": "ORG",
+      "start": 4,
+      "end": 34
+    },
+    {
+      "entity": "ISW",
+      "label": "ORG",
+      "start": 36,
+      "end": 39
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 56,
+      "end": 65
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 112,
+      "end": 118
+    },
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 121,
+      "end": 133
+    },
+    {
+      "entity": "6 August",
+      "label": "DATE",
+      "start": 195,
+      "end": 203
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 266,
+      "end": 275
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 391,
+      "end": 398
+    },
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 446,
+      "end": 458
+    }
+  ],
+  "history": []
+}

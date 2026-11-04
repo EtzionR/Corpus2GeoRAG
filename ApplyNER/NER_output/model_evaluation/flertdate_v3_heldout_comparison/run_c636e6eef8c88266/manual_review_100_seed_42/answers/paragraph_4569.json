@@ -1,0 +1,724 @@
+{
+  "comparison_row_id": 4569,
+  "Source": "Timeline of the Russo-Ukrainian war (12 November 2022 – 7 June 2023)",
+  "Index": 367,
+  "Text": "The Russian Foreign Ministry summoned senior US diplomats after comments on 21 May by US National Security Adviser Jake Sullivan appeared to support Ukrainian attacks on Russian-annexed Crimea using Western weaponry.",
+  "reviewed_at_utc": "2026-11-04T07:46:29.460083+00:00",
+  "original_predictions": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 4,
+      "end": 11
+    },
+    {
+      "entity": "Foreign Ministry",
+      "label": "ORG",
+      "start": 12,
+      "end": 28
+    },
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 45,
+      "end": 47
+    },
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 86,
+      "end": 88
+    },
+    {
+      "entity": "Jake Sullivan",
+      "label": "PER",
+      "start": 115,
+      "end": 128
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 149,
+      "end": 158
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 170,
+      "end": 177
+    },
+    {
+      "entity": "Crimea",
+      "label": "LOC",
+      "start": 186,
+      "end": 192
+    },
+    {
+      "entity": "Western",
+      "label": "MISC",
+      "start": 199,
+      "end": 206
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Russian Foreign Ministry",
+      "label": "ORG",
+      "start": 4,
+      "end": 28
+    },
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 45,
+      "end": 47
+    },
+    {
+      "entity": "21 May",
+      "label": "DATE",
+      "start": 76,
+      "end": 82
+    },
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 86,
+      "end": 88
+    },
+    {
+      "entity": "Jake Sullivan",
+      "label": "PER",
+      "start": 115,
+      "end": 128
+    },
+    {
+      "entity": "Crimea",
+      "label": "LOC",
+      "start": 186,
+      "end": 192
+    },
+    {
+      "entity": "Western",
+      "label": "MISC",
+      "start": 199,
+      "end": 206
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Russian Foreign Ministry",
+      "label": "ORG",
+      "start": 4,
+      "end": 28
+    },
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 45,
+      "end": 47
+    },
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 86,
+      "end": 88
+    },
+    {
+      "entity": "Jake Sullivan",
+      "label": "PER",
+      "start": 115,
+      "end": 128
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 149,
+      "end": 158
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 170,
+      "end": 177
+    },
+    {
+      "entity": "Crimea",
+      "label": "LOC",
+      "start": 186,
+      "end": 192
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Russian Foreign Ministry",
+      "label": "ORG",
+      "start": 4,
+      "end": 28
+    },
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 45,
+      "end": 47
+    },
+    {
+      "entity": "21 May",
+      "label": "DATE",
+      "start": 76,
+      "end": 82
+    },
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 86,
+      "end": 88
+    },
+    {
+      "entity": "Jake Sullivan",
+      "label": "PER",
+      "start": 115,
+      "end": 128
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 149,
+      "end": 158
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 170,
+      "end": 177
+    },
+    {
+      "entity": "Crimea",
+      "label": "LOC",
+      "start": 186,
+      "end": 192
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Russian Foreign Ministry",
+      "label": "ORG",
+      "start": 4,
+      "end": 28
+    },
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 45,
+      "end": 47
+    },
+    {
+      "entity": "21 May",
+      "label": "DATE",
+      "start": 76,
+      "end": 82
+    },
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 86,
+      "end": 88
+    },
+    {
+      "entity": "Jake Sullivan",
+      "label": "PER",
+      "start": 115,
+      "end": 128
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 149,
+      "end": 158
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 170,
+      "end": 177
+    },
+    {
+      "entity": "Crimea",
+      "label": "LOC",
+      "start": 186,
+      "end": 192
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "del 1,9",
+      "before": [
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 4,
+          "end": 11
+        },
+        {
+          "entity": "Foreign Ministry",
+          "label": "ORG",
+          "start": 12,
+          "end": 28
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 45,
+          "end": 47
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 86,
+          "end": 88
+        },
+        {
+          "entity": "Jake Sullivan",
+          "label": "PER",
+          "start": 115,
+          "end": 128
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 149,
+          "end": 158
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 170,
+          "end": 177
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 186,
+          "end": 192
+        },
+        {
+          "entity": "Western",
+          "label": "MISC",
+          "start": 199,
+          "end": 206
+        }
+      ],
+      "after": [
+        {
+          "entity": "Foreign Ministry",
+          "label": "ORG",
+          "start": 12,
+          "end": 28
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 45,
+          "end": 47
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 86,
+          "end": 88
+        },
+        {
+          "entity": "Jake Sullivan",
+          "label": "PER",
+          "start": 115,
+          "end": 128
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 149,
+          "end": 158
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 170,
+          "end": 177
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 186,
+          "end": 192
+        }
+      ],
+      "at_utc": "2026-11-04T07:46:03.726907+00:00"
+    },
+    {
+      "model": "original",
+      "command": "span 1 | Russian Foreign Ministry | 1",
+      "before": [
+        {
+          "entity": "Foreign Ministry",
+          "label": "ORG",
+          "start": 12,
+          "end": 28
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 45,
+          "end": 47
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 86,
+          "end": 88
+        },
+        {
+          "entity": "Jake Sullivan",
+          "label": "PER",
+          "start": 115,
+          "end": 128
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 149,
+          "end": 158
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 170,
+          "end": 177
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 186,
+          "end": 192
+        }
+      ],
+      "after": [
+        {
+          "entity": "Russian Foreign Ministry",
+          "label": "ORG",
+          "start": 4,
+          "end": 28
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 45,
+          "end": 47
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 86,
+          "end": 88
+        },
+        {
+          "entity": "Jake Sullivan",
+          "label": "PER",
+          "start": 115,
+          "end": 128
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 149,
+          "end": 158
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 170,
+          "end": 177
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 186,
+          "end": 192
+        }
+      ],
+      "at_utc": "2026-11-04T07:46:09.115606+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "del 7",
+      "before": [
+        {
+          "entity": "Russian Foreign Ministry",
+          "label": "ORG",
+          "start": 4,
+          "end": 28
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 45,
+          "end": 47
+        },
+        {
+          "entity": "21 May",
+          "label": "DATE",
+          "start": 76,
+          "end": 82
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 86,
+          "end": 88
+        },
+        {
+          "entity": "Jake Sullivan",
+          "label": "PER",
+          "start": 115,
+          "end": 128
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 186,
+          "end": 192
+        },
+        {
+          "entity": "Western",
+          "label": "MISC",
+          "start": 199,
+          "end": 206
+        }
+      ],
+      "after": [
+        {
+          "entity": "Russian Foreign Ministry",
+          "label": "ORG",
+          "start": 4,
+          "end": 28
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 45,
+          "end": 47
+        },
+        {
+          "entity": "21 May",
+          "label": "DATE",
+          "start": 76,
+          "end": 82
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 86,
+          "end": 88
+        },
+        {
+          "entity": "Jake Sullivan",
+          "label": "PER",
+          "start": 115,
+          "end": 128
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 186,
+          "end": 192
+        }
+      ],
+      "at_utc": "2026-11-04T07:46:15.248823+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add MISC | Ukrainian | 1",
+      "before": [
+        {
+          "entity": "Russian Foreign Ministry",
+          "label": "ORG",
+          "start": 4,
+          "end": 28
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 45,
+          "end": 47
+        },
+        {
+          "entity": "21 May",
+          "label": "DATE",
+          "start": 76,
+          "end": 82
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 86,
+          "end": 88
+        },
+        {
+          "entity": "Jake Sullivan",
+          "label": "PER",
+          "start": 115,
+          "end": 128
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 186,
+          "end": 192
+        }
+      ],
+      "after": [
+        {
+          "entity": "Russian Foreign Ministry",
+          "label": "ORG",
+          "start": 4,
+          "end": 28
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 45,
+          "end": 47
+        },
+        {
+          "entity": "21 May",
+          "label": "DATE",
+          "start": 76,
+          "end": 82
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 86,
+          "end": 88
+        },
+        {
+          "entity": "Jake Sullivan",
+          "label": "PER",
+          "start": 115,
+          "end": 128
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 149,
+          "end": 158
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 186,
+          "end": 192
+        }
+      ],
+      "at_utc": "2026-11-04T07:46:20.063821+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add MISC | Russian | 2",
+      "before": [
+        {
+          "entity": "Russian Foreign Ministry",
+          "label": "ORG",
+          "start": 4,
+          "end": 28
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 45,
+          "end": 47
+        },
+        {
+          "entity": "21 May",
+          "label": "DATE",
+          "start": 76,
+          "end": 82
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 86,
+          "end": 88
+        },
+        {
+          "entity": "Jake Sullivan",
+          "label": "PER",
+          "start": 115,
+          "end": 128
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 149,
+          "end": 158
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 186,
+          "end": 192
+        }
+      ],
+      "after": [
+        {
+          "entity": "Russian Foreign Ministry",
+          "label": "ORG",
+          "start": 4,
+          "end": 28
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 45,
+          "end": 47
+        },
+        {
+          "entity": "21 May",
+          "label": "DATE",
+          "start": 76,
+          "end": 82
+        },
+        {
+          "entity": "US",
+          "label": "LOC",
+          "start": 86,
+          "end": 88
+        },
+        {
+          "entity": "Jake Sullivan",
+          "label": "PER",
+          "start": 115,
+          "end": 128
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 149,
+          "end": 158
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 170,
+          "end": 177
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 186,
+          "end": 192
+        }
+      ],
+      "at_utc": "2026-11-04T07:46:25.531037+00:00"
+    }
+  ]
+}

@@ -1,0 +1,199 @@
+{
+  "comparison_row_id": 2648,
+  "Source": "Malaysia Airlines Flight 17",
+  "Index": 114,
+  "Text": "The tenth anniversary of the crash was commemorated at the National Monument MH17. Prime Minister Dick Schoof delivered a speech. Both he and King Willem-Alexander spoke with the victims' relatives. About 1,300 relatives attended, along with officials from various countries. The ceremony included reading the names of all 298 victims and observing two minutes of silence.",
+  "reviewed_at_utc": "2026-11-04T06:39:25.370545+00:00",
+  "original_predictions": [
+    {
+      "entity": "National Monument MH17",
+      "label": "LOC",
+      "start": 59,
+      "end": 81
+    },
+    {
+      "entity": "Dick Schoof",
+      "label": "PER",
+      "start": 98,
+      "end": 109
+    },
+    {
+      "entity": "King Willem-Alexander",
+      "label": "PER",
+      "start": 142,
+      "end": 163
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "National Monument MH17",
+      "label": "MISC",
+      "start": 59,
+      "end": 81
+    },
+    {
+      "entity": "Dick Schoof",
+      "label": "PER",
+      "start": 98,
+      "end": 109
+    },
+    {
+      "entity": "Willem-Alexander",
+      "label": "PER",
+      "start": 147,
+      "end": 163
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "National Monument MH17",
+      "label": "LOC",
+      "start": 59,
+      "end": 81
+    },
+    {
+      "entity": "Dick Schoof",
+      "label": "PER",
+      "start": 98,
+      "end": 109
+    },
+    {
+      "entity": "Willem-Alexander",
+      "label": "PER",
+      "start": 147,
+      "end": 163
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "National Monument MH17",
+      "label": "LOC",
+      "start": 59,
+      "end": 81
+    },
+    {
+      "entity": "Dick Schoof",
+      "label": "PER",
+      "start": 98,
+      "end": 109
+    },
+    {
+      "entity": "Willem-Alexander",
+      "label": "PER",
+      "start": 147,
+      "end": 163
+    }
+  ],
+  "gold": [
+    {
+      "entity": "National Monument MH17",
+      "label": "LOC",
+      "start": 59,
+      "end": 81
+    },
+    {
+      "entity": "Dick Schoof",
+      "label": "PER",
+      "start": 98,
+      "end": 109
+    },
+    {
+      "entity": "Willem-Alexander",
+      "label": "PER",
+      "start": 147,
+      "end": 163
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "span 3 | Willem-Alexander | 1",
+      "before": [
+        {
+          "entity": "National Monument MH17",
+          "label": "LOC",
+          "start": 59,
+          "end": 81
+        },
+        {
+          "entity": "Dick Schoof",
+          "label": "PER",
+          "start": 98,
+          "end": 109
+        },
+        {
+          "entity": "King Willem-Alexander",
+          "label": "PER",
+          "start": 142,
+          "end": 163
+        }
+      ],
+      "after": [
+        {
+          "entity": "National Monument MH17",
+          "label": "LOC",
+          "start": 59,
+          "end": 81
+        },
+        {
+          "entity": "Dick Schoof",
+          "label": "PER",
+          "start": 98,
+          "end": 109
+        },
+        {
+          "entity": "Willem-Alexander",
+          "label": "PER",
+          "start": 147,
+          "end": 163
+        }
+      ],
+      "at_utc": "2026-11-04T06:39:12.682014+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "label 1 LOC",
+      "before": [
+        {
+          "entity": "National Monument MH17",
+          "label": "MISC",
+          "start": 59,
+          "end": 81
+        },
+        {
+          "entity": "Dick Schoof",
+          "label": "PER",
+          "start": 98,
+          "end": 109
+        },
+        {
+          "entity": "Willem-Alexander",
+          "label": "PER",
+          "start": 147,
+          "end": 163
+        }
+      ],
+      "after": [
+        {
+          "entity": "National Monument MH17",
+          "label": "LOC",
+          "start": 59,
+          "end": 81
+        },
+        {
+          "entity": "Dick Schoof",
+          "label": "PER",
+          "start": 98,
+          "end": 109
+        },
+        {
+          "entity": "Willem-Alexander",
+          "label": "PER",
+          "start": 147,
+          "end": 163
+        }
+      ],
+      "at_utc": "2026-11-04T06:39:20.648250+00:00"
+    }
+  ]
+}

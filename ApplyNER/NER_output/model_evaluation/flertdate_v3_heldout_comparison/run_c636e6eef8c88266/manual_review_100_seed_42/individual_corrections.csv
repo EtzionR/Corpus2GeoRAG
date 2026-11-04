@@ -1,0 +1,255 @@
+﻿comparison_row_id,Model,Evaluation,Category,Operation,Predicted,Gold
+2680,FlertDate_v3,4 labels,MISC,Missing,None,"(42, 51, 'MISC')"
+2680,FlertDate_v3,5 labels,MISC,Missing,None,"(42, 51, 'MISC')"
+3203,Original FLERT,4 labels,MISC,Missing,None,"(164, 171, 'MISC')"
+4454,FlertDate_v3,4 labels,MISC,Missing,None,"(304, 311, 'MISC')"
+4454,FlertDate_v3,5 labels,MISC,Missing,None,"(304, 311, 'MISC')"
+893,Original FLERT,4 labels,MISC,Extra,"(18, 30, 'MISC')",None
+1090,Original FLERT,4 labels,LOC,Label,"(368, 374, 'ORG')","(368, 374, 'LOC')"
+1090,FlertDate_v3,4 labels,LOC,Label,"(368, 374, 'ORG')","(368, 374, 'LOC')"
+1090,FlertDate_v3,5 labels,LOC,Label,"(368, 374, 'ORG')","(368, 374, 'LOC')"
+1606,FlertDate_v3,4 labels,MISC,Missing,None,"(4, 11, 'MISC')"
+1606,FlertDate_v3,5 labels,MISC,Missing,None,"(4, 11, 'MISC')"
+3989,FlertDate_v3,4 labels,MISC,Missing,None,"(103, 112, 'MISC')"
+3989,FlertDate_v3,5 labels,MISC,Missing,None,"(103, 112, 'MISC')"
+2648,Original FLERT,4 labels,PER,Boundary,"(142, 163, 'PER')","(147, 163, 'PER')"
+2648,FlertDate_v3,4 labels,LOC,Label,"(59, 81, 'MISC')","(59, 81, 'LOC')"
+2648,FlertDate_v3,5 labels,LOC,Label,"(59, 81, 'MISC')","(59, 81, 'LOC')"
+3353,Original FLERT,4 labels,ORG,Extra,"(110, 123, 'ORG')",None
+3353,FlertDate_v3,4 labels,ORG,Extra,"(110, 123, 'ORG')",None
+3353,FlertDate_v3,5 labels,ORG,Extra,"(110, 123, 'ORG')",None
+2922,Original FLERT,4 labels,ORG,Label,"(79, 82, 'PER')","(79, 82, 'ORG')"
+2922,Original FLERT,4 labels,ORG,Label,"(236, 239, 'PER')","(236, 239, 'ORG')"
+2922,FlertDate_v3,4 labels,LOC,Label,"(385, 392, 'MISC')","(385, 392, 'LOC')"
+2922,FlertDate_v3,5 labels,LOC,Label,"(385, 392, 'MISC')","(385, 392, 'LOC')"
+23,Original FLERT,4 labels,ORG,Missing,None,"(41, 75, 'ORG')"
+23,FlertDate_v3,4 labels,ORG,Missing,None,"(41, 75, 'ORG')"
+23,FlertDate_v3,5 labels,ORG,Missing,None,"(41, 75, 'ORG')"
+3458,Original FLERT,4 labels,MISC,Missing,None,"(0, 9, 'MISC')"
+1001,Original FLERT,4 labels,LOC,Boundary,"(300, 307, 'LOC')","(300, 313, 'LOC')"
+4596,Original FLERT,4 labels,ORG,Boundary + label,"(105, 112, 'MISC')","(105, 132, 'ORG')"
+3034,FlertDate_v3,4 labels,ORG,Label,"(0, 30, 'LOC')","(0, 30, 'ORG')"
+3034,FlertDate_v3,5 labels,ORG,Label,"(0, 30, 'LOC')","(0, 30, 'ORG')"
+373,Original FLERT,4 labels,MISC,Boundary + label,"(43, 55, 'LOC')","(24, 55, 'MISC')"
+373,Original FLERT,4 labels,ORG,Extra,"(445, 478, 'ORG')",None
+373,Original FLERT,4 labels,ORG,Boundary,"(486, 495, 'ORG')","(445, 495, 'ORG')"
+373,FlertDate_v3,4 labels,MISC,Boundary + label,"(43, 55, 'ORG')","(24, 55, 'MISC')"
+373,FlertDate_v3,5 labels,MISC,Boundary + label,"(43, 55, 'ORG')","(24, 55, 'MISC')"
+4342,Original FLERT,4 labels,MISC,Extra,"(257, 264, 'MISC')",None
+4342,FlertDate_v3,4 labels,LOC,Label,"(66, 98, 'ORG')","(66, 98, 'LOC')"
+4342,FlertDate_v3,4 labels,MISC,Extra,"(257, 264, 'MISC')",None
+4342,FlertDate_v3,5 labels,LOC,Label,"(66, 98, 'ORG')","(66, 98, 'LOC')"
+4342,FlertDate_v3,5 labels,MISC,Extra,"(257, 264, 'MISC')",None
+3684,Original FLERT,4 labels,LOC,Label,"(36, 50, 'ORG')","(36, 50, 'LOC')"
+3684,FlertDate_v3,4 labels,LOC,Label,"(36, 50, 'ORG')","(36, 50, 'LOC')"
+3684,FlertDate_v3,5 labels,LOC,Label,"(36, 50, 'ORG')","(36, 50, 'LOC')"
+168,FlertDate_v3,4 labels,PER,Boundary,"(68, 75, 'PER')","(69, 74, 'PER')"
+168,FlertDate_v3,5 labels,PER,Boundary,"(68, 75, 'PER')","(69, 74, 'PER')"
+168,FlertDate_v3,5 labels,DATE,Missing,None,"(203, 212, 'DATE')"
+239,Original FLERT,4 labels,MISC,Boundary,"(60, 65, 'MISC')","(60, 71, 'MISC')"
+505,FlertDate_v3,5 labels,DATE,Extra,"(3, 14, 'DATE')",None
+505,FlertDate_v3,5 labels,DATE,Boundary,"(16, 20, 'DATE')","(3, 20, 'DATE')"
+2423,Original FLERT,4 labels,LOC,Boundary,"(336, 348, 'LOC')","(336, 356, 'LOC')"
+2423,FlertDate_v3,4 labels,MISC,Missing,None,"(159, 166, 'MISC')"
+2423,FlertDate_v3,4 labels,LOC,Boundary,"(336, 348, 'LOC')","(336, 356, 'LOC')"
+2423,FlertDate_v3,5 labels,MISC,Missing,None,"(159, 166, 'MISC')"
+2423,FlertDate_v3,5 labels,LOC,Boundary,"(336, 348, 'LOC')","(336, 356, 'LOC')"
+2298,FlertDate_v3,5 labels,DATE,Boundary,"(69, 73, 'DATE')","(49, 73, 'DATE')"
+3088,Original FLERT,4 labels,ORG,Extra,"(209, 250, 'ORG')",None
+3088,Original FLERT,4 labels,ORG,Boundary,"(252, 258, 'ORG')","(209, 259, 'ORG')"
+3088,FlertDate_v3,4 labels,MISC,Missing,None,"(582, 592, 'MISC')"
+3088,FlertDate_v3,5 labels,MISC,Missing,None,"(582, 592, 'MISC')"
+2842,Original FLERT,4 labels,MISC,Extra,"(663, 668, 'MISC')",None
+2842,Original FLERT,4 labels,MISC,Boundary,"(669, 678, 'MISC')","(663, 678, 'MISC')"
+2842,FlertDate_v3,4 labels,MISC,Missing,None,"(94, 103, 'MISC')"
+2842,FlertDate_v3,4 labels,MISC,Missing,None,"(412, 419, 'MISC')"
+2842,FlertDate_v3,4 labels,MISC,Missing,None,"(538, 545, 'MISC')"
+2842,FlertDate_v3,5 labels,MISC,Missing,None,"(94, 103, 'MISC')"
+2842,FlertDate_v3,5 labels,MISC,Missing,None,"(412, 419, 'MISC')"
+2842,FlertDate_v3,5 labels,MISC,Missing,None,"(538, 545, 'MISC')"
+1609,Original FLERT,4 labels,MISC,Extra,"(523, 530, 'MISC')",None
+1609,FlertDate_v3,4 labels,MISC,Missing,None,"(130, 136, 'MISC')"
+1609,FlertDate_v3,4 labels,MISC,Missing,None,"(507, 514, 'MISC')"
+1609,FlertDate_v3,4 labels,MISC,Extra,"(523, 530, 'MISC')",None
+1609,FlertDate_v3,5 labels,DATE,Missing,None,"(6, 22, 'DATE')"
+1609,FlertDate_v3,5 labels,MISC,Missing,None,"(130, 136, 'MISC')"
+1609,FlertDate_v3,5 labels,MISC,Missing,None,"(507, 514, 'MISC')"
+1609,FlertDate_v3,5 labels,MISC,Extra,"(523, 530, 'MISC')",None
+3482,Original FLERT,4 labels,MISC,Missing,None,"(0, 10, 'MISC')"
+3482,FlertDate_v3,4 labels,MISC,Missing,None,"(0, 10, 'MISC')"
+3482,FlertDate_v3,5 labels,MISC,Missing,None,"(0, 10, 'MISC')"
+5102,Original FLERT,4 labels,MISC,Extra,"(430, 435, 'MISC')",None
+5102,Original FLERT,4 labels,MISC,Boundary,"(436, 443, 'MISC')","(430, 443, 'MISC')"
+5102,FlertDate_v3,4 labels,PER,Missing,None,"(113, 120, 'PER')"
+5102,FlertDate_v3,4 labels,PER,Missing,None,"(482, 489, 'PER')"
+5102,FlertDate_v3,5 labels,PER,Missing,None,"(113, 120, 'PER')"
+5102,FlertDate_v3,5 labels,PER,Missing,None,"(482, 489, 'PER')"
+4220,FlertDate_v3,5 labels,DATE,Missing,None,"(152, 158, 'DATE')"
+4863,FlertDate_v3,4 labels,MISC,Boundary + label,"(167, 189, 'ORG')","(167, 176, 'MISC')"
+4863,FlertDate_v3,5 labels,MISC,Boundary + label,"(167, 189, 'ORG')","(167, 176, 'MISC')"
+3063,Original FLERT,4 labels,ORG,Extra,"(154, 159, 'ORG')",None
+3063,Original FLERT,4 labels,ORG,Boundary,"(161, 173, 'ORG')","(154, 174, 'ORG')"
+3063,FlertDate_v3,4 labels,ORG,Boundary,"(161, 173, 'ORG')","(154, 174, 'ORG')"
+3063,FlertDate_v3,5 labels,ORG,Boundary,"(161, 173, 'ORG')","(154, 174, 'ORG')"
+227,FlertDate_v3,4 labels,LOC,Label,"(283, 308, 'ORG')","(283, 308, 'LOC')"
+227,FlertDate_v3,5 labels,LOC,Label,"(283, 308, 'ORG')","(283, 308, 'LOC')"
+734,Original FLERT,4 labels,MISC,Extra,"(121, 128, 'MISC')",None
+734,Original FLERT,4 labels,MISC,Extra,"(418, 425, 'MISC')",None
+734,Original FLERT,4 labels,MISC,Extra,"(734, 741, 'MISC')",None
+734,FlertDate_v3,4 labels,MISC,Extra,"(121, 128, 'MISC')",None
+734,FlertDate_v3,4 labels,MISC,Extra,"(418, 425, 'MISC')",None
+734,FlertDate_v3,4 labels,MISC,Extra,"(734, 741, 'MISC')",None
+734,FlertDate_v3,5 labels,MISC,Extra,"(121, 128, 'MISC')",None
+734,FlertDate_v3,5 labels,DATE,Boundary,"(388, 392, 'DATE')","(388, 411, 'DATE')"
+734,FlertDate_v3,5 labels,MISC,Extra,"(418, 425, 'MISC')",None
+734,FlertDate_v3,5 labels,MISC,Extra,"(734, 741, 'MISC')",None
+290,Original FLERT,4 labels,MISC,Extra,"(21, 25, 'MISC')",None
+290,Original FLERT,4 labels,MISC,Extra,"(25, 34, 'MISC')",None
+290,Original FLERT,4 labels,LOC,Boundary,"(190, 199, 'LOC')","(190, 207, 'LOC')"
+290,Original FLERT,4 labels,MISC,Extra,"(304, 313, 'MISC')",None
+290,Original FLERT,4 labels,ORG,Boundary,"(314, 333, 'ORG')","(304, 333, 'ORG')"
+290,FlertDate_v3,4 labels,MISC,Extra,"(304, 313, 'MISC')",None
+290,FlertDate_v3,4 labels,ORG,Boundary,"(314, 333, 'ORG')","(304, 333, 'ORG')"
+290,FlertDate_v3,5 labels,MISC,Extra,"(304, 313, 'MISC')",None
+290,FlertDate_v3,5 labels,ORG,Boundary,"(314, 333, 'ORG')","(304, 333, 'ORG')"
+3334,FlertDate_v3,4 labels,MISC,Missing,None,"(24, 31, 'MISC')"
+3334,FlertDate_v3,5 labels,MISC,Missing,None,"(24, 31, 'MISC')"
+351,Original FLERT,4 labels,ORG,Extra,"(1, 24, 'ORG')",None
+351,FlertDate_v3,4 labels,ORG,Extra,"(1, 24, 'ORG')",None
+351,FlertDate_v3,5 labels,ORG,Extra,"(1, 24, 'ORG')",None
+465,Original FLERT,4 labels,MISC,Extra,"(709, 731, 'MISC')",None
+465,Original FLERT,4 labels,MISC,Boundary,"(732, 736, 'MISC')","(709, 736, 'MISC')"
+465,FlertDate_v3,5 labels,DATE,Missing,None,"(3, 7, 'DATE')"
+465,FlertDate_v3,5 labels,DATE,Missing,None,"(306, 316, 'DATE')"
+465,FlertDate_v3,5 labels,DATE,Missing,None,"(647, 653, 'DATE')"
+4892,Original FLERT,4 labels,MISC,Boundary,"(89, 96, 'MISC')","(89, 99, 'MISC')"
+4892,Original FLERT,4 labels,LOC,Label,"(280, 283, 'ORG')","(280, 283, 'LOC')"
+4892,Original FLERT,4 labels,LOC,Label,"(316, 319, 'ORG')","(316, 319, 'LOC')"
+4892,FlertDate_v3,4 labels,MISC,Missing,None,"(89, 99, 'MISC')"
+4892,FlertDate_v3,4 labels,MISC,Missing,None,"(203, 210, 'MISC')"
+4892,FlertDate_v3,4 labels,LOC,Label,"(280, 283, 'ORG')","(280, 283, 'LOC')"
+4892,FlertDate_v3,4 labels,LOC,Label,"(316, 319, 'ORG')","(316, 319, 'LOC')"
+4892,FlertDate_v3,5 labels,MISC,Missing,None,"(89, 99, 'MISC')"
+4892,FlertDate_v3,5 labels,MISC,Missing,None,"(203, 210, 'MISC')"
+4892,FlertDate_v3,5 labels,LOC,Label,"(280, 283, 'ORG')","(280, 283, 'LOC')"
+4892,FlertDate_v3,5 labels,LOC,Label,"(316, 319, 'ORG')","(316, 319, 'LOC')"
+3153,Original FLERT,4 labels,MISC,Extra,"(0, 5, 'MISC')",None
+3153,Original FLERT,4 labels,MISC,Boundary,"(6, 19, 'MISC')","(0, 19, 'MISC')"
+1972,Original FLERT,4 labels,ORG,Extra,"(455, 463, 'ORG')",None
+1652,Original FLERT,4 labels,MISC,Extra,"(13, 20, 'MISC')",None
+1652,Original FLERT,4 labels,MISC,Extra,"(305, 312, 'MISC')",None
+1652,FlertDate_v3,4 labels,MISC,Extra,"(13, 20, 'MISC')",None
+1652,FlertDate_v3,4 labels,MISC,Extra,"(305, 312, 'MISC')",None
+1652,FlertDate_v3,5 labels,MISC,Extra,"(13, 20, 'MISC')",None
+1652,FlertDate_v3,5 labels,MISC,Extra,"(305, 312, 'MISC')",None
+1049,FlertDate_v3,4 labels,LOC,Label,"(383, 408, 'ORG')","(383, 408, 'LOC')"
+1049,FlertDate_v3,4 labels,LOC,Label,"(410, 413, 'ORG')","(410, 413, 'LOC')"
+1049,FlertDate_v3,5 labels,LOC,Label,"(383, 408, 'ORG')","(383, 408, 'LOC')"
+1049,FlertDate_v3,5 labels,LOC,Label,"(410, 413, 'ORG')","(410, 413, 'LOC')"
+333,Original FLERT,4 labels,ORG,Extra,"(155, 159, 'ORG')",None
+333,Original FLERT,4 labels,ORG,Extra,"(335, 339, 'ORG')",None
+333,FlertDate_v3,4 labels,ORG,Extra,"(335, 339, 'ORG')",None
+333,FlertDate_v3,5 labels,ORG,Extra,"(335, 339, 'ORG')",None
+4411,Original FLERT,4 labels,LOC,Boundary,"(375, 378, 'LOC')","(375, 379, 'LOC')"
+3182,Original FLERT,4 labels,ORG,Label,"(7, 15, 'MISC')","(7, 15, 'ORG')"
+3182,Original FLERT,4 labels,ORG,Extra,"(150, 168, 'ORG')",None
+3182,Original FLERT,4 labels,ORG,Boundary,"(171, 182, 'ORG')","(150, 182, 'ORG')"
+3182,FlertDate_v3,4 labels,ORG,Extra,"(150, 168, 'ORG')",None
+3182,FlertDate_v3,4 labels,ORG,Boundary,"(171, 182, 'ORG')","(150, 182, 'ORG')"
+3182,FlertDate_v3,5 labels,ORG,Extra,"(150, 168, 'ORG')",None
+3182,FlertDate_v3,5 labels,ORG,Boundary,"(171, 182, 'ORG')","(150, 182, 'ORG')"
+1934,Original FLERT,4 labels,PER,Boundary,"(0, 10, 'PER')","(0, 11, 'PER')"
+1934,Original FLERT,4 labels,MISC,Boundary,"(57, 70, 'MISC')","(57, 123, 'MISC')"
+1934,Original FLERT,4 labels,MISC,Extra,"(125, 137, 'MISC')",None
+1934,Original FLERT,4 labels,MISC,Boundary,"(164, 173, 'MISC')","(125, 210, 'MISC')"
+1934,FlertDate_v3,4 labels,MISC,Boundary,"(57, 122, 'MISC')","(57, 123, 'MISC')"
+1934,FlertDate_v3,4 labels,MISC,Boundary,"(125, 209, 'MISC')","(125, 210, 'MISC')"
+1934,FlertDate_v3,5 labels,DATE,Boundary,"(39, 51, 'DATE')","(39, 52, 'DATE')"
+1934,FlertDate_v3,5 labels,MISC,Boundary,"(57, 122, 'MISC')","(57, 123, 'MISC')"
+1934,FlertDate_v3,5 labels,MISC,Boundary,"(125, 209, 'MISC')","(125, 210, 'MISC')"
+2916,Original FLERT,4 labels,MISC,Extra,"(17, 25, 'MISC')",None
+2916,Original FLERT,4 labels,ORG,Boundary,"(26, 36, 'ORG')","(17, 36, 'ORG')"
+2916,Original FLERT,4 labels,ORG,Extra,"(87, 97, 'ORG')",None
+911,Original FLERT,4 labels,MISC,Extra,"(4, 13, 'MISC')",None
+911,Original FLERT,4 labels,ORG,Boundary,"(14, 42, 'ORG')","(4, 42, 'ORG')"
+911,Original FLERT,4 labels,MISC,Extra,"(334, 343, 'MISC')",None
+911,Original FLERT,4 labels,ORG,Boundary,"(344, 363, 'ORG')","(334, 363, 'ORG')"
+4560,Original FLERT,4 labels,MISC,Extra,"(4, 11, 'MISC')",None
+4560,Original FLERT,4 labels,ORG,Boundary,"(12, 28, 'ORG')","(4, 28, 'ORG')"
+3443,Original FLERT,4 labels,MISC,Label,"(0, 12, 'ORG')","(0, 12, 'MISC')"
+5193,Original FLERT,4 labels,ORG,Label,"(2, 8, 'PER')","(2, 8, 'ORG')"
+5193,Original FLERT,4 labels,MISC,Extra,"(231, 238, 'MISC')",None
+4569,Original FLERT,4 labels,MISC,Extra,"(4, 11, 'MISC')",None
+4569,Original FLERT,4 labels,ORG,Boundary,"(12, 28, 'ORG')","(4, 28, 'ORG')"
+4569,Original FLERT,4 labels,MISC,Extra,"(199, 206, 'MISC')",None
+4569,FlertDate_v3,4 labels,MISC,Missing,None,"(149, 158, 'MISC')"
+4569,FlertDate_v3,4 labels,MISC,Missing,None,"(170, 177, 'MISC')"
+4569,FlertDate_v3,4 labels,MISC,Extra,"(199, 206, 'MISC')",None
+4569,FlertDate_v3,5 labels,MISC,Missing,None,"(149, 158, 'MISC')"
+4569,FlertDate_v3,5 labels,MISC,Missing,None,"(170, 177, 'MISC')"
+4569,FlertDate_v3,5 labels,MISC,Extra,"(199, 206, 'MISC')",None
+4938,Original FLERT,4 labels,MISC,Extra,"(0, 7, 'MISC')",None
+4969,FlertDate_v3,4 labels,MISC,Missing,None,"(55, 62, 'MISC')"
+4969,FlertDate_v3,5 labels,MISC,Missing,None,"(55, 62, 'MISC')"
+2640,Original FLERT,4 labels,ORG,Label,"(928, 931, 'MISC')","(928, 931, 'ORG')"
+2640,FlertDate_v3,4 labels,MISC,Missing,None,"(151, 158, 'MISC')"
+2640,FlertDate_v3,4 labels,MISC,Boundary + label,"(438, 456, 'ORG')","(438, 445, 'MISC')"
+2640,FlertDate_v3,4 labels,PER,Missing,None,"(473, 479, 'PER')"
+2640,FlertDate_v3,4 labels,MISC,Missing,None,"(1046, 1053, 'MISC')"
+2640,FlertDate_v3,4 labels,MISC,Missing,None,"(1074, 1081, 'MISC')"
+2640,FlertDate_v3,5 labels,MISC,Missing,None,"(151, 158, 'MISC')"
+2640,FlertDate_v3,5 labels,MISC,Boundary + label,"(438, 456, 'ORG')","(438, 445, 'MISC')"
+2640,FlertDate_v3,5 labels,PER,Missing,None,"(473, 479, 'PER')"
+2640,FlertDate_v3,5 labels,DATE,Boundary,"(958, 966, 'DATE')","(954, 971, 'DATE')"
+2640,FlertDate_v3,5 labels,MISC,Missing,None,"(1046, 1053, 'MISC')"
+2640,FlertDate_v3,5 labels,MISC,Missing,None,"(1074, 1081, 'MISC')"
+2640,FlertDate_v3,5 labels,DATE,Missing,None,"(1138, 1142, 'DATE')"
+1272,Original FLERT,4 labels,MISC,Boundary + label,"(97, 104, 'LOC')","(87, 104, 'MISC')"
+3256,FlertDate_v3,4 labels,MISC,Missing,None,"(157, 166, 'MISC')"
+3256,FlertDate_v3,4 labels,MISC,Missing,None,"(377, 386, 'MISC')"
+3256,FlertDate_v3,4 labels,MISC,Missing,None,"(478, 487, 'MISC')"
+3256,FlertDate_v3,4 labels,ORG,Extra,"(721, 722, 'ORG')",None
+3256,FlertDate_v3,5 labels,MISC,Missing,None,"(157, 166, 'MISC')"
+3256,FlertDate_v3,5 labels,MISC,Missing,None,"(377, 386, 'MISC')"
+3256,FlertDate_v3,5 labels,MISC,Missing,None,"(478, 487, 'MISC')"
+3256,FlertDate_v3,5 labels,ORG,Extra,"(721, 722, 'ORG')",None
+3523,Original FLERT,4 labels,ORG,Extra,"(20, 33, 'ORG')",None
+3523,Original FLERT,4 labels,ORG,Boundary,"(41, 61, 'ORG')","(20, 61, 'ORG')"
+3523,FlertDate_v3,4 labels,ORG,Extra,"(20, 33, 'ORG')",None
+3523,FlertDate_v3,4 labels,ORG,Boundary,"(41, 61, 'ORG')","(20, 61, 'ORG')"
+3523,FlertDate_v3,5 labels,ORG,Extra,"(20, 33, 'ORG')",None
+3523,FlertDate_v3,5 labels,ORG,Boundary,"(41, 61, 'ORG')","(20, 61, 'ORG')"
+2351,Original FLERT,4 labels,ORG,Missing,None,"(29, 41, 'ORG')"
+2351,Original FLERT,4 labels,ORG,Extra,"(96, 129, 'ORG')",None
+2351,Original FLERT,4 labels,ORG,Extra,"(131, 153, 'ORG')",None
+2351,Original FLERT,4 labels,ORG,Extra,"(161, 187, 'ORG')",None
+2351,Original FLERT,4 labels,ORG,Boundary,"(189, 193, 'ORG')","(96, 195, 'ORG')"
+2351,Original FLERT,4 labels,ORG,Extra,"(268, 296, 'ORG')",None
+2351,Original FLERT,4 labels,ORG,Boundary,"(298, 302, 'ORG')","(197, 304, 'ORG')"
+2351,Original FLERT,4 labels,ORG,Boundary,"(321, 325, 'ORG')","(312, 326, 'ORG')"
+2351,Original FLERT,4 labels,MISC,Boundary + label,"(471, 477, 'LOC')","(464, 477, 'MISC')"
+2351,FlertDate_v3,4 labels,MISC,Missing,None,"(18, 27, 'MISC')"
+2351,FlertDate_v3,4 labels,ORG,Missing,None,"(29, 41, 'ORG')"
+2351,FlertDate_v3,4 labels,ORG,Missing,None,"(49, 61, 'ORG')"
+2351,FlertDate_v3,4 labels,ORG,Extra,"(96, 129, 'ORG')",None
+2351,FlertDate_v3,4 labels,ORG,Extra,"(131, 187, 'ORG')",None
+2351,FlertDate_v3,4 labels,ORG,Boundary,"(189, 193, 'ORG')","(96, 195, 'ORG')"
+2351,FlertDate_v3,4 labels,ORG,Extra,"(241, 296, 'ORG')",None
+2351,FlertDate_v3,4 labels,ORG,Boundary,"(298, 302, 'ORG')","(197, 304, 'ORG')"
+2351,FlertDate_v3,4 labels,ORG,Boundary,"(321, 325, 'ORG')","(312, 326, 'ORG')"
+2351,FlertDate_v3,5 labels,MISC,Missing,None,"(18, 27, 'MISC')"
+2351,FlertDate_v3,5 labels,ORG,Missing,None,"(29, 41, 'ORG')"
+2351,FlertDate_v3,5 labels,ORG,Missing,None,"(49, 61, 'ORG')"
+2351,FlertDate_v3,5 labels,ORG,Extra,"(96, 129, 'ORG')",None
+2351,FlertDate_v3,5 labels,ORG,Extra,"(131, 187, 'ORG')",None
+2351,FlertDate_v3,5 labels,ORG,Boundary,"(189, 193, 'ORG')","(96, 195, 'ORG')"
+2351,FlertDate_v3,5 labels,ORG,Extra,"(241, 296, 'ORG')",None
+2351,FlertDate_v3,5 labels,ORG,Boundary,"(298, 302, 'ORG')","(197, 304, 'ORG')"
+2351,FlertDate_v3,5 labels,DATE,Extra,"(304, 305, 'DATE')",None
+2351,FlertDate_v3,5 labels,ORG,Boundary,"(321, 325, 'ORG')","(312, 326, 'ORG')"
+3109,FlertDate_v3,4 labels,ORG,Extra,"(12, 13, 'ORG')",None
+3109,FlertDate_v3,5 labels,DATE,Missing,None,"(3, 12, 'DATE')"
+3109,FlertDate_v3,5 labels,ORG,Extra,"(12, 13, 'ORG')",None
+2977,Original FLERT,4 labels,LOC,Boundary,"(407, 414, 'LOC')","(399, 415, 'LOC')"
+2977,FlertDate_v3,4 labels,LOC,Boundary,"(407, 414, 'LOC')","(399, 415, 'LOC')"
+2977,FlertDate_v3,5 labels,LOC,Boundary,"(407, 414, 'LOC')","(399, 415, 'LOC')"

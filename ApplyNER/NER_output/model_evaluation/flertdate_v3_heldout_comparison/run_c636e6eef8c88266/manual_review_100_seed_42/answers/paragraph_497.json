@@ -1,0 +1,156 @@
+{
+  "comparison_row_id": 497,
+  "Source": "3rd Heavy Mechanized Brigade",
+  "Index": 7,
+  "Text": "The 2nd Battalion of the 3rd Brigade took part in a December 2024 operation to recapture the village of Novomlynsk in the Kharkiv region.",
+  "reviewed_at_utc": "2026-11-04T07:52:40.220980+00:00",
+  "original_predictions": [
+    {
+      "entity": "2nd Battalion",
+      "label": "ORG",
+      "start": 4,
+      "end": 17
+    },
+    {
+      "entity": "3rd Brigade",
+      "label": "ORG",
+      "start": 25,
+      "end": 36
+    },
+    {
+      "entity": "Novomlynsk",
+      "label": "LOC",
+      "start": 104,
+      "end": 114
+    },
+    {
+      "entity": "Kharkiv",
+      "label": "LOC",
+      "start": 122,
+      "end": 129
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "2nd Battalion",
+      "label": "ORG",
+      "start": 4,
+      "end": 17
+    },
+    {
+      "entity": "3rd Brigade",
+      "label": "ORG",
+      "start": 25,
+      "end": 36
+    },
+    {
+      "entity": "December 2024",
+      "label": "DATE",
+      "start": 52,
+      "end": 65
+    },
+    {
+      "entity": "Novomlynsk",
+      "label": "LOC",
+      "start": 104,
+      "end": 114
+    },
+    {
+      "entity": "Kharkiv",
+      "label": "LOC",
+      "start": 122,
+      "end": 129
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "2nd Battalion",
+      "label": "ORG",
+      "start": 4,
+      "end": 17
+    },
+    {
+      "entity": "3rd Brigade",
+      "label": "ORG",
+      "start": 25,
+      "end": 36
+    },
+    {
+      "entity": "Novomlynsk",
+      "label": "LOC",
+      "start": 104,
+      "end": 114
+    },
+    {
+      "entity": "Kharkiv",
+      "label": "LOC",
+      "start": 122,
+      "end": 129
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "2nd Battalion",
+      "label": "ORG",
+      "start": 4,
+      "end": 17
+    },
+    {
+      "entity": "3rd Brigade",
+      "label": "ORG",
+      "start": 25,
+      "end": 36
+    },
+    {
+      "entity": "December 2024",
+      "label": "DATE",
+      "start": 52,
+      "end": 65
+    },
+    {
+      "entity": "Novomlynsk",
+      "label": "LOC",
+      "start": 104,
+      "end": 114
+    },
+    {
+      "entity": "Kharkiv",
+      "label": "LOC",
+      "start": 122,
+      "end": 129
+    }
+  ],
+  "gold": [
+    {
+      "entity": "2nd Battalion",
+      "label": "ORG",
+      "start": 4,
+      "end": 17
+    },
+    {
+      "entity": "3rd Brigade",
+      "label": "ORG",
+      "start": 25,
+      "end": 36
+    },
+    {
+      "entity": "December 2024",
+      "label": "DATE",
+      "start": 52,
+      "end": 65
+    },
+    {
+      "entity": "Novomlynsk",
+      "label": "LOC",
+      "start": 104,
+      "end": 114
+    },
+    {
+      "entity": "Kharkiv",
+      "label": "LOC",
+      "start": 122,
+      "end": 129
+    }
+  ],
+  "history": []
+}

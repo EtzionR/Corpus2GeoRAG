@@ -1,0 +1,328 @@
+{
+  "comparison_row_id": 3203,
+  "Source": "Russian strikes on religious sites during the invasion of Ukraine",
+  "Index": 4,
+  "Text": "On 16 April 2026, the Russian Air Force dropped guided glide bombs on Zaporizhzhia killing the pastor, Ruslan Utyuzh, and wounding several others at an evangelical Baptist church House of the Gospel. The general secretary and CEO of the Baptist World Alliance, Elijah Brown, released a statement saying, “the ongoing targeting of churches, and places of worship must come to an immediate stop”. ",
+  "reviewed_at_utc": "2026-11-04T06:29:30.103864+00:00",
+  "original_predictions": [
+    {
+      "entity": "Russian Air Force",
+      "label": "ORG",
+      "start": 22,
+      "end": 39
+    },
+    {
+      "entity": "Zaporizhzhia",
+      "label": "LOC",
+      "start": 70,
+      "end": 82
+    },
+    {
+      "entity": "Ruslan Utyuzh",
+      "label": "PER",
+      "start": 103,
+      "end": 116
+    },
+    {
+      "entity": "House of the Gospel",
+      "label": "ORG",
+      "start": 179,
+      "end": 198
+    },
+    {
+      "entity": "Baptist World Alliance",
+      "label": "ORG",
+      "start": 237,
+      "end": 259
+    },
+    {
+      "entity": "Elijah Brown",
+      "label": "PER",
+      "start": 261,
+      "end": 273
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "16 April 2026",
+      "label": "DATE",
+      "start": 3,
+      "end": 16
+    },
+    {
+      "entity": "Russian Air Force",
+      "label": "ORG",
+      "start": 22,
+      "end": 39
+    },
+    {
+      "entity": "Zaporizhzhia",
+      "label": "LOC",
+      "start": 70,
+      "end": 82
+    },
+    {
+      "entity": "Ruslan Utyuzh",
+      "label": "PER",
+      "start": 103,
+      "end": 116
+    },
+    {
+      "entity": "Baptist",
+      "label": "MISC",
+      "start": 164,
+      "end": 171
+    },
+    {
+      "entity": "House of the Gospel",
+      "label": "ORG",
+      "start": 179,
+      "end": 198
+    },
+    {
+      "entity": "Baptist World Alliance",
+      "label": "ORG",
+      "start": 237,
+      "end": 259
+    },
+    {
+      "entity": "Elijah Brown",
+      "label": "PER",
+      "start": 261,
+      "end": 273
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Russian Air Force",
+      "label": "ORG",
+      "start": 22,
+      "end": 39
+    },
+    {
+      "entity": "Zaporizhzhia",
+      "label": "LOC",
+      "start": 70,
+      "end": 82
+    },
+    {
+      "entity": "Ruslan Utyuzh",
+      "label": "PER",
+      "start": 103,
+      "end": 116
+    },
+    {
+      "entity": "Baptist",
+      "label": "MISC",
+      "start": 164,
+      "end": 171
+    },
+    {
+      "entity": "House of the Gospel",
+      "label": "ORG",
+      "start": 179,
+      "end": 198
+    },
+    {
+      "entity": "Baptist World Alliance",
+      "label": "ORG",
+      "start": 237,
+      "end": 259
+    },
+    {
+      "entity": "Elijah Brown",
+      "label": "PER",
+      "start": 261,
+      "end": 273
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "16 April 2026",
+      "label": "DATE",
+      "start": 3,
+      "end": 16
+    },
+    {
+      "entity": "Russian Air Force",
+      "label": "ORG",
+      "start": 22,
+      "end": 39
+    },
+    {
+      "entity": "Zaporizhzhia",
+      "label": "LOC",
+      "start": 70,
+      "end": 82
+    },
+    {
+      "entity": "Ruslan Utyuzh",
+      "label": "PER",
+      "start": 103,
+      "end": 116
+    },
+    {
+      "entity": "Baptist",
+      "label": "MISC",
+      "start": 164,
+      "end": 171
+    },
+    {
+      "entity": "House of the Gospel",
+      "label": "ORG",
+      "start": 179,
+      "end": 198
+    },
+    {
+      "entity": "Baptist World Alliance",
+      "label": "ORG",
+      "start": 237,
+      "end": 259
+    },
+    {
+      "entity": "Elijah Brown",
+      "label": "PER",
+      "start": 261,
+      "end": 273
+    }
+  ],
+  "gold": [
+    {
+      "entity": "16 April 2026",
+      "label": "DATE",
+      "start": 3,
+      "end": 16
+    },
+    {
+      "entity": "Russian Air Force",
+      "label": "ORG",
+      "start": 22,
+      "end": 39
+    },
+    {
+      "entity": "Zaporizhzhia",
+      "label": "LOC",
+      "start": 70,
+      "end": 82
+    },
+    {
+      "entity": "Ruslan Utyuzh",
+      "label": "PER",
+      "start": 103,
+      "end": 116
+    },
+    {
+      "entity": "Baptist",
+      "label": "MISC",
+      "start": 164,
+      "end": 171
+    },
+    {
+      "entity": "House of the Gospel",
+      "label": "ORG",
+      "start": 179,
+      "end": 198
+    },
+    {
+      "entity": "Baptist World Alliance",
+      "label": "ORG",
+      "start": 237,
+      "end": 259
+    },
+    {
+      "entity": "Elijah Brown",
+      "label": "PER",
+      "start": 261,
+      "end": 273
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "add MISC | Baptist | 1",
+      "before": [
+        {
+          "entity": "Russian Air Force",
+          "label": "ORG",
+          "start": 22,
+          "end": 39
+        },
+        {
+          "entity": "Zaporizhzhia",
+          "label": "LOC",
+          "start": 70,
+          "end": 82
+        },
+        {
+          "entity": "Ruslan Utyuzh",
+          "label": "PER",
+          "start": 103,
+          "end": 116
+        },
+        {
+          "entity": "House of the Gospel",
+          "label": "ORG",
+          "start": 179,
+          "end": 198
+        },
+        {
+          "entity": "Baptist World Alliance",
+          "label": "ORG",
+          "start": 237,
+          "end": 259
+        },
+        {
+          "entity": "Elijah Brown",
+          "label": "PER",
+          "start": 261,
+          "end": 273
+        }
+      ],
+      "after": [
+        {
+          "entity": "Russian Air Force",
+          "label": "ORG",
+          "start": 22,
+          "end": 39
+        },
+        {
+          "entity": "Zaporizhzhia",
+          "label": "LOC",
+          "start": 70,
+          "end": 82
+        },
+        {
+          "entity": "Ruslan Utyuzh",
+          "label": "PER",
+          "start": 103,
+          "end": 116
+        },
+        {
+          "entity": "Baptist",
+          "label": "MISC",
+          "start": 164,
+          "end": 171
+        },
+        {
+          "entity": "House of the Gospel",
+          "label": "ORG",
+          "start": 179,
+          "end": 198
+        },
+        {
+          "entity": "Baptist World Alliance",
+          "label": "ORG",
+          "start": 237,
+          "end": 259
+        },
+        {
+          "entity": "Elijah Brown",
+          "label": "PER",
+          "start": 261,
+          "end": 273
+        }
+      ],
+      "at_utc": "2026-11-04T06:29:25.511654+00:00"
+    }
+  ]
+}

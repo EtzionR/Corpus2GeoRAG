@@ -1,0 +1,48 @@
+{
+  "comparison_row_id": 932,
+  "Source": "Battle of Antonov Airport",
+  "Index": 38,
+  "Text": "Special Operations Forces",
+  "reviewed_at_utc": "2026-11-04T07:11:13.774151+00:00",
+  "original_predictions": [
+    {
+      "entity": "Special Operations Forces",
+      "label": "ORG",
+      "start": 0,
+      "end": 25
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Special Operations Forces",
+      "label": "ORG",
+      "start": 0,
+      "end": 25
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Special Operations Forces",
+      "label": "ORG",
+      "start": 0,
+      "end": 25
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Special Operations Forces",
+      "label": "ORG",
+      "start": 0,
+      "end": 25
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Special Operations Forces",
+      "label": "ORG",
+      "start": 0,
+      "end": 25
+    }
+  ],
+  "history": []
+}

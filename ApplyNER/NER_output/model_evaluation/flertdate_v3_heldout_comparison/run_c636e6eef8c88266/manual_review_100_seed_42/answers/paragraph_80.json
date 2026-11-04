@@ -1,0 +1,96 @@
+{
+  "comparison_row_id": 80,
+  "Source": "127th Motor Rifle Division (Russia)",
+  "Index": 20,
+  "Text": "T-72B mod.1989 firing at the Sergeyevsky Training Ground (08-04-2020)",
+  "reviewed_at_utc": "2026-11-04T06:35:50.374253+00:00",
+  "original_predictions": [
+    {
+      "entity": "T-72B",
+      "label": "MISC",
+      "start": 0,
+      "end": 5
+    },
+    {
+      "entity": "Sergeyevsky Training Ground",
+      "label": "LOC",
+      "start": 29,
+      "end": 56
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "T-72B",
+      "label": "MISC",
+      "start": 0,
+      "end": 5
+    },
+    {
+      "entity": "Sergeyevsky Training Ground",
+      "label": "LOC",
+      "start": 29,
+      "end": 56
+    },
+    {
+      "entity": "08-04-2020",
+      "label": "DATE",
+      "start": 58,
+      "end": 68
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "T-72B",
+      "label": "MISC",
+      "start": 0,
+      "end": 5
+    },
+    {
+      "entity": "Sergeyevsky Training Ground",
+      "label": "LOC",
+      "start": 29,
+      "end": 56
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "T-72B",
+      "label": "MISC",
+      "start": 0,
+      "end": 5
+    },
+    {
+      "entity": "Sergeyevsky Training Ground",
+      "label": "LOC",
+      "start": 29,
+      "end": 56
+    },
+    {
+      "entity": "08-04-2020",
+      "label": "DATE",
+      "start": 58,
+      "end": 68
+    }
+  ],
+  "gold": [
+    {
+      "entity": "T-72B",
+      "label": "MISC",
+      "start": 0,
+      "end": 5
+    },
+    {
+      "entity": "Sergeyevsky Training Ground",
+      "label": "LOC",
+      "start": 29,
+      "end": 56
+    },
+    {
+      "entity": "08-04-2020",
+      "label": "DATE",
+      "start": 58,
+      "end": 68
+    }
+  ],
+  "history": []
+}

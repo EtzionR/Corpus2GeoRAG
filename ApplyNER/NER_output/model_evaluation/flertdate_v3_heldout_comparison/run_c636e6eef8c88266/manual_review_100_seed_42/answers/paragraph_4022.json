@@ -1,0 +1,138 @@
+{
+  "comparison_row_id": 4022,
+  "Source": "Timeline of the Russo-Ukrainian war (1 August – 31 December 2024)",
+  "Index": 443,
+  "Text": "Ten people were killed in a Russian missile attack on Odesa. Twelve more people were killed in a separate attack on a dormitory in Hlukhiv, Sumy Oblast.",
+  "reviewed_at_utc": "2026-11-04T07:09:18.940137+00:00",
+  "original_predictions": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 28,
+      "end": 35
+    },
+    {
+      "entity": "Odesa",
+      "label": "LOC",
+      "start": 54,
+      "end": 59
+    },
+    {
+      "entity": "Hlukhiv",
+      "label": "LOC",
+      "start": 131,
+      "end": 138
+    },
+    {
+      "entity": "Sumy Oblast",
+      "label": "LOC",
+      "start": 140,
+      "end": 151
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 28,
+      "end": 35
+    },
+    {
+      "entity": "Odesa",
+      "label": "LOC",
+      "start": 54,
+      "end": 59
+    },
+    {
+      "entity": "Hlukhiv",
+      "label": "LOC",
+      "start": 131,
+      "end": 138
+    },
+    {
+      "entity": "Sumy Oblast",
+      "label": "LOC",
+      "start": 140,
+      "end": 151
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 28,
+      "end": 35
+    },
+    {
+      "entity": "Odesa",
+      "label": "LOC",
+      "start": 54,
+      "end": 59
+    },
+    {
+      "entity": "Hlukhiv",
+      "label": "LOC",
+      "start": 131,
+      "end": 138
+    },
+    {
+      "entity": "Sumy Oblast",
+      "label": "LOC",
+      "start": 140,
+      "end": 151
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 28,
+      "end": 35
+    },
+    {
+      "entity": "Odesa",
+      "label": "LOC",
+      "start": 54,
+      "end": 59
+    },
+    {
+      "entity": "Hlukhiv",
+      "label": "LOC",
+      "start": 131,
+      "end": 138
+    },
+    {
+      "entity": "Sumy Oblast",
+      "label": "LOC",
+      "start": 140,
+      "end": 151
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 28,
+      "end": 35
+    },
+    {
+      "entity": "Odesa",
+      "label": "LOC",
+      "start": 54,
+      "end": 59
+    },
+    {
+      "entity": "Hlukhiv",
+      "label": "LOC",
+      "start": 131,
+      "end": 138
+    },
+    {
+      "entity": "Sumy Oblast",
+      "label": "LOC",
+      "start": 140,
+      "end": 151
+    }
+  ],
+  "history": []
+}

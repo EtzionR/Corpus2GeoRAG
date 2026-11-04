@@ -1,0 +1,286 @@
+{
+  "comparison_row_id": 3063,
+  "Source": "Right Sector",
+  "Index": 24,
+  "Text": "Also in 2015, another group of volunteers separated from the Right Sector under Volodymyr Regesha forming their own separate paramilitary unit, named the Santa \"Right Sector\".",
+  "reviewed_at_utc": "2026-11-04T07:14:54.669941+00:00",
+  "original_predictions": [
+    {
+      "entity": "Right Sector",
+      "label": "ORG",
+      "start": 61,
+      "end": 73
+    },
+    {
+      "entity": "Volodymyr Regesha",
+      "label": "PER",
+      "start": 80,
+      "end": 97
+    },
+    {
+      "entity": "Santa",
+      "label": "ORG",
+      "start": 154,
+      "end": 159
+    },
+    {
+      "entity": "Right Sector",
+      "label": "ORG",
+      "start": 161,
+      "end": 173
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "2015",
+      "label": "DATE",
+      "start": 8,
+      "end": 12
+    },
+    {
+      "entity": "Right Sector",
+      "label": "ORG",
+      "start": 61,
+      "end": 73
+    },
+    {
+      "entity": "Volodymyr Regesha",
+      "label": "PER",
+      "start": 80,
+      "end": 97
+    },
+    {
+      "entity": "Right Sector",
+      "label": "ORG",
+      "start": 161,
+      "end": 173
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Right Sector",
+      "label": "ORG",
+      "start": 61,
+      "end": 73
+    },
+    {
+      "entity": "Volodymyr Regesha",
+      "label": "PER",
+      "start": 80,
+      "end": 97
+    },
+    {
+      "entity": "Santa \"Right Sector\"",
+      "label": "ORG",
+      "start": 154,
+      "end": 174
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "2015",
+      "label": "DATE",
+      "start": 8,
+      "end": 12
+    },
+    {
+      "entity": "Right Sector",
+      "label": "ORG",
+      "start": 61,
+      "end": 73
+    },
+    {
+      "entity": "Volodymyr Regesha",
+      "label": "PER",
+      "start": 80,
+      "end": 97
+    },
+    {
+      "entity": "Santa \"Right Sector\"",
+      "label": "ORG",
+      "start": 154,
+      "end": 174
+    }
+  ],
+  "gold": [
+    {
+      "entity": "2015",
+      "label": "DATE",
+      "start": 8,
+      "end": 12
+    },
+    {
+      "entity": "Right Sector",
+      "label": "ORG",
+      "start": 61,
+      "end": 73
+    },
+    {
+      "entity": "Volodymyr Regesha",
+      "label": "PER",
+      "start": 80,
+      "end": 97
+    },
+    {
+      "entity": "Santa \"Right Sector\"",
+      "label": "ORG",
+      "start": 154,
+      "end": 174
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "del 4",
+      "before": [
+        {
+          "entity": "Right Sector",
+          "label": "ORG",
+          "start": 61,
+          "end": 73
+        },
+        {
+          "entity": "Volodymyr Regesha",
+          "label": "PER",
+          "start": 80,
+          "end": 97
+        },
+        {
+          "entity": "Santa",
+          "label": "ORG",
+          "start": 154,
+          "end": 159
+        },
+        {
+          "entity": "Right Sector",
+          "label": "ORG",
+          "start": 161,
+          "end": 173
+        }
+      ],
+      "after": [
+        {
+          "entity": "Right Sector",
+          "label": "ORG",
+          "start": 61,
+          "end": 73
+        },
+        {
+          "entity": "Volodymyr Regesha",
+          "label": "PER",
+          "start": 80,
+          "end": 97
+        },
+        {
+          "entity": "Santa",
+          "label": "ORG",
+          "start": 154,
+          "end": 159
+        }
+      ],
+      "at_utc": "2026-11-04T07:14:27.953021+00:00"
+    },
+    {
+      "model": "original",
+      "command": "span 3 | Santa \"Right Sector\" | 1",
+      "before": [
+        {
+          "entity": "Right Sector",
+          "label": "ORG",
+          "start": 61,
+          "end": 73
+        },
+        {
+          "entity": "Volodymyr Regesha",
+          "label": "PER",
+          "start": 80,
+          "end": 97
+        },
+        {
+          "entity": "Santa",
+          "label": "ORG",
+          "start": 154,
+          "end": 159
+        }
+      ],
+      "after": [
+        {
+          "entity": "Right Sector",
+          "label": "ORG",
+          "start": 61,
+          "end": 73
+        },
+        {
+          "entity": "Volodymyr Regesha",
+          "label": "PER",
+          "start": 80,
+          "end": 97
+        },
+        {
+          "entity": "Santa \"Right Sector\"",
+          "label": "ORG",
+          "start": 154,
+          "end": 174
+        }
+      ],
+      "at_utc": "2026-11-04T07:14:34.233606+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "span 4 | Santa \"Right Sector\" | 1",
+      "before": [
+        {
+          "entity": "2015",
+          "label": "DATE",
+          "start": 8,
+          "end": 12
+        },
+        {
+          "entity": "Right Sector",
+          "label": "ORG",
+          "start": 61,
+          "end": 73
+        },
+        {
+          "entity": "Volodymyr Regesha",
+          "label": "PER",
+          "start": 80,
+          "end": 97
+        },
+        {
+          "entity": "Right Sector",
+          "label": "ORG",
+          "start": 161,
+          "end": 173
+        }
+      ],
+      "after": [
+        {
+          "entity": "2015",
+          "label": "DATE",
+          "start": 8,
+          "end": 12
+        },
+        {
+          "entity": "Right Sector",
+          "label": "ORG",
+          "start": 61,
+          "end": 73
+        },
+        {
+          "entity": "Volodymyr Regesha",
+          "label": "PER",
+          "start": 80,
+          "end": 97
+        },
+        {
+          "entity": "Santa \"Right Sector\"",
+          "label": "ORG",
+          "start": 154,
+          "end": 174
+        }
+      ],
+      "at_utc": "2026-11-04T07:14:48.970219+00:00"
+    }
+  ]
+}

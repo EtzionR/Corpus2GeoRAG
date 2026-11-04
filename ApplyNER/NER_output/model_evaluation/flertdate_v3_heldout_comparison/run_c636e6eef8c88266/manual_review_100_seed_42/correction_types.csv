@@ -1,0 +1,4 @@
+﻿Model,Evaluation,Missing,Extra,Boundary,Label,Boundary + label,Total
+Original FLERT,4 labels,5,39,29,10,4,87
+FlertDate_v3,4 labels,31,19,12,11,3,76
+FlertDate_v3,5 labels,39,21,17,11,3,91

@@ -1,0 +1,217 @@
+{
+  "comparison_row_id": 1272,
+  "Source": "Combat Organization of Anarcho-Communists",
+  "Index": 9,
+  "Text": "On 19 April 2023, Dmitry Petrov, one of the organisation's founders, was killed in the battle of Bakhmut while fighting for the Ukrainian Territorial Defense Forces.",
+  "reviewed_at_utc": "2026-11-04T07:50:24.926211+00:00",
+  "original_predictions": [
+    {
+      "entity": "Dmitry Petrov",
+      "label": "PER",
+      "start": 18,
+      "end": 31
+    },
+    {
+      "entity": "Bakhmut",
+      "label": "LOC",
+      "start": 97,
+      "end": 104
+    },
+    {
+      "entity": "Ukrainian Territorial Defense Forces",
+      "label": "ORG",
+      "start": 128,
+      "end": 164
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "19 April 2023",
+      "label": "DATE",
+      "start": 3,
+      "end": 16
+    },
+    {
+      "entity": "Dmitry Petrov",
+      "label": "PER",
+      "start": 18,
+      "end": 31
+    },
+    {
+      "entity": "battle of Bakhmut",
+      "label": "MISC",
+      "start": 87,
+      "end": 104
+    },
+    {
+      "entity": "Ukrainian Territorial Defense Forces",
+      "label": "ORG",
+      "start": 128,
+      "end": 164
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Dmitry Petrov",
+      "label": "PER",
+      "start": 18,
+      "end": 31
+    },
+    {
+      "entity": "battle of Bakhmut",
+      "label": "MISC",
+      "start": 87,
+      "end": 104
+    },
+    {
+      "entity": "Ukrainian Territorial Defense Forces",
+      "label": "ORG",
+      "start": 128,
+      "end": 164
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "19 April 2023",
+      "label": "DATE",
+      "start": 3,
+      "end": 16
+    },
+    {
+      "entity": "Dmitry Petrov",
+      "label": "PER",
+      "start": 18,
+      "end": 31
+    },
+    {
+      "entity": "battle of Bakhmut",
+      "label": "MISC",
+      "start": 87,
+      "end": 104
+    },
+    {
+      "entity": "Ukrainian Territorial Defense Forces",
+      "label": "ORG",
+      "start": 128,
+      "end": 164
+    }
+  ],
+  "gold": [
+    {
+      "entity": "19 April 2023",
+      "label": "DATE",
+      "start": 3,
+      "end": 16
+    },
+    {
+      "entity": "Dmitry Petrov",
+      "label": "PER",
+      "start": 18,
+      "end": 31
+    },
+    {
+      "entity": "battle of Bakhmut",
+      "label": "MISC",
+      "start": 87,
+      "end": 104
+    },
+    {
+      "entity": "Ukrainian Territorial Defense Forces",
+      "label": "ORG",
+      "start": 128,
+      "end": 164
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "span 2 | battle of Bakhmut | 1",
+      "before": [
+        {
+          "entity": "Dmitry Petrov",
+          "label": "PER",
+          "start": 18,
+          "end": 31
+        },
+        {
+          "entity": "Bakhmut",
+          "label": "LOC",
+          "start": 97,
+          "end": 104
+        },
+        {
+          "entity": "Ukrainian Territorial Defense Forces",
+          "label": "ORG",
+          "start": 128,
+          "end": 164
+        }
+      ],
+      "after": [
+        {
+          "entity": "Dmitry Petrov",
+          "label": "PER",
+          "start": 18,
+          "end": 31
+        },
+        {
+          "entity": "battle of Bakhmut",
+          "label": "LOC",
+          "start": 87,
+          "end": 104
+        },
+        {
+          "entity": "Ukrainian Territorial Defense Forces",
+          "label": "ORG",
+          "start": 128,
+          "end": 164
+        }
+      ],
+      "at_utc": "2026-11-04T07:50:14.862559+00:00"
+    },
+    {
+      "model": "original",
+      "command": "label 2 MISC",
+      "before": [
+        {
+          "entity": "Dmitry Petrov",
+          "label": "PER",
+          "start": 18,
+          "end": 31
+        },
+        {
+          "entity": "battle of Bakhmut",
+          "label": "LOC",
+          "start": 87,
+          "end": 104
+        },
+        {
+          "entity": "Ukrainian Territorial Defense Forces",
+          "label": "ORG",
+          "start": 128,
+          "end": 164
+        }
+      ],
+      "after": [
+        {
+          "entity": "Dmitry Petrov",
+          "label": "PER",
+          "start": 18,
+          "end": 31
+        },
+        {
+          "entity": "battle of Bakhmut",
+          "label": "MISC",
+          "start": 87,
+          "end": 104
+        },
+        {
+          "entity": "Ukrainian Territorial Defense Forces",
+          "label": "ORG",
+          "start": 128,
+          "end": 164
+        }
+      ],
+      "at_utc": "2026-11-04T07:50:20.906215+00:00"
+    }
+  ]
+}

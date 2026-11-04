@@ -1,0 +1,373 @@
+{
+  "comparison_row_id": 4560,
+  "Source": "Timeline of the Russo-Ukrainian war (12 November 2022 – 7 June 2023)",
+  "Index": 358,
+  "Text": "The Russian Defence Ministry said it had scrambled Su-27 and Su-35 fighter jets to intercept two US Air Force B-1B strategic bombers near the country's airspace boundary over the Baltic Sea.",
+  "reviewed_at_utc": "2026-11-04T07:44:13.279639+00:00",
+  "original_predictions": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 4,
+      "end": 11
+    },
+    {
+      "entity": "Defence Ministry",
+      "label": "ORG",
+      "start": 12,
+      "end": 28
+    },
+    {
+      "entity": "Su-27",
+      "label": "MISC",
+      "start": 51,
+      "end": 56
+    },
+    {
+      "entity": "Su-35",
+      "label": "MISC",
+      "start": 61,
+      "end": 66
+    },
+    {
+      "entity": "US Air Force",
+      "label": "ORG",
+      "start": 97,
+      "end": 109
+    },
+    {
+      "entity": "B-1B",
+      "label": "MISC",
+      "start": 110,
+      "end": 114
+    },
+    {
+      "entity": "Baltic Sea",
+      "label": "LOC",
+      "start": 179,
+      "end": 189
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Russian Defence Ministry",
+      "label": "ORG",
+      "start": 4,
+      "end": 28
+    },
+    {
+      "entity": "Su-27",
+      "label": "MISC",
+      "start": 51,
+      "end": 56
+    },
+    {
+      "entity": "Su-35",
+      "label": "MISC",
+      "start": 61,
+      "end": 66
+    },
+    {
+      "entity": "US Air Force",
+      "label": "ORG",
+      "start": 97,
+      "end": 109
+    },
+    {
+      "entity": "B-1B",
+      "label": "MISC",
+      "start": 110,
+      "end": 114
+    },
+    {
+      "entity": "Baltic Sea",
+      "label": "LOC",
+      "start": 179,
+      "end": 189
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Russian Defence Ministry",
+      "label": "ORG",
+      "start": 4,
+      "end": 28
+    },
+    {
+      "entity": "Su-27",
+      "label": "MISC",
+      "start": 51,
+      "end": 56
+    },
+    {
+      "entity": "Su-35",
+      "label": "MISC",
+      "start": 61,
+      "end": 66
+    },
+    {
+      "entity": "US Air Force",
+      "label": "ORG",
+      "start": 97,
+      "end": 109
+    },
+    {
+      "entity": "B-1B",
+      "label": "MISC",
+      "start": 110,
+      "end": 114
+    },
+    {
+      "entity": "Baltic Sea",
+      "label": "LOC",
+      "start": 179,
+      "end": 189
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Russian Defence Ministry",
+      "label": "ORG",
+      "start": 4,
+      "end": 28
+    },
+    {
+      "entity": "Su-27",
+      "label": "MISC",
+      "start": 51,
+      "end": 56
+    },
+    {
+      "entity": "Su-35",
+      "label": "MISC",
+      "start": 61,
+      "end": 66
+    },
+    {
+      "entity": "US Air Force",
+      "label": "ORG",
+      "start": 97,
+      "end": 109
+    },
+    {
+      "entity": "B-1B",
+      "label": "MISC",
+      "start": 110,
+      "end": 114
+    },
+    {
+      "entity": "Baltic Sea",
+      "label": "LOC",
+      "start": 179,
+      "end": 189
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Russian Defence Ministry",
+      "label": "ORG",
+      "start": 4,
+      "end": 28
+    },
+    {
+      "entity": "Su-27",
+      "label": "MISC",
+      "start": 51,
+      "end": 56
+    },
+    {
+      "entity": "Su-35",
+      "label": "MISC",
+      "start": 61,
+      "end": 66
+    },
+    {
+      "entity": "US Air Force",
+      "label": "ORG",
+      "start": 97,
+      "end": 109
+    },
+    {
+      "entity": "B-1B",
+      "label": "MISC",
+      "start": 110,
+      "end": 114
+    },
+    {
+      "entity": "Baltic Sea",
+      "label": "LOC",
+      "start": 179,
+      "end": 189
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "del 1",
+      "before": [
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 4,
+          "end": 11
+        },
+        {
+          "entity": "Defence Ministry",
+          "label": "ORG",
+          "start": 12,
+          "end": 28
+        },
+        {
+          "entity": "Su-27",
+          "label": "MISC",
+          "start": 51,
+          "end": 56
+        },
+        {
+          "entity": "Su-35",
+          "label": "MISC",
+          "start": 61,
+          "end": 66
+        },
+        {
+          "entity": "US Air Force",
+          "label": "ORG",
+          "start": 97,
+          "end": 109
+        },
+        {
+          "entity": "B-1B",
+          "label": "MISC",
+          "start": 110,
+          "end": 114
+        },
+        {
+          "entity": "Baltic Sea",
+          "label": "LOC",
+          "start": 179,
+          "end": 189
+        }
+      ],
+      "after": [
+        {
+          "entity": "Defence Ministry",
+          "label": "ORG",
+          "start": 12,
+          "end": 28
+        },
+        {
+          "entity": "Su-27",
+          "label": "MISC",
+          "start": 51,
+          "end": 56
+        },
+        {
+          "entity": "Su-35",
+          "label": "MISC",
+          "start": 61,
+          "end": 66
+        },
+        {
+          "entity": "US Air Force",
+          "label": "ORG",
+          "start": 97,
+          "end": 109
+        },
+        {
+          "entity": "B-1B",
+          "label": "MISC",
+          "start": 110,
+          "end": 114
+        },
+        {
+          "entity": "Baltic Sea",
+          "label": "LOC",
+          "start": 179,
+          "end": 189
+        }
+      ],
+      "at_utc": "2026-11-04T07:44:02.396062+00:00"
+    },
+    {
+      "model": "original",
+      "command": "span 1 | Russian Defence Ministry | 1",
+      "before": [
+        {
+          "entity": "Defence Ministry",
+          "label": "ORG",
+          "start": 12,
+          "end": 28
+        },
+        {
+          "entity": "Su-27",
+          "label": "MISC",
+          "start": 51,
+          "end": 56
+        },
+        {
+          "entity": "Su-35",
+          "label": "MISC",
+          "start": 61,
+          "end": 66
+        },
+        {
+          "entity": "US Air Force",
+          "label": "ORG",
+          "start": 97,
+          "end": 109
+        },
+        {
+          "entity": "B-1B",
+          "label": "MISC",
+          "start": 110,
+          "end": 114
+        },
+        {
+          "entity": "Baltic Sea",
+          "label": "LOC",
+          "start": 179,
+          "end": 189
+        }
+      ],
+      "after": [
+        {
+          "entity": "Russian Defence Ministry",
+          "label": "ORG",
+          "start": 4,
+          "end": 28
+        },
+        {
+          "entity": "Su-27",
+          "label": "MISC",
+          "start": 51,
+          "end": 56
+        },
+        {
+          "entity": "Su-35",
+          "label": "MISC",
+          "start": 61,
+          "end": 66
+        },
+        {
+          "entity": "US Air Force",
+          "label": "ORG",
+          "start": 97,
+          "end": 109
+        },
+        {
+          "entity": "B-1B",
+          "label": "MISC",
+          "start": 110,
+          "end": 114
+        },
+        {
+          "entity": "Baltic Sea",
+          "label": "LOC",
+          "start": 179,
+          "end": 189
+        }
+      ],
+      "at_utc": "2026-11-04T07:44:07.338074+00:00"
+    }
+  ]
+}

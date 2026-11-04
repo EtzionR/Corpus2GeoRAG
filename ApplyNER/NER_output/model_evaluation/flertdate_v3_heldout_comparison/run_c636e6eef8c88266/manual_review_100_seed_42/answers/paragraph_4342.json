@@ -1,0 +1,460 @@
+{
+  "comparison_row_id": 4342,
+  "Source": "Timeline of the Russo-Ukrainian war (12 November 2022 – 7 June 2023)",
+  "Index": 138,
+  "Text": "Dmitry Medvedev, member of Russia's security council, visited the Omsk Transport Engineering Plant (a tank factory) and made a statement, promising to \"modernize thousands of tanks\" and \"increase production of modern tanks\" in response to Ukraine receiving Western tanks.",
+  "reviewed_at_utc": "2026-11-04T06:57:29.521205+00:00",
+  "original_predictions": [
+    {
+      "entity": "Dmitry Medvedev",
+      "label": "PER",
+      "start": 0,
+      "end": 15
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 27,
+      "end": 33
+    },
+    {
+      "entity": "Omsk Transport Engineering Plant",
+      "label": "LOC",
+      "start": 66,
+      "end": 98
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 239,
+      "end": 246
+    },
+    {
+      "entity": "Western",
+      "label": "MISC",
+      "start": 257,
+      "end": 264
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Dmitry Medvedev",
+      "label": "PER",
+      "start": 0,
+      "end": 15
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 27,
+      "end": 33
+    },
+    {
+      "entity": "Omsk Transport Engineering Plant",
+      "label": "ORG",
+      "start": 66,
+      "end": 98
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 239,
+      "end": 246
+    },
+    {
+      "entity": "Western",
+      "label": "MISC",
+      "start": 257,
+      "end": 264
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Dmitry Medvedev",
+      "label": "PER",
+      "start": 0,
+      "end": 15
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 27,
+      "end": 33
+    },
+    {
+      "entity": "Omsk Transport Engineering Plant",
+      "label": "LOC",
+      "start": 66,
+      "end": 98
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 239,
+      "end": 246
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Dmitry Medvedev",
+      "label": "PER",
+      "start": 0,
+      "end": 15
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 27,
+      "end": 33
+    },
+    {
+      "entity": "Omsk Transport Engineering Plant",
+      "label": "LOC",
+      "start": 66,
+      "end": 98
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 239,
+      "end": 246
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Dmitry Medvedev",
+      "label": "PER",
+      "start": 0,
+      "end": 15
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 27,
+      "end": 33
+    },
+    {
+      "entity": "Omsk Transport Engineering Plant",
+      "label": "LOC",
+      "start": 66,
+      "end": 98
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 239,
+      "end": 246
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "span 2 | Russia's security council | 1",
+      "before": [
+        {
+          "entity": "Dmitry Medvedev",
+          "label": "PER",
+          "start": 0,
+          "end": 15
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 27,
+          "end": 33
+        },
+        {
+          "entity": "Omsk Transport Engineering Plant",
+          "label": "LOC",
+          "start": 66,
+          "end": 98
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 239,
+          "end": 246
+        },
+        {
+          "entity": "Western",
+          "label": "MISC",
+          "start": 257,
+          "end": 264
+        }
+      ],
+      "after": [
+        {
+          "entity": "Dmitry Medvedev",
+          "label": "PER",
+          "start": 0,
+          "end": 15
+        },
+        {
+          "entity": "Russia's security council",
+          "label": "LOC",
+          "start": 27,
+          "end": 52
+        },
+        {
+          "entity": "Omsk Transport Engineering Plant",
+          "label": "LOC",
+          "start": 66,
+          "end": 98
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 239,
+          "end": 246
+        },
+        {
+          "entity": "Western",
+          "label": "MISC",
+          "start": 257,
+          "end": 264
+        }
+      ],
+      "at_utc": "2026-11-04T06:54:23.553333+00:00"
+    },
+    {
+      "model": "original",
+      "command": "del 5",
+      "before": [
+        {
+          "entity": "Dmitry Medvedev",
+          "label": "PER",
+          "start": 0,
+          "end": 15
+        },
+        {
+          "entity": "Russia's security council",
+          "label": "LOC",
+          "start": 27,
+          "end": 52
+        },
+        {
+          "entity": "Omsk Transport Engineering Plant",
+          "label": "LOC",
+          "start": 66,
+          "end": 98
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 239,
+          "end": 246
+        },
+        {
+          "entity": "Western",
+          "label": "MISC",
+          "start": 257,
+          "end": 264
+        }
+      ],
+      "after": [
+        {
+          "entity": "Dmitry Medvedev",
+          "label": "PER",
+          "start": 0,
+          "end": 15
+        },
+        {
+          "entity": "Russia's security council",
+          "label": "LOC",
+          "start": 27,
+          "end": 52
+        },
+        {
+          "entity": "Omsk Transport Engineering Plant",
+          "label": "LOC",
+          "start": 66,
+          "end": 98
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 239,
+          "end": 246
+        }
+      ],
+      "at_utc": "2026-11-04T06:56:12.116924+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "del 5",
+      "before": [
+        {
+          "entity": "Dmitry Medvedev",
+          "label": "PER",
+          "start": 0,
+          "end": 15
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 27,
+          "end": 33
+        },
+        {
+          "entity": "Omsk Transport Engineering Plant",
+          "label": "ORG",
+          "start": 66,
+          "end": 98
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 239,
+          "end": 246
+        },
+        {
+          "entity": "Western",
+          "label": "MISC",
+          "start": 257,
+          "end": 264
+        }
+      ],
+      "after": [
+        {
+          "entity": "Dmitry Medvedev",
+          "label": "PER",
+          "start": 0,
+          "end": 15
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 27,
+          "end": 33
+        },
+        {
+          "entity": "Omsk Transport Engineering Plant",
+          "label": "ORG",
+          "start": 66,
+          "end": 98
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 239,
+          "end": 246
+        }
+      ],
+      "at_utc": "2026-11-04T06:56:16.338840+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "label 3 LOC",
+      "before": [
+        {
+          "entity": "Dmitry Medvedev",
+          "label": "PER",
+          "start": 0,
+          "end": 15
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 27,
+          "end": 33
+        },
+        {
+          "entity": "Omsk Transport Engineering Plant",
+          "label": "ORG",
+          "start": 66,
+          "end": 98
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 239,
+          "end": 246
+        }
+      ],
+      "after": [
+        {
+          "entity": "Dmitry Medvedev",
+          "label": "PER",
+          "start": 0,
+          "end": 15
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 27,
+          "end": 33
+        },
+        {
+          "entity": "Omsk Transport Engineering Plant",
+          "label": "LOC",
+          "start": 66,
+          "end": 98
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 239,
+          "end": 246
+        }
+      ],
+      "at_utc": "2026-11-04T06:56:21.803164+00:00"
+    },
+    {
+      "model": "original",
+      "command": "span 2 | Russia | 1",
+      "before": [
+        {
+          "entity": "Dmitry Medvedev",
+          "label": "PER",
+          "start": 0,
+          "end": 15
+        },
+        {
+          "entity": "Russia's security council",
+          "label": "LOC",
+          "start": 27,
+          "end": 52
+        },
+        {
+          "entity": "Omsk Transport Engineering Plant",
+          "label": "LOC",
+          "start": 66,
+          "end": 98
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 239,
+          "end": 246
+        }
+      ],
+      "after": [
+        {
+          "entity": "Dmitry Medvedev",
+          "label": "PER",
+          "start": 0,
+          "end": 15
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 27,
+          "end": 33
+        },
+        {
+          "entity": "Omsk Transport Engineering Plant",
+          "label": "LOC",
+          "start": 66,
+          "end": 98
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 239,
+          "end": 246
+        }
+      ],
+      "at_utc": "2026-11-04T06:57:24.872365+00:00"
+    }
+  ]
+}

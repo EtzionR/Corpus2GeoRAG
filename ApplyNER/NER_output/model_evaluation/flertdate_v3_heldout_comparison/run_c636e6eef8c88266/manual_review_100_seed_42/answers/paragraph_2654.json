@@ -1,0 +1,378 @@
+{
+  "comparison_row_id": 2654,
+  "Source": "Malaysia Airlines Flight 17",
+  "Index": 120,
+  "Text": "For the first year following the crash, Russian state media claimed that a Ukrainian Air Force Su-25 jet had shot down Flight 17. Radar data, allegedly from Russian air traffic controllers, which was leaked to a Moscow newspaper, was claimed to be proof that there were Ukrainian military jets near MH17. Russia claimed that a Ukrainian Air Force deserter had told them that he had overheard Ukrainian pilots discussing having shot down the wrong plane on the day MH17 crashed.",
+  "reviewed_at_utc": "2026-11-04T07:37:57.992871+00:00",
+  "original_predictions": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 40,
+      "end": 47
+    },
+    {
+      "entity": "Ukrainian Air Force",
+      "label": "ORG",
+      "start": 75,
+      "end": 94
+    },
+    {
+      "entity": "Su-25",
+      "label": "MISC",
+      "start": 95,
+      "end": 100
+    },
+    {
+      "entity": "Flight 17",
+      "label": "MISC",
+      "start": 119,
+      "end": 128
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 157,
+      "end": 164
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 212,
+      "end": 218
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 270,
+      "end": 279
+    },
+    {
+      "entity": "MH17",
+      "label": "MISC",
+      "start": 299,
+      "end": 303
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 305,
+      "end": 311
+    },
+    {
+      "entity": "Ukrainian Air Force",
+      "label": "ORG",
+      "start": 327,
+      "end": 346
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 392,
+      "end": 401
+    },
+    {
+      "entity": "MH17",
+      "label": "MISC",
+      "start": 464,
+      "end": 468
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 40,
+      "end": 47
+    },
+    {
+      "entity": "Ukrainian Air Force",
+      "label": "ORG",
+      "start": 75,
+      "end": 94
+    },
+    {
+      "entity": "Su-25",
+      "label": "MISC",
+      "start": 95,
+      "end": 100
+    },
+    {
+      "entity": "Flight 17",
+      "label": "MISC",
+      "start": 119,
+      "end": 128
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 157,
+      "end": 164
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 212,
+      "end": 218
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 270,
+      "end": 279
+    },
+    {
+      "entity": "MH17",
+      "label": "MISC",
+      "start": 299,
+      "end": 303
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 305,
+      "end": 311
+    },
+    {
+      "entity": "Ukrainian Air Force",
+      "label": "ORG",
+      "start": 327,
+      "end": 346
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 392,
+      "end": 401
+    },
+    {
+      "entity": "MH17",
+      "label": "MISC",
+      "start": 464,
+      "end": 468
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 40,
+      "end": 47
+    },
+    {
+      "entity": "Ukrainian Air Force",
+      "label": "ORG",
+      "start": 75,
+      "end": 94
+    },
+    {
+      "entity": "Su-25",
+      "label": "MISC",
+      "start": 95,
+      "end": 100
+    },
+    {
+      "entity": "Flight 17",
+      "label": "MISC",
+      "start": 119,
+      "end": 128
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 157,
+      "end": 164
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 212,
+      "end": 218
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 270,
+      "end": 279
+    },
+    {
+      "entity": "MH17",
+      "label": "MISC",
+      "start": 299,
+      "end": 303
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 305,
+      "end": 311
+    },
+    {
+      "entity": "Ukrainian Air Force",
+      "label": "ORG",
+      "start": 327,
+      "end": 346
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 392,
+      "end": 401
+    },
+    {
+      "entity": "MH17",
+      "label": "MISC",
+      "start": 464,
+      "end": 468
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 40,
+      "end": 47
+    },
+    {
+      "entity": "Ukrainian Air Force",
+      "label": "ORG",
+      "start": 75,
+      "end": 94
+    },
+    {
+      "entity": "Su-25",
+      "label": "MISC",
+      "start": 95,
+      "end": 100
+    },
+    {
+      "entity": "Flight 17",
+      "label": "MISC",
+      "start": 119,
+      "end": 128
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 157,
+      "end": 164
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 212,
+      "end": 218
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 270,
+      "end": 279
+    },
+    {
+      "entity": "MH17",
+      "label": "MISC",
+      "start": 299,
+      "end": 303
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 305,
+      "end": 311
+    },
+    {
+      "entity": "Ukrainian Air Force",
+      "label": "ORG",
+      "start": 327,
+      "end": 346
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 392,
+      "end": 401
+    },
+    {
+      "entity": "MH17",
+      "label": "MISC",
+      "start": 464,
+      "end": 468
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 40,
+      "end": 47
+    },
+    {
+      "entity": "Ukrainian Air Force",
+      "label": "ORG",
+      "start": 75,
+      "end": 94
+    },
+    {
+      "entity": "Su-25",
+      "label": "MISC",
+      "start": 95,
+      "end": 100
+    },
+    {
+      "entity": "Flight 17",
+      "label": "MISC",
+      "start": 119,
+      "end": 128
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 157,
+      "end": 164
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 212,
+      "end": 218
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 270,
+      "end": 279
+    },
+    {
+      "entity": "MH17",
+      "label": "MISC",
+      "start": 299,
+      "end": 303
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 305,
+      "end": 311
+    },
+    {
+      "entity": "Ukrainian Air Force",
+      "label": "ORG",
+      "start": 327,
+      "end": 346
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 392,
+      "end": 401
+    },
+    {
+      "entity": "MH17",
+      "label": "MISC",
+      "start": 464,
+      "end": 468
+    }
+  ],
+  "history": []
+}
