@@ -104,8 +104,8 @@ from geo_agent import (
     to_bounding_box,
 )
 
-# Ensure get_source_text, extract_answer_subgraph, API key persistence helpers, and AgentError are safely resolved even across hot-reloads
-if not hasattr(geo_agent, "extract_answer_subgraph"):
+# Ensure get_source_text, extract_answer_subgraph, format_evidence_popup_html, API key persistence helpers, and AgentError are safely resolved even across hot-reloads
+if not hasattr(geo_agent, "extract_answer_subgraph") or not hasattr(geo_agent, "format_evidence_popup_html") or not hasattr(geo_agent, "_is_event_article_title"):
     try:
         import importlib
         geo_agent = importlib.reload(geo_agent)
@@ -398,21 +398,37 @@ def format_tactical_citations(
     geo_locations: Optional[List[Dict[str, Any]]] = None,
 ) -> str:
     """
-    Format bracketed citations ([1], [S2], [L1], [P1-S1]) into styled tactical badges with hover tooltips.
+    Format bracketed citations ([1], [S2], [L1], [P1-S1]) into interactive tactical hyperlink badges with hover tooltips.
+    - Clicking a location citation ([1]) focuses and zooms the Folium map on that marker and opens its popup (0ms client-side).
+    - Clicking a source citation ([S2], [L1], [P1-S1]) expands the Verified Sources drawer and opens that source's Inspect card.
     Preserves standard markdown links like [text](url) and non-citation brackets.
     """
+    import html as _html
     if not content or not str(content).strip():
         return content
 
     pin_labels: Dict[int, str] = {}
+    pin_coords: Dict[int, Tuple[float, float]] = {}
     if geo_locations and isinstance(geo_locations, list):
         for loc in geo_locations:
             if isinstance(loc, dict):
                 p_num = loc.get("number")
                 p_lbl = loc.get("label") or loc.get("name") or loc.get("id")
-                if p_num is not None and p_lbl:
+                if p_num is not None:
                     try:
-                        pin_labels[int(p_num)] = str(p_lbl)
+                        num_int = int(p_num)
+                        if p_lbl:
+                            pin_labels[num_int] = str(p_lbl)
+                        geom = loc.get("geometry")
+                        coords = geom.get("coordinates") if isinstance(geom, dict) else None
+                        if isinstance(coords, (list, tuple)) and len(coords) >= 2:
+                            pin_coords[num_int] = (float(coords[1]), float(coords[0]))
+                        elif "lat" in loc and "lng" in loc:
+                            pin_coords[num_int] = (float(loc["lat"]), float(loc["lng"]))
+                        elif "lat" in loc and "lon" in loc:
+                            pin_coords[num_int] = (float(loc["lat"]), float(loc["lon"]))
+                        elif "latitude" in loc and "longitude" in loc:
+                            pin_coords[num_int] = (float(loc["latitude"]), float(loc["longitude"]))
                     except (ValueError, TypeError):
                         pass
 
@@ -433,27 +449,38 @@ def format_tactical_citations(
             if item.isdigit():
                 num = int(item)
                 lbl = pin_labels.get(num)
-                title = f"Map Marker #{num}: {lbl}" if lbl else f"Map Marker #{num}"
+                base_title = f"Map Marker #{num}: {lbl}" if lbl else f"Map Marker #{num}"
+                title = _html.escape(f"{base_title} (Click to zoom & focus on map)", quote=True)
+                coord = pin_coords.get(num)
+                coord_attrs = f" data-lat='{coord[0]:.6f}' data-lng='{coord[1]:.6f}'" if coord else ""
+                lbl_attr = f" data-pin-label='{_html.escape(lbl, quote=True)}'" if lbl else ""
                 rendered.append(
-                    f"<span class='tactical-cit tactical-cit-pin' title='{title}'>[{item}]</span>"
+                    f"<a href='#geoai-pin-{num}' class='tactical-cit tactical-cit-pin' "
+                    f"data-pin-number='{num}'{coord_attrs}{lbl_attr} title='{title}'>[{item}]</a>"
                 )
             elif item.startswith("S") and item[1:].isdigit():
                 desc = cit_labels.get(item)
-                title = f"Source Passage {item}: {desc}" if desc else f"Source Passage {item}"
+                base_title = f"Source Passage {item}: {desc}" if desc else f"Source Passage {item}"
+                title = _html.escape(f"{base_title} (Click to inspect source)", quote=True)
                 rendered.append(
-                    f"<span class='tactical-cit tactical-cit-src' title='{title}'>[{item}]</span>"
+                    f"<a href='#geoai-src-{item}' class='tactical-cit tactical-cit-src' "
+                    f"data-cit-target='{item}' title='{title}'>[{item}]</a>"
                 )
             elif item.startswith("L") and item[1:].isdigit():
                 desc = cit_labels.get(item)
-                title = f"Article Summary {item}: {desc}" if desc else f"Article Summary {item}"
+                base_title = f"Article Summary {item}: {desc}" if desc else f"Article Summary {item}"
+                title = _html.escape(f"{base_title} (Click to inspect summary)", quote=True)
                 rendered.append(
-                    f"<span class='tactical-cit tactical-cit-lead' title='{title}'>[{item}]</span>"
+                    f"<a href='#geoai-src-{item}' class='tactical-cit tactical-cit-lead' "
+                    f"data-cit-target='{item}' title='{title}'>[{item}]</a>"
                 )
             elif item.startswith("P") and "-S" in item:
                 desc = cit_labels.get(item)
-                title = f"Pin Evidence {item}: {desc}" if desc else f"Pin Evidence {item}"
+                base_title = f"Pin Evidence {item}: {desc}" if desc else f"Pin Evidence {item}"
+                title = _html.escape(f"{base_title} (Click to inspect evidence)", quote=True)
                 rendered.append(
-                    f"<span class='tactical-cit tactical-cit-ps' title='{title}'>[{item}]</span>"
+                    f"<a href='#geoai-src-{item}' class='tactical-cit tactical-cit-ps' "
+                    f"data-cit-target='{item}' title='{title}'>[{item}]</a>"
                 )
             else:
                 rendered.append(f"[{item}]")
@@ -2445,8 +2472,113 @@ class MapTrashBinHook(MacroElement):
                     updateTrashButtonState();
                 } else if (ev.data.type === 'GEOAI_PIN_SHAPE' && ev.data.shape) {
                     setMapPinShape(ev.data.shape);
+                } else if (ev.data.type === 'GEOAI_FOCUS_PIN') {
+                    focusMapPinByCitation(ev.data);
                 }
             });
+
+            function focusMapPinByCitation(payload) {
+                if (!payload) return;
+                var targetNum = payload.number != null ? String(payload.number).trim() : null;
+                var targetLat = (payload.lat != null && !isNaN(Number(payload.lat))) ? Number(payload.lat) : null;
+                var targetLng = (payload.lng != null && !isNaN(Number(payload.lng))) ? Number(payload.lng) : null;
+                var targetLabel = payload.label ? String(payload.label).trim() : null;
+
+                var matchedMarker = null;
+                var parentCluster = null;
+
+                function isMarkerMatch(m) {
+                    if (!(m instanceof L.Marker) || !m.getLatLng) return false;
+                    var cls = (m._icon && m._icon.className) ? m._icon.className : (m.options && m.options.icon && m.options.icon.options && m.options.icon.options.className ? m.options.icon.options.className : '');
+                    if (cls.indexOf('geoai-pin--target') !== -1 || cls.indexOf('geoai-pin--corner') !== -1) return false;
+
+                    // 1. Match by coordinate if provided
+                    if (targetLat !== null && targetLng !== null) {
+                        var ll = m.getLatLng();
+                        if (Math.abs(ll.lat - targetLat) < 0.00015 && Math.abs(ll.lng - targetLng) < 0.00015) {
+                            return true;
+                        }
+                    }
+
+                    // 2. Match by pin number in popup HTML, tooltip, or icon HTML
+                    if (targetNum) {
+                        var pContent = '';
+                        try {
+                            if (m.getPopup && m.getPopup()) {
+                                pContent = String(m.getPopup().getContent() || '');
+                            }
+                        } catch(e) {}
+                        if (pContent.indexOf('#' + targetNum + ' ') !== -1 || pContent.indexOf('★ #' + targetNum) !== -1) {
+                            return true;
+                        }
+                        var tContent = '';
+                        try {
+                            if (m.getTooltip && m.getTooltip()) {
+                                tContent = String(m.getTooltip().getContent() || '');
+                            }
+                        } catch(e) {}
+                        if (tContent.indexOf(targetNum + '. ') === 0) {
+                            return true;
+                        }
+                        var iconHtml = (m.options && m.options.icon && m.options.icon.options && m.options.icon.options.html) ? String(m.options.icon.options.html) : '';
+                        if (iconHtml.indexOf('<span>' + targetNum + '</span>') !== -1) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                // Search top-level layers and MarkerClusterGroups
+                map.eachLayer(function(layer) {
+                    if (matchedMarker) return;
+                    if (isMarkerMatch(layer)) {
+                        matchedMarker = layer;
+                        return;
+                    }
+                    if (typeof L.MarkerClusterGroup !== 'undefined' && layer instanceof L.MarkerClusterGroup && typeof layer.getLayers === 'function') {
+                        var cLayers = layer.getLayers();
+                        for (var i = 0; i < cLayers.length; i++) {
+                            if (isMarkerMatch(cLayers[i])) {
+                                matchedMarker = cLayers[i];
+                                parentCluster = layer;
+                                return;
+                            }
+                        }
+                    } else if (layer && typeof layer.eachLayer === 'function') {
+                        layer.eachLayer(function(sub) {
+                            if (matchedMarker) return;
+                            if (isMarkerMatch(sub)) {
+                                matchedMarker = sub;
+                                if (typeof L.MarkerClusterGroup !== 'undefined' && layer instanceof L.MarkerClusterGroup) {
+                                    parentCluster = layer;
+                                }
+                            }
+                        });
+                    }
+                });
+
+                if (matchedMarker) {
+                    // Ensure visibility if hidden by PinFilterControl
+                    if (matchedMarker._icon && matchedMarker._icon.style.display === 'none') {
+                        matchedMarker._icon.style.display = '';
+                    }
+                    var mLatLng = matchedMarker.getLatLng();
+                    var focusZoom = Math.max(map.getZoom() || 6, 11);
+                    if (parentCluster && typeof parentCluster.zoomToShowLayer === 'function') {
+                        parentCluster.zoomToShowLayer(matchedMarker, function() {
+                            try { matchedMarker.openPopup(); } catch(e) {}
+                        });
+                    } else {
+                        map.flyTo(mLatLng, focusZoom, { animate: true, duration: 0.65 });
+                        setTimeout(function() {
+                            try { matchedMarker.openPopup(); } catch(e) {}
+                        }, 350);
+                    }
+                } else if (targetLat !== null && targetLng !== null) {
+                    var fallbackZoom = Math.max(map.getZoom() || 6, 11);
+                    map.flyTo([targetLat, targetLng], fallbackZoom, { animate: true, duration: 0.65 });
+                }
+            }
 
             // 1. Instant client-side visual feedback on map canvas clicks (0ms latency)
             map.on('click', function(e) {
@@ -3532,6 +3664,7 @@ st.set_page_config(
 st.markdown(f"""
 <style>
     /* Tactical Citations Styling */
+    a.tactical-cit,
     .tactical-cit {{
         display: inline-block;
         padding: 1px 5px;
@@ -3542,11 +3675,14 @@ st.markdown(f"""
         border-radius: 4px;
         vertical-align: baseline;
         transition: all 0.15s ease-in-out;
-        cursor: default;
+        cursor: pointer !important;
+        text-decoration: none !important;
     }}
+    a.tactical-cit:hover,
     .tactical-cit:hover {{
         transform: translateY(-1px);
-        filter: brightness(1.2);
+        filter: brightness(1.25);
+        text-decoration: none !important;
     }}
     .tactical-cit-pin {{
         background: rgba(0, 229, 255, 0.15);
@@ -4237,6 +4373,11 @@ st.markdown(f"""
         border-color: rgba(0, 229, 255, 0.35);
         background: rgba(14, 22, 32, 0.6);
     }}
+    .geoai-source-detail--highlight {{
+        border-color: #00e676 !important;
+        box-shadow: 0 0 12px rgba(0, 230, 118, 0.45) !important;
+        background: rgba(0, 230, 118, 0.12) !important;
+    }}
     .geoai-source-summary {{
         cursor: pointer;
         display: flex;
@@ -4298,6 +4439,72 @@ st.markdown("""<script>
     document.addEventListener('click', function(e) {
         var target = e.target;
         if (!target || !target.closest) return;
+
+        // 0a. Interactive Location Citation Badge ([1], [2]) -> 0ms Map Zoom & Focus + Popup
+        var pinCit = target.closest('.tactical-cit-pin[data-pin-number]');
+        if (pinCit) {
+            e.preventDefault();
+            e.stopPropagation();
+            var pinNum = pinCit.getAttribute('data-pin-number');
+            var pLat = pinCit.getAttribute('data-lat');
+            var pLng = pinCit.getAttribute('data-lng');
+            var pLbl = pinCit.getAttribute('data-pin-label');
+            postToMapIframes({
+                type: 'GEOAI_FOCUS_PIN',
+                number: pinNum ? parseInt(pinNum, 10) : null,
+                lat: pLat ? parseFloat(pLat) : null,
+                lng: pLng ? parseFloat(pLng) : null,
+                label: pLbl || null
+            });
+            return;
+        }
+
+        // 0b. Interactive Source Citation Badge ([S1], [L1], [P1-S1]) -> Expand Verified Sources & Open Inspect Card
+        var srcCit = target.closest('.tactical-cit[data-cit-target]');
+        if (srcCit) {
+            e.preventDefault();
+            e.stopPropagation();
+            var citId = srcCit.getAttribute('data-cit-target');
+            if (citId) {
+                var chatMsg = srcCit.closest('div[data-testid="stChatMessage"]') || document;
+                // Find the Verified Sources Streamlit expander inside this message
+                var allDetails = chatMsg.querySelectorAll('details');
+                var expanderDetails = null;
+                for (var dIdx = 0; dIdx < allDetails.length; dIdx++) {
+                    var det = allDetails[dIdx];
+                    if (!det.classList.contains('geoai-source-detail')) {
+                        var sumEl = det.querySelector('summary');
+                        if (sumEl && (sumEl.textContent || '').indexOf('Verified Sources') !== -1) {
+                            expanderDetails = det;
+                            break;
+                        }
+                    }
+                }
+                if (expanderDetails && !expanderDetails.open) {
+                    var expSum = expanderDetails.querySelector('summary');
+                    if (expSum) {
+                        try { expSum.click(); } catch(err) { expanderDetails.open = true; }
+                    } else {
+                        expanderDetails.open = true;
+                    }
+                }
+                setTimeout(function() {
+                    var targetCard = chatMsg.querySelector('details.geoai-source-detail[data-cit-id="' + citId + '"]') ||
+                                     document.querySelector('details.geoai-source-detail[data-cit-id="' + citId + '"]');
+                    if (targetCard) {
+                        targetCard.open = true;
+                        targetCard.classList.add('geoai-source-detail--highlight');
+                        try {
+                            targetCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        } catch(err) {}
+                        setTimeout(function() {
+                            targetCard.classList.remove('geoai-source-detail--highlight');
+                        }, 2000);
+                    }
+                }, 80);
+            }
+            return;
+        }
 
         // 1. Instant preview pill Clear button
         var instClr = target.closest('[data-geoai-action="clear"]');
@@ -6758,8 +6965,10 @@ with col1:
                                     f"</div>"
                                 )
 
+                            cit_id_attr = f" data-cit-id='{cit_id}'" if cit_id else f" data-cit-id='S{s_idx + 1}'"
+                            ptr_attr = f" data-source-ptr='{src_doc}'" if src_doc else ""
                             source_items_html.append(
-                                f"<details class='geoai-source-detail'>"
+                                f"<details class='geoai-source-detail'{cit_id_attr}{ptr_attr}>"
                                 f"<summary class='geoai-source-summary'>"
                                 f"<span class='geoai-source-title'>📄 <b>{title_str}</b>{sec_str}</span>"
                                 f"<span class='geoai-source-badge'>Inspect ▾</span>"

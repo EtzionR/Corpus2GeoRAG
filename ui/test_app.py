@@ -3029,6 +3029,25 @@ class TestPhase1BackendChangesIntegration:
         assert "Battle of Bakhmut" in html
         assert "12 records" in html
 
+    def test_battle_pin_popup_synthesizes_events_from_sources_list(self, monkeypatch):
+        """Verify format_evidence_popup_html extracts battle/siege articles from sources_list even when `why` is empty."""
+        import geo_agent
+        fake_corpus = {
+            "TEXT_1": {"document": "Battle of Artemivsk", "section": "Background", "paragraph_index": 0},
+            "TEXT_2": {"document": "Battle of Artemivsk", "section": "Timeline", "paragraph_index": 1},
+            "TEXT_3": {"document": "Battle of Bakhmut", "section": "Overview", "paragraph_index": 0},
+            "TEXT_4": {"document": "Battle of Donbas (2022)", "section": "Eastern front", "paragraph_index": 2},
+        }
+        monkeypatch.setattr(geo_agent, "get_source_text", lambda ptr: fake_corpus.get(ptr))
+        html = geo_agent.format_evidence_popup_html("", sources_list=["TEXT_1", "TEXT_2", "TEXT_3", "TEXT_4"])
+
+        assert "⚔️ Associated Battles / Events (3):" in html
+        assert "Battle of Artemivsk" in html
+        assert "2 passages" in html
+        assert "Battle of Bakhmut" in html
+        assert "1 passage" in html
+        assert "Battle of Donbas (2022)" in html
+
     def test_generic_relation_evidence_formatting(self):
         """Verify non-event relations format as generic evidence."""
         import geo_agent
@@ -3040,7 +3059,7 @@ class TestPhase1BackendChangesIntegration:
         assert "⚔️ Associated Battles" not in html
 
     def test_format_tactical_citations_pins_and_sources(self):
-        """Verify format_tactical_citations styles pin, source, and summary bracketed tags with tooltips."""
+        """Verify format_tactical_citations styles pin, source, and summary bracketed tags as interactive hyperlinks with tooltips."""
         import app
         citations = [
             {"id": "S4", "article": "Battle of Avdiivka", "section": "October offensive", "pointer": "TEXT_123"},
@@ -3048,8 +3067,8 @@ class TestPhase1BackendChangesIntegration:
             {"id": "P1-S1", "article": "Donetsk Oblast", "section": "History", "pointer": "TEXT_789"},
         ]
         geo_locs = [
-            {"number": 1, "label": "Avdiivka"},
-            {"number": 2, "label": "Bakhmut"},
+            {"number": 1, "label": "Avdiivka", "geometry": {"type": "Point", "coordinates": [37.75, 48.13]}},
+            {"number": 2, "label": "Bakhmut", "lat": 48.58941, "lng": 38.00210},
         ]
         raw_text = "Fierce fighting occurred in Avdiivka [1, S4] and Bakhmut [2, L1, P1-S1]."
         formatted = app.format_tactical_citations(raw_text, citations=citations, geo_locations=geo_locs)
@@ -3058,11 +3077,39 @@ class TestPhase1BackendChangesIntegration:
         assert "tactical-cit-src" in formatted
         assert "tactical-cit-lead" in formatted
         assert "tactical-cit-ps" in formatted
-        assert "title='Map Marker #1: Avdiivka'" in formatted
-        assert "title='Source Passage S4: Battle of Avdiivka — October offensive'" in formatted
-        assert "title='Map Marker #2: Bakhmut'" in formatted
-        assert "title='Article Summary L1: Battle of Bakhmut'" in formatted
-        assert "title='Pin Evidence P1-S1: Donetsk Oblast — History'" in formatted
+        assert "data-pin-number='1'" in formatted
+        assert "data-lat='48.130000' data-lng='37.750000'" in formatted
+        assert "data-pin-number='2'" in formatted
+        assert "data-lat='48.589410' data-lng='38.002100'" in formatted
+        assert "data-cit-target='S4'" in formatted
+        assert "data-cit-target='L1'" in formatted
+        assert "data-cit-target='P1-S1'" in formatted
+        assert "Map Marker #1: Avdiivka (Click to zoom &amp; focus on map)" in formatted
+        assert "Source Passage S4: Battle of Avdiivka — October offensive (Click to inspect source)" in formatted
+        assert "Map Marker #2: Bakhmut (Click to zoom &amp; focus on map)" in formatted
+        assert "Article Summary L1: Battle of Bakhmut (Click to inspect summary)" in formatted
+        assert "Pin Evidence P1-S1: Donetsk Oblast — History (Click to inspect evidence)" in formatted
+
+    def test_interactive_citation_js_handlers_present_in_app_and_map_hook(self):
+        """Verify parent-to-iframe GEOAI_FOCUS_PIN and source drawer expand handlers are wired in app.py."""
+        import folium
+        from streamlit_folium import _get_map_string
+        import app
+
+        with open("app.py", "r", encoding="utf-8") as f:
+            app_code = f.read()
+
+        assert "GEOAI_FOCUS_PIN" in app_code
+        assert "data-cit-target" in app_code
+        assert "data-cit-id=" in app_code
+        assert "geoai-source-detail--highlight" in app_code
+
+        m = folium.Map()
+        app.MapTrashBinHook().add_to(m)
+        script = _get_map_string(m)
+        assert "focusMapPinByCitation" in script
+        assert "GEOAI_FOCUS_PIN" in script
+        assert "zoomToShowLayer" in script
 
     def test_format_tactical_citations_preserves_links_and_plain_text(self):
         """Verify format_tactical_citations does not mangle markdown links or plain brackets."""

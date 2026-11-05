@@ -849,20 +849,52 @@ def extract_answer_subgraph(
 # 3. GeoAI Routing Entrypoint (Adapter with Mock Fallback)
 # ==============================================================================
 
-def format_evidence_popup_html(why: Optional[str]) -> str:
-    """
-    Format place evidence string from the backend into rich tactical popup HTML.
-    Handles P2-78 multi-event and battle list aggregations (e.g. 'event: Battle of Avdiivka (2017) in 28 records, ...')
-    by rendering distinct bulleted event entries with record counts.
-    """
-    if not why or not str(why).strip():
-        return ""
-    why_str = str(why).strip()
+_EVENT_DOC_TITLE_RE = re.compile(
+    r"^(?:Battles?|Sieges?|Offensives?|Attacks?|Bombings?|Strikes?|Skirmish(?:es)?|Campaigns?|Invasions?|Occupation|Liberation|Capture|Fall|Defense|Defence|Massacres?|Raid|Assault)\s+(?:of|for|at|in|on)\s+",
+    re.IGNORECASE,
+)
 
-    # Detect event records (e.g. P2-78 battle list format: 'event: Title in N records')
-    if "event:" in why_str.lower():
-        events: List[Tuple[str, Optional[str]]] = []
-        other_bits: List[str] = []
+
+def _is_event_article_title(title: Optional[str]) -> bool:
+    """Return True if a knowledge graph document title represents a named battle, siege, or military event."""
+    if not title or not str(title).strip():
+        return False
+    t = str(title).strip()
+    if _EVENT_DOC_TITLE_RE.match(t):
+        return True
+    t_low = t.lower()
+    return any(
+        kw in t_low
+        for kw in (
+            "battle of ",
+            "battles for ",
+            "battles of ",
+            "siege of ",
+            "offensive",
+            "counteroffensive",
+            "strikes on ",
+            "attack on ",
+            "bombing of ",
+        )
+    )
+
+
+def format_evidence_popup_html(
+    why: Optional[str],
+    sources_list: Optional[List[str]] = None,
+) -> str:
+    """
+    Format place evidence string and source documents from the backend into rich tactical popup HTML.
+    Handles P2-78 multi-event and battle list aggregations (e.g. 'event: Battle of Avdiivka (2017) in 28 records, ...')
+    as well as battle/event articles discovered in `sources_list` (for `event_places` / `about` / `area_topic` routes),
+    rendering distinct bulleted event entries with record/passage counts.
+    """
+    why_str = str(why).strip() if why else ""
+    events: List[Tuple[str, Optional[str]]] = []
+    seen_event_titles: set[str] = set()
+    other_bits: List[str] = []
+
+    if why_str:
         pieces = [p.strip() for p in why_str.replace(";", ",").split(",") if p.strip()]
         for piece in pieces:
             if piece.lower().startswith("event:"):
@@ -870,28 +902,53 @@ def format_evidence_popup_html(why: Optional[str]) -> str:
                 match = re.match(r"^(.*?)(?:\s+in\s+(\d+\s+records?))?$", ev_str, re.IGNORECASE)
                 if match:
                     title, count = match.groups()
-                    events.append((title.strip(), count.strip() if count else None))
+                    clean_t = title.strip().replace("\ufffd", " - ")
+                    if clean_t.lower() not in seen_event_titles:
+                        seen_event_titles.add(clean_t.lower())
+                        events.append((clean_t, count.strip() if count else None))
                 else:
-                    events.append((ev_str, None))
+                    clean_t = ev_str.replace("\ufffd", " - ")
+                    if clean_t.lower() not in seen_event_titles:
+                        seen_event_titles.add(clean_t.lower())
+                        events.append((clean_t, None))
             else:
                 other_bits.append(piece)
 
-        if events:
-            ev_html_items = []
-            for ev_title, ev_count in events:
-                count_str = f" <span style='color:#94a3b8; font-size:0.85em;'>({ev_count})</span>" if ev_count else ""
-                ev_html_items.append(f"<li style='margin-bottom:3px;'><b>⚔️ {ev_title}</b>{count_str}</li>")
+    # Also inspect sources_list for battle/event article titles not already listed in `why`
+    if sources_list:
+        doc_counts: Dict[str, int] = {}
+        for s_ptr in sources_list:
+            s_text = get_source_text(s_ptr)
+            doc_raw = s_text.get("document") if isinstance(s_text, dict) else None
+            if doc_raw:
+                doc_clean = str(doc_raw).replace("\ufffd", " - ").strip()
+                if _is_event_article_title(doc_clean):
+                    doc_counts[doc_clean] = doc_counts.get(doc_clean, 0) + 1
+        for doc_title, cnt in doc_counts.items():
+            if doc_title.lower() not in seen_event_titles:
+                seen_event_titles.add(doc_title.lower())
+                unit = "passage" if cnt == 1 else "passages"
+                events.append((doc_title, f"{cnt} {unit}"))
 
-            other_html = f"<div style='color:#94a3b8; font-size:0.85em; margin-top:4px;'><i>Evidence: {', '.join(other_bits)}</i></div>" if other_bits else ""
-            return (
-                f"<div style='margin-top:6px; padding-top:5px; border-top:1px solid rgba(255,255,255,0.15);'>"
-                f"<b style='color:#f59e0b;'>⚔️ Associated Battles / Events ({len(events)}):</b>"
-                f"<ul style='margin:3px 0 3px 14px; padding:0; list-style-type:none;'>"
-                f"{' '.join(ev_html_items)}"
-                f"</ul>"
-                f"{other_html}"
-                f"</div>"
-            )
+    if events:
+        ev_html_items = []
+        for ev_title, ev_count in events:
+            count_str = f" <span style='color:#94a3b8; font-size:0.85em;'>({ev_count})</span>" if ev_count else ""
+            ev_html_items.append(f"<li style='margin-bottom:3px;'><b>⚔️ {ev_title}</b>{count_str}</li>")
+
+        other_html = f"<div style='color:#94a3b8; font-size:0.85em; margin-top:4px;'><i>Evidence: {', '.join(other_bits)}</i></div>" if other_bits else ""
+        return (
+            f"<div style='margin-top:6px; padding-top:5px; border-top:1px solid rgba(255,255,255,0.15);'>"
+            f"<b style='color:#f59e0b;'>⚔️ Associated Battles / Events ({len(events)}):</b>"
+            f"<ul style='margin:3px 0 3px 14px; padding:0; list-style-type:none;'>"
+            f"{' '.join(ev_html_items)}"
+            f"</ul>"
+            f"{other_html}"
+            f"</div>"
+        )
+
+    if not why_str:
+        return ""
 
     return (
         f"<div style='margin-top:6px; padding-top:5px; border-top:1px solid rgba(255,255,255,0.15); font-size:0.95em;'>"
@@ -991,6 +1048,30 @@ def query_geo_agent(
             if isinstance(c, dict) and c.get("pointer") and c.get("id"):
                 tag_by_pointer[c["pointer"]] = c["id"]
 
+        def _select_diverse_place_sources(ptrs: List[str], limit: int = 3) -> List[Tuple[int, str]]:
+            """Select up to `limit` (original_index, pointer) pairs prioritizing distinct article titles first."""
+            if not ptrs:
+                return []
+            selected: List[Tuple[int, str]] = []
+            seen_docs: set[str] = set()
+            # Pass 1: first pointer from each distinct document
+            for idx, ptr in enumerate(ptrs):
+                s_info = get_source_text(ptr)
+                doc_name = str(s_info.get("document") or ptr).strip() if isinstance(s_info, dict) else ptr
+                if doc_name not in seen_docs:
+                    seen_docs.add(doc_name)
+                    selected.append((idx, ptr))
+                    if len(selected) >= limit:
+                        return selected
+            # Pass 2: fill remaining slots in original order
+            selected_indices = {i for i, _ in selected}
+            for idx, ptr in enumerate(ptrs):
+                if idx not in selected_indices:
+                    selected.append((idx, ptr))
+                    if len(selected) >= limit:
+                        break
+            return selected
+
         ans_text = raw_result.get("answer", "")
         top_sources = list(raw_result.get("sources", []))
         if not top_sources:
@@ -999,7 +1080,7 @@ def query_geo_agent(
             geo_locs = raw_result.get("geo_locations", [])
             for loc in geo_locs:
                 if loc.get("role", "primary") == "primary" or len(geo_locs) <= 10:
-                    for ptr in loc.get("sources", [])[:3]:
+                    for _, ptr in _select_diverse_place_sources(loc.get("sources", []), limit=3):
                         if ptr not in seen_ptrs:
                             seen_ptrs.add(ptr)
                             top_sources.append(ptr)
@@ -1077,22 +1158,37 @@ def query_geo_agent(
             layer_name = f"{num_prefix}[{kind.upper()}] {label}{uncertain_tag}"
             tooltip_text = f"{num_prefix}{label} [{kind.upper()}]{uncertain_tag}"
 
-            why_html = format_evidence_popup_html(why)
+            why_html = format_evidence_popup_html(why, sources_list=sources_list)
             uncertain_html = f"<br><span style='color:#ff9800;'><b>⚠️ Uncertain:</b> {uncertain}</span>" if uncertain else ""
             src_html = ""
             if sources_list:
                 src_lines = []
-                for s_idx, s_ptr in enumerate(sources_list[:3]):
+                diverse_sources = _select_diverse_place_sources(sources_list, limit=3)
+                doc_freq: Dict[str, int] = {}
+                for _, s_ptr in diverse_sources:
+                    s_info = get_source_text(s_ptr)
+                    d_name = str(s_info.get("document") or s_ptr).strip() if isinstance(s_info, dict) else s_ptr
+                    doc_freq[d_name] = doc_freq.get(d_name, 0) + 1
+
+                for s_idx, s_ptr in diverse_sources:
                     tag = tag_by_pointer.get(s_ptr)
                     if not tag:
                         tag = f"P{number}-S{s_idx + 1}" if number is not None else f"S{s_idx + 1}"
                     s_text = get_source_text(s_ptr)
                     if s_text and s_text.get("document"):
-                        doc_clean = str(s_text["document"]).replace("\ufffd", " - ")
+                        raw_doc = str(s_text["document"]).strip()
+                        doc_clean = raw_doc.replace("\ufffd", " - ")
+                        if doc_freq.get(raw_doc, 0) > 1:
+                            sec_raw = str(s_text.get("section") or "").replace("\ufffd", " - ").strip()
+                            para_idx = s_text.get("paragraph_index")
+                            if sec_raw and sec_raw.lower() != doc_clean.lower():
+                                doc_clean = f"{doc_clean} <span style='color:#94a3b8; font-size:0.85em;'>› {sec_raw}</span>"
+                            elif para_idx is not None:
+                                doc_clean = f"{doc_clean} <span style='color:#94a3b8; font-size:0.85em;'>(¶{int(para_idx) + 1})</span>"
                     else:
                         doc_clean = s_ptr
                     src_lines.append(f"<div style='margin-bottom:2px;'>• <b style='color:#00e5ff;'>[{tag}]</b> {doc_clean}</div>")
-                more_count = len(sources_list) - 3
+                more_count = len(sources_list) - len(diverse_sources)
                 more_html = f"<div style='color:#94a3b8; font-size:0.85em; margin-top:2px;'><i>(+{more_count} more sources)</i></div>" if more_count > 0 else ""
                 src_html = (
                     f"<div style='margin-top:6px; padding-top:4px; border-top:1px solid rgba(255,255,255,0.15); font-size:0.95em;'>"
