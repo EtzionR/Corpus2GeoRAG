@@ -3002,3 +3002,90 @@ class TestPhase4And5IntegrationAndHygiene:
         click_block = frag_code[click_block_idx:click_block_idx + 350]
         assert "st.rerun()" not in click_block
 
+
+class TestPhase1BackendChangesIntegration:
+    """Test suite validating Phase 1 backend updates integration in GeoAI."""
+
+    def test_multi_event_battle_pin_popup_formatting(self):
+        """Verify format_evidence_popup_html groups multiple battle records into distinct styled items (P2-78)."""
+        import geo_agent
+        why_multi = "event: Battle of Avdiivka (2017) in 28 records, event: Battle of Avdiivka (2023-2024) in 45 records; 73 matching paragraphs"
+        html = geo_agent.format_evidence_popup_html(why_multi)
+
+        assert "⚔️ Associated Battles / Events (2):" in html
+        assert "Battle of Avdiivka (2017)" in html
+        assert "Battle of Avdiivka (2023-2024)" in html
+        assert "28 records" in html
+        assert "45 records" in html
+        assert "73 matching paragraphs" in html
+
+    def test_single_event_battle_pin_popup_formatting(self):
+        """Verify format_evidence_popup_html handles single event titles with record count."""
+        import geo_agent
+        why_single = "event: Battle of Bakhmut in 12 records; 12 matching paragraphs"
+        html = geo_agent.format_evidence_popup_html(why_single)
+
+        assert "⚔️ Associated Battles / Events (1):" in html
+        assert "Battle of Bakhmut" in html
+        assert "12 records" in html
+
+    def test_generic_relation_evidence_formatting(self):
+        """Verify non-event relations format as generic evidence."""
+        import geo_agent
+        why_rel = "ATTACKED in 12 records, SHELLED in 4 records; 16 matching paragraphs"
+        html = geo_agent.format_evidence_popup_html(why_rel)
+
+        assert "<b>Evidence:</b>" in html
+        assert "ATTACKED in 12 records" in html
+        assert "⚔️ Associated Battles" not in html
+
+    def test_format_tactical_citations_pins_and_sources(self):
+        """Verify format_tactical_citations styles pin, source, and summary bracketed tags with tooltips."""
+        import app
+        citations = [
+            {"id": "S4", "article": "Battle of Avdiivka", "section": "October offensive", "pointer": "TEXT_123"},
+            {"id": "L1", "article": "Battle of Bakhmut", "section": "", "pointer": "TEXT_456"},
+            {"id": "P1-S1", "article": "Donetsk Oblast", "section": "History", "pointer": "TEXT_789"},
+        ]
+        geo_locs = [
+            {"number": 1, "label": "Avdiivka"},
+            {"number": 2, "label": "Bakhmut"},
+        ]
+        raw_text = "Fierce fighting occurred in Avdiivka [1, S4] and Bakhmut [2, L1, P1-S1]."
+        formatted = app.format_tactical_citations(raw_text, citations=citations, geo_locations=geo_locs)
+
+        assert "tactical-cit-pin" in formatted
+        assert "tactical-cit-src" in formatted
+        assert "tactical-cit-lead" in formatted
+        assert "tactical-cit-ps" in formatted
+        assert "title='Map Marker #1: Avdiivka'" in formatted
+        assert "title='Source Passage S4: Battle of Avdiivka — October offensive'" in formatted
+        assert "title='Map Marker #2: Bakhmut'" in formatted
+        assert "title='Article Summary L1: Battle of Bakhmut'" in formatted
+        assert "title='Pin Evidence P1-S1: Donetsk Oblast — History'" in formatted
+
+    def test_format_tactical_citations_preserves_links_and_plain_text(self):
+        """Verify format_tactical_citations does not mangle markdown links or plain brackets."""
+        import app
+        text = "See [official report](https://example.com) and [non-citation-note]."
+        formatted = app.format_tactical_citations(text)
+        assert "[official report](https://example.com)" in formatted
+        assert "[non-citation-note]" in formatted
+
+    def test_assistant_message_preserves_geo_locations(self):
+        """Verify _build_assistant_message includes geo_locations from raw_response."""
+        import app
+        from geo_agent import AgentResponse
+        resp = AgentResponse(
+            answer="Strategic sector scan complete [1].",
+            raw_response={
+                "answer": "Strategic sector scan complete [1].",
+                "geo_locations": [{"number": 1, "label": "Kharkiv"}],
+            },
+            layers=[],
+            sources=["TEXT_100"]
+        )
+        msg = app._build_assistant_message(resp)
+        assert "geo_locations" in msg
+        assert len(msg["geo_locations"]) == 1
+        assert msg["geo_locations"][0]["label"] == "Kharkiv"

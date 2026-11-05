@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import os
 import sys
+import re
 import logging
 import functools
 import concurrent.futures
@@ -37,6 +38,7 @@ __all__ = [
     "extract_answer_subgraph",
     "get_agent_env_path",
     "persist_openrouter_api_key",
+    "format_evidence_popup_html",
     "query_geo_agent",
     "AgentError",
     "InvalidRequestError",
@@ -847,6 +849,57 @@ def extract_answer_subgraph(
 # 3. GeoAI Routing Entrypoint (Adapter with Mock Fallback)
 # ==============================================================================
 
+def format_evidence_popup_html(why: Optional[str]) -> str:
+    """
+    Format place evidence string from the backend into rich tactical popup HTML.
+    Handles P2-78 multi-event and battle list aggregations (e.g. 'event: Battle of Avdiivka (2017) in 28 records, ...')
+    by rendering distinct bulleted event entries with record counts.
+    """
+    if not why or not str(why).strip():
+        return ""
+    why_str = str(why).strip()
+
+    # Detect event records (e.g. P2-78 battle list format: 'event: Title in N records')
+    if "event:" in why_str.lower():
+        events: List[Tuple[str, Optional[str]]] = []
+        other_bits: List[str] = []
+        pieces = [p.strip() for p in why_str.replace(";", ",").split(",") if p.strip()]
+        for piece in pieces:
+            if piece.lower().startswith("event:"):
+                ev_str = piece[6:].strip()
+                match = re.match(r"^(.*?)(?:\s+in\s+(\d+\s+records?))?$", ev_str, re.IGNORECASE)
+                if match:
+                    title, count = match.groups()
+                    events.append((title.strip(), count.strip() if count else None))
+                else:
+                    events.append((ev_str, None))
+            else:
+                other_bits.append(piece)
+
+        if events:
+            ev_html_items = []
+            for ev_title, ev_count in events:
+                count_str = f" <span style='color:#94a3b8; font-size:0.85em;'>({ev_count})</span>" if ev_count else ""
+                ev_html_items.append(f"<li style='margin-bottom:3px;'><b>⚔️ {ev_title}</b>{count_str}</li>")
+
+            other_html = f"<div style='color:#94a3b8; font-size:0.85em; margin-top:4px;'><i>Evidence: {', '.join(other_bits)}</i></div>" if other_bits else ""
+            return (
+                f"<div style='margin-top:6px; padding-top:5px; border-top:1px solid rgba(255,255,255,0.15);'>"
+                f"<b style='color:#f59e0b;'>⚔️ Associated Battles / Events ({len(events)}):</b>"
+                f"<ul style='margin:3px 0 3px 14px; padding:0; list-style-type:none;'>"
+                f"{' '.join(ev_html_items)}"
+                f"</ul>"
+                f"{other_html}"
+                f"</div>"
+            )
+
+    return (
+        f"<div style='margin-top:6px; padding-top:5px; border-top:1px solid rgba(255,255,255,0.15); font-size:0.95em;'>"
+        f"<b>Evidence:</b> {why_str}"
+        f"</div>"
+    )
+
+
 def query_geo_agent(
     text_prompt: Optional[str] = None,
     selected_point: Optional[Tuple[float, float]] = None,
@@ -1024,7 +1077,7 @@ def query_geo_agent(
             layer_name = f"{num_prefix}[{kind.upper()}] {label}{uncertain_tag}"
             tooltip_text = f"{num_prefix}{label} [{kind.upper()}]{uncertain_tag}"
 
-            why_html = f"<br><b>Evidence:</b> {why}" if why else ""
+            why_html = format_evidence_popup_html(why)
             uncertain_html = f"<br><span style='color:#ff9800;'><b>⚠️ Uncertain:</b> {uncertain}</span>" if uncertain else ""
             src_html = ""
             if sources_list:
@@ -1072,6 +1125,7 @@ def query_geo_agent(
                     "number": number,
                     "role": role,
                     "uncertain": uncertain,
+                    "why": why,
                 },
                 color=color,
                 tooltip=tooltip_text,

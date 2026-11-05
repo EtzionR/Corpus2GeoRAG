@@ -27,6 +27,7 @@ Team & Deployment Notice:
 """
 
 import sys
+import re
 import time
 import json
 from datetime import datetime
@@ -387,6 +388,80 @@ def _highlight_text_spans(text: str, spans: Optional[List[Any]]) -> str:
     return "".join(result)
 
 
+_CITATION_PATTERN = re.compile(
+    r'\[((?:(?:[0-9]+|S[0-9]+|L[0-9]+|P[0-9]+-S[0-9]+)\s*,\s*)*(?:[0-9]+|S[0-9]+|L[0-9]+|P[0-9]+-S[0-9]+))\]'
+)
+
+def format_tactical_citations(
+    content: str,
+    citations: Optional[List[Dict[str, Any]]] = None,
+    geo_locations: Optional[List[Dict[str, Any]]] = None,
+) -> str:
+    """
+    Format bracketed citations ([1], [S2], [L1], [P1-S1]) into styled tactical badges with hover tooltips.
+    Preserves standard markdown links like [text](url) and non-citation brackets.
+    """
+    if not content or not str(content).strip():
+        return content
+
+    pin_labels: Dict[int, str] = {}
+    if geo_locations and isinstance(geo_locations, list):
+        for loc in geo_locations:
+            if isinstance(loc, dict):
+                p_num = loc.get("number")
+                p_lbl = loc.get("label") or loc.get("name") or loc.get("id")
+                if p_num is not None and p_lbl:
+                    try:
+                        pin_labels[int(p_num)] = str(p_lbl)
+                    except (ValueError, TypeError):
+                        pass
+
+    cit_labels: Dict[str, str] = {}
+    if citations and isinstance(citations, list):
+        for c in citations:
+            if isinstance(c, dict) and c.get("id"):
+                c_id = str(c["id"])
+                art = c.get("article") or c.get("pointer") or ""
+                sec = c.get("section")
+                full_desc = f"{art} — {sec}" if sec and art else (art or sec or "")
+                cit_labels[c_id] = full_desc
+
+    def _replace_cit_group(m: re.Match) -> str:
+        raw_items = [x.strip() for x in m.group(1).split(",") if x.strip()]
+        rendered = []
+        for item in raw_items:
+            if item.isdigit():
+                num = int(item)
+                lbl = pin_labels.get(num)
+                title = f"Map Marker #{num}: {lbl}" if lbl else f"Map Marker #{num}"
+                rendered.append(
+                    f"<span class='tactical-cit tactical-cit-pin' title='{title}'>[{item}]</span>"
+                )
+            elif item.startswith("S") and item[1:].isdigit():
+                desc = cit_labels.get(item)
+                title = f"Source Passage {item}: {desc}" if desc else f"Source Passage {item}"
+                rendered.append(
+                    f"<span class='tactical-cit tactical-cit-src' title='{title}'>[{item}]</span>"
+                )
+            elif item.startswith("L") and item[1:].isdigit():
+                desc = cit_labels.get(item)
+                title = f"Article Summary {item}: {desc}" if desc else f"Article Summary {item}"
+                rendered.append(
+                    f"<span class='tactical-cit tactical-cit-lead' title='{title}'>[{item}]</span>"
+                )
+            elif item.startswith("P") and "-S" in item:
+                desc = cit_labels.get(item)
+                title = f"Pin Evidence {item}: {desc}" if desc else f"Pin Evidence {item}"
+                rendered.append(
+                    f"<span class='tactical-cit tactical-cit-ps' title='{title}'>[{item}]</span>"
+                )
+            else:
+                rendered.append(f"[{item}]")
+        return " ".join(rendered)
+
+    return _CITATION_PATTERN.sub(_replace_cit_group, content)
+
+
 def _build_assistant_message(resp: AgentResponse) -> Dict[str, Any]:
     """Build a standardized assistant message dictionary for st.session_state.messages."""
     ans_plain = getattr(resp, "answer_plain", "") or resp.answer
@@ -417,6 +492,7 @@ def _build_assistant_message(resp: AgentResponse) -> Dict[str, Any]:
         "map_not_shown": int(getattr(resp, "map_not_shown", 0) or 0),
         "subgraph": raw_subgraph,
         "raw_response": getattr(resp, "raw_response", None),
+        "geo_locations": (getattr(resp, "raw_response", {}) or {}).get("geo_locations", []),
         "layers": getattr(resp, "layers", []),
     }
 
@@ -3455,6 +3531,48 @@ st.set_page_config(
 # Custom CSS for tactical HUD interface styling
 st.markdown(f"""
 <style>
+    /* Tactical Citations Styling */
+    .tactical-cit {{
+        display: inline-block;
+        padding: 1px 5px;
+        margin: 0 2px;
+        font-size: 0.82em;
+        font-weight: 700;
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        border-radius: 4px;
+        vertical-align: baseline;
+        transition: all 0.15s ease-in-out;
+        cursor: default;
+    }}
+    .tactical-cit:hover {{
+        transform: translateY(-1px);
+        filter: brightness(1.2);
+    }}
+    .tactical-cit-pin {{
+        background: rgba(0, 229, 255, 0.15);
+        color: #00e5ff;
+        border: 1px solid rgba(0, 229, 255, 0.45);
+        box-shadow: 0 0 4px rgba(0, 229, 255, 0.2);
+    }}
+    .tactical-cit-src {{
+        background: rgba(0, 230, 118, 0.15);
+        color: #00e676;
+        border: 1px solid rgba(0, 230, 118, 0.45);
+        box-shadow: 0 0 4px rgba(0, 230, 118, 0.2);
+    }}
+    .tactical-cit-lead {{
+        background: rgba(168, 85, 247, 0.15);
+        color: #c084fc;
+        border: 1px solid rgba(168, 85, 247, 0.45);
+        box-shadow: 0 0 4px rgba(168, 85, 247, 0.2);
+    }}
+    .tactical-cit-ps {{
+        background: rgba(245, 158, 11, 0.15);
+        color: #fbbf24;
+        border: 1px solid rgba(245, 158, 11, 0.45);
+        box-shadow: 0 0 4px rgba(245, 158, 11, 0.2);
+    }}
+
     /* Global Typography */
     html, body, [class*="css"], font, span, p, div, button, input {{
         font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
@@ -6511,12 +6629,55 @@ with col1:
                 st.markdown(f"<div class='chat-role-tag {role_class}'><span class='{marker_class}'></span>{role_tag}</div>", unsafe_allow_html=True)
                 if role == "assistant" and not st.session_state.get("show_citations", True):
                     st.markdown(msg.get("content_plain") or msg["content"])
+                elif role == "assistant":
+                    locs = msg.get("geo_locations")
+                    if not locs and msg.get("layers"):
+                        locs = [
+                            l.data for l in msg["layers"]
+                            if hasattr(l, "data") and isinstance(l.data, dict) and l.data.get("number") is not None
+                        ]
+                    formatted_content = format_tactical_citations(
+                        msg["content"],
+                        citations=msg.get("citations"),
+                        geo_locations=locs,
+                    )
+                    st.markdown(formatted_content, unsafe_allow_html=True)
                 else:
                     st.markdown(msg["content"])
                 if role == "assistant" and not msg.get("is_live") and not msg.get("is_error"):
                     st.caption("⚠️ *Example answer: no OpenRouter key set (Deterministic Mock Engine)*")
                 if role == "assistant" and int(msg.get("map_not_shown", 0) or 0) > 0:
                     st.caption(f"📍 *{msg['map_not_shown']} additional context places found in the knowledge graph (showing discussed places on map).*")
+                if role == "assistant" and msg.get("status") == "no_data" and m_idx == len(st.session_state.messages) - 1:
+                    content_lower = str(msg.get("content", "")).lower()
+                    if "select one on the map" in content_lower or "name an area" in content_lower or "no area" in content_lower:
+                        st.markdown(
+                            "<div style='margin-top: 8px; margin-bottom: 8px; padding: 10px 12px; border-radius: 6px; background: rgba(14, 165, 233, 0.08); border-left: 3px solid #0ea5e9; font-size: 0.85rem; color: #cbd5e1;'>"
+                            "🧭 <b>Tactical Guidance:</b> This inquiry requires an operational boundary. "
+                            "Use the <b>Draw a rectangle (⬚)</b> tool on the tactical map toolbar to frame your sector, or select a localized operational scenario below:"
+                            "</div>",
+                            unsafe_allow_html=True
+                        )
+                        area_suggestions = [
+                            "Drone attacks in Kharkiv",
+                            "Drone attacks in Kyiv",
+                            "Battles in Donbas",
+                        ]
+                        as_cols = st.columns(3)
+                        for as_idx, as_q in enumerate(area_suggestions):
+                            with as_cols[as_idx]:
+                                if st.button(f"🎯 {as_q}", key=f"btn_area_sugg_{m_idx}_{as_idx}", use_container_width=True):
+                                    st.session_state.pending_query = {
+                                        "text_prompt": as_q,
+                                        "selected_point": None,
+                                        "bounding_box": None,
+                                    }
+                                    st.session_state.messages.append({
+                                        "role": "user",
+                                        "content": as_q
+                                    })
+                                    st.rerun()
+
 
                 # Source Evidence Inspection Drawer
                 msg_sources = msg.get("sources", [])
