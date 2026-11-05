@@ -1920,7 +1920,10 @@ class TestOption1MapCanvasTacticalHudAndStableLayout:
         with open("app.py", "r", encoding="utf-8") as f:
             code = f.read()
         assert "st.session_state.bounding_box = (_ll, _ur)\n            st.session_state.answered_bbox = None\n            st.session_state.active_point = _ur\n            st.session_state.active_tactical_scan = None" in code
-        assert "st.session_state.bounding_box = (lower_left, upper_right)\n            st.session_state.answered_bbox = None\n            st.session_state.active_point = upper_right\n            st.session_state.active_tactical_scan = None" in code
+        assert (
+            "st.session_state.bounding_box = (lower_left, upper_right)\n            st.session_state.answered_bbox = None\n            st.session_state.active_point = upper_right\n            st.session_state.active_tactical_scan = None" in code
+            or "st.session_state.bounding_box = (lower_left, upper_right)\n                st.session_state.answered_bbox = None\n                st.session_state.active_point = upper_right\n                st.session_state.active_tactical_scan = None" in code
+        )
 
     def test_trash_can_clear_selection_resets_both_point_and_bbox(self):
         """Plan Test 4: clear_spatial_selection resets point, bbox, HUD state, active_tactical_scan, and increments sequence."""
@@ -2508,10 +2511,494 @@ class TestAgentRagMvpContractAndApiKeyPersistence:
         assert resp.is_live_backend is False
 
 
+class TestPlaceSourcesTagging:
+    """Verify place-source tagging convention ([P{pin}-S{idx}]) and popup source tags."""
+
+    def test_list_query_sources_tagged_with_pin_convention(self, monkeypatch):
+        """When citations are empty in a list query, place sources get [P{pin}-S{idx}] tags."""
+        import geo_agent
+
+        fake_raw = {
+            "answer": "Drone attacks occurred in Kyiv [1], Dnipro [2], and Sumy [3].",
+            "answer_plain": "Drone attacks occurred in Kyiv, Dnipro, and Sumy.",
+            "status": "answered",
+            "grounded": True,
+            "shape": "list",
+            "geo_locations": [
+                {
+                    "number": 1,
+                    "id": "Kyiv",
+                    "label": "Kyiv",
+                    "kind": "city",
+                    "role": "primary",
+                    "geometry": {"type": "Point", "coordinates": [30.524, 50.450]},
+                    "why": "ATTACKED in 47 records",
+                    "sources": ["TEXT_1421", "TEXT_4263", "TEXT_4533", "TEXT_9999"]
+                },
+                {
+                    "number": 2,
+                    "id": "Dnipro",
+                    "label": "Dnipro",
+                    "kind": "city",
+                    "role": "primary",
+                    "geometry": {"type": "Point", "coordinates": [35.041, 48.468]},
+                    "why": "ATTACKED in 7 records",
+                    "sources": ["TEXT_8758", "TEXT_8760", "TEXT_8769"]
+                },
+                {
+                    "number": 3,
+                    "id": "Sumy",
+                    "label": "Sumy",
+                    "kind": "city",
+                    "role": "primary",
+                    "geometry": {"type": "Point", "coordinates": [34.802, 50.911]},
+                    "why": "ATTACKED in 2 records",
+                    "sources": ["TEXT_1023", "TEXT_4541", "TEXT_5992"]
+                },
+                {
+                    "number": 4,
+                    "id": "Zhytomyr",
+                    "label": "Zhytomyr",
+                    "kind": "city",
+                    "role": "context",
+                    "geometry": {"type": "Point", "coordinates": [28.669, 50.260]},
+                    "why": "ATTACKED in 5 records",
+                    "sources": ["TEXT_5420"]
+                }
+            ],
+            "citations": [],
+            "sources": []
+        }
+
+        monkeypatch.setattr(geo_agent, "_BACKEND_AVAILABLE", True)
+        monkeypatch.setattr(geo_agent, "_backend_query", lambda **kw: fake_raw)
+
+        def fake_get_source_text(ptr):
+            return {
+                "pointer": ptr,
+                "document": f"Doc for {ptr}",
+                "section": "General",
+                "paragraph_index": 0,
+                "text": f"Verbatim passage text for {ptr}"
+            }
+        monkeypatch.setattr(geo_agent, "_backend_get_source_text", fake_get_source_text)
+        if hasattr(geo_agent.get_source_text, "cache_clear"):
+            geo_agent.get_source_text.cache_clear()
+
+        resp = geo_agent.query_geo_agent(text_prompt="Where were drone attacks?", api_key="sk-or-test")
+        # When <= 10 total places, primary places (3*3) + context (1) = 10 sources
+        assert len(resp.sources) == 10
+        assert resp.sources[:3] == ["TEXT_1421", "TEXT_4263", "TEXT_4533"]
+
+        # Synthetic citations are populated with [P{pin}-S{idx}]
+        assert len(resp.citations) == 10
+        cit_ids = [c["id"] for c in resp.citations]
+        assert cit_ids[0] == "P1-S1"
+        assert cit_ids[1] == "P1-S2"
+        assert cit_ids[2] == "P1-S3"
+        assert cit_ids[3] == "P2-S1"
+        assert cit_ids[6] == "P3-S1"
+        assert cit_ids[9] == "P4-S1"
+
+        # Point info popup checks
+        pin1 = next(l for l in resp.layers if l.data.get("number") == 1)
+        assert "[P1-S1]" in pin1.popup
+        assert "[P1-S2]" in pin1.popup
+        assert "[P1-S3]" in pin1.popup
+        assert "(+1 more sources)" in pin1.popup
+
+        pin2 = next(l for l in resp.layers if l.data.get("number") == 2)
+        assert "[P2-S1]" in pin2.popup
+        assert "[P2-S2]" in pin2.popup
+        assert "[P2-S3]" in pin2.popup
+
+    def test_large_list_101_places_extracts_exactly_9_sources_with_pin_tags(self, monkeypatch):
+        """When query returns >10 places (e.g. 101 places), only 3 primary places are collected (exactly 9 sources)."""
+        import geo_agent
+
+        # 3 primary places with 10 sources each + 98 context places
+        locs = [
+            {
+                "number": 1,
+                "id": "Kyiv",
+                "label": "Kyiv",
+                "kind": "city",
+                "role": "primary",
+                "geometry": {"type": "Point", "coordinates": [30.524, 50.450]},
+                "sources": [f"TEXT_K_{i}" for i in range(10)]
+            },
+            {
+                "number": 2,
+                "id": "Dnipro",
+                "label": "Dnipro",
+                "kind": "city",
+                "role": "primary",
+                "geometry": {"type": "Point", "coordinates": [35.041, 48.468]},
+                "sources": [f"TEXT_D_{i}" for i in range(10)]
+            },
+            {
+                "number": 3,
+                "id": "Sumy",
+                "label": "Sumy",
+                "kind": "city",
+                "role": "primary",
+                "geometry": {"type": "Point", "coordinates": [34.802, 50.911]},
+                "sources": [f"TEXT_S_{i}" for i in range(10)]
+            }
+        ]
+        for c_idx in range(4, 102):
+            locs.append({
+                "number": c_idx,
+                "id": f"Place_{c_idx}",
+                "label": f"Place {c_idx}",
+                "kind": "town",
+                "role": "context",
+                "geometry": {"type": "Point", "coordinates": [30.0 + c_idx * 0.01, 50.0 + c_idx * 0.01]},
+                "sources": [f"TEXT_CTX_{c_idx}"]
+            })
+
+        fake_raw = {
+            "answer": "101 places found...",
+            "answer_plain": "101 places found...",
+            "status": "answered",
+            "grounded": True,
+            "shape": "list",
+            "geo_locations": locs,
+            "citations": [],
+            "sources": []
+        }
+
+        monkeypatch.setattr(geo_agent, "_BACKEND_AVAILABLE", True)
+        monkeypatch.setattr(geo_agent, "_backend_query", lambda **kw: fake_raw)
+
+        def fake_get_source_text(ptr):
+            return {"pointer": ptr, "document": f"Article {ptr}", "section": "Sec", "text": "Passage text"}
+        monkeypatch.setattr(geo_agent, "_backend_get_source_text", fake_get_source_text)
+        if hasattr(geo_agent.get_source_text, "cache_clear"):
+            geo_agent.get_source_text.cache_clear()
+
+        resp = geo_agent.query_geo_agent(text_prompt="Drone attacks in area", api_key="sk-or-test")
+        # Exactly 3 primary * 3 sources = 9 sources
+        assert len(resp.sources) == 9
+        assert len(resp.citations) == 9
+        assert resp.citations[0]["id"] == "P1-S1"
+        assert resp.citations[0]["place_label"] == "Kyiv"
+        assert resp.citations[3]["id"] == "P2-S1"
+        assert resp.citations[3]["place_label"] == "Dnipro"
+        assert resp.citations[6]["id"] == "P3-S1"
+        assert resp.citations[6]["place_label"] == "Sumy"
+
+    def test_point_popup_preserves_existing_citation_id(self, monkeypatch):
+        """When pointer is already in citations (e.g. [L1]), popup uses that tag."""
+        import geo_agent
+
+        fake_raw = {
+            "answer": "Kyiv [1] [L1] is capital.",
+            "answer_plain": "Kyiv is capital.",
+            "status": "answered",
+            "grounded": True,
+            "shape": "fact",
+            "geo_locations": [
+                {
+                    "number": 1,
+                    "id": "Kyiv",
+                    "label": "Kyiv",
+                    "kind": "city",
+                    "role": "primary",
+                    "geometry": {"type": "Point", "coordinates": [30.524, 50.450]},
+                    "sources": ["TEXT_50333", "TEXT_9999"]
+                }
+            ],
+            "citations": [
+                {
+                    "id": "L1",
+                    "pointer": "TEXT_50333",
+                    "article": "Kyiv",
+                    "section": "Lead"
+                }
+            ],
+            "sources": ["TEXT_50333"]
+        }
+
+        monkeypatch.setattr(geo_agent, "_BACKEND_AVAILABLE", True)
+        monkeypatch.setattr(geo_agent, "_backend_query", lambda **kw: fake_raw)
+
+        def fake_get_source_text(ptr):
+            return {"pointer": ptr, "document": "Kyiv Article", "section": "Lead", "text": "Kyiv text"}
+        monkeypatch.setattr(geo_agent, "_backend_get_source_text", fake_get_source_text)
+        if hasattr(geo_agent.get_source_text, "cache_clear"):
+            geo_agent.get_source_text.cache_clear()
+
+        resp = geo_agent.query_geo_agent(text_prompt="Tell me about Kyiv", api_key="sk-or-test")
+        pin1 = next(l for l in resp.layers if l.data.get("number") == 1)
+        assert "[L1]" in pin1.popup
+        assert "[P1-S2]" in pin1.popup
 
 
+class TestAnswerKnowledgeSubgraph:
+    """Validate induced answer subgraph extraction, NetworkX enrichment, and modal HTML rendering."""
+
+    def test_extract_answer_subgraph_live_response_with_nx_enrichment(self, monkeypatch):
+        """Verify subgraph includes answer's LOC, regions (INSIDE), connected PER/ORG in G, and TEXT nodes."""
+        import networkx as nx
+        import geo_agent
+
+        G = nx.Graph()
+        G.add_node("Bakhmut", type="LOC", place_type="city")
+        G.add_node("Donetsk Oblast", type="LOC", place_type="state")
+        G.add_node("93rd Mechanized Brigade", type="ORG")
+        G.add_node("Oleksandr Syrskyi", type="PER")
+        G.add_node("Unrelated Unit", type="ORG")
+        G.add_node("TEXT_50333", type="TEXT", text_id=50333, text="93rd Mechanized Brigade and Oleksandr Syrskyi defended Bakhmut.", source="Battle of Bakhmut", title="Overview", index=1)
+
+        G.add_edge("Bakhmut", "Donetsk Oblast", relations={"INSIDE": [{"subject": "Bakhmut", "basis": "admin"}]})
+        G.add_edge("93rd Mechanized Brigade", "Bakhmut", relations={"DEFENDED": [{"subject": "93rd Mechanized Brigade", "object": "Bakhmut", "text_id": 50333}]})
+        G.add_edge("93rd Mechanized Brigade", "TEXT_50333", relations={})
+        G.add_edge("Oleksandr Syrskyi", "TEXT_50333", relations={})
+        G.add_edge("Oleksandr Syrskyi", "Bakhmut", relations={"COMMANDED_SECTOR": [{"subject": "Oleksandr Syrskyi", "object": "Bakhmut", "text_id": 50333}]})
+        # Unrelated unit is linked to Bakhmut only in TEXT_99999 (not used in this answer)
+        G.add_edge("Unrelated Unit", "Bakhmut", relations={"DEPLOYED_AT": [{"subject": "Unrelated Unit", "object": "Bakhmut", "text_id": 99999}]})
+
+        monkeypatch.setattr(
+            geo_agent,
+            "_backend_get_source_text",
+            lambda ptr: {
+                "pointer": ptr,
+                "document": "Battle of Bakhmut",
+                "section": "Overview",
+                "paragraph_index": 0,
+                "text": "93rd Mechanized Brigade and Oleksandr Syrskyi defended Bakhmut.",
+            },
+        )
+        if hasattr(geo_agent.get_source_text, "cache_clear"):
+            geo_agent.get_source_text.cache_clear()
+
+        raw_result = {
+            "answer": "Bakhmut [1] was defended by the 93rd Mechanized Brigade under Oleksandr Syrskyi [S1].",
+            "answer_plain": "Bakhmut was defended by the 93rd Mechanized Brigade under Oleksandr Syrskyi.",
+            "geo_locations": [
+                {
+                    "number": 1,
+                    "id": "Bakhmut",
+                    "label": "Bakhmut",
+                    "kind": "city",
+                    "role": "primary",
+                    "geometry": {"type": "Point", "coordinates": [37.9999, 48.5953]},
+                    "why": "DEFENDED in 1 record",
+                    "sources": ["TEXT_50333"],
+                }
+            ],
+            "regions": [
+                {
+                    "id": "Ukraine",
+                    "place_type": "country",
+                    "count": 1,
+                    "places": [1],
+                    "children": [
+                        {"id": "Donetsk Oblast", "place_type": "state", "count": 1, "places": [1], "children": []}
+                    ],
+                }
+            ],
+            "citations": [{"id": "S1", "pointer": "TEXT_50333", "article": "Battle of Bakhmut", "section": "Overview"}],
+            "sources": ["TEXT_50333"],
+        }
+
+        sg = geo_agent.extract_answer_subgraph(
+            raw_response=raw_result,
+            sources=["TEXT_50333"],
+            citations=raw_result["citations"],
+            regions=raw_result["regions"],
+            answer_text=raw_result["answer_plain"],
+            nx_graph=G,
+        )
+
+        node_ids = {n["id"] for n in sg["nodes"]}
+        assert "Bakhmut" in node_ids
+        assert "Donetsk Oblast" in node_ids
+        assert "Ukraine" in node_ids
+        assert "93rd Mechanized Brigade" in node_ids
+        assert "Oleksandr Syrskyi" in node_ids
+        assert "TEXT_50333" in node_ids
+        # Unrelated Unit from another paragraph must NOT pollute the answer subgraph
+        assert "Unrelated Unit" not in node_ids
+
+        edge_labels = {e["label"] for e in sg["edges"]}
+        assert "INSIDE" in edge_labels
+        assert "DEFENDED" in edge_labels
+        assert any("cited_in" in lbl for lbl in edge_labels)
+
+    def test_mock_mode_response_populates_subgraph_and_renders_modal_html(self):
+        """Verify Offline Mock mode responses automatically include a valid subgraph and render modal HTML."""
+        import app
+        import geo_agent
+
+        resp = geo_agent.query_geo_agent(text_prompt="Show logistics hubs in central Ukraine", force_mock=True)
+        assert isinstance(resp.subgraph, dict)
+        assert len(resp.subgraph.get("nodes", [])) >= 3
+        assert len(resp.subgraph.get("edges", [])) >= 2
+
+        msg = app._build_assistant_message(resp)
+        assert "subgraph" in msg
+        assert len(msg["subgraph"]["nodes"]) >= 3
+
+        html_out = app._render_subgraph_modal_html(msg["subgraph"], query_title="Show logistics hubs")
+        assert "sg-canvas" in html_out
+        assert "Force Physics" in html_out
+        assert "Hierarchical Flow" in html_out
+        assert "Sector Alpha (Kyiv)" in html_out
+        # Enhancements: label opacity slider, passive stats readout, and hover handlers
+        assert "sg-label-slider" in html_out
+        assert "sg-stat-readout" in html_out
+        assert "hoverRelation" in html_out
+        assert "unhoverRelation" in html_out
+        assert "Grounded Answer Subgraph" in html_out
+        # Dedicated Tactical Scrollbar matching chat console roller
+        assert "*::-webkit-scrollbar-thumb" in html_out
+        assert "scrollbar-color" in html_out
+        assert "sg-edge-section" in html_out
+        assert "sg-inspector-body" in html_out
 
 
+class TestPhase3ErrorBoundariesAndContinuity:
+    """Phase 3 Test Suite: Validates backend timeouts, error boundaries, and conversational turn parity."""
+
+    def test_backend_query_timeout_raises_agent_error(self, monkeypatch):
+        """Verify that a hanging backend query respects GEOAI_BACKEND_TIMEOUT and raises AgentError."""
+        import time
+        import pytest
+        import geo_agent
+
+        def hanging_backend_query(*args, **kwargs):
+            time.sleep(0.5)
+            return {"answer": "Should have timed out"}
+
+        monkeypatch.setattr(geo_agent, "_BACKEND_AVAILABLE", True)
+        monkeypatch.setattr(geo_agent, "_backend_query", hanging_backend_query)
+        monkeypatch.setenv("GEOAI_BACKEND_TIMEOUT", "0.05")
+
+        with pytest.raises(geo_agent.AgentError) as exc_info:
+            geo_agent.query_geo_agent(text_prompt="Test timeout", api_key="sk-or-test")
+
+        assert "timed out" in str(exc_info.value).lower()
+
+    def test_build_error_assistant_message_structure(self):
+        """Verify _build_error_assistant_message constructs valid assistant error card."""
+        import app
+
+        err_card = app._build_error_assistant_message("Connection refused by peer")
+        assert err_card["role"] == "assistant"
+        assert err_card["status"] == "error"
+        assert err_card["is_error"] is True
+        assert err_card["grounded"] is False
+        assert "Connection refused by peer" in err_card["content"]
+        assert err_card["sources"] == []
+        assert err_card["citations"] == []
+
+    def test_chat_error_fallback_code_in_app(self):
+        """Verify app.py source contains turn parity error handling in Section 6b."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            code = f.read()
+
+        assert "_build_error_assistant_message" in code
+        assert "st.session_state.messages.append(_build_error_assistant_message(err_msg))" in code
+        assert 'role_tag += " • [ERROR]"' in code
 
 
+class TestPhase4And5IntegrationAndHygiene:
+    """Phase 4 & 5 Test Suite: Validates session state hygiene, memory bounding, and integration safety."""
+
+    def test_source_metadata_cache_deduplication_and_clearing(self, monkeypatch):
+        """Verify source_metadata_cache deduplicates lookups and is purged by clear_map_and_console."""
+        import streamlit as st
+        import app
+        import geo_agent
+
+        st.session_state.source_metadata_cache = {}
+        fake_passage = {
+            "pointer": "TEXT_50333",
+            "document": "Battle of Bakhmut",
+            "section": "Operations",
+            "text": "Detailed tactical text passage."
+        }
+        monkeypatch.setattr(geo_agent, "_backend_get_source_text", lambda ptr: fake_passage)
+        if hasattr(geo_agent.get_source_text, "cache_clear"):
+            geo_agent.get_source_text.cache_clear()
+
+        # 1. Populate cache
+        p1 = geo_agent.get_source_text("TEXT_50333")
+        st.session_state.source_metadata_cache["TEXT_50333"] = p1
+        assert "TEXT_50333" in st.session_state.source_metadata_cache
+        assert st.session_state.source_metadata_cache["TEXT_50333"]["document"] == "Battle of Bakhmut"
+
+        # 2. Verify clear_map_and_console resets source_metadata_cache
+        app.clear_map_and_console()
+        assert st.session_state.source_metadata_cache == {}
+
+    def test_agent_turns_capped_at_five_during_extended_dialogue(self, monkeypatch):
+        """Verify agent_turns stays bounded at <= 5 items across long multi-turn sessions."""
+        import streamlit as st
+        import app
+        from app import AgentResponse
+
+        st.session_state.agent_turns = []
+        st.session_state.messages = []
+        st.session_state.rag_logs = []
+
+        fake_resp = AgentResponse(
+            answer="Turn completed.",
+            raw_response={"answer": "Turn completed."},
+            layers=[],
+            sources=[]
+        )
+        monkeypatch.setattr(app, "query_geo_agent", lambda **kw: fake_resp)
+
+        for i in range(8):
+            app.dispatch_geo_query(text_prompt=f"Simulated dialogue step #{i+1}")
+
+        assert len(st.session_state.agent_turns) == 5
+        assert st.session_state.agent_turns[-1]["query"] == "Simulated dialogue step #8"
+        assert st.session_state.agent_turns[0]["query"] == "Simulated dialogue step #4"
+
+    def test_rag_logs_capped_at_fifty_entries(self):
+        """Verify RAG telemetry logs do not exceed the 50-entry memory ceiling."""
+        import streamlit as st
+        import app
+
+        st.session_state.rag_logs = []
+        for i in range(60):
+            entry = {
+                "id": i + 1,
+                "timestamp": "2026-11-04 12:00:00",
+                "latency_ms": 15.0,
+                "status": "SUCCESS",
+                "query_summary": f"Query #{i+1}"
+            }
+            app._append_rag_log(entry)
+
+        assert len(st.session_state.rag_logs) == 50
+        assert st.session_state.rag_logs[-1]["id"] == 60
+        assert st.session_state.rag_logs[0]["id"] == 11
+
+    def test_tactical_map_fragment_decorator_present(self):
+        """Verify render_tactical_map_fragment is decorated with @st.fragment for client isolation."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            code = f.read()
+
+        assert "@st.fragment" in code
+        assert "def render_tactical_map_fragment():" in code
+
+    def test_zero_rerun_contract_on_direct_point_click(self):
+        """Verify direct map clicks update active_point locally without triggering st.rerun."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            code = f.read()
+
+        frag_start = code.find("def render_tactical_map_fragment():")
+        assert frag_start != -1
+        frag_code = code[frag_start:]
+
+        # Inside the fragment, point selection must update active_point without st.rerun()
+        click_block_idx = frag_code.find("st.session_state.selected_points = [clicked_coord]")
+        assert click_block_idx != -1
+        click_block = frag_code[click_block_idx:click_block_idx + 350]
+        assert "st.rerun()" not in click_block
 
