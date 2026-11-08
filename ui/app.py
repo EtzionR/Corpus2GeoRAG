@@ -1927,6 +1927,334 @@ def clear_map_and_console(ignore_current_drawing: bool = True):
             del st.session_state[k]
 
 
+# ==============================================================================
+# Deferred Point-Selection Sync (zero Python reruns while the user clicks around the map)
+# ==============================================================================
+# Every `Streamlit.setComponentValue()` call from the map iframe forces a Python rerun of
+# `render_tactical_map_fragment()` (full Folium rebuild + feature group re-mount).
+# Point selections (canvas clicks, answer-pin popups, cluster clicks) are already rendered
+# 100% client-side (instant reticle, in-map HUD, docked pill), so Python only needs the
+# selection when the operator acts OUTSIDE the map (chat input, Recon button, sidebar).
+#
+# This gate wraps `window.Streamlit.setComponentValue` inside the map iframe:
+#   * Passive sends (streamlit-folium's own onMapClick / onLayerClick / debounced updates,
+#     and our click / popup handlers) are buffered: N clicks -> 0 reruns.
+#   * Explicit `geoaiImmediateDispatch()` sends (rectangle draw, trash/delete, Recon) pass
+#     through instantly and carry any buffered click along with them.
+#   * The buffer is flushed (exactly one rerun) when the map iframe loses focus, or on the
+#     first pointerdown / focusin / keydown in the parent Streamlit document.
+# Python-side, `reconcile_deferred_map_selection()` closes the remaining race where the
+# flushed click and a chat submit / recon arrive in the same full-script run.
+DEFERRED_SELECTION_SYNC_JS = r"""
+            // ---- GeoAI Deferred Selection Sync Gate (zero-rerun point selection) ----
+            (function installGeoaiDeferredSelectionGate() {
+                function geoaiCanonicalJson(v) {
+                    if (v === undefined) return 'null';
+                    if (v === null || typeof v !== 'object') return JSON.stringify(v);
+                    if (typeof v.toJSON === 'function') return geoaiCanonicalJson(v.toJSON());
+                    if (Array.isArray(v)) {
+                        return '[' + v.map(geoaiCanonicalJson).join(',') + ']';
+                    }
+                    var keys = Object.keys(v).filter(function(k) {
+                        return v[k] !== undefined && typeof v[k] !== 'function';
+                    }).sort();
+                    return '{' + keys.map(function(k) {
+                        return JSON.stringify(k) + ':' + geoaiCanonicalJson(v[k]);
+                    }).join(',') + '}';
+                }
+                window.geoaiCanonicalJson = geoaiCanonicalJson;
+
+                var gate = window._geoaiSyncGate;
+                if (!gate) {
+                    gate = window._geoaiSyncGate = {
+                        dirty: false,
+                        pending: null,
+                        bypass: false,
+                        lastSentKey: null,
+                        deferredCount: 0,
+                        sentCount: 0,
+                        flushCount: 0,
+                        origSend: null
+                    };
+                }
+
+                function installSendInterceptor() {
+                    var S = window.Streamlit;
+                    if (!S || typeof S.setComponentValue !== 'function') return false;
+                    if (S._geoaiGateInstalled) return true;
+                    var orig = S.setComponentValue;
+                    gate.origSend = function(v) { return orig.call(S, v); };
+                    if (window.__GLOBAL_DATA__ && window.__GLOBAL_DATA__.previous_data !== undefined) {
+                        gate.lastSentKey = geoaiCanonicalJson(window.__GLOBAL_DATA__.previous_data);
+                    }
+                    S.setComponentValue = function(v) {
+                        var key = geoaiCanonicalJson(v);
+                        if (gate.bypass) {
+                            gate.lastSentKey = key;
+                            gate.sentCount += 1;
+                            return orig.call(S, v);
+                        }
+                        // Passive (library / click) send: identical payloads are dropped, new ones buffered
+                        if (key === gate.lastSentKey) return;
+                        gate.pending = v;
+                        gate.dirty = true;
+                        gate.deferredCount += 1;
+                    };
+                    S._geoaiGateInstalled = true;
+                    return true;
+                }
+                installSendInterceptor();
+
+                function geoaiSendNow(u) {
+                    if (!installSendInterceptor()) return false;
+                    gate.bypass = true;
+                    try {
+                        window.Streamlit.setComponentValue(u);
+                    } finally {
+                        gate.bypass = false;
+                    }
+                    return true;
+                }
+
+                function geoaiBuildPayload() {
+                    var g = window.__GLOBAL_DATA__;
+                    var activeClick = g.lat_lng_clicked || g.last_object_clicked;
+                    var c = {
+                        last_clicked: activeClick,
+                        last_active_drawing: g.last_active_drawing,
+                        all_drawings: g.all_drawings
+                    };
+                    var u = {};
+                    if (g.returned_objects && Array.isArray(g.returned_objects)) {
+                        g.returned_objects.forEach(function(k) {
+                            if (c.hasOwnProperty(k)) u[k] = c[k];
+                        });
+                    } else {
+                        u = c;
+                    }
+                    return u;
+                }
+                window.geoaiBuildPayload = geoaiBuildPayload;
+
+                // Instant 0ms Component Value Dispatch (bypasses streamlit-folium's 250ms debounce
+                // and the deferred gate). Used ONLY for urgent actions: rectangle draw, delete, recon.
+                window.geoaiImmediateDispatch = function(mapInstance) {
+                    try {
+                        if (!window.__GLOBAL_DATA__ || !window.Streamlit || typeof window.Streamlit.setComponentValue !== 'function') return;
+                        var g = window.__GLOBAL_DATA__;
+                        var u = geoaiBuildPayload();
+                        var hadPending = gate.dirty;
+                        gate.dirty = false;
+                        gate.pending = null;
+                        if (hadPending || JSON.stringify(g.previous_data) !== JSON.stringify(u)) {
+                            if (hadPending || geoaiCanonicalJson(u) !== gate.lastSentKey) {
+                                g.previous_data = u;
+                                geoaiSendNow(u);
+                            } else {
+                                g.previous_data = u;
+                            }
+                        }
+                    } catch(err) {
+                        console.warn("[GeoAI] Immediate dispatch error:", err);
+                    }
+                };
+
+                // Mark a client-side-only selection change (point click / pin popup) without a rerun
+                window.geoaiMarkSelectionDirty = function() {
+                    installSendInterceptor();
+                    gate.dirty = true;
+                };
+
+                // Flush buffered selection to Python exactly once (no-op when nothing is pending)
+                window.geoaiFlushDeferredSelection = function(reason) {
+                    if (!gate.dirty) return false;
+                    gate.flushCount += 1;
+                    gate.lastFlushReason = reason || 'manual';
+                    window.geoaiImmediateDispatch(window.map || null);
+                    return true;
+                };
+
+                window.geoaiDeferredSyncStats = function() {
+                    return {
+                        dirty: gate.dirty,
+                        deferredCount: gate.deferredCount,
+                        sentCount: gate.sentCount,
+                        flushCount: gate.flushCount,
+                        lastFlushReason: gate.lastFlushReason || null
+                    };
+                };
+
+                // Flush triggers: map iframe loses focus / tab hidden
+                if (!window._geoaiFlushTriggersBound) {
+                    window._geoaiFlushTriggersBound = true;
+                    window.addEventListener('blur', function() {
+                        window.geoaiFlushDeferredSelection('iframe-blur');
+                    });
+                    try {
+                        document.addEventListener('visibilitychange', function() {
+                            if (document.visibilityState === 'hidden') {
+                                window.geoaiFlushDeferredSelection('visibility-hidden');
+                            }
+                        });
+                    } catch(e) {}
+                }
+
+                // Flush triggers: first interaction in the parent Streamlit document
+                // (chat input focus, Recon / suggestion buttons, sidebar) — bound once per parent.
+                try {
+                    var pw = window.parent;
+                    if (pw && pw !== window && pw.document) {
+                        pw.__geoaiFlushMapSelection = function(reason) {
+                            try { return window.geoaiFlushDeferredSelection(reason); } catch(e) { return false; }
+                        };
+                        if (!pw.__geoaiFlushListenersBound) {
+                            pw.__geoaiFlushListenersBound = true;
+                            ['pointerdown', 'focusin', 'keydown'].forEach(function(evName) {
+                                pw.document.addEventListener(evName, function() {
+                                    try {
+                                        if (typeof pw.__geoaiFlushMapSelection === 'function') {
+                                            pw.__geoaiFlushMapSelection('parent-' + evName);
+                                        }
+                                    } catch(e) {}
+                                }, true);
+                            });
+                        }
+                    }
+                } catch(e) {}
+            })();
+            // ---- End GeoAI Deferred Selection Sync Gate ----
+"""
+
+
+def build_deferred_selection_sync_js() -> str:
+    """Return the client-side deferred selection sync gate injected by `MapTrashBinHook`."""
+    return DEFERRED_SELECTION_SYNC_JS
+
+
+def reconcile_deferred_map_selection(
+    map_state: Optional[Dict[str, Any]],
+    session_state: Optional[Any] = None,
+) -> bool:
+    """
+    Apply a deferred point selection carried by `map_state` to session state.
+
+    Called in Section 2c right before a chat submit / recon request locks `pending_query`,
+    so a map click that was flushed in the same run as the submit is never dropped.
+    Rectangle drawings, deletions and recon actions are intentionally NOT handled here
+    (they keep their dedicated Section 2b / Section 5 paths).
+
+    Returns True when the active selection changed.
+    """
+    ss = session_state if session_state is not None else st.session_state
+    if ss.get("pending_query") or not isinstance(map_state, dict):
+        return False
+
+    drawing = map_state.get("last_active_drawing")
+    if isinstance(drawing, dict):
+        props = drawing.get("properties") or {}
+        geom = drawing.get("geometry") or {}
+        is_new_drawing = (
+            drawing != ss.get("last_processed_drawing")
+            and drawing != ss.get("ignored_drawing")
+        )
+        if is_new_drawing and (props.get("action") in ("recon", "delete") or geom.get("type") == "Polygon" or not geom):
+            return False
+        if is_new_drawing and geom.get("type") == "Point":
+            coords = geom.get("coordinates") or []
+            if len(coords) >= 2:
+                try:
+                    pt = (round(float(coords[1]), 5), round(float(coords[0]), 5))
+                except (TypeError, ValueError):
+                    pt = None
+                if pt is not None:
+                    ss.last_processed_drawing = drawing
+                    ss.ignored_drawing = None
+                    ss.last_clicked = pt
+                    changed = (
+                        ss.get("selected_points") != [pt]
+                        or ss.get("bounding_box") is not None
+                    )
+                    if changed:
+                        ss.selection_mode = "Point Selection"
+                        ss.selected_points = [pt]
+                        ss.bounding_box = None
+                        ss.answered_bbox = None
+                        ss.active_point = pt
+                        ss.active_tactical_scan = None
+                    return changed
+
+    clicked = map_state.get("last_clicked")
+    if not isinstance(clicked, dict) or "lat" not in clicked or "lng" not in clicked:
+        return False
+    try:
+        coord = (round(float(clicked["lat"]), 5), round(float(clicked["lng"]), 5))
+    except (TypeError, ValueError):
+        return False
+
+    if _is_drawing_corner_release(coord, ss.get("bounding_box")):
+        ss.last_clicked = coord
+        return False
+    if coord == ss.get("last_clicked"):
+        return False
+
+    ss.last_clicked = coord
+    if ss.get("selected_points") == [coord] and ss.get("bounding_box") is None:
+        return False
+    ss.selection_mode = "Point Selection"
+    ss.selected_points = [coord]
+    ss.bounding_box = None
+    ss.answered_bbox = None
+    ss.active_point = coord
+    ss.active_tactical_scan = None
+    return True
+
+
+def _peek_incoming_map_state() -> Optional[Dict[str, Any]]:
+    # 1. Inspect fresh incoming widget states directly from Streamlit's internal runner context.
+    # When a component calls setComponentValue(), Streamlit populates _new_widget_state
+    # with the incoming WebSocket payload BEFORE running the script, but SessionState.__getitem__
+    # will not expose it until register_widget() is called later during map rendering.
+    try:
+        from streamlit.runtime.state.session_state_proxy import get_session_state
+        ss = get_session_state()
+        raw_state = getattr(ss, "_state", None)
+        if raw_state is not None:
+            new_widgets = getattr(raw_state, "_new_widget_state", None)
+            if new_widgets is not None and hasattr(new_widgets, "states"):
+                for wid, item in new_widgets.states.items():
+                    val = getattr(item, "value", None)
+                    if val is not None and hasattr(val, "WhichOneof") and val.WhichOneof("value") == "json_value":
+                        try:
+                            parsed = json.loads(val.json_value)
+                            if isinstance(parsed, dict) and (
+                                "last_clicked" in parsed
+                                or "last_active_drawing" in parsed
+                                or "all_drawings" in parsed
+                                or "last_object_clicked" in parsed
+                            ):
+                                return parsed
+                        except Exception:
+                            pass
+                    elif isinstance(item, dict):
+                        if "last_clicked" in item or "last_active_drawing" in item or "all_drawings" in item or "last_object_clicked" in item:
+                            return item
+    except Exception:
+        pass
+
+    # 2. Prioritize 64-character hash keys directly from Streamlit session_state
+    for k in list(st.session_state.keys()):
+        if isinstance(k, str) and len(k) == 64:
+            v = st.session_state.get(k)
+            if isinstance(v, dict) and ("last_clicked" in v or "last_active_drawing" in v or "all_drawings" in v or "last_object_clicked" in v):
+                return v
+
+    # 3. Fallback to static widget key
+    s = st.session_state.get("geoai_tactical_map")
+    if isinstance(s, dict) and ("last_clicked" in s or "last_active_drawing" in s or "all_drawings" in s or "last_object_clicked" in s):
+        return s
+    return None
+
+
 class SelectionSyncHook(MacroElement):
     """
     Lightweight MacroElement attached to `selection_fg` (feature_group_0) so that whenever
@@ -2368,38 +2696,9 @@ class MapTrashBinHook(MacroElement):
                 try { map.invalidateSize(); } catch(e) {}
             });
 
-            // Instant 0ms Component Value Dispatch to bypass streamlit-folium's 250ms artificial debounce
-            window.geoaiImmediateDispatch = function(mapInstance) {
-                try {
-                    if (!window.__GLOBAL_DATA__ || !window.Streamlit || typeof window.Streamlit.setComponentValue !== 'function') return;
-                    var g = window.__GLOBAL_DATA__;
-                    var activeClick = g.lat_lng_clicked || g.last_object_clicked;
-                    var c = {
-                        last_clicked: activeClick,
-                        last_active_drawing: g.last_active_drawing,
-                        all_drawings: g.all_drawings
-                    };
-                    var u = {};
-                    if (g.returned_objects && Array.isArray(g.returned_objects)) {
-                        g.returned_objects.forEach(function(k) {
-                            if (c.hasOwnProperty(k)) u[k] = c[k];
-                        });
-                    } else {
-                        u = c;
-                    }
-                    if (JSON.stringify(g.previous_data) !== JSON.stringify(u)) {
-                        g.previous_data = u;
-                        window.Streamlit.setComponentValue(u);
-                    }
-                } catch(err) {
-                    console.warn("[GeoAI] Immediate dispatch error:", err);
-                }
-            };
-            try {
-                if (typeof debouncedUpdateComponentValue === 'function') {
-                    debouncedUpdateComponentValue = window.geoaiImmediateDispatch;
-                }
-            } catch(e) {}
+            // Deferred selection sync gate + instant 0ms dispatch for urgent actions
+            // (see DEFERRED_SELECTION_SYNC_JS in app.py)
+{{ this.deferred_sync_js }}
 
             window._mapInitializing = true;
             setTimeout(function() { window._mapInitializing = false; }, 400);
@@ -3338,11 +3637,13 @@ class MapTrashBinHook(MacroElement):
                     window.__GLOBAL_DATA__.last_active_drawing = null;
                     window.__GLOBAL_DATA__.all_drawings = [];
                 }
+                // Deferred sync: point selection is fully rendered client-side, so do NOT rerun
+                // Python now. The gate flushes once when the operator leaves the map.
                 try {
-                    if (typeof window.geoaiImmediateDispatch === "function") {
+                    if (typeof window.geoaiMarkSelectionDirty === "function") {
+                        window.geoaiMarkSelectionDirty();
+                    } else if (typeof window.geoaiImmediateDispatch === "function") {
                         window.geoaiImmediateDispatch(map);
-                    } else if (typeof updateComponentValue === "function") {
-                        updateComponentValue(map);
                     }
                 } catch(err) {}
             });
@@ -3421,11 +3722,13 @@ class MapTrashBinHook(MacroElement):
                                 console.warn("[GeoAI] Instant reticle marker error:", err);
                             }
 
+                            // Deferred sync: answer-pin selection is rendered client-side (reticle + HUD);
+                            // Python receives it once on flush instead of rerunning on every pin click.
                             try {
-                                if (typeof window.geoaiImmediateDispatch === 'function') {
+                                if (typeof window.geoaiMarkSelectionDirty === 'function') {
+                                    window.geoaiMarkSelectionDirty();
+                                } else if (typeof window.geoaiImmediateDispatch === 'function') {
                                     window.geoaiImmediateDispatch(map);
-                                } else if (typeof updateComponentValue === 'function') {
-                                    updateComponentValue(map);
                                 }
                             } catch(err) {}
                         }
@@ -4071,6 +4374,7 @@ class MapTrashBinHook(MacroElement):
         super().__init__()
         self.selection_layer_names = selection_layer_names or []
         self.has_active = has_active
+        self.deferred_sync_js = build_deferred_selection_sync_js()
 
 # ==============================================================================
 # 1. Visual Theme Configurations & Page Setup (GeoAI Defense C2)
@@ -5888,6 +6192,15 @@ _is_chat_submit = bool(
 )
 
 if not st.session_state.get("pending_query"):
+    # Deferred point selection: the map iframe buffers point clicks client-side and flushes them
+    # when the operator leaves the map. If that flush lands in the same run as this submit,
+    # apply it now so the query targets the point the operator actually sees on the map.
+    if _is_chat_submit or _incoming_recon:
+        try:
+            reconcile_deferred_map_selection(_peek_incoming_map_state())
+        except Exception as _reconcile_err:
+            print(f"[Deferred Selection Warning] Could not reconcile map selection: {_reconcile_err}")
+
     _is_bbox = st.session_state.get("bounding_box") is not None
     _active_pt = None if _is_bbox else (st.session_state.selected_points[0] if st.session_state.get("selected_points") else None)
     _active_bbox = st.session_state.get("bounding_box") if _is_bbox else None
@@ -5913,51 +6226,6 @@ if not st.session_state.get("pending_query"):
 # Ingests map clicks, drawings, and deletions before the sidebar and chat mount,
 # ensuring all UI panels reflect the newest spatial selection on the initial rerun
 # without requiring a second st.rerun() cascade.
-def _peek_incoming_map_state() -> Optional[Dict[str, Any]]:
-    # 1. Inspect fresh incoming widget states directly from Streamlit's internal runner context.
-    # When a component calls setComponentValue(), Streamlit populates _new_widget_state
-    # with the incoming WebSocket payload BEFORE running the script, but SessionState.__getitem__
-    # will not expose it until register_widget() is called later during map rendering.
-    try:
-        from streamlit.runtime.state.session_state_proxy import get_session_state
-        ss = get_session_state()
-        raw_state = getattr(ss, "_state", None)
-        if raw_state is not None:
-            new_widgets = getattr(raw_state, "_new_widget_state", None)
-            if new_widgets is not None and hasattr(new_widgets, "states"):
-                for wid, item in new_widgets.states.items():
-                    val = getattr(item, "value", None)
-                    if val is not None and hasattr(val, "WhichOneof") and val.WhichOneof("value") == "json_value":
-                        try:
-                            parsed = json.loads(val.json_value)
-                            if isinstance(parsed, dict) and (
-                                "last_clicked" in parsed
-                                or "last_active_drawing" in parsed
-                                or "all_drawings" in parsed
-                                or "last_object_clicked" in parsed
-                            ):
-                                return parsed
-                        except Exception:
-                            pass
-                    elif isinstance(item, dict):
-                        if "last_clicked" in item or "last_active_drawing" in item or "all_drawings" in item or "last_object_clicked" in item:
-                            return item
-    except Exception:
-        pass
-
-    # 2. Prioritize 64-character hash keys directly from Streamlit session_state
-    for k in list(st.session_state.keys()):
-        if isinstance(k, str) and len(k) == 64:
-            v = st.session_state.get(k)
-            if isinstance(v, dict) and ("last_clicked" in v or "last_active_drawing" in v or "all_drawings" in v or "last_object_clicked" in v):
-                return v
-
-    # 3. Fallback to static widget key
-    s = st.session_state.get("geoai_tactical_map")
-    if isinstance(s, dict) and ("last_clicked" in s or "last_active_drawing" in s or "all_drawings" in s or "last_object_clicked" in s):
-        return s
-    return None
-
 _early_map_state = _peek_incoming_map_state()
 if (
     not st.session_state.get("pending_query")

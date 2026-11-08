@@ -25,7 +25,7 @@ import sys
 from typing import Dict, List, Set, Tuple
 
 
-MIN_REQUIRED_TESTS = 148
+MIN_REQUIRED_TESTS = 165
 EXEMPT_PYTHON_FILES = {
     "test_app.py",
     "conftest.py",
@@ -49,6 +49,8 @@ REQUIRED_SYMBOL_COVERAGE: Dict[str, List[str]] = {
         "SelectionSyncHook",
         "compute_sector_bounding_box",
         "format_regional_distribution_html",
+        "build_deferred_selection_sync_js",
+        "reconcile_deferred_map_selection",
     ],
     "geo_agent.py": [
         "MapLayer",

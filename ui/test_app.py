@@ -4559,3 +4559,614 @@ class TestPhase2QualityEnforcementAndFutureProofing:
 
         readme_text = readme_path.read_text(encoding="utf-8")
         assert "Definition of Done" in readme_text
+
+
+# ==============================================================================
+# Deferred Point-Selection Sync (zero Python reruns while clicking around the map)
+# ==============================================================================
+import json as _json
+import shutil as _shutil
+import subprocess as _subprocess
+
+
+_NODE_BIN = _shutil.which("node")
+_requires_node = pytest.mark.skipif(_NODE_BIN is None, reason="Node.js not installed; JS behavioural harness skipped")
+
+
+# Node harness: fake browser globals + a faithful re-implementation of streamlit-folium's
+# updateComponentValue (including its different key order and its own previous_data dedup),
+# so the gate is exercised exactly as it runs inside the map iframe.
+_DEFERRED_GATE_NODE_HARNESS = r"""
+const SNIPPET = require('fs').readFileSync(process.argv[2], 'utf8');
+
+function makeTarget() {
+  const listeners = {};
+  return {
+    listeners,
+    addEventListener(name, fn) { (listeners[name] = listeners[name] || []).push(fn); },
+    fire(name, ev) { (listeners[name] || []).forEach(fn => fn(ev || {})); },
+    count(name) { return (listeners[name] || []).length; },
+  };
+}
+
+function makeEnv(opts) {
+  opts = opts || {};
+  const sent = [];
+  const parentDoc = makeTarget();
+  const parent = { document: parentDoc };
+  const win = makeTarget();
+  const doc = makeTarget();
+  doc.visibilityState = 'visible';
+  win.parent = parent;
+  if (!opts.noStreamlit) {
+    win.Streamlit = { setComponentValue(v) { sent.push(JSON.parse(JSON.stringify(v))); } };
+  }
+  win.__GLOBAL_DATA__ = {
+    lat_lng_clicked: null, last_object_clicked: null, last_object_clicked_count: 0,
+    all_drawings: null, last_active_drawing: null,
+    returned_objects: ['last_clicked', 'last_active_drawing', 'all_drawings'],
+    previous_data: { last_clicked: null, last_active_drawing: null, all_drawings: null },
+  };
+  win.map = {};
+  const run = () => new Function('window', 'document', SNIPPET)(win, doc);
+  run();
+  // streamlit-folium's own updateComponentValue (key order: last_clicked, all_drawings, last_active_drawing)
+  function libraryUpdate() {
+    const g = win.__GLOBAL_DATA__;
+    const c = {
+      last_clicked: g.lat_lng_clicked,
+      last_object_clicked: g.last_object_clicked,
+      all_drawings: g.all_drawings,
+      last_active_drawing: g.last_active_drawing,
+    };
+    const u = Object.fromEntries(Object.entries(c).filter(([k]) => g.returned_objects.includes(k)));
+    if (JSON.stringify(g.previous_data) !== JSON.stringify(u)) {
+      g.previous_data = u;
+      win.Streamlit && win.Streamlit.setComponentValue(u);
+    }
+  }
+  // Our click handler + streamlit-folium onMapClick, exactly as wired in MapTrashBinHook
+  function canvasClick(lat, lng) {
+    const g = win.__GLOBAL_DATA__;
+    g.lat_lng_clicked = { lat, lng };
+    g.last_active_drawing = null;
+    g.all_drawings = [];
+    win.geoaiMarkSelectionDirty();
+    g.lat_lng_clicked = { lat, lng };
+    libraryUpdate();
+  }
+  function pinPopupClick(lat, lng) {
+    const g = win.__GLOBAL_DATA__;
+    g.lat_lng_clicked = { lat, lng };
+    g.last_object_clicked = { lat, lng };
+    g.last_active_drawing = { type: 'Feature', geometry: { type: 'Point', coordinates: [lng, lat] }, properties: {} };
+    win.geoaiMarkSelectionDirty();
+    libraryUpdate();
+  }
+  return { win, doc, parent, parentDoc, sent, run, libraryUpdate, canvasClick, pinPopupClick };
+}
+
+const R = {};
+
+// 1. 50 rapid canvas clicks + pans -> zero Python reruns
+{
+  const e = makeEnv();
+  for (let i = 0; i < 50; i++) {
+    e.canvasClick(48 + i * 0.01, 31 + i * 0.01);
+    e.libraryUpdate(); // moveend / zoomend pan after each click
+  }
+  R.rapid_clicks_sent = e.sent.length;
+  R.rapid_clicks_dirty = e.win.geoaiDeferredSyncStats().dirty;
+  // 2. leaving the map (iframe blur) flushes exactly once with the LATEST click
+  e.win.fire('blur');
+  R.flush_sent = e.sent.length;
+  R.flush_payload = e.sent[e.sent.length - 1] || null;
+  R.flush_reason = e.win.geoaiDeferredSyncStats().lastFlushReason;
+  // 3. library re-send of same content (different key order) is dropped
+  e.win.__GLOBAL_DATA__.previous_data = {};
+  e.libraryUpdate();
+  R.after_reorder_sent = e.sent.length;
+  // 4. second blur is a no-op
+  e.win.fire('blur');
+  R.second_blur_sent = e.sent.length;
+  // 5. parent interaction flushes a new click once
+  e.canvasClick(50.45, 30.52);
+  R.before_parent_sent = e.sent.length;
+  e.parentDoc.fire('pointerdown');
+  e.parentDoc.fire('focusin');
+  e.parentDoc.fire('keydown');
+  R.parent_flush_sent = e.sent.length;
+  R.parent_flush_payload = e.sent[e.sent.length - 1];
+  R.parent_flush_reason = e.win.geoaiDeferredSyncStats().lastFlushReason;
+  // 6. pans with no pending selection never send
+  for (let i = 0; i < 20; i++) e.libraryUpdate();
+  R.idle_pan_sent = e.sent.length;
+}
+
+// 7. Urgent delete while a click is pending: ONE send carrying the delete payload
+{
+  const e = makeEnv();
+  e.canvasClick(49.0, 32.0);
+  const g = e.win.__GLOBAL_DATA__;
+  g.all_drawings = [];
+  g.last_active_drawing = { type: 'Feature', geometry: null, properties: { action: 'delete', timestamp: 1 } };
+  g.lat_lng_clicked = null;
+  e.win.geoaiImmediateDispatch(e.win.map);
+  R.delete_sent = e.sent.length;
+  R.delete_payload = e.sent[0] || null;
+  R.delete_dirty_after = e.win.geoaiDeferredSyncStats().dirty;
+  e.win.fire('blur');
+  R.delete_then_blur_sent = e.sent.length;
+}
+
+// 8. Urgent rectangle draw (immediate) is never deferred
+{
+  const e = makeEnv();
+  const g = e.win.__GLOBAL_DATA__;
+  g.lat_lng_clicked = null;
+  g.last_active_drawing = { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[30, 48], [32, 48], [32, 50], [30, 50], [30, 48]]] }, properties: {} };
+  g.all_drawings = [g.last_active_drawing];
+  e.win.geoaiImmediateDispatch(e.win.map);
+  R.rect_sent = e.sent.length;
+  // library onDraw re-send of the same polygon (different key order) is dropped
+  e.libraryUpdate();
+  R.rect_after_library_sent = e.sent.length;
+}
+
+// 9. Answer-pin popup selection deferred, then flushed with the pin coordinates
+{
+  const e = makeEnv();
+  for (let i = 0; i < 10; i++) e.pinPopupClick(47 + i * 0.1, 35 + i * 0.1);
+  R.pin_clicks_sent = e.sent.length;
+  e.win.fire('blur');
+  R.pin_flush_sent = e.sent.length;
+  R.pin_flush_payload = e.sent[0] || null;
+}
+
+// 10. Re-executing the snippet (map script re-run) never double-wraps or double-binds
+{
+  const e = makeEnv();
+  e.run();
+  e.run();
+  R.parent_pointerdown_listeners = e.parentDoc.count('pointerdown');
+  R.blur_listeners = e.win.count('blur');
+  e.canvasClick(46.5, 30.7);
+  e.win.fire('blur');
+  R.rerun_snippet_flush_sent = e.sent.length;
+}
+
+// 11. Canonical JSON is key-order independent and handles nested arrays / toJSON
+{
+  const e = makeEnv();
+  const cj = e.win.geoaiCanonicalJson;
+  R.canonical_equal = cj({ b: 1, a: { d: [1, { y: 2, x: 1 }], c: null } }) === cj({ a: { c: null, d: [1, { x: 1, y: 2 }] }, b: 1 });
+  R.canonical_differs = cj({ a: 1 }) !== cj({ a: 2 });
+  R.canonical_tojson = cj({ toJSON() { return { z: 1 }; } }) === '{"z":1}';
+}
+
+// 12. Missing Streamlit bridge never throws
+{
+  let threw = false;
+  try {
+    const e = makeEnv({ noStreamlit: true });
+    e.win.geoaiMarkSelectionDirty();
+    e.win.geoaiFlushDeferredSelection('test');
+    e.win.geoaiImmediateDispatch(e.win.map);
+  } catch (err) { threw = String(err); }
+  R.no_streamlit_threw = threw;
+}
+
+// 13. Tab hidden flushes pending selection
+{
+  const e = makeEnv();
+  e.canvasClick(48.1, 37.8);
+  e.doc.visibilityState = 'hidden';
+  e.doc.fire('visibilitychange');
+  R.visibility_flush_sent = e.sent.length;
+}
+
+process.stdout.write(JSON.stringify(R));
+"""
+
+
+def _run_deferred_gate_harness(tmp_path):
+    import app
+
+    snippet_path = tmp_path / "gate_snippet.js"
+    harness_path = tmp_path / "gate_harness.js"
+    snippet_path.write_text(app.build_deferred_selection_sync_js(), encoding="utf-8")
+    harness_path.write_text(_DEFERRED_GATE_NODE_HARNESS, encoding="utf-8")
+    proc = _subprocess.run(
+        [_NODE_BIN, str(harness_path), str(snippet_path)],
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert proc.returncode == 0, f"Node harness failed:\nSTDOUT:{proc.stdout}\nSTDERR:{proc.stderr}"
+    return _json.loads(proc.stdout)
+
+
+def _reset_selection_state(**overrides):
+    import streamlit as st
+
+    defaults = {
+        "pending_query": None,
+        "selected_points": [],
+        "bounding_box": None,
+        "answered_bbox": None,
+        "active_point": None,
+        "active_tactical_scan": None,
+        "selection_mode": "Point Selection",
+        "last_clicked": None,
+        "last_processed_drawing": None,
+        "ignored_drawing": None,
+    }
+    defaults.update(overrides)
+    for k, v in defaults.items():
+        st.session_state[k] = v
+    return st.session_state
+
+
+class TestDeferredPointSelectionSync:
+    """
+    Point selections (canvas clicks, answer-pin popups, cluster clicks) must not rerun Python
+    on every click. The map iframe buffers them and flushes exactly once when the operator
+    leaves the map; urgent actions (rectangle draw, delete, recon) stay instant; and
+    `reconcile_deferred_map_selection` guarantees a flushed click is never lost when it
+    lands in the same run as a chat submit / recon.
+    """
+
+    # ------------------------------------------------------------------ JS behaviour (Node)
+
+    @_requires_node
+    def test_js_rapid_point_clicks_and_pans_produce_zero_component_sends(self, tmp_path):
+        r = _run_deferred_gate_harness(tmp_path)
+        assert r["rapid_clicks_sent"] == 0, "50 clicks + pans must not call setComponentValue (no Python reruns)"
+        assert r["rapid_clicks_dirty"] is True
+        assert r["idle_pan_sent"] == r["parent_flush_sent"], "Pans with no pending selection must never send"
+
+    @_requires_node
+    def test_js_blur_flushes_once_with_latest_click_and_dedups_reordered_resend(self, tmp_path):
+        r = _run_deferred_gate_harness(tmp_path)
+        assert r["flush_sent"] == 1
+        assert r["flush_reason"] == "iframe-blur"
+        payload = r["flush_payload"]
+        assert payload["last_clicked"] == {"lat": 48 + 49 * 0.01, "lng": 31 + 49 * 0.01}
+        assert payload["all_drawings"] == []
+        assert payload["last_active_drawing"] is None
+        assert set(payload.keys()) == {"last_clicked", "last_active_drawing", "all_drawings"}
+        assert r["after_reorder_sent"] == 1, "Same content in a different key order must be dropped"
+        assert r["second_blur_sent"] == 1, "Flushing with nothing pending must be a no-op"
+
+    @_requires_node
+    def test_js_parent_document_interaction_flushes_exactly_once(self, tmp_path):
+        r = _run_deferred_gate_harness(tmp_path)
+        assert r["before_parent_sent"] == 1
+        assert r["parent_flush_sent"] == 2, "pointerdown + focusin + keydown must yield a single flush"
+        assert r["parent_flush_reason"] == "parent-pointerdown"
+        assert r["parent_flush_payload"]["last_clicked"] == {"lat": 50.45, "lng": 30.52}
+
+    @_requires_node
+    def test_js_urgent_delete_and_rectangle_bypass_the_gate(self, tmp_path):
+        r = _run_deferred_gate_harness(tmp_path)
+        assert r["delete_sent"] == 1
+        assert r["delete_payload"]["last_active_drawing"]["properties"]["action"] == "delete"
+        assert r["delete_payload"]["all_drawings"] == []
+        assert r["delete_dirty_after"] is False, "Immediate dispatch must absorb the pending click"
+        assert r["delete_then_blur_sent"] == 1
+        assert r["rect_sent"] == 1
+        assert r["rect_after_library_sent"] == 1
+
+    @_requires_node
+    def test_js_answer_pin_popup_selection_deferred_then_flushed(self, tmp_path):
+        r = _run_deferred_gate_harness(tmp_path)
+        assert r["pin_clicks_sent"] == 0
+        assert r["pin_flush_sent"] == 1
+        p = r["pin_flush_payload"]
+        assert p["last_active_drawing"]["geometry"]["type"] == "Point"
+        assert abs(p["last_clicked"]["lat"] - 47.9) < 1e-9
+        assert abs(p["last_clicked"]["lng"] - 35.9) < 1e-9
+
+    @_requires_node
+    def test_js_snippet_reexecution_idempotent_and_failsafe(self, tmp_path):
+        r = _run_deferred_gate_harness(tmp_path)
+        assert r["parent_pointerdown_listeners"] == 1
+        assert r["blur_listeners"] == 1
+        assert r["rerun_snippet_flush_sent"] == 1, "Re-running the map script must not double-wrap setComponentValue"
+        assert r["canonical_equal"] is True
+        assert r["canonical_differs"] is True
+        assert r["canonical_tojson"] is True
+        assert r["no_streamlit_threw"] is False
+        assert r["visibility_flush_sent"] == 1
+
+    @_requires_node
+    def test_js_rendered_map_scripts_are_syntactically_valid(self, tmp_path):
+        """Every <script> block of a fully rendered map (with both hooks) must parse under `node --check`."""
+        import re
+        import folium
+        import app
+
+        m = folium.Map()
+        fg = folium.FeatureGroup(name="Active Selection")
+        app.SelectionSyncHook(has_selection=True, active_point=(48.5, 35.0)).add_to(fg)
+        fg.add_to(m)
+        app.MapTrashBinHook().add_to(m)
+        html = m.get_root().render()
+        scripts = [
+            s for s in re.findall(r"<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>", html, flags=re.S)
+            if "geoai" in s.lower()
+        ]
+        assert scripts, "Expected GeoAI inline scripts in the rendered map"
+        for idx, body in enumerate(scripts):
+            p = tmp_path / f"script_{idx}.js"
+            p.write_text(body, encoding="utf-8")
+            proc = _subprocess.run([_NODE_BIN, "--check", str(p)], capture_output=True, text=True, timeout=60)
+            assert proc.returncode == 0, f"Script block {idx} has a JS syntax error:\n{proc.stderr}"
+
+    # ------------------------------------------------------------------ Static wiring
+
+    def test_map_trash_bin_hook_embeds_gate_once_without_template_leaks(self):
+        import folium
+        from streamlit_folium import _get_map_string
+        import app
+
+        m = folium.Map()
+        hook = app.MapTrashBinHook()
+        assert hook.deferred_sync_js == app.DEFERRED_SELECTION_SYNC_JS
+        hook.add_to(m)
+        script = _get_map_string(m)
+        assert script.count("GeoAI Deferred Selection Sync Gate (zero-rerun point selection)") == 1
+        assert "this.deferred_sync_js" not in script
+        assert "window.geoaiMarkSelectionDirty = function" in script
+        assert "window.geoaiFlushDeferredSelection = function" in script
+        assert "S.setComponentValue = function(v)" in script
+        assert "S._geoaiGateInstalled" in script
+        # Legacy contract preserved
+        assert "var activeClick = g.lat_lng_clicked || g.last_object_clicked;" in script
+        assert "JSON.stringify(g.previous_data) !== JSON.stringify(u)" in script
+        # The ineffective/unsafe debounce override that bypassed the gate must be gone
+        assert "debouncedUpdateComponentValue = window.geoaiImmediateDispatch" not in script
+
+    def test_point_click_and_pin_popup_handlers_defer_while_urgent_actions_dispatch_immediately(self):
+        import folium
+        from streamlit_folium import _get_map_string
+        import app
+
+        m = folium.Map()
+        app.MapTrashBinHook().add_to(m)
+        script = _get_map_string(m)
+
+        click_start = script.index("// 1. Instant client-side visual feedback on map canvas clicks")
+        click_end = script.index("// Synchronize selection and maintain popup state when existing markers are clicked")
+        click_block = script[click_start:click_end]
+        assert "window.geoaiMarkSelectionDirty();" in click_block
+        assert click_block.index("geoaiMarkSelectionDirty") < click_block.index("geoaiImmediateDispatch"), (
+            "Canvas click must prefer the deferred path; immediate dispatch is only a fallback"
+        )
+        assert "updateComponentValue(map)" not in click_block
+
+        popup_end = script.index("map.on('popupclose'")
+        popup_block = script[click_end:popup_end]
+        assert "window.geoaiMarkSelectionDirty();" in popup_block
+        assert popup_block.index("geoaiMarkSelectionDirty") < popup_block.index("geoaiImmediateDispatch")
+
+        # Urgent paths: rectangle draw, trash/delete, and recon still dispatch immediately
+        draw_block = script[script.index("map.on('draw:created'"):script.index("function syncAnsweredBboxInDrawnItems")]
+        assert "window.geoaiImmediateDispatch(map);" in draw_block
+        assert "geoaiMarkSelectionDirty" not in draw_block
+        removal_block = script[script.index("function triggerRemoval"):script.index("// Delegated click listener to catch trash bin")]
+        assert "window.geoaiImmediateDispatch(map);" in removal_block
+        recon_block = script[script.index("reconBtn.addEventListener('click'"):]
+        assert "window.geoaiImmediateDispatch(map);" in recon_block[:2500]
+
+    def test_flush_triggers_cover_iframe_blur_and_parent_interactions(self):
+        import app
+
+        js = app.build_deferred_selection_sync_js()
+        assert "window.addEventListener('blur'" in js
+        assert "'pointerdown', 'focusin', 'keydown'" in js
+        assert "pw.__geoaiFlushListenersBound" in js
+        assert "visibilitychange" in js
+        # Flush must be capture-phase so Streamlit widgets cannot swallow it
+        assert "}, true);" in js
+        # No timers: a timer-based flush would reintroduce background reruns
+        assert "setTimeout" not in js and "setInterval" not in js
+
+    def test_section_2c_reconciles_before_locking_pending_query(self):
+        import ast
+
+        with open("app.py", "r", encoding="utf-8") as f:
+            src = f.read()
+        call_idx = src.index("reconcile_deferred_map_selection(_peek_incoming_map_state())")
+        lock_idx = src.index('st.session_state.last_processed_chat_input = _incoming_chat')
+        assert call_idx < lock_idx, "Deferred click must be applied before pending_query is locked"
+        guard_region = src[call_idx - 400:call_idx]
+        assert "if _is_chat_submit or _incoming_recon:" in guard_region
+
+        # Both helpers must be defined at module level BEFORE the Section 2c call executes
+        tree = ast.parse(src)
+        def_lines = {
+            n.name: n.lineno for n in tree.body
+            if isinstance(n, ast.FunctionDef) and n.name in ("_peek_incoming_map_state", "reconcile_deferred_map_selection")
+        }
+        call_line = src[:call_idx].count("\n") + 1
+        assert set(def_lines) == {"_peek_incoming_map_state", "reconcile_deferred_map_selection"}
+        assert all(line < call_line for line in def_lines.values())
+
+    def test_returned_objects_and_hover_contract_unchanged(self):
+        from pathlib import Path
+        import verify_quality_gate
+
+        ok, errors = verify_quality_gate.audit_static_performance_invariants(Path(__file__).resolve().parent)
+        assert ok, errors
+        with open("app.py", "r", encoding="utf-8") as f:
+            src = f.read()
+        assert 'returned_objects=["last_clicked", "last_active_drawing", "all_drawings"]' in src
+        assert "return_on_hover=False" in src
+
+    # ------------------------------------------------------------------ Python reconcile
+
+    def test_reconcile_applies_new_click_and_ignores_duplicates(self):
+        import app
+
+        ss = _reset_selection_state()
+        changed = app.reconcile_deferred_map_selection({"last_clicked": {"lat": 50.450012, "lng": 30.523419}})
+        assert changed is True
+        assert ss.selected_points == [(50.45001, 30.52342)]
+        assert ss.last_clicked == (50.45001, 30.52342)
+        assert ss.active_point == (50.45001, 30.52342)
+        assert ss.selection_mode == "Point Selection"
+
+        assert app.reconcile_deferred_map_selection({"last_clicked": {"lat": 50.45001, "lng": 30.52342}}) is False
+        assert ss.selected_points == [(50.45001, 30.52342)]
+
+    def test_reconcile_click_replaces_bbox_but_corner_release_preserves_it(self):
+        import app
+
+        bbox = ((48.0, 30.0), (50.0, 32.0))
+        ss = _reset_selection_state(bounding_box=bbox, selected_points=[bbox[0], bbox[1]], selection_mode="Bounding Box")
+
+        # Leaflet mouse-release on a corner must never degrade the box into a point
+        assert app.reconcile_deferred_map_selection({"last_clicked": {"lat": 50.0, "lng": 32.0}}) is False
+        assert ss.bounding_box == bbox
+        assert ss.selection_mode == "Bounding Box"
+        assert ss.last_clicked == (50.0, 32.0)
+
+        # A genuine click elsewhere switches to point mode
+        assert app.reconcile_deferred_map_selection({"last_clicked": {"lat": 49.0, "lng": 31.0}}) is True
+        assert ss.bounding_box is None
+        assert ss.answered_bbox is None
+        assert ss.selected_points == [(49.0, 31.0)]
+        assert ss.selection_mode == "Point Selection"
+
+    def test_reconcile_never_touches_in_flight_queries_or_urgent_drawings(self):
+        import app
+
+        ss = _reset_selection_state(pending_query={"text_prompt": "x", "selected_point": None, "bounding_box": None})
+        assert app.reconcile_deferred_map_selection({"last_clicked": {"lat": 1.0, "lng": 2.0}}) is False
+        assert ss.selected_points == []
+
+        for drawing in (
+            {"type": "Feature", "geometry": None, "properties": {"action": "recon", "targetType": "point", "lat": 1, "lng": 2}},
+            {"type": "Feature", "geometry": None, "properties": {"action": "delete", "timestamp": 1}},
+            {"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[30, 48], [32, 48], [32, 50], [30, 50]]]}, "properties": {}},
+        ):
+            ss = _reset_selection_state()
+            assert app.reconcile_deferred_map_selection(
+                {"last_clicked": {"lat": 47.0, "lng": 36.0}, "last_active_drawing": drawing}
+            ) is False
+            assert ss.selected_points == [], f"Urgent drawing {drawing['properties']} must keep its own path"
+            assert ss.last_clicked is None
+
+    def test_reconcile_answer_pin_point_drawing_marks_processed(self):
+        import app
+
+        pin = {"type": "Feature", "geometry": {"type": "Point", "coordinates": [35.04621, 48.46471]}, "properties": {}}
+        ss = _reset_selection_state()
+        assert app.reconcile_deferred_map_selection(
+            {"last_clicked": {"lat": 48.46471, "lng": 35.04621}, "last_active_drawing": pin}
+        ) is True
+        assert ss.selected_points == [(48.46471, 35.04621)]
+        assert ss.last_processed_drawing == pin
+        assert ss.last_clicked == (48.46471, 35.04621)
+        # Re-delivery of the same processed pin is a no-op
+        assert app.reconcile_deferred_map_selection(
+            {"last_clicked": {"lat": 48.46471, "lng": 35.04621}, "last_active_drawing": pin}
+        ) is False
+
+        # An ignored (cleared) drawing falls back to last_clicked handling
+        ss = _reset_selection_state(ignored_drawing=pin)
+        assert app.reconcile_deferred_map_selection(
+            {"last_clicked": {"lat": 46.0, "lng": 33.0}, "last_active_drawing": pin}
+        ) is True
+        assert ss.selected_points == [(46.0, 33.0)]
+
+    @pytest.mark.parametrize(
+        "bad_state",
+        [
+            None,
+            [],
+            "not-a-dict",
+            {},
+            {"last_clicked": None},
+            {"last_clicked": {"lat": 1.0}},
+            {"last_clicked": {"lat": "north", "lng": 2.0}},
+            {"last_clicked": [1.0, 2.0]},
+            {"last_active_drawing": {"type": "Feature", "geometry": {"type": "Point", "coordinates": ["x", "y"]}}},
+            {"last_active_drawing": {"type": "Feature", "geometry": {"type": "Point", "coordinates": [1.0]}}},
+        ],
+    )
+    def test_reconcile_rejects_malformed_payloads_without_raising(self, bad_state):
+        import app
+
+        ss = _reset_selection_state(selected_points=[(10.0, 20.0)], last_clicked=(10.0, 20.0))
+        assert app.reconcile_deferred_map_selection(bad_state) is False
+        assert ss.selected_points == [(10.0, 20.0)]
+
+    def test_reconcile_end_to_end_with_peeked_widget_state(self):
+        """A flushed click sitting in session state is picked up via `_peek_incoming_map_state`."""
+        import streamlit as st
+        import app
+
+        hash_key = "d" * 64
+        _reset_selection_state()
+        st.session_state[hash_key] = {"last_clicked": {"lat": 49.98081, "lng": 36.25272}, "last_active_drawing": None, "all_drawings": []}
+        try:
+            assert app.reconcile_deferred_map_selection(app._peek_incoming_map_state()) is True
+            assert st.session_state.selected_points == [(49.98081, 36.25272)]
+        finally:
+            del st.session_state[hash_key]
+
+    def test_reconcile_agrees_with_simulator_click_semantics(self, streamlit_state_simulator):
+        """The reconcile path and the Section 2b/5 click path must converge to identical state."""
+        import app
+
+        sim = streamlit_state_simulator
+        clicks = [(48.1, 31.1), (48.1, 31.1), (49.2, 32.2), (50.3, 33.3)]
+        ss = _reset_selection_state()
+        for i, (lat, lng) in enumerate(clicks):
+            sim_state = sim.simulate_point_click(lat, lng, now_ts=1000.0 + i * 5.0)
+            app.reconcile_deferred_map_selection({"last_clicked": {"lat": lat, "lng": lng}})
+            assert ss.selected_points == sim_state["selected_points"]
+            assert ss.bounding_box == sim_state["bounding_box"]
+            assert ss.last_clicked == sim_state["last_clicked"]
+        assert sim.rerun_count == 0
+
+    # ------------------------------------------------------------------ Performance
+
+    def test_benchmark_reconcile_and_gate_build_latency(
+        self,
+        streamlit_state_simulator,
+        micro_benchmark,
+        latency_ceiling,
+    ):
+        import app
+
+        sim_state = streamlit_state_simulator.state
+        payloads = [{"last_clicked": {"lat": 45.0 + i * 0.001, "lng": 30.0 + i * 0.001}} for i in range(1000)]
+        with latency_ceiling(15.0, label="reconcile_deferred_map_selection x1000"):
+            for p in payloads:
+                app.reconcile_deferred_map_selection(p, session_state=sim_state)
+        assert sim_state.selected_points == [(round(45.0 + 999 * 0.001, 5), round(30.0 + 999 * 0.001, 5))]
+
+        micro_benchmark(
+            app.reconcile_deferred_map_selection,
+            {"last_clicked": {"lat": 45.5, "lng": 30.5}},
+            session_state=sim_state,
+            iterations=200,
+            max_mean_ms=0.1,
+            label="reconcile_deferred_map_selection",
+        )
+        micro_benchmark(app.build_deferred_selection_sync_js, iterations=200, max_mean_ms=0.05, label="build_deferred_selection_sync_js")
+
+    def test_benchmark_map_trash_bin_hook_compilation_with_gate(self, micro_benchmark):
+        import folium
+        from streamlit_folium import _get_map_string
+        import app
+
+        def _compile():
+            m = folium.Map()
+            app.MapTrashBinHook().add_to(m)
+            return _get_map_string(m)
+
+        micro_benchmark(_compile, iterations=10, max_mean_ms=80.0, label="MapTrashBinHook+gate compilation")
