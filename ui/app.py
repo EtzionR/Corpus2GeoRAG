@@ -27,6 +27,7 @@ Team & Deployment Notice:
 """
 
 import sys
+import re
 import time
 import json
 from datetime import datetime
@@ -80,6 +81,7 @@ if not _BOOTSTRAP_DONE:
 
 # Core Streamlit and mapping imports
 import streamlit as st
+import streamlit.components.v1 as components
 import folium
 from folium.plugins import Draw, MarkerCluster
 from branca.element import MacroElement
@@ -103,8 +105,8 @@ from geo_agent import (
     to_bounding_box,
 )
 
-# Ensure get_source_text, extract_answer_subgraph, API key persistence helpers, and AgentError are safely resolved even across hot-reloads
-if not hasattr(geo_agent, "extract_answer_subgraph"):
+# Ensure get_source_text, extract_answer_subgraph, format_evidence_popup_html, API key persistence helpers, and AgentError are safely resolved even across hot-reloads
+if not hasattr(geo_agent, "extract_answer_subgraph") or not hasattr(geo_agent, "format_evidence_popup_html") or not hasattr(geo_agent, "_is_event_article_title"):
     try:
         import importlib
         geo_agent = importlib.reload(geo_agent)
@@ -387,6 +389,336 @@ def _highlight_text_spans(text: str, spans: Optional[List[Any]]) -> str:
     return "".join(result)
 
 
+_CITATION_PATTERN = re.compile(
+    r'\[((?:(?:[0-9]+|S[0-9]+|L[0-9]+|P[0-9]+-S[0-9]+)\s*,\s*)*(?:[0-9]+|S[0-9]+|L[0-9]+|P[0-9]+-S[0-9]+))\]'
+)
+
+def format_tactical_citations(
+    content: str,
+    citations: Optional[List[Dict[str, Any]]] = None,
+    geo_locations: Optional[List[Dict[str, Any]]] = None,
+) -> str:
+    """
+    Format bracketed citations ([1], [S2], [L1], [P1-S1]) into interactive tactical hyperlink badges with hover tooltips.
+    - Clicking a location citation ([1]) focuses and zooms the Folium map on that marker and opens its popup (0ms client-side).
+    - Clicking a source citation ([S2], [L1], [P1-S1]) expands the Verified Sources drawer and opens that source's Inspect card.
+    Preserves standard markdown links like [text](url) and non-citation brackets.
+    """
+    import html as _html
+    if not content or not str(content).strip():
+        return content
+
+    pin_labels: Dict[int, str] = {}
+    pin_coords: Dict[int, Tuple[float, float]] = {}
+    if geo_locations and isinstance(geo_locations, list):
+        for loc in geo_locations:
+            if isinstance(loc, dict):
+                p_num = loc.get("number")
+                p_lbl = loc.get("label") or loc.get("name") or loc.get("id")
+                if p_num is not None:
+                    try:
+                        num_int = int(p_num)
+                        if p_lbl:
+                            pin_labels[num_int] = str(p_lbl)
+                        geom = loc.get("geometry")
+                        coords = geom.get("coordinates") if isinstance(geom, dict) else None
+                        if isinstance(coords, (list, tuple)) and len(coords) >= 2:
+                            pin_coords[num_int] = (float(coords[1]), float(coords[0]))
+                        elif "lat" in loc and "lng" in loc:
+                            pin_coords[num_int] = (float(loc["lat"]), float(loc["lng"]))
+                        elif "lat" in loc and "lon" in loc:
+                            pin_coords[num_int] = (float(loc["lat"]), float(loc["lon"]))
+                        elif "latitude" in loc and "longitude" in loc:
+                            pin_coords[num_int] = (float(loc["latitude"]), float(loc["longitude"]))
+                    except (ValueError, TypeError):
+                        pass
+
+    cit_labels: Dict[str, str] = {}
+    if citations and isinstance(citations, list):
+        for c in citations:
+            if isinstance(c, dict) and c.get("id"):
+                c_id = str(c["id"])
+                art = c.get("article") or c.get("pointer") or ""
+                sec = c.get("section")
+                full_desc = f"{art} — {sec}" if sec and art else (art or sec or "")
+                cit_labels[c_id] = full_desc
+
+    def _replace_cit_group(m: re.Match) -> str:
+        raw_items = [x.strip() for x in m.group(1).split(",") if x.strip()]
+        rendered = []
+        for item in raw_items:
+            if item.isdigit():
+                num = int(item)
+                lbl = pin_labels.get(num)
+                base_title = f"Map Marker #{num}: {lbl}" if lbl else f"Map Marker #{num}"
+                title = _html.escape(f"{base_title} (Click to zoom & focus on map)", quote=True)
+                coord = pin_coords.get(num)
+                coord_attrs = f" data-lat='{coord[0]:.6f}' data-lng='{coord[1]:.6f}'" if coord else ""
+                lbl_attr = f" data-pin-label='{_html.escape(lbl, quote=True)}'" if lbl else ""
+                rendered.append(
+                    f"<a href='#geoai-pin-{num}' class='tactical-cit tactical-cit-pin' "
+                    f"data-pin-number='{num}'{coord_attrs}{lbl_attr} title='{title}'>[{item}]</a>"
+                )
+            elif item.startswith("S") and item[1:].isdigit():
+                desc = cit_labels.get(item)
+                base_title = f"Source Passage {item}: {desc}" if desc else f"Source Passage {item}"
+                title = _html.escape(f"{base_title} (Click to inspect source)", quote=True)
+                rendered.append(
+                    f"<a href='#geoai-src-{item}' class='tactical-cit tactical-cit-src' "
+                    f"data-cit-target='{item}' title='{title}'>[{item}]</a>"
+                )
+            elif item.startswith("L") and item[1:].isdigit():
+                desc = cit_labels.get(item)
+                base_title = f"Article Summary {item}: {desc}" if desc else f"Article Summary {item}"
+                title = _html.escape(f"{base_title} (Click to inspect summary)", quote=True)
+                rendered.append(
+                    f"<a href='#geoai-src-{item}' class='tactical-cit tactical-cit-lead' "
+                    f"data-cit-target='{item}' title='{title}'>[{item}]</a>"
+                )
+            elif item.startswith("P") and "-S" in item:
+                desc = cit_labels.get(item)
+                base_title = f"Pin Evidence {item}: {desc}" if desc else f"Pin Evidence {item}"
+                title = _html.escape(f"{base_title} (Click to inspect evidence)", quote=True)
+                rendered.append(
+                    f"<a href='#geoai-src-{item}' class='tactical-cit tactical-cit-ps' "
+                    f"data-cit-target='{item}' title='{title}'>[{item}]</a>"
+                )
+            else:
+                rendered.append(f"[{item}]")
+        return " ".join(rendered)
+
+    return _CITATION_PATTERN.sub(_replace_cit_group, content)
+
+
+def compute_sector_bounding_box(
+    places: list,
+    pin_coords: dict | None = None,
+) -> list[float] | None:
+    """
+    Calculate the bounding box [south, west, north, east] for a sector's place/pin IDs.
+    Returns [min_lat, min_lng, max_lat, max_lng] rounded to 5 decimal places, or None if no coordinates.
+    """
+    if not places or not pin_coords:
+        return None
+    coords = []
+    for p in places:
+        try:
+            p_int = int(p)
+            if p_int in pin_coords:
+                coords.append(pin_coords[p_int])
+        except (ValueError, TypeError):
+            continue
+    if not coords:
+        return None
+    min_lat = min(c[0] for c in coords)
+    max_lat = max(c[0] for c in coords)
+    min_lng = min(c[1] for c in coords)
+    max_lng = max(c[1] for c in coords)
+    return [round(min_lat, 5), round(min_lng, 5), round(max_lat, 5), round(max_lng, 5)]
+
+
+def format_regional_distribution_html(
+    regions: any,
+    pin_coords: dict | None = None,
+    pin_labels: dict | None = None,
+) -> str:
+    """
+    Render hierarchical regional sector distribution markup for the assistant message expander.
+    - Each region is an interactive foldable card (<details class='tactical-sector-card'>)
+      with a compact summary row and an unfolded drawer containing its operational pins.
+    - Converts Oblast/Region headers into interactive .tactical-sector-btn buttons with data-sector-bbox.
+    - Converts place pin numbers into clickable .tactical-cit-pin badges (triggering 0ms Leaflet flyTo + popup).
+    - Includes a 0ms 'Reset Sector Filter' button to restore full map view and remove pin dimming.
+    """
+    import html as _html
+    import json as _json
+
+    if not regions:
+        return ""
+
+    pin_coords = pin_coords or {}
+    pin_labels = pin_labels or {}
+
+    def _render_pin_badge(pin_num: int) -> str:
+        lbl = pin_labels.get(pin_num)
+        base_title = f"Map Marker #{pin_num}: {lbl}" if lbl else f"Map Marker #{pin_num}"
+        title = _html.escape(f"{base_title} (Click to zoom & focus on map)", quote=True)
+        coord = pin_coords.get(pin_num)
+        coord_attrs = f" data-lat='{coord[0]:.6f}' data-lng='{coord[1]:.6f}'" if coord else ""
+        lbl_attr = f" data-pin-label='{_html.escape(lbl, quote=True)}'" if lbl else ""
+        return (
+            f"<a href='#geoai-pin-{pin_num}' class='tactical-cit tactical-cit-pin' "
+            f"data-pin-number='{pin_num}'{coord_attrs}{lbl_attr} title='{title}'>#{pin_num}</a>"
+        )
+
+    def _render_pins_grid(places_list: list, limit: int = 24) -> str:
+        if not places_list:
+            return ""
+        rendered = [_render_pin_badge(p) for p in places_list[:limit]]
+        more_badge = ""
+        if len(places_list) > limit:
+            remaining = len(places_list) - limit
+            more_badge = f"<span class='tactical-more-pins'>+{remaining} more in sector</span>"
+        return (
+            f"<div class='tactical-pins-section'>"
+            f"<div class='tactical-pins-label'>Operational Pins ({len(places_list)})</div>"
+            f"<div class='tactical-pins-grid tactical-reg-pins'>{' '.join(rendered)} {more_badge}</div>"
+            f"</div>"
+        )
+
+    html_parts = []
+    html_parts.append("<div class='tactical-sector-container'>")
+
+    if isinstance(regions, list):
+        total_sectors = sum(
+            len([c for c in (r.get("children") or []) if isinstance(c, dict)]) or 1
+            for r in regions
+            if isinstance(r, dict)
+        ) or len(regions)
+    elif isinstance(regions, dict):
+        total_sectors = len(regions)
+    else:
+        total_sectors = 1
+
+    # Header toolbar with Reset button
+    html_parts.append(
+        "<div class='tactical-sector-toolbar'>"
+        "<div class='tactical-sector-title'>"
+        "<span>🛡️ TACTICAL SECTORS</span> "
+        f"<code>{total_sectors} SECTORS</code>"
+        "</div>"
+        "<button type='button' class='tactical-sector-btn tactical-sector-reset-btn' data-sector-action='reset' "
+        "title='Reset sector zoom and clear pin dimming'>🌐 All Sectors</button>"
+        "</div>"
+    )
+
+    if isinstance(regions, list):
+        for idx, r_node in enumerate(regions):
+            if not isinstance(r_node, dict):
+                continue
+            r_id = str(r_node.get("id", "Unknown"))
+            r_cnt = r_node.get("count", 0)
+            raw_r_places = r_node.get("places") or []
+            r_places_raw = []
+            for p in raw_r_places:
+                try:
+                    r_places_raw.append(int(p))
+                except (ValueError, TypeError):
+                    pass
+            r_places = list(dict.fromkeys(r_places_raw))
+            children = [c for c in (r_node.get("children") or []) if isinstance(c, dict)]
+
+            all_node_places_raw = list(r_places)
+            for ch in children:
+                for cp in (ch.get("places") or []):
+                    try:
+                        all_node_places_raw.append(int(cp))
+                    except (ValueError, TypeError):
+                        pass
+            all_node_places = list(dict.fromkeys(all_node_places_raw))
+
+            r_bbox = compute_sector_bounding_box(all_node_places, pin_coords)
+            r_bbox_attr = f" data-sector-bbox='{_json.dumps(r_bbox)}'" if r_bbox else ""
+            r_pins_attr = f" data-sector-pins='{_json.dumps(all_node_places)}'" if all_node_places else ""
+
+            icon = "🌐" if ("ukraine" in r_id.lower() or r_node.get("place_type") == "country") else ("🏛️" if ("oblast" in r_id.lower() or r_node.get("place_type") == "state") else "📍")
+
+            children_html = []
+            if children:
+                for child in children:
+                    c_id = str(child.get("id", "Unknown"))
+                    c_cnt = child.get("count", 0)
+                    raw_c_places = child.get("places") or []
+                    c_places_raw = []
+                    for cp in raw_c_places:
+                        try:
+                            c_places_raw.append(int(cp))
+                        except (ValueError, TypeError):
+                            pass
+                    c_places = list(dict.fromkeys(c_places_raw))
+                    c_bbox = compute_sector_bounding_box(c_places, pin_coords)
+                    c_bbox_attr = f" data-sector-bbox='{_json.dumps(c_bbox)}'" if c_bbox else ""
+                    c_pins_attr = f" data-sector-pins='{_json.dumps(c_places)}'" if c_places else ""
+                    c_icon = "🏛️" if "oblast" in c_id.lower() else "📍"
+
+                    children_html.append(
+                        f"<details class='tactical-sector-card tactical-sector-child-card'>"
+                        f"<summary class='tactical-sector-summary'>"
+                        f"<div class='tactical-sector-header-left'>"
+                        f"<span class='tactical-chevron'>▶</span>"
+                        f"<span class='tactical-sector-icon'>{c_icon}</span>"
+                        f"<span class='tactical-sector-name' title='{_html.escape(c_id, quote=True)}'>{_html.escape(c_id)}</span>"
+                        f"<span class='tactical-sector-count'>{c_cnt} places</span>"
+                        f"</div>"
+                        f"<button type='button' class='tactical-sector-btn' data-sector-name='{_html.escape(c_id, quote=True)}'"
+                        f"{c_bbox_attr}{c_pins_attr} data-sector-count='{c_cnt}' "
+                        f"title='Focus map on {c_id} sector'>🎯 Focus</button>"
+                        f"</summary>"
+                        f"<div class='tactical-sector-drawer'>"
+                        f"{_render_pins_grid(c_places, limit=20)}"
+                        f"</div>"
+                        f"</details>"
+                    )
+
+            child_block = "".join(children_html)
+            pins_block = _render_pins_grid(r_places, limit=24)
+            open_attr = " open" if (children and len(regions) == 1) else ""
+
+            html_parts.append(
+                f"<details class='tactical-sector-card'{open_attr}>"
+                f"<summary class='tactical-sector-summary'>"
+                f"<div class='tactical-sector-header-left'>"
+                f"<span class='tactical-chevron'>▶</span>"
+                f"<span class='tactical-sector-icon'>{icon}</span>"
+                f"<span class='tactical-sector-name' title='{_html.escape(r_id, quote=True)}'>{_html.escape(r_id)}</span>"
+                f"<span class='tactical-sector-count'>{r_cnt} places</span>"
+                f"</div>"
+                f"<button type='button' class='tactical-sector-btn' data-sector-name='{_html.escape(r_id, quote=True)}'"
+                f"{r_bbox_attr}{r_pins_attr} data-sector-count='{r_cnt}' "
+                f"title='Focus map on {r_id} sector'>🎯 Focus</button>"
+                f"</summary>"
+                f"<div class='tactical-sector-drawer'>"
+                f"{child_block}"
+                f"{pins_block}"
+                f"</div>"
+                f"</details>"
+            )
+
+    elif isinstance(regions, dict):
+        for reg_name, count in sorted(regions.items(), key=lambda x: str(x[0])):
+            r_name_str = str(reg_name)
+            matched_pins = []
+            for p_num, lbl in pin_labels.items():
+                if r_name_str.lower() in lbl.lower() or lbl.lower() in r_name_str.lower():
+                    matched_pins.append(p_num)
+            r_bbox = compute_sector_bounding_box(matched_pins, pin_coords) if matched_pins else None
+            r_bbox_attr = f" data-sector-bbox='{_json.dumps(r_bbox)}'" if r_bbox else ""
+            r_pins_attr = f" data-sector-pins='{_json.dumps(matched_pins)}'" if matched_pins else ""
+            icon = "🏛️" if "oblast" in r_name_str.lower() else "📍"
+
+            html_parts.append(
+                f"<details class='tactical-sector-card'>"
+                f"<summary class='tactical-sector-summary'>"
+                f"<div class='tactical-sector-header-left'>"
+                f"<span class='tactical-chevron'>▶</span>"
+                f"<span class='tactical-sector-icon'>{icon}</span>"
+                f"<span class='tactical-sector-name'>{_html.escape(r_name_str)}</span>"
+                f"<span class='tactical-sector-count'>{count} places</span>"
+                f"</div>"
+                f"<button type='button' class='tactical-sector-btn' data-sector-name='{_html.escape(r_name_str, quote=True)}'"
+                f"{r_bbox_attr}{r_pins_attr} data-sector-count='{count}' "
+                f"title='Focus map on {r_name_str} sector'>🎯 Focus</button>"
+                f"</summary>"
+                f"<div class='tactical-sector-drawer'>"
+                f"{_render_pins_grid(matched_pins, limit=24)}"
+                f"</div>"
+                f"</details>"
+            )
+
+    html_parts.append("</div>")
+    return "\n".join(html_parts)
+
+
 def _build_assistant_message(resp: AgentResponse) -> Dict[str, Any]:
     """Build a standardized assistant message dictionary for st.session_state.messages."""
     ans_plain = getattr(resp, "answer_plain", "") or resp.answer
@@ -417,6 +749,7 @@ def _build_assistant_message(resp: AgentResponse) -> Dict[str, Any]:
         "map_not_shown": int(getattr(resp, "map_not_shown", 0) or 0),
         "subgraph": raw_subgraph,
         "raw_response": getattr(resp, "raw_response", None),
+        "geo_locations": (getattr(resp, "raw_response", {}) or {}).get("geo_locations", []),
         "layers": getattr(resp, "layers", []),
     }
 
@@ -1594,6 +1927,334 @@ def clear_map_and_console(ignore_current_drawing: bool = True):
             del st.session_state[k]
 
 
+# ==============================================================================
+# Deferred Point-Selection Sync (zero Python reruns while the user clicks around the map)
+# ==============================================================================
+# Every `Streamlit.setComponentValue()` call from the map iframe forces a Python rerun of
+# `render_tactical_map_fragment()` (full Folium rebuild + feature group re-mount).
+# Point selections (canvas clicks, answer-pin popups, cluster clicks) are already rendered
+# 100% client-side (instant reticle, in-map HUD, docked pill), so Python only needs the
+# selection when the operator acts OUTSIDE the map (chat input, Recon button, sidebar).
+#
+# This gate wraps `window.Streamlit.setComponentValue` inside the map iframe:
+#   * Passive sends (streamlit-folium's own onMapClick / onLayerClick / debounced updates,
+#     and our click / popup handlers) are buffered: N clicks -> 0 reruns.
+#   * Explicit `geoaiImmediateDispatch()` sends (rectangle draw, trash/delete, Recon) pass
+#     through instantly and carry any buffered click along with them.
+#   * The buffer is flushed (exactly one rerun) when the map iframe loses focus, or on the
+#     first pointerdown / focusin / keydown in the parent Streamlit document.
+# Python-side, `reconcile_deferred_map_selection()` closes the remaining race where the
+# flushed click and a chat submit / recon arrive in the same full-script run.
+DEFERRED_SELECTION_SYNC_JS = r"""
+            // ---- GeoAI Deferred Selection Sync Gate (zero-rerun point selection) ----
+            (function installGeoaiDeferredSelectionGate() {
+                function geoaiCanonicalJson(v) {
+                    if (v === undefined) return 'null';
+                    if (v === null || typeof v !== 'object') return JSON.stringify(v);
+                    if (typeof v.toJSON === 'function') return geoaiCanonicalJson(v.toJSON());
+                    if (Array.isArray(v)) {
+                        return '[' + v.map(geoaiCanonicalJson).join(',') + ']';
+                    }
+                    var keys = Object.keys(v).filter(function(k) {
+                        return v[k] !== undefined && typeof v[k] !== 'function';
+                    }).sort();
+                    return '{' + keys.map(function(k) {
+                        return JSON.stringify(k) + ':' + geoaiCanonicalJson(v[k]);
+                    }).join(',') + '}';
+                }
+                window.geoaiCanonicalJson = geoaiCanonicalJson;
+
+                var gate = window._geoaiSyncGate;
+                if (!gate) {
+                    gate = window._geoaiSyncGate = {
+                        dirty: false,
+                        pending: null,
+                        bypass: false,
+                        lastSentKey: null,
+                        deferredCount: 0,
+                        sentCount: 0,
+                        flushCount: 0,
+                        origSend: null
+                    };
+                }
+
+                function installSendInterceptor() {
+                    var S = window.Streamlit;
+                    if (!S || typeof S.setComponentValue !== 'function') return false;
+                    if (S._geoaiGateInstalled) return true;
+                    var orig = S.setComponentValue;
+                    gate.origSend = function(v) { return orig.call(S, v); };
+                    if (window.__GLOBAL_DATA__ && window.__GLOBAL_DATA__.previous_data !== undefined) {
+                        gate.lastSentKey = geoaiCanonicalJson(window.__GLOBAL_DATA__.previous_data);
+                    }
+                    S.setComponentValue = function(v) {
+                        var key = geoaiCanonicalJson(v);
+                        if (gate.bypass) {
+                            gate.lastSentKey = key;
+                            gate.sentCount += 1;
+                            return orig.call(S, v);
+                        }
+                        // Passive (library / click) send: identical payloads are dropped, new ones buffered
+                        if (key === gate.lastSentKey) return;
+                        gate.pending = v;
+                        gate.dirty = true;
+                        gate.deferredCount += 1;
+                    };
+                    S._geoaiGateInstalled = true;
+                    return true;
+                }
+                installSendInterceptor();
+
+                function geoaiSendNow(u) {
+                    if (!installSendInterceptor()) return false;
+                    gate.bypass = true;
+                    try {
+                        window.Streamlit.setComponentValue(u);
+                    } finally {
+                        gate.bypass = false;
+                    }
+                    return true;
+                }
+
+                function geoaiBuildPayload() {
+                    var g = window.__GLOBAL_DATA__;
+                    var activeClick = g.lat_lng_clicked || g.last_object_clicked;
+                    var c = {
+                        last_clicked: activeClick,
+                        last_active_drawing: g.last_active_drawing,
+                        all_drawings: g.all_drawings
+                    };
+                    var u = {};
+                    if (g.returned_objects && Array.isArray(g.returned_objects)) {
+                        g.returned_objects.forEach(function(k) {
+                            if (c.hasOwnProperty(k)) u[k] = c[k];
+                        });
+                    } else {
+                        u = c;
+                    }
+                    return u;
+                }
+                window.geoaiBuildPayload = geoaiBuildPayload;
+
+                // Instant 0ms Component Value Dispatch (bypasses streamlit-folium's 250ms debounce
+                // and the deferred gate). Used ONLY for urgent actions: rectangle draw, delete, recon.
+                window.geoaiImmediateDispatch = function(mapInstance) {
+                    try {
+                        if (!window.__GLOBAL_DATA__ || !window.Streamlit || typeof window.Streamlit.setComponentValue !== 'function') return;
+                        var g = window.__GLOBAL_DATA__;
+                        var u = geoaiBuildPayload();
+                        var hadPending = gate.dirty;
+                        gate.dirty = false;
+                        gate.pending = null;
+                        if (hadPending || JSON.stringify(g.previous_data) !== JSON.stringify(u)) {
+                            if (hadPending || geoaiCanonicalJson(u) !== gate.lastSentKey) {
+                                g.previous_data = u;
+                                geoaiSendNow(u);
+                            } else {
+                                g.previous_data = u;
+                            }
+                        }
+                    } catch(err) {
+                        console.warn("[GeoAI] Immediate dispatch error:", err);
+                    }
+                };
+
+                // Mark a client-side-only selection change (point click / pin popup) without a rerun
+                window.geoaiMarkSelectionDirty = function() {
+                    installSendInterceptor();
+                    gate.dirty = true;
+                };
+
+                // Flush buffered selection to Python exactly once (no-op when nothing is pending)
+                window.geoaiFlushDeferredSelection = function(reason) {
+                    if (!gate.dirty) return false;
+                    gate.flushCount += 1;
+                    gate.lastFlushReason = reason || 'manual';
+                    window.geoaiImmediateDispatch(window.map || null);
+                    return true;
+                };
+
+                window.geoaiDeferredSyncStats = function() {
+                    return {
+                        dirty: gate.dirty,
+                        deferredCount: gate.deferredCount,
+                        sentCount: gate.sentCount,
+                        flushCount: gate.flushCount,
+                        lastFlushReason: gate.lastFlushReason || null
+                    };
+                };
+
+                // Flush triggers: map iframe loses focus / tab hidden
+                if (!window._geoaiFlushTriggersBound) {
+                    window._geoaiFlushTriggersBound = true;
+                    window.addEventListener('blur', function() {
+                        window.geoaiFlushDeferredSelection('iframe-blur');
+                    });
+                    try {
+                        document.addEventListener('visibilitychange', function() {
+                            if (document.visibilityState === 'hidden') {
+                                window.geoaiFlushDeferredSelection('visibility-hidden');
+                            }
+                        });
+                    } catch(e) {}
+                }
+
+                // Flush triggers: first interaction in the parent Streamlit document
+                // (chat input focus, Recon / suggestion buttons, sidebar) — bound once per parent.
+                try {
+                    var pw = window.parent;
+                    if (pw && pw !== window && pw.document) {
+                        pw.__geoaiFlushMapSelection = function(reason) {
+                            try { return window.geoaiFlushDeferredSelection(reason); } catch(e) { return false; }
+                        };
+                        if (!pw.__geoaiFlushListenersBound) {
+                            pw.__geoaiFlushListenersBound = true;
+                            ['pointerdown', 'focusin', 'keydown'].forEach(function(evName) {
+                                pw.document.addEventListener(evName, function() {
+                                    try {
+                                        if (typeof pw.__geoaiFlushMapSelection === 'function') {
+                                            pw.__geoaiFlushMapSelection('parent-' + evName);
+                                        }
+                                    } catch(e) {}
+                                }, true);
+                            });
+                        }
+                    }
+                } catch(e) {}
+            })();
+            // ---- End GeoAI Deferred Selection Sync Gate ----
+"""
+
+
+def build_deferred_selection_sync_js() -> str:
+    """Return the client-side deferred selection sync gate injected by `MapTrashBinHook`."""
+    return DEFERRED_SELECTION_SYNC_JS
+
+
+def reconcile_deferred_map_selection(
+    map_state: Optional[Dict[str, Any]],
+    session_state: Optional[Any] = None,
+) -> bool:
+    """
+    Apply a deferred point selection carried by `map_state` to session state.
+
+    Called in Section 2c right before a chat submit / recon request locks `pending_query`,
+    so a map click that was flushed in the same run as the submit is never dropped.
+    Rectangle drawings, deletions and recon actions are intentionally NOT handled here
+    (they keep their dedicated Section 2b / Section 5 paths).
+
+    Returns True when the active selection changed.
+    """
+    ss = session_state if session_state is not None else st.session_state
+    if ss.get("pending_query") or not isinstance(map_state, dict):
+        return False
+
+    drawing = map_state.get("last_active_drawing")
+    if isinstance(drawing, dict):
+        props = drawing.get("properties") or {}
+        geom = drawing.get("geometry") or {}
+        is_new_drawing = (
+            drawing != ss.get("last_processed_drawing")
+            and drawing != ss.get("ignored_drawing")
+        )
+        if is_new_drawing and (props.get("action") in ("recon", "delete") or geom.get("type") == "Polygon" or not geom):
+            return False
+        if is_new_drawing and geom.get("type") == "Point":
+            coords = geom.get("coordinates") or []
+            if len(coords) >= 2:
+                try:
+                    pt = (round(float(coords[1]), 5), round(float(coords[0]), 5))
+                except (TypeError, ValueError):
+                    pt = None
+                if pt is not None:
+                    ss.last_processed_drawing = drawing
+                    ss.ignored_drawing = None
+                    ss.last_clicked = pt
+                    changed = (
+                        ss.get("selected_points") != [pt]
+                        or ss.get("bounding_box") is not None
+                    )
+                    if changed:
+                        ss.selection_mode = "Point Selection"
+                        ss.selected_points = [pt]
+                        ss.bounding_box = None
+                        ss.answered_bbox = None
+                        ss.active_point = pt
+                        ss.active_tactical_scan = None
+                    return changed
+
+    clicked = map_state.get("last_clicked")
+    if not isinstance(clicked, dict) or "lat" not in clicked or "lng" not in clicked:
+        return False
+    try:
+        coord = (round(float(clicked["lat"]), 5), round(float(clicked["lng"]), 5))
+    except (TypeError, ValueError):
+        return False
+
+    if _is_drawing_corner_release(coord, ss.get("bounding_box")):
+        ss.last_clicked = coord
+        return False
+    if coord == ss.get("last_clicked"):
+        return False
+
+    ss.last_clicked = coord
+    if ss.get("selected_points") == [coord] and ss.get("bounding_box") is None:
+        return False
+    ss.selection_mode = "Point Selection"
+    ss.selected_points = [coord]
+    ss.bounding_box = None
+    ss.answered_bbox = None
+    ss.active_point = coord
+    ss.active_tactical_scan = None
+    return True
+
+
+def _peek_incoming_map_state() -> Optional[Dict[str, Any]]:
+    # 1. Inspect fresh incoming widget states directly from Streamlit's internal runner context.
+    # When a component calls setComponentValue(), Streamlit populates _new_widget_state
+    # with the incoming WebSocket payload BEFORE running the script, but SessionState.__getitem__
+    # will not expose it until register_widget() is called later during map rendering.
+    try:
+        from streamlit.runtime.state.session_state_proxy import get_session_state
+        ss = get_session_state()
+        raw_state = getattr(ss, "_state", None)
+        if raw_state is not None:
+            new_widgets = getattr(raw_state, "_new_widget_state", None)
+            if new_widgets is not None and hasattr(new_widgets, "states"):
+                for wid, item in new_widgets.states.items():
+                    val = getattr(item, "value", None)
+                    if val is not None and hasattr(val, "WhichOneof") and val.WhichOneof("value") == "json_value":
+                        try:
+                            parsed = json.loads(val.json_value)
+                            if isinstance(parsed, dict) and (
+                                "last_clicked" in parsed
+                                or "last_active_drawing" in parsed
+                                or "all_drawings" in parsed
+                                or "last_object_clicked" in parsed
+                            ):
+                                return parsed
+                        except Exception:
+                            pass
+                    elif isinstance(item, dict):
+                        if "last_clicked" in item or "last_active_drawing" in item or "all_drawings" in item or "last_object_clicked" in item:
+                            return item
+    except Exception:
+        pass
+
+    # 2. Prioritize 64-character hash keys directly from Streamlit session_state
+    for k in list(st.session_state.keys()):
+        if isinstance(k, str) and len(k) == 64:
+            v = st.session_state.get(k)
+            if isinstance(v, dict) and ("last_clicked" in v or "last_active_drawing" in v or "all_drawings" in v or "last_object_clicked" in v):
+                return v
+
+    # 3. Fallback to static widget key
+    s = st.session_state.get("geoai_tactical_map")
+    if isinstance(s, dict) and ("last_clicked" in s or "last_active_drawing" in s or "all_drawings" in s or "last_object_clicked" in s):
+        return s
+    return None
+
+
 class SelectionSyncHook(MacroElement):
     """
     Lightweight MacroElement attached to `selection_fg` (feature_group_0) so that whenever
@@ -2035,38 +2696,9 @@ class MapTrashBinHook(MacroElement):
                 try { map.invalidateSize(); } catch(e) {}
             });
 
-            // Instant 0ms Component Value Dispatch to bypass streamlit-folium's 250ms artificial debounce
-            window.geoaiImmediateDispatch = function(mapInstance) {
-                try {
-                    if (!window.__GLOBAL_DATA__ || !window.Streamlit || typeof window.Streamlit.setComponentValue !== 'function') return;
-                    var g = window.__GLOBAL_DATA__;
-                    var activeClick = g.lat_lng_clicked || g.last_object_clicked;
-                    var c = {
-                        last_clicked: activeClick,
-                        last_active_drawing: g.last_active_drawing,
-                        all_drawings: g.all_drawings
-                    };
-                    var u = {};
-                    if (g.returned_objects && Array.isArray(g.returned_objects)) {
-                        g.returned_objects.forEach(function(k) {
-                            if (c.hasOwnProperty(k)) u[k] = c[k];
-                        });
-                    } else {
-                        u = c;
-                    }
-                    if (JSON.stringify(g.previous_data) !== JSON.stringify(u)) {
-                        g.previous_data = u;
-                        window.Streamlit.setComponentValue(u);
-                    }
-                } catch(err) {
-                    console.warn("[GeoAI] Immediate dispatch error:", err);
-                }
-            };
-            try {
-                if (typeof debouncedUpdateComponentValue === 'function') {
-                    debouncedUpdateComponentValue = window.geoaiImmediateDispatch;
-                }
-            } catch(e) {}
+            // Deferred selection sync gate + instant 0ms dispatch for urgent actions
+            // (see DEFERRED_SELECTION_SYNC_JS in app.py)
+{{ this.deferred_sync_js }}
 
             window._mapInitializing = true;
             setTimeout(function() { window._mapInitializing = false; }, 400);
@@ -2367,8 +2999,584 @@ class MapTrashBinHook(MacroElement):
                         window.__GLOBAL_DATA__.all_drawings = [];
                     }
                     updateTrashButtonState();
+                    window._activeSectorName = null;
+                    window._activeSectorPins = null;
+                    window._activeSectorBbox = null;
+                    if (typeof applySectorHighlighting === 'function') {
+                        applySectorHighlighting();
+                    }
                 } else if (ev.data.type === 'GEOAI_PIN_SHAPE' && ev.data.shape) {
                     setMapPinShape(ev.data.shape);
+                } else if (ev.data.type === 'GEOAI_FOCUS_PIN') {
+                    focusMapPinByCitation(ev.data);
+                } else if (ev.data.type === 'GEOAI_FOCUS_SECTOR') {
+                    focusMapSector(ev.data);
+                }
+            });
+
+            function focusMapPinByCitation(payload) {
+                if (!payload) return;
+                var targetNum = payload.number != null ? String(payload.number).trim() : null;
+                var targetLat = (payload.lat != null && !isNaN(Number(payload.lat))) ? Number(payload.lat) : null;
+                var targetLng = (payload.lng != null && !isNaN(Number(payload.lng))) ? Number(payload.lng) : null;
+                var targetLabel = payload.label ? String(payload.label).trim() : null;
+
+                var matchedMarker = null;
+                var parentCluster = null;
+
+                function isMarkerMatch(m) {
+                    if (!(m instanceof L.Marker) || !m.getLatLng) return false;
+                    var cls = (m._icon && m._icon.className) ? m._icon.className : (m.options && m.options.icon && m.options.icon.options && m.options.icon.options.className ? m.options.icon.options.className : '');
+                    if (cls.indexOf('geoai-pin--target') !== -1 || cls.indexOf('geoai-pin--corner') !== -1) return false;
+
+                    // 1. Match by coordinate if provided (0.0003 deg is ~30m tolerance)
+                    if (targetLat !== null && targetLng !== null) {
+                        var ll = m.getLatLng();
+                        if (Math.abs(ll.lat - targetLat) < 0.0003 && Math.abs(ll.lng - targetLng) < 0.0003) {
+                            return true;
+                        }
+                    }
+
+                    // 2. Match by pin number in popup HTML, tooltip, or icon HTML
+                    if (targetNum) {
+                        var pContent = '';
+                        try {
+                            if (m.getPopup && m.getPopup()) {
+                                pContent = String(m.getPopup().getContent() || '');
+                            }
+                        } catch(e) {}
+                        if (pContent.indexOf('#' + targetNum + ' ') !== -1 || 
+                            pContent.indexOf('★ #' + targetNum) !== -1 || 
+                            pContent.indexOf('#' + targetNum + '<') !== -1 ||
+                            pContent.indexOf('#' + targetNum + ':') !== -1) {
+                            return true;
+                        }
+                        var tContent = '';
+                        try {
+                            if (m.getTooltip && m.getTooltip()) {
+                                tContent = String(m.getTooltip().getContent() || '');
+                            }
+                        } catch(e) {}
+                        if (tContent.indexOf(targetNum + '. ') === 0 || tContent.indexOf('#' + targetNum) !== -1) {
+                            return true;
+                        }
+                        var iconHtml = (m.options && m.options.icon && m.options.icon.options && m.options.icon.options.html) ? String(m.options.icon.options.html) : '';
+                        if (iconHtml.indexOf('<span>' + targetNum + '</span>') !== -1 || iconHtml.indexOf('>' + targetNum + '<') !== -1) {
+                            return true;
+                        }
+                    }
+
+                    // 3. Match by label in popup
+                    if (targetLabel) {
+                        var pContent3 = '';
+                        try {
+                            if (m.getPopup && m.getPopup()) {
+                                pContent3 = String(m.getPopup().getContent() || '');
+                            }
+                        } catch(e) {}
+                        if (pContent3.toLowerCase().indexOf(targetLabel.toLowerCase()) !== -1) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                // Recursive layer traversal function to visit FeatureGroups and MarkerClusterGroups
+                function searchLayers(layerGroup) {
+                    if (!layerGroup || matchedMarker) return;
+                    if (isMarkerMatch(layerGroup)) {
+                        matchedMarker = layerGroup;
+                        return;
+                    }
+                    if (typeof layerGroup.zoomToShowLayer === 'function' && typeof layerGroup.getLayers === 'function') {
+                        var clusterLayers = layerGroup.getLayers();
+                        for (var i = 0; i < clusterLayers.length; i++) {
+                            if (isMarkerMatch(clusterLayers[i])) {
+                                matchedMarker = clusterLayers[i];
+                                parentCluster = layerGroup;
+                                return;
+                            }
+                        }
+                    }
+                    if (typeof layerGroup.eachLayer === 'function') {
+                        layerGroup.eachLayer(function(child) {
+                            if (matchedMarker) return;
+                            if (isMarkerMatch(child)) {
+                                matchedMarker = child;
+                                if (typeof layerGroup.zoomToShowLayer === 'function') {
+                                    parentCluster = layerGroup;
+                                }
+                                return;
+                            }
+                            if (typeof child.getLayers === 'function' || typeof child.eachLayer === 'function') {
+                                if (typeof child.zoomToShowLayer === 'function' && typeof child.getLayers === 'function') {
+                                    var cLayers2 = child.getLayers();
+                                    for (var k = 0; k < cLayers2.length; k++) {
+                                        if (isMarkerMatch(cLayers2[k])) {
+                                            matchedMarker = cLayers2[k];
+                                            parentCluster = child;
+                                            return;
+                                        }
+                                    }
+                                }
+                                searchLayers(child);
+                            }
+                        });
+                    }
+                }
+
+                searchLayers(map);
+
+                // Fallback: search getActiveClusterGroups if registered
+                if (!matchedMarker && typeof getActiveClusterGroups === 'function') {
+                    var clusters = getActiveClusterGroups();
+                    for (var c = 0; c < clusters.length; c++) {
+                        var cGroup = clusters[c];
+                        if (cGroup && typeof cGroup.getLayers === 'function') {
+                            var cLayers3 = cGroup.getLayers();
+                            for (var j = 0; j < cLayers3.length; j++) {
+                                if (isMarkerMatch(cLayers3[j])) {
+                                    matchedMarker = cLayers3[j];
+                                    parentCluster = cGroup;
+                                    break;
+                                }
+                            }
+                        }
+                        if (matchedMarker) break;
+                    }
+                }
+
+                if (matchedMarker) {
+                    if (matchedMarker._icon && matchedMarker._icon.style.display === 'none') {
+                        matchedMarker._icon.style.display = '';
+                    }
+                    var mLatLng = matchedMarker.getLatLng();
+                    var focusZoom = Math.max(map.getZoom() || 6, 13);
+                    window._lastOpenPopupInfo = { lat: mLatLng.lat, lng: mLatLng.lng };
+
+                    if (parentCluster && typeof parentCluster.zoomToShowLayer === 'function') {
+                        parentCluster.zoomToShowLayer(matchedMarker, function() {
+                            try { matchedMarker.openPopup(); } catch(e) {}
+                        });
+                    } else {
+                        map.flyTo(mLatLng, focusZoom, { animate: true, duration: 0.65 });
+                        map.once('moveend', function() {
+                            try { matchedMarker.openPopup(); } catch(e) {}
+                        });
+                        setTimeout(function() {
+                            try { matchedMarker.openPopup(); } catch(e) {}
+                        }, 700);
+                    }
+                } else if (targetLat !== null && targetLng !== null) {
+                    var fallbackZoom = Math.max(map.getZoom() || 6, 13);
+                    map.flyTo([targetLat, targetLng], fallbackZoom, { animate: true, duration: 0.65 });
+                    map.once('moveend', function() {
+                        searchLayers(map);
+                        if (matchedMarker) {
+                            if (parentCluster && typeof parentCluster.zoomToShowLayer === 'function') {
+                                parentCluster.zoomToShowLayer(matchedMarker, function() {
+                                    try { matchedMarker.openPopup(); } catch(e) {}
+                                });
+                            } else {
+                                try { matchedMarker.openPopup(); } catch(e) {}
+                            }
+                        }
+                    });
+                }
+            }
+
+            function focusMapSector(payload) {
+                if (!payload) return;
+                var sName = payload.name || payload.sector || null;
+                var bbox = payload.bbox;
+                var action = payload.action;
+                var targetPins = (payload.pins && Array.isArray(payload.pins)) ? payload.pins.map(Number) : [];
+
+                if (!window._initialMapBounds && map.getBounds) {
+                    try { window._initialMapBounds = map.getBounds(); } catch(err) {}
+                }
+
+                if (action === 'reset' || (!sName && !bbox)) {
+                    window._activeSectorName = null;
+                    window._activeSectorPins = null;
+                    window._activeSectorBbox = null;
+                    applySectorHighlighting();
+                    if (window._initialMapBounds) {
+                        try { map.fitBounds(window._initialMapBounds, { padding: [35, 35], animate: true, duration: 0.65 }); } catch(err) {}
+                    }
+                    return;
+                }
+
+                window._activeSectorName = sName;
+                window._activeSectorPins = targetPins;
+                window._activeSectorBbox = bbox;
+
+                applySectorHighlighting();
+                setTimeout(applySectorHighlighting, 120);
+                setTimeout(applySectorHighlighting, 350);
+                setTimeout(applySectorHighlighting, 750);
+
+                if (bbox && Array.isArray(bbox) && bbox.length === 4) {
+                    var south = Math.min(Number(bbox[0]), Number(bbox[2]));
+                    var north = Math.max(Number(bbox[0]), Number(bbox[2]));
+                    var west = Math.min(Number(bbox[1]), Number(bbox[3]));
+                    var east = Math.max(Number(bbox[1]), Number(bbox[3]));
+                    if (!isNaN(south) && !isNaN(north) && !isNaN(west) && !isNaN(east)) {
+                        if (Math.abs(north - south) < 0.005 && Math.abs(east - west) < 0.005) {
+                            south -= 0.03;
+                            north += 0.03;
+                            west -= 0.03;
+                            east += 0.03;
+                        }
+                        map.fitBounds([[south, west], [north, east]], {
+                            padding: [45, 45],
+                            maxZoom: 13,
+                            animate: true,
+                            duration: 0.75
+                        });
+                    }
+                }
+            }
+
+            function applySectorHighlighting() {
+                if (window._isApplyingSectorHighlight) return;
+                window._isApplyingSectorHighlight = true;
+                try {
+                    var activeSector = window._activeSectorName;
+                    var activePins = window._activeSectorPins || [];
+                    var activeBbox = window._activeSectorBbox;
+                    var hasActiveFilter = Boolean(activeSector);
+
+                    var south = (activeBbox && Array.isArray(activeBbox) && activeBbox.length === 4) ? Math.min(Number(activeBbox[0]), Number(activeBbox[2])) : null;
+                    var north = (activeBbox && Array.isArray(activeBbox) && activeBbox.length === 4) ? Math.max(Number(activeBbox[0]), Number(activeBbox[2])) : null;
+                    var west = (activeBbox && Array.isArray(activeBbox) && activeBbox.length === 4) ? Math.min(Number(activeBbox[1]), Number(activeBbox[3])) : null;
+                    var east = (activeBbox && Array.isArray(activeBbox) && activeBbox.length === 4) ? Math.max(Number(activeBbox[1]), Number(activeBbox[3])) : null;
+
+                    function checkMarkerInSector(m) {
+                        if (!m) return false;
+                        var pNum = null;
+                        var iconHtml = (m.options && m.options.icon && m.options.icon.options && m.options.icon.options.html) ? String(m.options.icon.options.html) : '';
+                        var dMatch = iconHtml.match(/data-pin-num=['"](\\d+)['"]/);
+                        if (dMatch) {
+                            pNum = parseInt(dMatch[1], 10);
+                        } else {
+                            var mMatch = iconHtml.match(/<span>(\\d+)<\\/span>/);
+                            if (mMatch) pNum = parseInt(mMatch[1], 10);
+                        }
+                        if (pNum === null) {
+                            var pContent = '';
+                            try { if (m.getPopup && m.getPopup()) pContent = String(m.getPopup().getContent() || ''); } catch(e) {}
+                            var pMatch = pContent.match(/#(\\d+)/) || pContent.match(/(\\d+)\\./);
+                            if (pMatch) pNum = parseInt(pMatch[1], 10);
+                        }
+                        if (pNum === null) {
+                            var tContent = '';
+                            try { if (m.getTooltip && m.getTooltip()) tContent = String(m.getTooltip().getContent() || ''); } catch(e) {}
+                            var tMatch = tContent.match(/#?(\\d+)/);
+                            if (tMatch) pNum = parseInt(tMatch[1], 10);
+                        }
+
+                        if (activePins.length > 0 && pNum !== null && !isNaN(pNum)) {
+                            return activePins.indexOf(pNum) !== -1;
+                        }
+                        if (south !== null && north !== null && west !== null && east !== null && m.getLatLng) {
+                            var ll = m.getLatLng();
+                            if (ll && ll.lat >= (south - 0.003) && ll.lat <= (north + 0.003) && ll.lng >= (west - 0.003) && ll.lng <= (east + 0.003)) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+
+                    // 1. Restore any previously broken-out cluster markers if sector changed or reset
+                    if (window._brokenOutSectorState && window._brokenOutSectorState.items && window._brokenOutSectorState.items.length > 0) {
+                        if (!hasActiveFilter || window._brokenOutSectorState.sector !== activeSector) {
+                            for (var b = 0; b < window._brokenOutSectorState.items.length; b++) {
+                                var item = window._brokenOutSectorState.items[b];
+                                try {
+                                    if (item.marker && item.marker._icon) {
+                                        item.marker._icon.classList.remove('geoai-sector--highlighted', 'geoai-sector--dimmed');
+                                    }
+                                    if (window._sectorBreakoutGroup && item.marker) {
+                                        window._sectorBreakoutGroup.removeLayer(item.marker);
+                                    }
+                                    if (item.clusterGroup && item.marker && map.hasLayer(item.clusterGroup)) {
+                                        item.clusterGroup.addLayer(item.marker);
+                                    }
+                                } catch(e) {}
+                            }
+                            window._brokenOutSectorState = { sector: null, items: [] };
+                        }
+                    }
+
+                    // 2. Break out matching sector markers from MarkerClusterGroups so all sector pins are individually visible
+                    if (hasActiveFilter) {
+                        if (!window._sectorBreakoutGroup) {
+                            window._sectorBreakoutGroup = L.layerGroup().addTo(map);
+                        } else if (!map.hasLayer(window._sectorBreakoutGroup)) {
+                            window._sectorBreakoutGroup.addTo(map);
+                        }
+                        if (!window._brokenOutSectorState || window._brokenOutSectorState.sector !== activeSector) {
+                            window._brokenOutSectorState = { sector: activeSector, items: [] };
+                        }
+
+                        var sectorClusters = [];
+                        function collectClusters(layer) {
+                            if (!layer) return;
+                            if (typeof L.MarkerClusterGroup !== 'undefined' && layer instanceof L.MarkerClusterGroup) {
+                                if (sectorClusters.indexOf(layer) === -1) sectorClusters.push(layer);
+                            } else if (layer !== window._sectorBreakoutGroup && layer.eachLayer) {
+                                try { layer.eachLayer(collectClusters); } catch(e) {}
+                            }
+                        }
+                        map.eachLayer(collectClusters);
+                        if (typeof getActiveClusterGroups === 'function') {
+                            var activeC = getActiveClusterGroups();
+                            for (var ac = 0; ac < activeC.length; ac++) {
+                                if (activeC[ac] && sectorClusters.indexOf(activeC[ac]) === -1) {
+                                    sectorClusters.push(activeC[ac]);
+                                }
+                            }
+                        }
+
+                        for (var cgIdx = 0; cgIdx < sectorClusters.length; cgIdx++) {
+                            var cg = sectorClusters[cgIdx];
+                            if (cg && typeof cg.getLayers === 'function') {
+                                var cgMarkers = cg.getLayers().slice();
+                                for (var mIdx = 0; mIdx < cgMarkers.length; mIdx++) {
+                                    var cm = cgMarkers[mIdx];
+                                    if (checkMarkerInSector(cm)) {
+                                        try {
+                                            cg.removeLayer(cm);
+                                            window._sectorBreakoutGroup.addLayer(cm);
+                                            window._brokenOutSectorState.items.push({ marker: cm, clusterGroup: cg });
+                                        } catch(e) {}
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    function processMarker(m) {
+                        if (!m) return;
+                        var iconEl = m._icon;
+                        if (!iconEl) return;
+                        var cls = iconEl.className || '';
+                        if (cls.indexOf('geoai-pin--target') !== -1 || cls.indexOf('geoai-pin--corner') !== -1) return;
+
+                        if (!hasActiveFilter) {
+                            iconEl.classList.remove('geoai-sector--dimmed', 'geoai-sector--highlighted');
+                            return;
+                        }
+
+                        var inSector = checkMarkerInSector(m);
+                        if (inSector) {
+                            iconEl.classList.remove('geoai-sector--dimmed');
+                            iconEl.classList.add('geoai-sector--highlighted');
+                        } else {
+                            iconEl.classList.remove('geoai-sector--highlighted');
+                            iconEl.classList.add('geoai-sector--dimmed');
+                        }
+                    }
+
+                    function inspectLayer(layer) {
+                        if (!layer) return;
+                        if (layer instanceof L.Marker) {
+                            processMarker(layer);
+                        } else if (typeof L.MarkerCluster !== 'undefined' && layer instanceof L.MarkerCluster) {
+                            var cIcon = layer._icon;
+                            if (cIcon) {
+                                if (!hasActiveFilter) {
+                                    cIcon.classList.remove('geoai-sector--dimmed', 'geoai-sector--highlighted');
+                                } else {
+                                    cIcon.classList.remove('geoai-sector--highlighted');
+                                    cIcon.classList.add('geoai-sector--dimmed');
+                                }
+                            }
+                        } else if (typeof L.MarkerClusterGroup !== 'undefined' && layer instanceof L.MarkerClusterGroup) {
+                            if (typeof layer.eachLayer === 'function') {
+                                layer.eachLayer(processMarker);
+                            }
+                        } else if (layer.eachLayer) {
+                            try { layer.eachLayer(inspectLayer); } catch(e) {}
+                        }
+                    }
+
+                    map.eachLayer(inspectLayer);
+
+                    // Sweep markerPane to dim remaining cluster bubbles or clean up when reset
+                    try {
+                        var markerPane = map.getPanes ? map.getPanes().markerPane : null;
+                        if (markerPane) {
+                            if (!hasActiveFilter) {
+                                var icons = markerPane.querySelectorAll('.leaflet-marker-icon, .marker-cluster, .geoai-cluster-wrap');
+                                for (var i = 0; i < icons.length; i++) {
+                                    icons[i].classList.remove('geoai-sector--dimmed', 'geoai-sector--highlighted');
+                                }
+                            } else {
+                                var clusterIcons = markerPane.querySelectorAll('.marker-cluster, .geoai-cluster-wrap');
+                                for (var c = 0; c < clusterIcons.length; c++) {
+                                    clusterIcons[c].classList.remove('geoai-sector--highlighted');
+                                    clusterIcons[c].classList.add('geoai-sector--dimmed');
+                                }
+                            }
+                        }
+                    } catch(err) {}
+                } finally {
+                    window._isApplyingSectorHighlight = false;
+                }
+            }
+
+            // Expose function and direct click bridge to parent window
+            try {
+                var pWin = window.parent;
+                if (pWin) {
+                    pWin._geoaiFocusMapPin = focusMapPinByCitation;
+                    pWin._geoaiFocusSector = focusMapSector;
+
+                    // If a focus request arrived before this map iframe finished mounting, process it now
+                    if (pWin._geoaiPendingFocusPin) {
+                        var pending = pWin._geoaiPendingFocusPin;
+                        pWin._geoaiPendingFocusPin = null;
+                        setTimeout(function() { focusMapPinByCitation(pending); }, 400);
+                    }
+
+                    var pDoc = pWin.document;
+                    if (pDoc && !pWin._geoaiCitationHookInstalled) {
+                        pWin._geoaiCitationHookInstalled = true;
+                        pDoc.addEventListener('click', function(e) {
+                            var target = e.target;
+                            if (!target || !target.closest) return;
+
+                            var pinCit = target.closest('.tactical-cit-pin');
+                            if (pinCit) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                var pinNum = pinCit.getAttribute('data-pin-number');
+                                var pLat = pinCit.getAttribute('data-lat');
+                                var pLng = pinCit.getAttribute('data-lng');
+                                var pLbl = pinCit.getAttribute('data-pin-label');
+                                var payload = {
+                                    type: 'GEOAI_FOCUS_PIN',
+                                    number: pinNum ? parseInt(pinNum, 10) : null,
+                                    lat: (pLat && !isNaN(parseFloat(pLat))) ? parseFloat(pLat) : null,
+                                    lng: (pLng && !isNaN(parseFloat(pLng))) ? parseFloat(pLng) : null,
+                                    label: pLbl || null
+                                };
+                                if (typeof pWin._geoaiFocusMapPin === 'function') {
+                                    pWin._geoaiFocusMapPin(payload);
+                                }
+                                return;
+                            }
+
+                            var srcCit = target.closest('.tactical-cit[data-cit-target], .tactical-cit-src, .tactical-cit-lead, .tactical-cit-ps');
+                            if (srcCit) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                var citId = srcCit.getAttribute('data-cit-target') || srcCit.textContent.replace(/[\\[\\]]/g, '').trim();
+                                if (typeof pWin._geoaiHandleSourceCitation === 'function') {
+                                    pWin._geoaiHandleSourceCitation(srcCit, citId, pDoc);
+                                }
+                                return;
+                            }
+
+                            // 0c. Regional Sector Button
+                            var sectorBtn = target.closest('.tactical-sector-btn, .tactical-sector-link, [data-sector-bbox]');
+                            if (sectorBtn) {
+                                e.preventDefault();
+                                e.stopPropagation();
+
+                                var isReset = sectorBtn.getAttribute('data-sector-action') === 'reset';
+                                var allSectorBtns = pDoc.querySelectorAll('.tactical-sector-btn, .tactical-sector-link');
+
+                                if (isReset) {
+                                    for (var b = 0; b < allSectorBtns.length; b++) {
+                                        allSectorBtns[b].classList.remove('active');
+                                    }
+                                    var resetPayload = {
+                                        type: 'GEOAI_FOCUS_SECTOR',
+                                        action: 'reset',
+                                        name: null,
+                                        sector: null,
+                                        bbox: null,
+                                        pins: []
+                                    };
+                                    focusMapSector(resetPayload);
+                                    if (typeof pWin._geoaiFocusSector === 'function' && pWin._geoaiFocusSector !== focusMapSector) {
+                                        pWin._geoaiFocusSector(resetPayload);
+                                    }
+                                    return;
+                                }
+
+                                var wasActive = sectorBtn.classList.contains('active');
+                                for (var i = 0; i < allSectorBtns.length; i++) {
+                                    allSectorBtns[i].classList.remove('active');
+                                }
+                                if (!wasActive) {
+                                    sectorBtn.classList.add('active');
+                                }
+
+                                var sName = sectorBtn.getAttribute('data-sector-name') || '';
+                                var rawBbox = sectorBtn.getAttribute('data-sector-bbox');
+                                var rawPins = sectorBtn.getAttribute('data-sector-pins');
+                                var bboxArr = null;
+                                if (rawBbox && rawBbox !== 'null') {
+                                    try { bboxArr = JSON.parse(rawBbox); } catch(err) {}
+                                }
+                                var pinsArr = [];
+                                if (rawPins && rawPins !== 'null') {
+                                    try { pinsArr = JSON.parse(rawPins); } catch(err) {}
+                                }
+
+                                var payload = {
+                                    type: 'GEOAI_FOCUS_SECTOR',
+                                    action: wasActive ? 'reset' : 'focus',
+                                    name: wasActive ? null : sName,
+                                    sector: wasActive ? null : sName,
+                                    bbox: wasActive ? null : bboxArr,
+                                    pins: wasActive ? [] : pinsArr
+                                };
+
+                                focusMapSector(payload);
+                                if (typeof pWin._geoaiFocusSector === 'function' && pWin._geoaiFocusSector !== focusMapSector) {
+                                    pWin._geoaiFocusSector(payload);
+                                }
+                                return;
+                            }
+                        }, true);
+                    }
+                }
+            } catch(e) {}
+
+            map.on('moveend zoomend', function() {
+                if (window._activeSectorName && typeof applySectorHighlighting === 'function') {
+                    applySectorHighlighting();
+                }
+            });
+            map.on('layeradd spiderfied unspiderfied', function() {
+                if (window._activeSectorName && typeof applySectorHighlighting === 'function') {
+                    applySectorHighlighting();
+                }
+            });
+
+            // Handle popup citation clicks inside Leaflet canvas
+            map.on('popupopen', function(e) {
+                var popupEl = e.popup && e.popup.getElement ? e.popup.getElement() : null;
+                if (popupEl && !popupEl._geoaiCitBound) {
+                    popupEl._geoaiCitBound = true;
+                    popupEl.addEventListener('click', function(evt) {
+                        var srcCit = evt.target && evt.target.closest && evt.target.closest('.tactical-cit[data-cit-target], .tactical-cit-src, .tactical-cit-lead, .tactical-cit-ps');
+                        if (srcCit) {
+                            evt.preventDefault();
+                            evt.stopPropagation();
+                            var citId = srcCit.getAttribute('data-cit-target') || srcCit.textContent.replace(/[\\[\\]]/g, '').trim();
+                            try {
+                                if (pWin && typeof pWin._geoaiHandleSourceCitation === 'function') {
+                                    pWin._geoaiHandleSourceCitation(null, citId, pWin.document);
+                                }
+                            } catch(err) {}
+                        }
+                    }, true);
                 }
             });
 
@@ -2429,11 +3637,13 @@ class MapTrashBinHook(MacroElement):
                     window.__GLOBAL_DATA__.last_active_drawing = null;
                     window.__GLOBAL_DATA__.all_drawings = [];
                 }
+                // Deferred sync: point selection is fully rendered client-side, so do NOT rerun
+                // Python now. The gate flushes once when the operator leaves the map.
                 try {
-                    if (typeof window.geoaiImmediateDispatch === "function") {
+                    if (typeof window.geoaiMarkSelectionDirty === "function") {
+                        window.geoaiMarkSelectionDirty();
+                    } else if (typeof window.geoaiImmediateDispatch === "function") {
                         window.geoaiImmediateDispatch(map);
-                    } else if (typeof updateComponentValue === "function") {
-                        updateComponentValue(map);
                     }
                 } catch(err) {}
             });
@@ -2512,11 +3722,13 @@ class MapTrashBinHook(MacroElement):
                                 console.warn("[GeoAI] Instant reticle marker error:", err);
                             }
 
+                            // Deferred sync: answer-pin selection is rendered client-side (reticle + HUD);
+                            // Python receives it once on flush instead of rerunning on every pin click.
                             try {
-                                if (typeof window.geoaiImmediateDispatch === 'function') {
+                                if (typeof window.geoaiMarkSelectionDirty === 'function') {
+                                    window.geoaiMarkSelectionDirty();
+                                } else if (typeof window.geoaiImmediateDispatch === 'function') {
                                     window.geoaiImmediateDispatch(map);
-                                } else if (typeof updateComponentValue === 'function') {
-                                    updateComponentValue(map);
                                 }
                             } catch(err) {}
                         }
@@ -3162,6 +4374,7 @@ class MapTrashBinHook(MacroElement):
         super().__init__()
         self.selection_layer_names = selection_layer_names or []
         self.has_active = has_active
+        self.deferred_sync_js = build_deferred_selection_sync_js()
 
 # ==============================================================================
 # 1. Visual Theme Configurations & Page Setup (GeoAI Defense C2)
@@ -3375,7 +4588,11 @@ def make_pin_icon(
     is_unc = bool(uncertain) or tok == "uncertain"
 
     if is_ctx:
-        html = "<div class='geoai-dot'></div>"
+        num_str = str(number).strip() if number is not None and str(number).strip() != "" else ""
+        if num_str:
+            html = f"<div class='geoai-dot' data-pin-num='{num_str}'><i class='geoai-dot-num'>{num_str}</i></div>"
+        else:
+            html = "<div class='geoai-dot'></div>"
         return folium.DivIcon(
             html=html,
             icon_size=(10, 10),
@@ -3455,6 +4672,258 @@ st.set_page_config(
 # Custom CSS for tactical HUD interface styling
 st.markdown(f"""
 <style>
+    /* Tactical Citations Styling */
+    a.tactical-cit,
+    .tactical-cit {{
+        display: inline-block;
+        padding: 1px 5px;
+        margin: 0 2px;
+        font-size: 0.82em;
+        font-weight: 700;
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        border-radius: 4px;
+        vertical-align: baseline;
+        transition: all 0.15s ease-in-out;
+        cursor: pointer !important;
+        text-decoration: none !important;
+    }}
+    a.tactical-cit:hover,
+    .tactical-cit:hover {{
+        transform: translateY(-1px);
+        filter: brightness(1.25);
+        text-decoration: none !important;
+    }}
+    .tactical-cit-pin {{
+        background: rgba(0, 229, 255, 0.15);
+        color: #00e5ff;
+        border: 1px solid rgba(0, 229, 255, 0.45);
+        box-shadow: 0 0 4px rgba(0, 229, 255, 0.2);
+    }}
+    .tactical-cit-src {{
+        background: rgba(0, 230, 118, 0.15);
+        color: #00e676;
+        border: 1px solid rgba(0, 230, 118, 0.45);
+        box-shadow: 0 0 4px rgba(0, 230, 118, 0.2);
+    }}
+    .tactical-cit-lead {{
+        background: rgba(168, 85, 247, 0.15);
+        color: #c084fc;
+        border: 1px solid rgba(168, 85, 247, 0.45);
+        box-shadow: 0 0 4px rgba(168, 85, 247, 0.2);
+    }}
+    .tactical-cit-ps {{
+        background: rgba(245, 158, 11, 0.15);
+        color: #fbbf24;
+        border: 1px solid rgba(245, 158, 11, 0.45);
+        box-shadow: 0 0 4px rgba(245, 158, 11, 0.2);
+    }}
+
+    /* Phase 2: Tactical Sector Cards & Foldable Regional Tree */
+    .tactical-sector-container {{
+        background: rgba(11, 19, 32, 0.7);
+        border: 1px solid rgba(56, 189, 248, 0.2);
+        border-radius: 8px;
+        padding: 8px 10px;
+        margin: 6px 0 10px 0;
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    }}
+    .tactical-sector-toolbar {{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 6px;
+        margin-bottom: 6px;
+        border-bottom: 1px solid rgba(56, 189, 248, 0.15);
+    }}
+    .tactical-sector-title {{
+        font-size: 0.74rem;
+        font-weight: 700;
+        color: #94a3b8;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }}
+    .tactical-sector-title code {{
+        background: rgba(56, 189, 248, 0.12);
+        color: #38bdf8;
+        padding: 1px 6px;
+        border-radius: 3px;
+        font-size: 0.70rem;
+    }}
+    .tactical-sector-reset-btn {{
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid rgba(56, 189, 248, 0.35);
+        color: #38bdf8;
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.74rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }}
+    .tactical-sector-reset-btn:hover {{
+        background: rgba(56, 189, 248, 0.2);
+        color: #f0f9ff;
+        border-color: #38bdf8;
+        box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+    }}
+    .tactical-sector-card {{
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(56, 189, 248, 0.18);
+        border-radius: 6px;
+        margin: 4px 0;
+        overflow: hidden;
+        transition: border-color 0.15s ease, background-color 0.15s ease;
+    }}
+    .tactical-sector-card:hover {{
+        border-color: rgba(56, 189, 248, 0.4);
+        background: rgba(15, 23, 42, 0.85);
+    }}
+    .tactical-sector-card[open] {{
+        border-color: rgba(56, 189, 248, 0.5);
+        background: rgba(15, 23, 42, 0.9);
+    }}
+    .tactical-sector-summary {{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 10px;
+        cursor: pointer;
+        user-select: none;
+        list-style: none;
+        gap: 8px;
+    }}
+    .tactical-sector-summary::-webkit-details-marker {{
+        display: none;
+    }}
+    .tactical-sector-header-left {{
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        min-width: 0;
+    }}
+    .tactical-chevron {{
+        font-size: 0.68rem;
+        color: #38bdf8;
+        transition: transform 0.2s ease;
+        display: inline-block;
+        line-height: 1;
+    }}
+    .tactical-sector-card[open] > .tactical-sector-summary .tactical-chevron {{
+        transform: rotate(90deg);
+    }}
+    .tactical-sector-name {{
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #f1f5f9;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }}
+    .tactical-sector-count {{
+        background: rgba(56, 189, 248, 0.12);
+        color: #38bdf8;
+        border: 1px solid rgba(56, 189, 248, 0.25);
+        border-radius: 10px;
+        padding: 1px 7px;
+        font-size: 0.70rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        white-space: nowrap;
+    }}
+    .tactical-sector-btn {{
+        background: rgba(56, 189, 248, 0.12);
+        border: 1px solid rgba(56, 189, 248, 0.4);
+        color: #38bdf8;
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.74rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        text-decoration: none;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }}
+    .tactical-sector-btn:hover {{
+        background: rgba(56, 189, 248, 0.25);
+        border-color: #38bdf8;
+        color: #ffffff;
+        box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+    }}
+    .tactical-sector-btn.active {{
+        background: rgba(56, 189, 248, 0.45);
+        border-color: #38bdf8;
+        color: #ffffff;
+        box-shadow: 0 0 14px rgba(56, 189, 248, 0.85);
+    }}
+    .tactical-sector-drawer {{
+        padding: 6px 8px 8px 10px;
+        border-top: 1px solid rgba(56, 189, 248, 0.12);
+        background: rgba(10, 15, 26, 0.45);
+    }}
+    .tactical-pins-section {{
+        margin-top: 4px;
+    }}
+    .tactical-pins-label {{
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: #64748b;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+    }}
+    .tactical-pins-grid {{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        align-items: center;
+    }}
+    .tactical-more-pins {{
+        font-size: 0.72rem;
+        color: #64748b;
+        padding: 2px 6px;
+        font-style: italic;
+    }}
+    .tactical-sector-child-card {{
+        margin: 4px 0 6px 0;
+        background: rgba(15, 23, 42, 0.5);
+        border: 1px solid rgba(56, 189, 248, 0.15);
+    }}
+    .tactical-reg-item {{
+        margin: 3px 0;
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 6px;
+    }}
+    .tactical-reg-child {{
+        margin-left: 20px;
+        margin-top: 2px;
+        margin-bottom: 2px;
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 6px;
+    }}
+    .tactical-reg-pins {{
+        font-size: 0.80rem;
+        color: #94a3b8;
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        flex-wrap: wrap;
+    }}
+
     /* Global Typography */
     html, body, [class*="css"], font, span, p, div, button, input {{
         font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
@@ -4072,7 +5541,19 @@ st.markdown(f"""
         margin-bottom: 2px;
     }}
 
-    /* Instant Client-Side Target HUD Pill Bridge */
+    /* Instant Client-Side Target HUD Pill Bridge (Hidden in favor of in-map #geoai_map_tactical_hud) */
+    #geoai-instant-pill-slot,
+    div[data-testid="stHtml"]:has(#geoai-instant-pill-slot),
+    div[data-testid="stElementContainer"]:has(#geoai-instant-pill-slot) {{
+        display: none !important;
+        height: 0px !important;
+        min-height: 0px !important;
+        max-height: 0px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        border: none !important;
+    }}
     .geoai-instant-pill-row {{
         display: flex;
         gap: 8px;
@@ -4119,6 +5600,11 @@ st.markdown(f"""
         border-color: rgba(0, 229, 255, 0.35);
         background: rgba(14, 22, 32, 0.6);
     }}
+    .geoai-source-detail--highlight {{
+        border-color: #00e676 !important;
+        box-shadow: 0 0 12px rgba(0, 230, 118, 0.45) !important;
+        background: rgba(0, 230, 118, 0.12) !important;
+    }}
     .geoai-source-summary {{
         cursor: pointer;
         display: flex;
@@ -4151,6 +5637,20 @@ st.markdown(f"""
         flex-shrink: 0;
         transition: all 0.15s ease;
     }}
+    
+    /* Hide the zero-height parent bridge iframe completely to prevent visual artifacts */
+    iframe[title="geoai-parent-bridge"],
+    iframe[srcdoc*="geoai-parent-bridge"],
+    div[data-testid="stCustomComponentV1"]:has(iframe[srcdoc*="geoai-parent-bridge"]),
+    div[data-testid="stElementContainer"]:has(iframe[srcdoc*="geoai-parent-bridge"]) {{
+        display: none !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        max-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+    }}
     .geoai-source-detail[open] .geoai-source-badge {{
         color: #f87171;
         border-color: rgba(248, 113, 113, 0.3);
@@ -4159,176 +5659,389 @@ st.markdown(f"""
 </style>
 """, unsafe_allow_html=True)
 
-# 0ms Instant Target HUD Bridge: listens to Leaflet map clicks/drawings in the iframe
-st.markdown("""<script>
-(function() {
-    if (window._geoaiSelectionBridgeInstalled) return;
-    window._geoaiSelectionBridgeInstalled = true;
+# 0ms Instant Target HUD Bridge: listens to Leaflet map clicks/drawings and interactive citations
+components.html(
+    """<!-- geoai-parent-bridge -->
+    <div id="geoai-parent-bridge" style="display:none;"></div>
+    <script>
+    (function() {
+        var pWin = window.parent;
+        if (!pWin) return;
+        var pDoc = pWin.document;
+        if (!pDoc) return;
 
-    function postToMapIframes(payload) {
-        try {
-            var iframes = document.querySelectorAll('iframe');
-            for (var i = 0; i < iframes.length; i++) {
-                if (iframes[i].contentWindow) {
-                    iframes[i].contentWindow.postMessage(payload, '*');
+        function postToMapIframes(payload) {
+            try {
+                var iframes = pDoc.querySelectorAll('iframe');
+                for (var i = 0; i < iframes.length; i++) {
+                    if (iframes[i].contentWindow) {
+                        iframes[i].contentWindow.postMessage(payload, '*');
+                    }
                 }
-            }
-        } catch (err) {}
-    }
-
-    // 0ms Parent-to-Iframe Event Forwarding (Clear buttons, Chat Submit, Recon Scan)
-    document.addEventListener('click', function(e) {
-        var target = e.target;
-        if (!target || !target.closest) return;
-
-        // 1. Instant preview pill Clear button
-        var instClr = target.closest('[data-geoai-action="clear"]');
-        if (instClr) {
-            var slot = document.getElementById('geoai-instant-pill-slot');
-            if (slot) {
-                slot.style.display = 'none';
-                slot.innerHTML = '';
-            }
-            postToMapIframes({ type: 'GEOAI_PARENT_CMD', action: 'clear' });
-            return;
+            } catch (err) {}
         }
 
-        // 1b. Instant preview pill Recon button
-        var instRec = target.closest('[data-geoai-action="recon"]');
-        if (instRec) {
-            postToMapIframes({ type: 'GEOAI_QUERY_STATE', state: 'querying' });
-            var realBtn = document.querySelector('button[key="run_chat_recon"]') || Array.from(document.querySelectorAll('button')).find(function(b) {
-                return (b.textContent || '').indexOf('Recon') !== -1;
+        function handleSourceCitation(srcCit, targetId, doc) {
+            doc = doc || pDoc;
+            var rawId = targetId || (srcCit && srcCit.getAttribute && srcCit.getAttribute('data-cit-target')) || (srcCit && srcCit.textContent) || '';
+            var normId = rawId.replace(/[\\[\\]]/g, '').trim().toUpperCase();
+            if (!normId) return;
+
+            var chatMsg = (srcCit && srcCit.closest) ? (srcCit.closest('div[data-testid="stChatMessage"]') || srcCit.closest('.stChatMessage') || doc) : doc;
+
+            // 1. Expand the 'Verified Sources' expander if closed
+            var expanders = chatMsg.querySelectorAll('div[data-testid="stExpander"], details[data-testid="stExpander"], [data-testid="stExpander"]');
+            if (!expanders.length) {
+                expanders = doc.querySelectorAll('div[data-testid="stExpander"], details[data-testid="stExpander"], [data-testid="stExpander"]');
+            }
+            for (var eIdx = 0; eIdx < expanders.length; eIdx++) {
+                var exp = expanders[eIdx];
+                var expText = (exp.textContent || '').toLowerCase();
+                if (expText.indexOf('sources') !== -1 || expText.indexOf('verified') !== -1 || expText.indexOf('📑') !== -1) {
+                    var detailsTag = exp.tagName === 'DETAILS' ? exp : exp.querySelector('details');
+                    var summaryTag = exp.querySelector('summary') || exp.querySelector('[data-testid="stExpanderStepChevron"]') || exp.querySelector('button');
+
+                    var isAlreadyOpen = false;
+                    if (detailsTag && detailsTag.open) {
+                        isAlreadyOpen = true;
+                    } else if (summaryTag && summaryTag.getAttribute('aria-expanded') === 'true') {
+                        isAlreadyOpen = true;
+                    } else if (exp.classList.contains('open') || exp.getAttribute('data-state') === 'expanded') {
+                        isAlreadyOpen = true;
+                    }
+
+                    if (!isAlreadyOpen) {
+                        if (summaryTag && summaryTag.click) {
+                            try { summaryTag.click(); } catch(err) { if (detailsTag) detailsTag.open = true; }
+                        } else if (detailsTag) {
+                            detailsTag.open = true;
+                        }
+                    }
+                    break;
+                }
+            }
+
+            // 2. Find and activate matching source card
+            function activateCard(card) {
+                if (!card) return;
+                card.open = true;
+                card.classList.add('geoai-source-detail--highlight');
+                try {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } catch(e) {
+                    try { card.scrollIntoView(true); } catch(e2) {}
+                }
+                setTimeout(function() {
+                    card.classList.remove('geoai-source-detail--highlight');
+                }, 3000);
+            }
+
+            function findCard(scope) {
+                var allCards = (scope || doc).querySelectorAll('details.geoai-source-detail');
+                if (!allCards || !allCards.length) return null;
+
+                // A. Exact data-cit-id match (e.g. data-cit-id="S1" or "P3-S1")
+                for (var c = 0; c < allCards.length; c++) {
+                    var cId = (allCards[c].getAttribute('data-cit-id') || '').trim().toUpperCase();
+                    if (cId === normId) return allCards[c];
+                }
+
+                // B. Suffix or substring match (e.g. "P3-S1" matches "S1" or vice-versa)
+                for (var c2 = 0; c2 < allCards.length; c2++) {
+                    var cId2 = (allCards[c2].getAttribute('data-cit-id') || '').trim().toUpperCase();
+                    if (cId2.indexOf(normId) !== -1 || normId.indexOf(cId2) !== -1) return allCards[c2];
+                }
+
+                // C. Header text match (e.g. "[S1]" or "[P3-S1]")
+                for (var t = 0; t < allCards.length; t++) {
+                    var tEl = allCards[t].querySelector('.geoai-source-title') || allCards[t];
+                    var tText = (tEl.textContent || '').toUpperCase();
+                    if (tText.indexOf('[' + normId + ']') !== -1 || tText.indexOf(normId) !== -1) return allCards[t];
+                }
+
+                // D. Numeric fallback: e.g. "S1" -> 1st card, "S2" -> 2nd card
+                var numDigits = normId.match(/\\d+/);
+                if (numDigits) {
+                    var sIndex = parseInt(numDigits[0], 10) - 1;
+                    if (sIndex >= 0 && sIndex < allCards.length) {
+                        return allCards[sIndex];
+                    }
+                }
+
+                return allCards[0] || null;
+            }
+
+            [0, 35, 110, 260, 520].forEach(function(delay) {
+                setTimeout(function() {
+                    var card = findCard(chatMsg) || findCard(doc);
+                    if (card) {
+                        activateCard(card);
+                    }
+                }, delay);
             });
-            if (realBtn) {
-                realBtn.click();
-            }
-            return;
         }
 
-        // 2. Streamlit Clear / Reset buttons -> 0ms visual cleanup in map iframe
-        var btn = target.closest('button');
-        if (btn) {
-            var txt = (btn.textContent || '').trim();
-            if (
-                txt.indexOf('❌ Clear') !== -1 ||
-                txt.indexOf('Clear Box') !== -1 ||
-                txt.indexOf('Clear Point') !== -1 ||
-                txt.indexOf('Reset Map Layers') !== -1 ||
-                txt.indexOf('Clear Map & Console') !== -1
-            ) {
-                var slot2 = document.getElementById('geoai-instant-pill-slot');
-                if (slot2) {
-                    slot2.style.display = 'none';
-                    slot2.innerHTML = '';
+        pWin._geoaiHandleSourceCitation = handleSourceCitation;
+
+        if (pWin._geoaiSelectionBridgeInstalled) return;
+        pWin._geoaiSelectionBridgeInstalled = true;
+
+        // 0ms Parent-to-Iframe Event Forwarding (Clear buttons, Chat Submit, Recon Scan, Citations)
+        pDoc.addEventListener('click', function(e) {
+            var target = e.target;
+            if (!target || !target.closest) return;
+
+            // 0a. Interactive Location Citation Badge ([1], [2]) -> 0ms Map Zoom & Focus + Popup
+            var pinCit = target.closest('.tactical-cit-pin');
+            if (pinCit) {
+                e.preventDefault();
+                e.stopPropagation();
+                var pinNum = pinCit.getAttribute('data-pin-number');
+                var pLat = pinCit.getAttribute('data-lat');
+                var pLng = pinCit.getAttribute('data-lng');
+                var pLbl = pinCit.getAttribute('data-pin-label');
+                var payload = {
+                    type: 'GEOAI_FOCUS_PIN',
+                    number: pinNum ? parseInt(pinNum, 10) : null,
+                    lat: (pLat && !isNaN(parseFloat(pLat))) ? parseFloat(pLat) : null,
+                    lng: (pLng && !isNaN(parseFloat(pLng))) ? parseFloat(pLng) : null,
+                    label: pLbl || null
+                };
+                if (typeof pWin._geoaiFocusMapPin === 'function') {
+                    pWin._geoaiFocusMapPin(payload);
+                } else {
+                    pWin._geoaiPendingFocusPin = payload;
                 }
-                postToMapIframes({ type: 'GEOAI_PARENT_CMD', action: 'clear_visuals' });
+                postToMapIframes(payload);
                 return;
             }
-            // 3. Recon Scan or Chat Submit button -> 0ms querying scanline + pulse
-            var inChatInput = Boolean(btn.closest('div[data-testid="stChatInput"]'));
-            if (
-                txt.indexOf('Recon') !== -1 ||
-                btn.getAttribute('data-testid') === 'stChatInputSubmitButton' ||
-                inChatInput
-            ) {
+
+            // 0b. Interactive Source Citation Badge ([S1], [L1], [P1-S1]) -> Expand Verified Sources & Open Inspect Card
+            var srcCit = target.closest('.tactical-cit[data-cit-target], .tactical-cit-src, .tactical-cit-lead, .tactical-cit-ps');
+            if (srcCit) {
+                e.preventDefault();
+                e.stopPropagation();
+                var citId = srcCit.getAttribute('data-cit-target') || srcCit.textContent.replace(/[\\[\\]]/g, '').trim();
+                handleSourceCitation(srcCit, citId, pDoc);
+                return;
+            }
+
+            // 0c. Interactive Regional Sector Button / Header -> 0ms Map Bounding Box Zoom + Sector Pin Highlight
+            var sectorBtn = target.closest('.tactical-sector-btn, .tactical-sector-link, [data-sector-bbox]');
+            if (sectorBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var isReset = sectorBtn.getAttribute('data-sector-action') === 'reset';
+                var allSectorBtns = pDoc.querySelectorAll('.tactical-sector-btn, .tactical-sector-link');
+
+                if (isReset) {
+                    for (var b = 0; b < allSectorBtns.length; b++) {
+                        allSectorBtns[b].classList.remove('active');
+                    }
+                    var resetPayload = {
+                        type: 'GEOAI_FOCUS_SECTOR',
+                        action: 'reset',
+                        name: null,
+                        sector: null,
+                        bbox: null,
+                        pins: []
+                    };
+                    if (typeof pWin._geoaiFocusSector === 'function') {
+                        pWin._geoaiFocusSector(resetPayload);
+                    }
+                    postToMapIframes(resetPayload);
+                    return;
+                }
+
+                var wasActive = sectorBtn.classList.contains('active');
+                for (var i = 0; i < allSectorBtns.length; i++) {
+                    allSectorBtns[i].classList.remove('active');
+                }
+                if (!wasActive) {
+                    sectorBtn.classList.add('active');
+                }
+
+                var sName = sectorBtn.getAttribute('data-sector-name') || '';
+                var rawBbox = sectorBtn.getAttribute('data-sector-bbox');
+                var rawPins = sectorBtn.getAttribute('data-sector-pins');
+                var bboxArr = null;
+                if (rawBbox && rawBbox !== 'null') {
+                    try { bboxArr = JSON.parse(rawBbox); } catch(err) {}
+                }
+                var pinsArr = [];
+                if (rawPins && rawPins !== 'null') {
+                    try { pinsArr = JSON.parse(rawPins); } catch(err) {}
+                }
+
+                var payload = {
+                    type: 'GEOAI_FOCUS_SECTOR',
+                    action: wasActive ? 'reset' : 'focus',
+                    name: wasActive ? null : sName,
+                    sector: wasActive ? null : sName,
+                    bbox: wasActive ? null : bboxArr,
+                    pins: wasActive ? [] : pinsArr
+                };
+
+                if (typeof pWin._geoaiFocusSector === 'function') {
+                    pWin._geoaiFocusSector(payload);
+                }
+                postToMapIframes(payload);
+                return;
+            }
+
+            // 1. Instant preview pill Clear button
+            var instClr = target.closest('[data-geoai-action="clear"]');
+            if (instClr) {
+                var slot = pDoc.getElementById('geoai-instant-pill-slot');
+                if (slot) {
+                    slot.style.display = 'none';
+                    slot.innerHTML = '';
+                }
+                postToMapIframes({ type: 'GEOAI_PARENT_CMD', action: 'clear' });
+                return;
+            }
+
+            // 1b. Instant preview pill Recon button
+            var instRec = target.closest('[data-geoai-action="recon"]');
+            if (instRec) {
                 postToMapIframes({ type: 'GEOAI_QUERY_STATE', state: 'querying' });
-            }
-        }
-    }, true);
-
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            var ta = e.target && e.target.closest && e.target.closest('div[data-testid="stChatInput"] textarea');
-            if (ta && ta.value && ta.value.trim().length > 0) {
-                postToMapIframes({ type: 'GEOAI_QUERY_STATE', state: 'querying' });
-            }
-        }
-    }, true);
-
-    window.addEventListener('message', function(event) {
-        if (!event.data) return;
-        if (event.data.type === 'GEOAI_PARENT_CMD') {
-            if (event.data.action === 'trigger_recon') {
-                var reconBtn = document.querySelector('.st-key-run_chat_recon button') ||
-                    document.querySelector('button[key="run_chat_recon"]') ||
-                    Array.from(document.querySelectorAll('button')).find(function(b) {
-                        return (b.textContent || '').indexOf('Recon') !== -1;
-                    });
-                if (reconBtn) {
-                    try { reconBtn.click(); } catch(e) {}
+                var realBtn = pDoc.querySelector('button[key="run_chat_recon"]') || Array.from(pDoc.querySelectorAll('button')).find(function(b) {
+                    return (b.textContent || '').indexOf('Recon') !== -1;
+                });
+                if (realBtn) {
+                    realBtn.click();
                 }
-            } else if (event.data.action === 'trigger_clear') {
-                var clearBtn = document.querySelector('.st-key-clear_chat_pts button') ||
-                    document.querySelector('button[key="clear_chat_pts"]') ||
-                    Array.from(document.querySelectorAll('button')).find(function(b) {
-                        return (b.textContent || '').indexOf('Clear') !== -1;
-                    });
-                if (clearBtn) {
-                    try { clearBtn.click(); } catch(e) {}
-                }
+                return;
             }
-            return;
-        }
-        if (event.data.type !== 'GEOAI_SELECTION_EVENT') return;
-        var data = event.data;
-        var slot = document.getElementById('geoai-instant-pill-slot');
-        if (!slot) return;
 
-        if (data.action === 'clear') {
-            slot.style.display = 'none';
-            slot.innerHTML = '';
-            return;
-        }
-
-        var pillHtml = '';
-        if (data.action === 'set_point') {
-            var plat = Number(data.lat).toFixed(4);
-            var plng = Number(data.lng).toFixed(4);
-            pillHtml = "<div class='geo-docked-pill' title='Attached Tactical Target: (" + plat + "°, " + plng + "°)'>" +
-                       "<span class='geo-pill-icon'>📍</span>" +
-                       "<span class='geo-pill-label'>TARGET:</span>" +
-                       "<span class='geo-pill-coord'>(" + plat + "°, " + plng + "°)</span>" +
-                       "</div>";
-        } else if (data.action === 'set_bbox') {
-            var sw_lat = Number(data.sw[0]).toFixed(4);
-            var sw_lng = Number(data.sw[1]).toFixed(4);
-            var ne_lat = Number(data.ne[0]).toFixed(4);
-            var ne_lng = Number(data.ne[1]).toFixed(4);
-            pillHtml = "<div class='geo-docked-pill geo-docked-pill-stacked' title='Bounding Box AOI: Lower-Left (" + sw_lat + "°, " + sw_lng + "°) | Upper-Right (" + ne_lat + "°, " + ne_lng + "°)'>" +
-                       "<span class='geo-pill-icon'>📦</span>" +
-                       "<div class='geo-pill-stack'>" +
-                       "<div class='geo-pill-row'><span class='geo-pill-sublabel'>SW:</span><span class='geo-pill-coord'>" + sw_lat + "°, " + sw_lng + "°</span></div>" +
-                       "<div class='geo-pill-row'><span class='geo-pill-sublabel'>NE:</span><span class='geo-pill-coord'>" + ne_lat + "°, " + ne_lng + "°</span></div>" +
-                       "</div></div>";
-        }
-
-        if (pillHtml) {
-            slot.innerHTML = "<div class='geoai-instant-pill-row'>" +
-                             "<div class='geoai-instant-pill-col-left'>" + pillHtml + "</div>" +
-                             "<div class='geoai-instant-pill-col-mid'><div class='geoai-instant-btn' data-geoai-action='clear' style='cursor:pointer;'>❌ Clear</div></div>" +
-                             "<div class='geoai-instant-pill-col-right'><div class='geoai-instant-btn' data-geoai-action='recon' style='cursor:pointer;'>🔍 Recon</div></div>" +
-                             "</div>";
-            slot.style.display = 'block';
-        }
-    });
-
-    // Forward window resize to map iframes to keep Leaflet tiles synchronized
-    function forwardResizeToIframes() {
-        try {
-            var mapIframes = document.querySelectorAll('iframe');
-            for (var i = 0; i < mapIframes.length; i++) {
-                if (mapIframes[i].contentWindow) {
-                    mapIframes[i].contentWindow.dispatchEvent(new Event('resize'));
+            // 2. Streamlit Clear / Reset buttons -> 0ms visual cleanup in map iframe
+            var btn = target.closest('button');
+            if (btn) {
+                var txt = (btn.textContent || '').trim();
+                if (
+                    txt.indexOf('❌ Clear') !== -1 ||
+                    txt.indexOf('Clear Box') !== -1 ||
+                    txt.indexOf('Clear Point') !== -1 ||
+                    txt.indexOf('Reset Map Layers') !== -1 ||
+                    txt.indexOf('Clear Map & Console') !== -1
+                ) {
+                    var slot2 = pDoc.getElementById('geoai-instant-pill-slot');
+                    if (slot2) {
+                        slot2.style.display = 'none';
+                        slot2.innerHTML = '';
+                    }
+                    postToMapIframes({ type: 'GEOAI_PARENT_CMD', action: 'clear_visuals' });
+                    return;
+                }
+                // 3. Recon Scan or Chat Submit button -> 0ms querying scanline + pulse
+                var inChatInput = Boolean(btn.closest('div[data-testid="stChatInput"]'));
+                if (
+                    txt.indexOf('Recon') !== -1 ||
+                    btn.getAttribute('data-testid') === 'stChatInputSubmitButton' ||
+                    inChatInput
+                ) {
+                    postToMapIframes({ type: 'GEOAI_QUERY_STATE', state: 'querying' });
+                    return;
                 }
             }
-        } catch(e) {}
-    }
-    window.addEventListener('resize', forwardResizeToIframes);
-})();
-</script>
-<div id="geoai-instant-pill-slot" style="display: none;"></div>
-""", unsafe_allow_html=True)
+        }, true);
+
+        pDoc.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                var ta = e.target && e.target.closest && e.target.closest('div[data-testid="stChatInput"] textarea');
+                if (ta && ta.value && ta.value.trim().length > 0) {
+                    postToMapIframes({ type: 'GEOAI_QUERY_STATE', state: 'querying' });
+                }
+            }
+        }, true);
+
+        pWin.addEventListener('message', function(event) {
+            if (!event.data) return;
+            if (event.data.type === 'GEOAI_PARENT_CMD') {
+                if (event.data.action === 'trigger_recon') {
+                    var reconBtn = pDoc.querySelector('.st-key-run_chat_recon button') ||
+                        pDoc.querySelector('button[key="run_chat_recon"]') ||
+                        Array.from(pDoc.querySelectorAll('button')).find(function(b) {
+                            return (b.textContent || '').indexOf('Recon') !== -1;
+                        });
+                    if (reconBtn) {
+                        try { reconBtn.click(); } catch(e) {}
+                    }
+                } else if (event.data.action === 'trigger_clear') {
+                    var clearBtn = pDoc.querySelector('.st-key-clear_chat_pts button') ||
+                        pDoc.querySelector('button[key="clear_chat_pts"]') ||
+                        Array.from(pDoc.querySelectorAll('button')).find(function(b) {
+                            return (b.textContent || '').indexOf('Clear') !== -1;
+                        });
+                    if (clearBtn) {
+                        try { clearBtn.click(); } catch(e) {}
+                    }
+                }
+                return;
+            }
+            if (event.data.type !== 'GEOAI_SELECTION_EVENT') return;
+            var data = event.data;
+            var slot = pDoc.getElementById('geoai-instant-pill-slot');
+            if (!slot) return;
+
+            if (data.action === 'clear') {
+                slot.style.display = 'none';
+                slot.innerHTML = '';
+                return;
+            }
+
+            var pillHtml = '';
+            if (data.action === 'set_point') {
+                var plat = Number(data.lat).toFixed(4);
+                var plng = Number(data.lng).toFixed(4);
+                pillHtml = "<div class='geo-docked-pill' title='Attached Tactical Target: (" + plat + "°, " + plng + "°)'>" +
+                           "<span class='geo-pill-icon'>📍</span>" +
+                           "<span class='geo-pill-label'>TARGET:</span>" +
+                           "<span class='geo-pill-coord'>(" + plat + "°, " + plng + "°)</span>" +
+                           "</div>";
+            } else if (data.action === 'set_bbox') {
+                var sw_lat = Number(data.sw[0]).toFixed(4);
+                var sw_lng = Number(data.sw[1]).toFixed(4);
+                var ne_lat = Number(data.ne[0]).toFixed(4);
+                var ne_lng = Number(data.ne[1]).toFixed(4);
+                pillHtml = "<div class='geo-docked-pill geo-docked-pill-stacked' title='Bounding Box AOI: Lower-Left (" + sw_lat + "°, " + sw_lng + "°) | Upper-Right (" + ne_lat + "°, " + ne_lng + "°)'>" +
+                           "<span class='geo-pill-icon'>📦</span>" +
+                           "<div class='geo-pill-stack'>" +
+                           "<div class='geo-pill-row'><span class='geo-pill-sublabel'>SW:</span><span class='geo-pill-coord'>" + sw_lat + "°, " + sw_lng + "°</span></div>" +
+                           "<div class='geo-pill-row'><span class='geo-pill-sublabel'>NE:</span><span class='geo-pill-coord'>" + ne_lat + "°, " + ne_lng + "°</span></div>" +
+                           "</div></div>";
+            }
+
+            if (pillHtml) {
+                slot.innerHTML = "<div class='geoai-instant-pill-row'>" +
+                                 "<div class='geoai-instant-pill-col-left'>" + pillHtml + "</div>" +
+                                 "<div class='geoai-instant-pill-col-mid'><div class='geoai-instant-btn' data-geoai-action='clear' style='cursor:pointer;'>❌ Clear</div></div>" +
+                                 "<div class='geoai-instant-pill-col-right'><div class='geoai-instant-btn' data-geoai-action='recon' style='cursor:pointer;'>🔍 Recon</div></div>" +
+                                 "</div>";
+                slot.style.display = 'none';
+            }
+        });
+
+        // Forward window resize to map iframes to keep Leaflet tiles synchronized
+        function forwardResizeToIframes() {
+            try {
+                var mapIframes = pDoc.querySelectorAll('iframe');
+                for (var i = 0; i < mapIframes.length; i++) {
+                    if (mapIframes[i].contentWindow) {
+                        mapIframes[i].contentWindow.dispatchEvent(new Event('resize'));
+                    }
+                }
+            } catch(e) {}
+        }
+        window.addEventListener('resize', forwardResizeToIframes);
+    pWin.addEventListener('resize', forwardResizeToIframes);
+    })();
+    </script>""",
+    height=0,
+    width=0,
+)
+st.html('<div id="geoai-instant-pill-slot" style="display: none;"></div>')
 
 
 # ==============================================================================
@@ -4479,6 +6192,15 @@ _is_chat_submit = bool(
 )
 
 if not st.session_state.get("pending_query"):
+    # Deferred point selection: the map iframe buffers point clicks client-side and flushes them
+    # when the operator leaves the map. If that flush lands in the same run as this submit,
+    # apply it now so the query targets the point the operator actually sees on the map.
+    if _is_chat_submit or _incoming_recon:
+        try:
+            reconcile_deferred_map_selection(_peek_incoming_map_state())
+        except Exception as _reconcile_err:
+            print(f"[Deferred Selection Warning] Could not reconcile map selection: {_reconcile_err}")
+
     _is_bbox = st.session_state.get("bounding_box") is not None
     _active_pt = None if _is_bbox else (st.session_state.selected_points[0] if st.session_state.get("selected_points") else None)
     _active_bbox = st.session_state.get("bounding_box") if _is_bbox else None
@@ -4504,51 +6226,6 @@ if not st.session_state.get("pending_query"):
 # Ingests map clicks, drawings, and deletions before the sidebar and chat mount,
 # ensuring all UI panels reflect the newest spatial selection on the initial rerun
 # without requiring a second st.rerun() cascade.
-def _peek_incoming_map_state() -> Optional[Dict[str, Any]]:
-    # 1. Inspect fresh incoming widget states directly from Streamlit's internal runner context.
-    # When a component calls setComponentValue(), Streamlit populates _new_widget_state
-    # with the incoming WebSocket payload BEFORE running the script, but SessionState.__getitem__
-    # will not expose it until register_widget() is called later during map rendering.
-    try:
-        from streamlit.runtime.state.session_state_proxy import get_session_state
-        ss = get_session_state()
-        raw_state = getattr(ss, "_state", None)
-        if raw_state is not None:
-            new_widgets = getattr(raw_state, "_new_widget_state", None)
-            if new_widgets is not None and hasattr(new_widgets, "states"):
-                for wid, item in new_widgets.states.items():
-                    val = getattr(item, "value", None)
-                    if val is not None and hasattr(val, "WhichOneof") and val.WhichOneof("value") == "json_value":
-                        try:
-                            parsed = json.loads(val.json_value)
-                            if isinstance(parsed, dict) and (
-                                "last_clicked" in parsed
-                                or "last_active_drawing" in parsed
-                                or "all_drawings" in parsed
-                                or "last_object_clicked" in parsed
-                            ):
-                                return parsed
-                        except Exception:
-                            pass
-                    elif isinstance(item, dict):
-                        if "last_clicked" in item or "last_active_drawing" in item or "all_drawings" in item or "last_object_clicked" in item:
-                            return item
-    except Exception:
-        pass
-
-    # 2. Prioritize 64-character hash keys directly from Streamlit session_state
-    for k in list(st.session_state.keys()):
-        if isinstance(k, str) and len(k) == 64:
-            v = st.session_state.get(k)
-            if isinstance(v, dict) and ("last_clicked" in v or "last_active_drawing" in v or "all_drawings" in v or "last_object_clicked" in v):
-                return v
-
-    # 3. Fallback to static widget key
-    s = st.session_state.get("geoai_tactical_map")
-    if isinstance(s, dict) and ("last_clicked" in s or "last_active_drawing" in s or "all_drawings" in s or "last_object_clicked" in s):
-        return s
-    return None
-
 _early_map_state = _peek_incoming_map_state()
 if (
     not st.session_state.get("pending_query")
@@ -5584,6 +7261,9 @@ with col2:
                     box-shadow: 0 0 0 1.5px var(--geoai-halo);
                     transition: transform 0.12s ease;
                 }
+                .geoai-dot-num {
+                    display: none;
+                }
                 .geoai-pin:hover .geoai-dot {
                     transform: scale(1.35);
                     opacity: 1;
@@ -5643,6 +7323,64 @@ with col2:
                     width: 44px;
                     height: 44px;
                     box-shadow: 0 0 0 7px rgba(0, 229, 255, 0.18), 0 0 16px rgba(0, 229, 255, 0.40);
+                }
+
+                /* Phase 2: Regional Sector Filtering & Highlighting (Never override .leaflet-marker-icon translate3d transform!) */
+                .geoai-sector--dimmed,
+                .geoai-sector--dimmed.leaflet-marker-icon,
+                .geoai-sector--dimmed.marker-cluster,
+                .geoai-sector--dimmed.geoai-cluster-wrap,
+                .geoai-sector--dimmed .geoai-diamond,
+                .geoai-sector--dimmed .geoai-teardrop,
+                .geoai-sector--dimmed .geoai-dot,
+                .geoai-sector--dimmed .geoai-cluster {
+                    opacity: 0.15 !important;
+                    filter: grayscale(90%) contrast(70%) !important;
+                    transition: opacity 0.25s ease, filter 0.25s ease !important;
+                }
+                .geoai-sector--highlighted,
+                .geoai-sector--highlighted.leaflet-marker-icon {
+                    opacity: 1.0 !important;
+                    z-index: 10000 !important;
+                    filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.95)) drop-shadow(0 0 3px rgba(56, 189, 248, 0.75)) !important;
+                    transition: filter 0.25s ease, opacity 0.25s ease !important;
+                }
+                .geoai-sector--highlighted .geoai-diamond {
+                    transform: rotate(45deg) scale(1.18) !important;
+                    border-color: #38bdf8 !important;
+                    box-shadow: 0 0 12px rgba(56, 189, 248, 0.9) !important;
+                }
+                .geoai-sector--highlighted .geoai-diamond.geoai-teardrop,
+                .geoai-shape-teardrop .geoai-sector--highlighted .geoai-diamond {
+                    transform: translateY(-14px) rotate(-45deg) scale(1.18) !important;
+                    border-color: #38bdf8 !important;
+                    box-shadow: 0 0 12px rgba(56, 189, 248, 0.9) !important;
+                }
+                .geoai-sector--highlighted .geoai-dot {
+                    width: 20px !important;
+                    height: 20px !important;
+                    margin-left: -5px !important;
+                    margin-top: -5px !important;
+                    border-radius: 50% !important;
+                    opacity: 1.0 !important;
+                    background: #0b1320 !important;
+                    border: 2px solid #38bdf8 !important;
+                    box-shadow: 0 0 10px #38bdf8, inset 0 0 4px rgba(56, 189, 248, 0.4) !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                }
+                .geoai-sector--highlighted .geoai-dot .geoai-dot-num {
+                    display: inline-block !important;
+                    font: 700 9.5px/1 'JetBrains Mono', monospace !important;
+                    font-style: normal !important;
+                    color: #f0f9ff !important;
+                    letter-spacing: -0.03em !important;
+                }
+                .geoai-sector--highlighted.geoai-cluster-wrap .geoai-cluster {
+                    border-color: #38bdf8 !important;
+                    box-shadow: 0 0 14px rgba(56, 189, 248, 0.9) !important;
+                    color: #ffffff !important;
                 }
 
                 /* Instant Client-Side Pin Filter Toggles */
@@ -6511,12 +8249,55 @@ with col1:
                 st.markdown(f"<div class='chat-role-tag {role_class}'><span class='{marker_class}'></span>{role_tag}</div>", unsafe_allow_html=True)
                 if role == "assistant" and not st.session_state.get("show_citations", True):
                     st.markdown(msg.get("content_plain") or msg["content"])
+                elif role == "assistant":
+                    locs = msg.get("geo_locations")
+                    if not locs and msg.get("layers"):
+                        locs = [
+                            l.data for l in msg["layers"]
+                            if hasattr(l, "data") and isinstance(l.data, dict) and l.data.get("number") is not None
+                        ]
+                    formatted_content = format_tactical_citations(
+                        msg["content"],
+                        citations=msg.get("citations"),
+                        geo_locations=locs,
+                    )
+                    st.markdown(formatted_content, unsafe_allow_html=True)
                 else:
                     st.markdown(msg["content"])
                 if role == "assistant" and not msg.get("is_live") and not msg.get("is_error"):
                     st.caption("⚠️ *Example answer: no OpenRouter key set (Deterministic Mock Engine)*")
                 if role == "assistant" and int(msg.get("map_not_shown", 0) or 0) > 0:
                     st.caption(f"📍 *{msg['map_not_shown']} additional context places found in the knowledge graph (showing discussed places on map).*")
+                if role == "assistant" and msg.get("status") == "no_data" and m_idx == len(st.session_state.messages) - 1:
+                    content_lower = str(msg.get("content", "")).lower()
+                    if "select one on the map" in content_lower or "name an area" in content_lower or "no area" in content_lower:
+                        st.markdown(
+                            "<div style='margin-top: 8px; margin-bottom: 8px; padding: 10px 12px; border-radius: 6px; background: rgba(14, 165, 233, 0.08); border-left: 3px solid #0ea5e9; font-size: 0.85rem; color: #cbd5e1;'>"
+                            "🧭 <b>Tactical Guidance:</b> This inquiry requires an operational boundary. "
+                            "Use the <b>Draw a rectangle (⬚)</b> tool on the tactical map toolbar to frame your sector, or select a localized operational scenario below:"
+                            "</div>",
+                            unsafe_allow_html=True
+                        )
+                        area_suggestions = [
+                            "Drone attacks in Kharkiv",
+                            "Drone attacks in Kyiv",
+                            "Battles in Donbas",
+                        ]
+                        as_cols = st.columns(3)
+                        for as_idx, as_q in enumerate(area_suggestions):
+                            with as_cols[as_idx]:
+                                if st.button(f"🎯 {as_q}", key=f"btn_area_sugg_{m_idx}_{as_idx}", use_container_width=True):
+                                    st.session_state.pending_query = {
+                                        "text_prompt": as_q,
+                                        "selected_point": None,
+                                        "bounding_box": None,
+                                    }
+                                    st.session_state.messages.append({
+                                        "role": "user",
+                                        "content": as_q
+                                    })
+                                    st.rerun()
+
 
                 # Source Evidence Inspection Drawer
                 msg_sources = msg.get("sources", [])
@@ -6597,8 +8378,10 @@ with col1:
                                     f"</div>"
                                 )
 
+                            cit_id_attr = f" data-cit-id='{cit_id}'" if cit_id else f" data-cit-id='S{s_idx + 1}'"
+                            ptr_attr = f" data-source-ptr='{src_doc}'" if src_doc else ""
                             source_items_html.append(
-                                f"<details class='geoai-source-detail'>"
+                                f"<details class='geoai-source-detail'{cit_id_attr}{ptr_attr}>"
                                 f"<summary class='geoai-source-summary'>"
                                 f"<span class='geoai-source-title'>📄 <b>{title_str}</b>{sec_str}</span>"
                                 f"<span class='geoai-source-badge'>Inspect ▾</span>"
@@ -6626,41 +8409,49 @@ with col1:
                     ):
                         show_answer_subgraph_dialog(m_idx)
 
-                # Upgrade 5: Regional Distribution Breakdown
+                # Upgrade 5: Regional Distribution Breakdown (Phase 2 Interactive Regional Tree)
                 msg_regions = msg.get("regions")
                 if role == "assistant" and msg_regions:
-                    if isinstance(msg_regions, dict):
-                        with st.expander(f"🌍 Regional Distribution ({len(msg_regions)} regions)", expanded=False):
-                            for reg_name, count in sorted(msg_regions.items(), key=lambda x: str(x[0])):
-                                st.markdown(f"- **{reg_name}**: `{count}` places/events")
-                    elif isinstance(msg_regions, list):
-                        with st.expander(f"🌍 Regional Distribution ({len(msg_regions)} regions)", expanded=False):
-                            reg_lines = []
-                            for r_node in msg_regions:
-                                if not isinstance(r_node, dict):
-                                    continue
-                                r_id = r_node.get("id", "Unknown")
-                                r_cnt = r_node.get("count", 0)
-                                r_places = r_node.get("places") or []
-                                r_pins_str = (
-                                    f" *(pins: {', '.join(f'#{p}' for p in r_places[:8])}{'...' if len(r_places) > 8 else ''})*"
-                                    if r_places
-                                    else ""
-                                )
-                                reg_lines.append(f"- **{r_id}**: `{r_cnt}` places{r_pins_str}")
-                                for child in r_node.get("children") or []:
-                                    if isinstance(child, dict):
-                                        c_id = child.get("id", "Unknown")
-                                        c_cnt = child.get("count", 0)
-                                        c_places = child.get("places") or []
-                                        c_pins_str = (
-                                            f" *(pins: {', '.join(f'#{p}' for p in c_places[:6])}{'...' if len(c_places) > 6 else ''})*"
-                                            if c_places
-                                            else ""
-                                        )
-                                        reg_lines.append(f"  - **{c_id}**: `{c_cnt}` places{c_pins_str}")
-                            if reg_lines:
-                                st.markdown("\n".join(reg_lines))
+                    reg_pin_labels: Dict[int, str] = {}
+                    reg_pin_coords: Dict[int, Tuple[float, float]] = {}
+                    for loc in (msg.get("geo_locations") or []):
+                        if isinstance(loc, dict) and loc.get("number") is not None:
+                            try:
+                                n = int(loc["number"])
+                                lbl = loc.get("label") or loc.get("name") or loc.get("id")
+                                if lbl:
+                                    reg_pin_labels[n] = str(lbl)
+                                geom = loc.get("geometry")
+                                coords = geom.get("coordinates") if isinstance(geom, dict) else None
+                                if isinstance(coords, (list, tuple)) and len(coords) >= 2:
+                                    reg_pin_coords[n] = (float(coords[1]), float(coords[0]))
+                                elif "lat" in loc and "lng" in loc:
+                                    reg_pin_coords[n] = (float(loc["lat"]), float(loc["lng"]))
+                            except (ValueError, TypeError):
+                                pass
+                    for lyr in (msg.get("layers") or []):
+                        l_data = getattr(lyr, "data", None) or (lyr.get("data") if isinstance(lyr, dict) else {})
+                        if isinstance(l_data, dict) and l_data.get("number") is not None:
+                            try:
+                                n = int(l_data["number"])
+                                if n not in reg_pin_coords and "lat" in l_data and "lng" in l_data:
+                                    reg_pin_coords[n] = (float(l_data["lat"]), float(l_data["lng"]))
+                                if n not in reg_pin_labels:
+                                    lyr_name = getattr(lyr, "name", None) or (lyr.get("name") if isinstance(lyr, dict) else "")
+                                    if lyr_name:
+                                        reg_pin_labels[n] = str(lyr_name)
+                            except (ValueError, TypeError):
+                                pass
+
+                    num_regions = len(msg_regions) if hasattr(msg_regions, "__len__") else 1
+                    with st.expander(f"🌍 Regional Distribution ({num_regions} regions)", expanded=False):
+                        reg_html = format_regional_distribution_html(
+                            regions=msg_regions,
+                            pin_coords=reg_pin_coords,
+                            pin_labels=reg_pin_labels,
+                        )
+                        if reg_html:
+                            st.markdown(reg_html, unsafe_allow_html=True)
 
                 # Upgrade 4: Follow-up Suggestions & Did-You-Mean
                 raw_dym = msg.get("did_you_mean")
