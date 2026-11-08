@@ -3181,6 +3181,238 @@ class TestPhase1BackendChangesIntegration:
 
 
 # ==============================================================================
+# PHASE 2: Hierarchical & Regional Sector Filtering
+# ==============================================================================
+class TestPhase2RegionalSectorFiltering:
+    """
+    Unit and integration tests for Phase 2:
+    1. Interactive regional tree in assistant messages (Oblast header buttons/links).
+    2. Calculation of sector bounding boxes client-side (0ms latency bounds fitting).
+    3. Interactive regional pin badges (.tactical-cit-pin deep-links triggering _geoaiFocusMapPin).
+    4. Sector highlighting on map (highlighting sector pins while dimming other context pins).
+    """
+
+    def test_compute_sector_bounding_box_standard_and_multi_point(self):
+        """Verify compute_sector_bounding_box computes [south, west, north, east] correctly."""
+        import app
+        coords = {
+            1: (48.13, 37.75),   # Avdiivka
+            2: (48.59, 38.00),   # Bakhmut
+            5: (47.10, 37.55),   # Mariupol
+        }
+        bbox = app.compute_sector_bounding_box([1, 2, 5], pin_coords=coords)
+        assert bbox is not None
+        assert bbox == [47.1, 37.55, 48.59, 38.0]
+        assert bbox[0] <= bbox[2]  # south <= north
+        assert bbox[1] <= bbox[3]  # west <= east
+
+    def test_compute_sector_bounding_box_single_pin_and_edge_cases(self):
+        """Verify compute_sector_bounding_box handles single pins, missing pins, and empty inputs gracefully."""
+        import app
+        coords = {3: (49.99, 36.23)}
+        single_bbox = app.compute_sector_bounding_box([3], pin_coords=coords)
+        assert single_bbox == [49.99, 36.23, 49.99, 36.23]
+
+        assert app.compute_sector_bounding_box([], pin_coords=coords) is None
+        assert app.compute_sector_bounding_box([1, 2], pin_coords={}) is None
+        assert app.compute_sector_bounding_box(None, pin_coords=coords) is None
+        assert app.compute_sector_bounding_box([99, 100], pin_coords=coords) is None
+
+        partial_bbox = app.compute_sector_bounding_box([3, 99], pin_coords=coords)
+        assert partial_bbox == [49.99, 36.23, 49.99, 36.23]
+
+    def test_format_regional_distribution_html_hierarchical_nodes(self):
+        """
+        Verify format_regional_distribution_html generates interactive Oblast headers,
+        calculated sector bounding boxes, and clickable pin badges.
+        """
+        import app
+        import json
+
+        regions = [
+            {
+                "id": "Ukraine",
+                "place_type": "country",
+                "count": 50,
+                "places": [1, 2],
+                "children": [
+                    {
+                        "id": "Donetsk Oblast",
+                        "place_type": "state",
+                        "count": 14,
+                        "places": [1, 2, 5],
+                        "children": [],
+                    },
+                    {
+                        "id": "Kharkiv Oblast",
+                        "place_type": "state",
+                        "count": 8,
+                        "places": [8, 9],
+                        "children": [],
+                    },
+                ],
+            }
+        ]
+        coords = {
+            1: (48.13, 37.75),
+            2: (48.59, 38.00),
+            5: (47.10, 37.55),
+            8: (49.99, 36.23),
+            9: (49.83, 36.69),
+        }
+        labels = {
+            1: "Avdiivka",
+            2: "Bakhmut",
+            5: "Mariupol",
+            8: "Kharkiv",
+            9: "Chuhuiv",
+        }
+
+        html = app.format_regional_distribution_html(regions, pin_coords=coords, pin_labels=labels)
+        assert html is not None and len(html) > 0
+
+        # 1. Reset Sector Filter button
+        assert "tactical-sector-reset-btn" in html
+        assert "data-sector-action='reset'" in html
+
+        # 2. Interactive Oblast header button
+        assert "Donetsk Oblast" in html
+        assert "tactical-sector-btn" in html
+        assert "data-sector-name='Donetsk Oblast'" in html
+        assert "data-sector-pins='[1, 2, 5]'" in html
+
+        # 3. Calculated bounding box attribute for Donetsk Oblast
+        expected_donetsk_bbox = [47.1, 37.55, 48.59, 38.0]
+        assert f"data-sector-bbox='{json.dumps(expected_donetsk_bbox)}'" in html
+
+        # 4. Interactive pin badges (.tactical-cit-pin)
+        assert "tactical-cit-pin" in html
+        assert "href='#geoai-pin-1'" in html
+        assert "data-pin-number='1'" in html
+        assert "data-lat='48.130000'" in html
+        assert "data-lng='37.750000'" in html
+        assert "data-pin-label='Avdiivka'" in html
+        assert "#1" in html
+        assert "#2" in html
+        assert "#5" in html
+
+        # 5. Kharkiv Oblast
+        assert "Kharkiv Oblast" in html
+        assert "data-sector-name='Kharkiv Oblast'" in html
+        assert "data-sector-pins='[8, 9]'" in html
+        expected_kharkiv_bbox = [49.83, 36.23, 49.99, 36.69]
+        assert f"data-sector-bbox='{json.dumps(expected_kharkiv_bbox)}'" in html
+        assert "data-pin-label='Kharkiv'" in html
+        assert "#8" in html
+
+    def test_format_regional_distribution_html_dict_format(self):
+        """Verify format_regional_distribution_html formats dict-style regions into interactive buttons."""
+        import app
+
+        regions = {
+            "Donetsk Oblast": 14,
+            "Kharkiv Oblast": 8,
+        }
+        labels = {1: "Donetsk sector", 2: "Kharkiv center"}
+        coords = {1: (48.0, 37.8), 2: (50.0, 36.2)}
+
+        html = app.format_regional_distribution_html(regions, pin_coords=coords, pin_labels=labels)
+        assert "Donetsk Oblast" in html
+        assert "Kharkiv Oblast" in html
+        assert "tactical-sector-btn" in html
+        assert "data-sector-action='reset'" in html
+
+    def test_format_regional_distribution_html_empty_and_none(self):
+        """Verify format_regional_distribution_html returns empty string on empty input."""
+        import app
+        assert app.format_regional_distribution_html(None) == ""
+        assert app.format_regional_distribution_html([]) == ""
+        assert app.format_regional_distribution_html({}) == ""
+
+    def test_interactive_sector_and_pin_js_handlers_in_map_trash_bin_hook(self):
+        """
+        Verify MapTrashBinHook compiles JavaScript handlers for:
+        1. `focusMapSector` and `applySectorHighlighting` functions.
+        2. Window parent bridge: `pWin._geoaiFocusSector = focusMapSector;`.
+        3. Message dispatcher: `GEOAI_FOCUS_SECTOR`.
+        4. Parent doc click listener for `.tactical-sector-btn` and reset action.
+        5. Leaflet zoomend/moveend sector re-application hook.
+        """
+        import folium
+        import app
+
+        m = folium.Map()
+        app.MapTrashBinHook().add_to(m)
+        script = m.get_root().render()
+
+        assert "function focusMapSector(payload)" in script
+        assert "function applySectorHighlighting()" in script
+        assert "pWin._geoaiFocusSector = focusMapSector;" in script
+        assert "ev.data.type === 'GEOAI_FOCUS_SECTOR'" in script
+        assert "target.closest('.tactical-sector-btn, .tactical-sector-link, [data-sector-bbox]')" in script
+        assert "geoai-sector--dimmed" in script
+        assert "geoai-sector--highlighted" in script
+        assert "map.on('moveend zoomend'" in script
+
+    def test_sector_filtering_css_in_app_and_folium(self):
+        """Verify CSS classes for sector highlighting and dimming exist in app.py."""
+        with open("app.py", "r", encoding="utf-8") as f:
+            src = f.read()
+
+        assert ".geoai-sector--dimmed" in src
+        assert ".geoai-sector--highlighted" in src
+        assert ".tactical-sector-btn" in src
+        assert ".tactical-reg-pins" in src
+
+    def test_assistant_message_regional_tree_integration(self):
+        """Verify assistant message dictionary with regions and geo_locations formats regional distribution."""
+        import app
+        from geo_agent import AgentResponse
+
+        resp = AgentResponse(
+            answer="Operational sweep in Donetsk Oblast [1, 2].",
+            raw_response={
+                "answer": "Operational sweep in Donetsk Oblast [1, 2].",
+                "geo_locations": [
+                    {"number": 1, "label": "Avdiivka", "lat": 48.13, "lng": 37.75},
+                    {"number": 2, "label": "Bakhmut", "lat": 48.59, "lng": 38.00},
+                ],
+                "regions": [
+                    {
+                        "id": "Donetsk Oblast",
+                        "place_type": "state",
+                        "count": 2,
+                        "places": [1, 2],
+                        "children": [],
+                    }
+                ],
+            },
+            regions=[
+                {
+                    "id": "Donetsk Oblast",
+                    "place_type": "state",
+                    "count": 2,
+                    "places": [1, 2],
+                    "children": [],
+                }
+            ],
+            layers=[],
+        )
+        msg = app._build_assistant_message(resp)
+        assert msg["regions"] is not None
+        assert len(msg["regions"]) == 1
+
+        reg_coords = {loc["number"]: (loc["lat"], loc["lng"]) for loc in msg["geo_locations"]}
+        reg_labels = {loc["number"]: loc["label"] for loc in msg["geo_locations"]}
+        reg_html = app.format_regional_distribution_html(msg["regions"], pin_coords=reg_coords, pin_labels=reg_labels)
+
+        assert "Donetsk Oblast" in reg_html
+        assert "data-sector-pins='[1, 2]'" in reg_html
+        assert "data-pin-number='1'" in reg_html
+        assert "data-pin-label='Avdiivka'" in reg_html
+
+
+# ==============================================================================
 # PHASE 1.1: Static Performance & Invariant Auditing (AST / Lint Tests)
 # ==============================================================================
 class TestPhase1StaticPerformanceAndInvariantAuditing:
@@ -3442,6 +3674,8 @@ class TestPhase1StaticPerformanceAndInvariantAuditing:
             "_highlight_text_spans",
             "format_tactical_citations",
             "_render_subgraph_modal_html",
+            "compute_sector_bounding_box",
+            "format_regional_distribution_html",
         }
         for node in ast.walk(app_tree):
             if isinstance(node, ast.FunctionDef) and node.name in pure_helpers:
@@ -3644,6 +3878,41 @@ class TestPhase1ExecutionTimingAndLatencyCeilings:
             max_mean_ms=15.0,
             max_p95_ms=25.0,
             label="_render_subgraph_modal_html",
+        )
+
+        test_coords = {1: (48.13, 37.75), 2: (48.59, 38.00), 5: (47.10, 37.55)}
+        micro_benchmark(
+            app.compute_sector_bounding_box,
+            [1, 2, 5],
+            pin_coords=test_coords,
+            iterations=50,
+            warmup=5,
+            max_mean_ms=0.2,
+            max_p95_ms=0.5,
+            label="compute_sector_bounding_box",
+        )
+
+        test_regions = [
+            {
+                "id": "Ukraine",
+                "place_type": "country",
+                "count": 50,
+                "places": [1, 2],
+                "children": [
+                    {"id": "Donetsk Oblast", "count": 14, "places": [1, 2, 5], "children": []},
+                ],
+            }
+        ]
+        micro_benchmark(
+            app.format_regional_distribution_html,
+            test_regions,
+            pin_coords=test_coords,
+            pin_labels={1: "Avdiivka", 2: "Bakhmut", 5: "Mariupol"},
+            iterations=25,
+            warmup=3,
+            max_mean_ms=2.0,
+            max_p95_ms=4.0,
+            label="format_regional_distribution_html",
         )
 
     def test_benchmark_leaflet_hooks_and_control_template_compilation(self, micro_benchmark):

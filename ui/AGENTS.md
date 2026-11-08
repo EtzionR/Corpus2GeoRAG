@@ -87,3 +87,52 @@ This document establishes critical architectural rules and performance requireme
   4. Create or update the pull request against upstream (`EtzionR/Corpus2GeoRAG:main`).
 - **Never make unverified direct modifications in `Corpus2GeoRAG\ui\` or outside the `ui/` folder.**
 
+
+---
+
+## 6. Mandatory Test-Driven & Performance Enforcement Protocol (Definition of Done)
+
+No feature, bug fix, refactor, or UI modification in `ui/` (`GeoAI - Project`) is considered complete unless it satisfies every criterion in this **Definition of Done (DoD)**:
+
+### 6.1 Strict Definition of Done (DoD)
+1. **Mandatory Unit Test Pairing:**
+   - Every new feature, route, helper function, dataclass, or UI element in `app.py`, `geo_agent.py`, or any new `.py` module **must** include accompanying unit tests in `test_app.py` verifying normal execution and edge cases.
+   - `verify_quality_gate.py` automatically audits all `.py` files and public symbols in the workspace and blocks execution if any module or symbol lacks matching test coverage in `test_app.py`.
+2. **Mandatory Performance & Latency Ceiling Tests:**
+   - Every state mutation, network/adapter call, HTML/SVG renderer, or Folium map interaction **must** include an accompanying micro-benchmark or latency assertion using the fixtures in `conftest.py` (`latency_ceiling`, `micro_benchmark`, `high_volume_rag_payload_factory`, `streamlit_state_simulator`).
+   - Enforced synchronous latency ceilings:
+     | Operation / Pipeline Path | Ceiling (ms) |
+     | :--- | :--- |
+     | `make_pin_icon` (single icon across all role/shape variants) | `<= 1.0 ms` mean (`<= 2.0 ms` P95) |
+     | `make_pin_icon` (batch of 100 icons) | `<= 25.0 ms` total |
+     | `color_token` & `bbox_style` lookups | `<= 0.2 ms` mean |
+     | `_popup_card` HTML synthesis | `<= 0.5 ms` mean |
+     | `_highlight_text_spans` interval merging & `<mark>` rendering | `<= 2.0 ms` mean |
+     | `format_tactical_citations` regex badge linking | `<= 5.0 ms` mean |
+     | `_render_subgraph_modal_html` interactive SVG/HTML synthesis | `<= 15.0 ms` mean |
+     | `MapTrashBinHook` + `SelectionSyncHook` Folium compilation | `<= 80.0 ms` mean |
+     | `_build_raw_request_payload` request serialization | `<= 1.0 ms` mean |
+     | `format_evidence_popup_html` popup evidence rendering | `<= 2.0 ms` mean |
+     | `extract_answer_subgraph` induced subgraph extraction | `<= 25.0 ms` mean |
+     | `get_source_text` (1,000 warm LRU cache lookups) | `<= 5.0 ms` total (`< 0.005 ms` / hit) |
+     | `to_bounding_box` (1,000 corner normalizations) | `<= 15.0 ms` total |
+     | `query_geo_agent` hydration & GeoJSON parsing (250 points) | `<= 120.0 ms` total |
+     | `query_geo_agent` hydration & GeoJSON parsing (500 points) | `<= 250.0 ms` total |
+     | Folium `MarkerCluster` vs primary pin partitioning (500 layers) | `<= 150.0 ms` total |
+     | 50 rapid consecutive map point clicks (`StreamlitStateSimulator`) | `<= 25.0 ms` total (`0` `st.rerun()`) |
+     | 25 rapid AOI BBox resizes + corner release clicks | `<= 25.0 ms` total (`0` `st.rerun()`) |
+3. **Zero Regression & Non-Decreasing Coverage:**
+   - No commit or PR may reduce the total test count below `MIN_REQUIRED_TESTS` (`139+` tests), weaken AST invariants, or introduce unguarded `st.rerun()` calls inside Section 2c, Section 2b, or map click/draw handlers.
+
+### 6.2 Automated Quality Gate & Pre-Commit Enforcement
+- Before any commit or deployment, run the automated enforcement gate:
+  ```bash
+  python verify_quality_gate.py
+  # or via platform runners:
+  run_tests.bat --ci
+  ./run_tests.sh
+  ```
+- Enable the repository Git pre-commit hook so commits are automatically blocked on any test failure, missing test pairing, or latency regression:
+  ```bash
+  git config core.hooksPath .githooks
+  ```

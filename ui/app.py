@@ -490,6 +490,173 @@ def format_tactical_citations(
     return _CITATION_PATTERN.sub(_replace_cit_group, content)
 
 
+def compute_sector_bounding_box(
+    places: list,
+    pin_coords: dict | None = None,
+) -> list[float] | None:
+    """
+    Calculate the bounding box [south, west, north, east] for a sector's place/pin IDs.
+    Returns [min_lat, min_lng, max_lat, max_lng] rounded to 5 decimal places, or None if no coordinates.
+    """
+    if not places or not pin_coords:
+        return None
+    coords = []
+    for p in places:
+        try:
+            p_int = int(p)
+            if p_int in pin_coords:
+                coords.append(pin_coords[p_int])
+        except (ValueError, TypeError):
+            continue
+    if not coords:
+        return None
+    min_lat = min(c[0] for c in coords)
+    max_lat = max(c[0] for c in coords)
+    min_lng = min(c[1] for c in coords)
+    max_lng = max(c[1] for c in coords)
+    return [round(min_lat, 5), round(min_lng, 5), round(max_lat, 5), round(max_lng, 5)]
+
+
+def format_regional_distribution_html(
+    regions: any,
+    pin_coords: dict | None = None,
+    pin_labels: dict | None = None,
+) -> str:
+    """
+    Render hierarchical regional sector distribution markup for the assistant message expander.
+    - Converts Oblast/Region headers into interactive .tactical-sector-btn buttons/links with data-sector-bbox.
+    - Converts place pin numbers into clickable .tactical-cit-pin badges (triggering 0ms Leaflet flyTo + popup).
+    - Includes a 0ms 'Reset Sector Filter' button to restore full map view and remove pin dimming.
+    """
+    import html as _html
+    import json as _json
+
+    if not regions:
+        return ""
+
+    pin_coords = pin_coords or {}
+    pin_labels = pin_labels or {}
+
+    def _render_pin_badge(pin_num: int) -> str:
+        lbl = pin_labels.get(pin_num)
+        base_title = f"Map Marker #{pin_num}: {lbl}" if lbl else f"Map Marker #{pin_num}"
+        title = _html.escape(f"{base_title} (Click to zoom & focus on map)", quote=True)
+        coord = pin_coords.get(pin_num)
+        coord_attrs = f" data-lat='{coord[0]:.6f}' data-lng='{coord[1]:.6f}'" if coord else ""
+        lbl_attr = f" data-pin-label='{_html.escape(lbl, quote=True)}'" if lbl else ""
+        return (
+            f"<a href='#geoai-pin-{pin_num}' class='tactical-cit tactical-cit-pin' "
+            f"data-pin-number='{pin_num}'{coord_attrs}{lbl_attr} title='{title}'>#{pin_num}</a>"
+        )
+
+    def _render_pins_span(places_list: list, limit: int = 8) -> str:
+        if not places_list:
+            return ""
+        rendered = [_render_pin_badge(p) for p in places_list[:limit]]
+        more = "..." if len(places_list) > limit else ""
+        return f"<span class='tactical-reg-pins'>*(pins: {', '.join(rendered)}{more})*</span>"
+
+    html_parts = []
+
+    # Reset control header
+    html_parts.append(
+        "<div style='margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;'>"
+        "<span style='font-size: 0.78rem; color: #94a3b8; letter-spacing: 0.05em; text-transform: uppercase;'>Tactical Sector Filter</span>"
+        "<button type='button' class='tactical-sector-btn tactical-sector-reset-btn' data-sector-action='reset' "
+        "title='Reset sector zoom and clear pin dimming' style='font-size: 0.75rem; padding: 1px 6px;'>🌐 All Sectors</button>"
+        "</div>"
+    )
+
+    if isinstance(regions, list):
+        for r_node in regions:
+            if not isinstance(r_node, dict):
+                continue
+            r_id = str(r_node.get("id", "Unknown"))
+            r_cnt = r_node.get("count", 0)
+            raw_r_places = r_node.get("places") or []
+            r_places = []
+            for p in raw_r_places:
+                try:
+                    r_places.append(int(p))
+                except (ValueError, TypeError):
+                    pass
+            children = [c for c in (r_node.get("children") or []) if isinstance(c, dict)]
+
+            all_node_places = list(r_places)
+            for ch in children:
+                for cp in (ch.get("places") or []):
+                    try:
+                        all_node_places.append(int(cp))
+                    except (ValueError, TypeError):
+                        pass
+
+            r_bbox = compute_sector_bounding_box(all_node_places, pin_coords)
+            r_bbox_attr = f" data-sector-bbox='{_json.dumps(r_bbox)}'" if r_bbox else ""
+            r_pins_attr = f" data-sector-pins='{_json.dumps(all_node_places)}'" if all_node_places else ""
+
+            if children:
+                html_parts.append(
+                    f"<div class='tactical-reg-item'>"
+                    f"<button type='button' class='tactical-sector-btn' data-sector-name='{_html.escape(r_id, quote=True)}'"
+                    f"{r_bbox_attr}{r_pins_attr} data-sector-count='{r_cnt}' "
+                    f"title='Focus map on {r_id} sector'>🌐 <strong>{_html.escape(r_id)}</strong> — <code>{r_cnt}</code> places</button>"
+                    f"{_render_pins_span(r_places, limit=8)}"
+                    f"</div>"
+                )
+                for child in children:
+                    c_id = str(child.get("id", "Unknown"))
+                    c_cnt = child.get("count", 0)
+                    raw_c_places = child.get("places") or []
+                    c_places = []
+                    for cp in raw_c_places:
+                        try:
+                            c_places.append(int(cp))
+                        except (ValueError, TypeError):
+                            pass
+                    c_bbox = compute_sector_bounding_box(c_places, pin_coords)
+                    c_bbox_attr = f" data-sector-bbox='{_json.dumps(c_bbox)}'" if c_bbox else ""
+                    c_pins_attr = f" data-sector-pins='{_json.dumps(c_places)}'" if c_places else ""
+                    html_parts.append(
+                        f"<div class='tactical-reg-child'>"
+                        f"<button type='button' class='tactical-sector-btn' data-sector-name='{_html.escape(c_id, quote=True)}'"
+                        f"{c_bbox_attr}{c_pins_attr} data-sector-count='{c_cnt}' "
+                        f"title='Focus map on {c_id} sector'>📍 <strong>{_html.escape(c_id)}</strong> — <code>{c_cnt}</code> places</button>"
+                        f"{_render_pins_span(c_places, limit=6)}"
+                        f"</div>"
+                    )
+            else:
+                html_parts.append(
+                    f"<div class='tactical-reg-item'>"
+                    f"<button type='button' class='tactical-sector-btn' data-sector-name='{_html.escape(r_id, quote=True)}'"
+                    f"{r_bbox_attr}{r_pins_attr} data-sector-count='{r_cnt}' "
+                    f"title='Focus map on {r_id} sector'>📍 <strong>{_html.escape(r_id)}</strong> — <code>{r_cnt}</code> places</button>"
+                    f"{_render_pins_span(r_places, limit=8)}"
+                    f"</div>"
+                )
+
+    elif isinstance(regions, dict):
+        for reg_name, count in sorted(regions.items(), key=lambda x: str(x[0])):
+            r_name_str = str(reg_name)
+            matched_pins = []
+            for p_num, lbl in pin_labels.items():
+                if r_name_str.lower() in lbl.lower() or lbl.lower() in r_name_str.lower():
+                    matched_pins.append(p_num)
+            r_bbox = compute_sector_bounding_box(matched_pins, pin_coords) if matched_pins else None
+            r_bbox_attr = f" data-sector-bbox='{_json.dumps(r_bbox)}'" if r_bbox else ""
+            r_pins_attr = f" data-sector-pins='{_json.dumps(matched_pins)}'" if matched_pins else ""
+
+            html_parts.append(
+                f"<div class='tactical-reg-item'>"
+                f"<button type='button' class='tactical-sector-btn' data-sector-name='{_html.escape(r_name_str, quote=True)}'"
+                f"{r_bbox_attr}{r_pins_attr} data-sector-count='{count}' "
+                f"title='Focus map on {r_name_str} sector'>📍 <strong>{_html.escape(r_name_str)}</strong> — <code>{count}</code> places/events</button>"
+                f"{_render_pins_span(matched_pins, limit=8)}"
+                f"</div>"
+            )
+
+    return "\n".join(html_parts)
+
+
 def _build_assistant_message(resp: AgentResponse) -> Dict[str, Any]:
     """Build a standardized assistant message dictionary for st.session_state.messages."""
     ans_plain = getattr(resp, "answer_plain", "") or resp.answer
@@ -2471,10 +2638,18 @@ class MapTrashBinHook(MacroElement):
                         window.__GLOBAL_DATA__.all_drawings = [];
                     }
                     updateTrashButtonState();
+                    window._activeSectorName = null;
+                    window._activeSectorPins = null;
+                    window._activeSectorBbox = null;
+                    if (typeof applySectorHighlighting === 'function') {
+                        applySectorHighlighting();
+                    }
                 } else if (ev.data.type === 'GEOAI_PIN_SHAPE' && ev.data.shape) {
                     setMapPinShape(ev.data.shape);
                 } else if (ev.data.type === 'GEOAI_FOCUS_PIN') {
                     focusMapPinByCitation(ev.data);
+                } else if (ev.data.type === 'GEOAI_FOCUS_SECTOR') {
+                    focusMapSector(ev.data);
                 }
             });
 
@@ -2649,11 +2824,150 @@ class MapTrashBinHook(MacroElement):
                 }
             }
 
+            function focusMapSector(payload) {
+                if (!payload) return;
+                var action = payload.action || 'focus';
+                var sName = payload.sector || null;
+                var bbox = payload.bbox;
+                var targetPins = (payload.pins && Array.isArray(payload.pins)) ? payload.pins.map(Number) : [];
+
+                if (!window._initialMapBounds && map.getBounds) {
+                    try { window._initialMapBounds = map.getBounds(); } catch(err) {}
+                }
+
+                if (action === 'reset' || !sName) {
+                    window._activeSectorName = null;
+                    window._activeSectorPins = null;
+                    window._activeSectorBbox = null;
+                    applySectorHighlighting();
+                    if (window._initialMapBounds) {
+                        try { map.fitBounds(window._initialMapBounds, { padding: [35, 35], animate: true, duration: 0.65 }); } catch(err) {}
+                    }
+                    return;
+                }
+
+                window._activeSectorName = sName;
+                window._activeSectorPins = targetPins;
+                window._activeSectorBbox = bbox;
+
+                applySectorHighlighting();
+
+                if (bbox && Array.isArray(bbox) && bbox.length === 4) {
+                    var south = Math.min(Number(bbox[0]), Number(bbox[2]));
+                    var north = Math.max(Number(bbox[0]), Number(bbox[2]));
+                    var west = Math.min(Number(bbox[1]), Number(bbox[3]));
+                    var east = Math.max(Number(bbox[1]), Number(bbox[3]));
+                    if (!isNaN(south) && !isNaN(north) && !isNaN(west) && !isNaN(east)) {
+                        if (Math.abs(north - south) < 0.005 && Math.abs(east - west) < 0.005) {
+                            south -= 0.03;
+                            north += 0.03;
+                            west -= 0.03;
+                            east += 0.03;
+                        }
+                        map.fitBounds([[south, west], [north, east]], {
+                            padding: [45, 45],
+                            maxZoom: 13,
+                            animate: true,
+                            duration: 0.75
+                        });
+                    }
+                }
+            }
+
+            function applySectorHighlighting() {
+                var activeSector = window._activeSectorName;
+                var activePins = window._activeSectorPins || [];
+                var activeBbox = window._activeSectorBbox;
+                var hasActiveFilter = Boolean(activeSector);
+
+                var south = (activeBbox && Array.isArray(activeBbox) && activeBbox.length === 4) ? Math.min(Number(activeBbox[0]), Number(activeBbox[2])) : null;
+                var north = (activeBbox && Array.isArray(activeBbox) && activeBbox.length === 4) ? Math.max(Number(activeBbox[0]), Number(activeBbox[2])) : null;
+                var west = (activeBbox && Array.isArray(activeBbox) && activeBbox.length === 4) ? Math.min(Number(activeBbox[1]), Number(activeBbox[3])) : null;
+                var east = (activeBbox && Array.isArray(activeBbox) && activeBbox.length === 4) ? Math.max(Number(activeBbox[1]), Number(activeBbox[3])) : null;
+
+                function processMarker(m) {
+                    if (!m) return;
+                    var iconEl = m._icon;
+                    if (!iconEl) return;
+                    var cls = iconEl.className || '';
+                    if (cls.indexOf('geoai-pin--target') !== -1 || cls.indexOf('geoai-pin--corner') !== -1) return;
+
+                    if (!hasActiveFilter) {
+                        iconEl.classList.remove('geoai-sector--dimmed', 'geoai-sector--highlighted');
+                        return;
+                    }
+
+                    var inSector = false;
+                    var pNum = null;
+                    var iconHtml = (m.options && m.options.icon && m.options.icon.options && m.options.icon.options.html) ? String(m.options.icon.options.html) : '';
+                    var mMatch = iconHtml.match(/<span>(\\d+)<\\/span>/);
+                    if (mMatch) pNum = parseInt(mMatch[1], 10);
+                    if (pNum === null) {
+                        var pContent = '';
+                        try { if (m.getPopup && m.getPopup()) pContent = String(m.getPopup().getContent() || ''); } catch(e) {}
+                        var pMatch = pContent.match(/#(\\d+)/);
+                        if (pMatch) pNum = parseInt(pMatch[1], 10);
+                    }
+                    if (pNum === null) {
+                        var tContent = '';
+                        try { if (m.getTooltip && m.getTooltip()) tContent = String(m.getTooltip().getContent() || ''); } catch(e) {}
+                        var tMatch = tContent.match(/#?(\\d+)/);
+                        if (tMatch) pNum = parseInt(tMatch[1], 10);
+                    }
+
+                    if (pNum !== null && activePins.indexOf(pNum) !== -1) {
+                        inSector = true;
+                    } else if (south !== null && north !== null && west !== null && east !== null && m.getLatLng) {
+                        var ll = m.getLatLng();
+                        if (ll && ll.lat >= (south - 0.002) && ll.lat <= (north + 0.002) && ll.lng >= (west - 0.002) && ll.lng <= (east + 0.002)) {
+                            inSector = true;
+                        }
+                    }
+
+                    if (inSector) {
+                        iconEl.classList.remove('geoai-sector--dimmed');
+                        iconEl.classList.add('geoai-sector--highlighted');
+                    } else {
+                        iconEl.classList.remove('geoai-sector--highlighted');
+                        iconEl.classList.add('geoai-sector--dimmed');
+                    }
+                }
+
+                function searchAndApply(group) {
+                    if (!group) return;
+                    if (group instanceof L.Marker) {
+                        processMarker(group);
+                        return;
+                    }
+                    if (typeof group.eachLayer === 'function') {
+                        group.eachLayer(function(child) {
+                            if (child instanceof L.Marker) {
+                                processMarker(child);
+                            } else if (typeof child.eachLayer === 'function' || typeof child.getLayers === 'function') {
+                                searchAndApply(child);
+                            }
+                        });
+                    }
+                }
+
+                searchAndApply(map);
+
+                if (typeof getActiveClusterGroups === 'function') {
+                    var clusters = getActiveClusterGroups();
+                    for (var c = 0; c < clusters.length; c++) {
+                        if (clusters[c] && typeof clusters[c].eachLayer === 'function') {
+                            clusters[c].eachLayer(processMarker);
+                        }
+                    }
+                }
+            }
+
             // Expose function and direct click bridge to parent window
             try {
                 var pWin = window.parent;
                 if (pWin) {
                     pWin._geoaiFocusMapPin = focusMapPinByCitation;
+                    pWin._geoaiFocusSector = focusMapSector;
 
                     // If a focus request arrived before this map iframe finished mounting, process it now
                     if (pWin._geoaiPendingFocusPin) {
@@ -2700,10 +3014,78 @@ class MapTrashBinHook(MacroElement):
                                 }
                                 return;
                             }
+
+                            // 0c. Regional Sector Button
+                            var sectorBtn = target.closest('.tactical-sector-btn, .tactical-sector-link, [data-sector-bbox]');
+                            if (sectorBtn) {
+                                e.preventDefault();
+                                e.stopPropagation();
+
+                                var isReset = sectorBtn.getAttribute('data-sector-action') === 'reset';
+                                var allSectorBtns = pDoc.querySelectorAll('.tactical-sector-btn, .tactical-sector-link');
+
+                                if (isReset) {
+                                    for (var b = 0; b < allSectorBtns.length; b++) {
+                                        allSectorBtns[b].classList.remove('active');
+                                    }
+                                    var resetPayload = {
+                                        type: 'GEOAI_FOCUS_SECTOR',
+                                        action: 'reset',
+                                        sector: null,
+                                        bbox: null,
+                                        pins: []
+                                    };
+                                    focusMapSector(resetPayload);
+                                    if (typeof pWin._geoaiFocusSector === 'function' && pWin._geoaiFocusSector !== focusMapSector) {
+                                        pWin._geoaiFocusSector(resetPayload);
+                                    }
+                                    return;
+                                }
+
+                                var wasActive = sectorBtn.classList.contains('active');
+                                for (var i = 0; i < allSectorBtns.length; i++) {
+                                    allSectorBtns[i].classList.remove('active');
+                                }
+                                if (!wasActive) {
+                                    sectorBtn.classList.add('active');
+                                }
+
+                                var sName = sectorBtn.getAttribute('data-sector-name') || '';
+                                var rawBbox = sectorBtn.getAttribute('data-sector-bbox');
+                                var rawPins = sectorBtn.getAttribute('data-sector-pins');
+                                var bboxArr = null;
+                                if (rawBbox && rawBbox !== 'null') {
+                                    try { bboxArr = JSON.parse(rawBbox); } catch(err) {}
+                                }
+                                var pinsArr = [];
+                                if (rawPins && rawPins !== 'null') {
+                                    try { pinsArr = JSON.parse(rawPins); } catch(err) {}
+                                }
+
+                                var payload = {
+                                    type: 'GEOAI_FOCUS_SECTOR',
+                                    action: wasActive ? 'reset' : 'focus',
+                                    sector: wasActive ? null : sName,
+                                    bbox: wasActive ? null : bboxArr,
+                                    pins: wasActive ? [] : pinsArr
+                                };
+
+                                focusMapSector(payload);
+                                if (typeof pWin._geoaiFocusSector === 'function' && pWin._geoaiFocusSector !== focusMapSector) {
+                                    pWin._geoaiFocusSector(payload);
+                                }
+                                return;
+                            }
                         }, true);
                     }
                 }
             } catch(e) {}
+
+            map.on('moveend zoomend', function() {
+                if (window._activeSectorName && typeof applySectorHighlighting === 'function') {
+                    applySectorHighlighting();
+                }
+            });
 
             // Handle popup citation clicks inside Leaflet canvas
             map.on('popupopen', function(e) {
@@ -3855,6 +4237,61 @@ st.markdown(f"""
         box-shadow: 0 0 4px rgba(245, 158, 11, 0.2);
     }}
 
+    /* Phase 2: Tactical Sector Buttons & Regional Tree */
+    .tactical-sector-btn {{
+        background: rgba(15, 23, 42, 0.75);
+        border: 1px solid rgba(56, 189, 248, 0.35);
+        color: #38bdf8;
+        border-radius: 4px;
+        padding: 3px 8px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        text-decoration: none;
+        margin: 2px 0;
+    }}
+    .tactical-sector-btn:hover {{
+        background: rgba(56, 189, 248, 0.2);
+        border-color: #38bdf8;
+        color: #f0f9ff;
+        box-shadow: 0 0 8px rgba(56, 189, 248, 0.45);
+        transform: translateY(-1px);
+    }}
+    .tactical-sector-btn.active {{
+        background: rgba(56, 189, 248, 0.35);
+        border-color: #38bdf8;
+        color: #ffffff;
+        box-shadow: 0 0 12px rgba(56, 189, 248, 0.7);
+    }}
+    .tactical-reg-item {{
+        margin: 3px 0;
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 6px;
+    }}
+    .tactical-reg-child {{
+        margin-left: 20px;
+        margin-top: 2px;
+        margin-bottom: 2px;
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 6px;
+    }}
+    .tactical-reg-pins {{
+        font-size: 0.80rem;
+        color: #94a3b8;
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        flex-wrap: wrap;
+    }}
+
     /* Global Typography */
     html, body, [class*="css"], font, span, p, div, button, input {{
         font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
@@ -4742,6 +5179,68 @@ components.html(
                 e.stopPropagation();
                 var citId = srcCit.getAttribute('data-cit-target') || srcCit.textContent.replace(/[\\[\\]]/g, '').trim();
                 handleSourceCitation(srcCit, citId, pDoc);
+                return;
+            }
+
+            // 0c. Interactive Regional Sector Button / Header -> 0ms Map Bounding Box Zoom + Sector Pin Highlight
+            var sectorBtn = target.closest('.tactical-sector-btn, .tactical-sector-link, [data-sector-bbox]');
+            if (sectorBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var isReset = sectorBtn.getAttribute('data-sector-action') === 'reset';
+                var allSectorBtns = pDoc.querySelectorAll('.tactical-sector-btn, .tactical-sector-link');
+
+                if (isReset) {
+                    for (var b = 0; b < allSectorBtns.length; b++) {
+                        allSectorBtns[b].classList.remove('active');
+                    }
+                    var resetPayload = {
+                        type: 'GEOAI_FOCUS_SECTOR',
+                        action: 'reset',
+                        sector: null,
+                        bbox: null,
+                        pins: []
+                    };
+                    if (typeof pWin._geoaiFocusSector === 'function') {
+                        pWin._geoaiFocusSector(resetPayload);
+                    }
+                    postToMapIframes(resetPayload);
+                    return;
+                }
+
+                var wasActive = sectorBtn.classList.contains('active');
+                for (var i = 0; i < allSectorBtns.length; i++) {
+                    allSectorBtns[i].classList.remove('active');
+                }
+                if (!wasActive) {
+                    sectorBtn.classList.add('active');
+                }
+
+                var sName = sectorBtn.getAttribute('data-sector-name') || '';
+                var rawBbox = sectorBtn.getAttribute('data-sector-bbox');
+                var rawPins = sectorBtn.getAttribute('data-sector-pins');
+                var bboxArr = null;
+                if (rawBbox && rawBbox !== 'null') {
+                    try { bboxArr = JSON.parse(rawBbox); } catch(err) {}
+                }
+                var pinsArr = [];
+                if (rawPins && rawPins !== 'null') {
+                    try { pinsArr = JSON.parse(rawPins); } catch(err) {}
+                }
+
+                var payload = {
+                    type: 'GEOAI_FOCUS_SECTOR',
+                    action: wasActive ? 'reset' : 'focus',
+                    sector: wasActive ? null : sName,
+                    bbox: wasActive ? null : bboxArr,
+                    pins: wasActive ? [] : pinsArr
+                };
+
+                if (typeof pWin._geoaiFocusSector === 'function') {
+                    pWin._geoaiFocusSector(payload);
+                }
+                postToMapIframes(payload);
                 return;
             }
 
@@ -6213,6 +6712,25 @@ with col2:
                     box-shadow: 0 0 0 7px rgba(0, 229, 255, 0.18), 0 0 16px rgba(0, 229, 255, 0.40);
                 }
 
+                /* Phase 2: Regional Sector Filtering & Highlighting */
+                .geoai-sector--dimmed {
+                    opacity: 0.22 !important;
+                    filter: grayscale(85%) !important;
+                    transition: opacity 0.25s ease, filter 0.25s ease !important;
+                }
+                .geoai-sector--highlighted {
+                    opacity: 1.0 !important;
+                    transform: scale(1.18) !important;
+                    filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.95)) drop-shadow(0 0 4px rgba(56, 189, 248, 0.8)) !important;
+                    z-index: 10000 !important;
+                    transition: transform 0.25s ease, filter 0.25s ease, opacity 0.25s ease !important;
+                }
+                .geoai-sector--highlighted .geoai-diamond,
+                .geoai-sector--highlighted .geoai-teardrop {
+                    border-color: #38bdf8 !important;
+                    box-shadow: 0 0 12px rgba(56, 189, 248, 0.9) !important;
+                }
+
                 /* Instant Client-Side Pin Filter Toggles */
                 .geoai-hide-primary-pins .geoai-pin--primary,
                 .geoai-hide-primary-pins .awesome-marker-icon-blue {
@@ -7239,41 +7757,49 @@ with col1:
                     ):
                         show_answer_subgraph_dialog(m_idx)
 
-                # Upgrade 5: Regional Distribution Breakdown
+                # Upgrade 5: Regional Distribution Breakdown (Phase 2 Interactive Regional Tree)
                 msg_regions = msg.get("regions")
                 if role == "assistant" and msg_regions:
-                    if isinstance(msg_regions, dict):
-                        with st.expander(f"🌍 Regional Distribution ({len(msg_regions)} regions)", expanded=False):
-                            for reg_name, count in sorted(msg_regions.items(), key=lambda x: str(x[0])):
-                                st.markdown(f"- **{reg_name}**: `{count}` places/events")
-                    elif isinstance(msg_regions, list):
-                        with st.expander(f"🌍 Regional Distribution ({len(msg_regions)} regions)", expanded=False):
-                            reg_lines = []
-                            for r_node in msg_regions:
-                                if not isinstance(r_node, dict):
-                                    continue
-                                r_id = r_node.get("id", "Unknown")
-                                r_cnt = r_node.get("count", 0)
-                                r_places = r_node.get("places") or []
-                                r_pins_str = (
-                                    f" *(pins: {', '.join(f'#{p}' for p in r_places[:8])}{'...' if len(r_places) > 8 else ''})*"
-                                    if r_places
-                                    else ""
-                                )
-                                reg_lines.append(f"- **{r_id}**: `{r_cnt}` places{r_pins_str}")
-                                for child in r_node.get("children") or []:
-                                    if isinstance(child, dict):
-                                        c_id = child.get("id", "Unknown")
-                                        c_cnt = child.get("count", 0)
-                                        c_places = child.get("places") or []
-                                        c_pins_str = (
-                                            f" *(pins: {', '.join(f'#{p}' for p in c_places[:6])}{'...' if len(c_places) > 6 else ''})*"
-                                            if c_places
-                                            else ""
-                                        )
-                                        reg_lines.append(f"  - **{c_id}**: `{c_cnt}` places{c_pins_str}")
-                            if reg_lines:
-                                st.markdown("\n".join(reg_lines))
+                    reg_pin_labels: Dict[int, str] = {}
+                    reg_pin_coords: Dict[int, Tuple[float, float]] = {}
+                    for loc in (msg.get("geo_locations") or []):
+                        if isinstance(loc, dict) and loc.get("number") is not None:
+                            try:
+                                n = int(loc["number"])
+                                lbl = loc.get("label") or loc.get("name") or loc.get("id")
+                                if lbl:
+                                    reg_pin_labels[n] = str(lbl)
+                                geom = loc.get("geometry")
+                                coords = geom.get("coordinates") if isinstance(geom, dict) else None
+                                if isinstance(coords, (list, tuple)) and len(coords) >= 2:
+                                    reg_pin_coords[n] = (float(coords[1]), float(coords[0]))
+                                elif "lat" in loc and "lng" in loc:
+                                    reg_pin_coords[n] = (float(loc["lat"]), float(loc["lng"]))
+                            except (ValueError, TypeError):
+                                pass
+                    for lyr in (msg.get("layers") or []):
+                        l_data = getattr(lyr, "data", None) or (lyr.get("data") if isinstance(lyr, dict) else {})
+                        if isinstance(l_data, dict) and l_data.get("number") is not None:
+                            try:
+                                n = int(l_data["number"])
+                                if n not in reg_pin_coords and "lat" in l_data and "lng" in l_data:
+                                    reg_pin_coords[n] = (float(l_data["lat"]), float(l_data["lng"]))
+                                if n not in reg_pin_labels:
+                                    lyr_name = getattr(lyr, "name", None) or (lyr.get("name") if isinstance(lyr, dict) else "")
+                                    if lyr_name:
+                                        reg_pin_labels[n] = str(lyr_name)
+                            except (ValueError, TypeError):
+                                pass
+
+                    num_regions = len(msg_regions) if hasattr(msg_regions, "__len__") else 1
+                    with st.expander(f"🌍 Regional Distribution ({num_regions} regions)", expanded=False):
+                        reg_html = format_regional_distribution_html(
+                            regions=msg_regions,
+                            pin_coords=reg_pin_coords,
+                            pin_labels=reg_pin_labels,
+                        )
+                        if reg_html:
+                            st.markdown(reg_html, unsafe_allow_html=True)
 
                 # Upgrade 4: Follow-up Suggestions & Did-You-Mean
                 raw_dym = msg.get("did_you_mean")
