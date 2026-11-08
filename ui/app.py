@@ -2495,7 +2495,7 @@ class MapTrashBinHook(MacroElement):
                     // 1. Match by coordinate if provided
                     if (targetLat !== null && targetLng !== null) {
                         var ll = m.getLatLng();
-                        if (Math.abs(ll.lat - targetLat) < 0.00015 && Math.abs(ll.lng - targetLng) < 0.00015) {
+                        if (Math.abs(ll.lat - targetLat) < 0.0002 && Math.abs(ll.lng - targetLng) < 0.0002) {
                             return true;
                         }
                     }
@@ -2508,7 +2508,7 @@ class MapTrashBinHook(MacroElement):
                                 pContent = String(m.getPopup().getContent() || '');
                             }
                         } catch(e) {}
-                        if (pContent.indexOf('#' + targetNum + ' ') !== -1 || pContent.indexOf('★ #' + targetNum) !== -1) {
+                        if (pContent.indexOf('#' + targetNum + ' ') !== -1 || pContent.indexOf('★ #' + targetNum) !== -1 || pContent.indexOf('#' + targetNum + '<') !== -1) {
                             return true;
                         }
                         var tContent = '';
@@ -2525,6 +2525,19 @@ class MapTrashBinHook(MacroElement):
                             return true;
                         }
                     }
+
+                    // 3. Match by label in popup
+                    if (targetLabel) {
+                        var pContent3 = '';
+                        try {
+                            if (m.getPopup && m.getPopup()) {
+                                pContent3 = String(m.getPopup().getContent() || '');
+                            }
+                        } catch(e) {}
+                        if (pContent3.toLowerCase().indexOf(targetLabel.toLowerCase()) !== -1) {
+                            return true;
+                        }
+                    }
                     return false;
                 }
 
@@ -2535,7 +2548,7 @@ class MapTrashBinHook(MacroElement):
                         matchedMarker = layer;
                         return;
                     }
-                    if (typeof L.MarkerClusterGroup !== 'undefined' && layer instanceof L.MarkerClusterGroup && typeof layer.getLayers === 'function') {
+                    if (layer && typeof layer.zoomToShowLayer === 'function' && typeof layer.getLayers === 'function') {
                         var cLayers = layer.getLayers();
                         for (var i = 0; i < cLayers.length; i++) {
                             if (isMarkerMatch(cLayers[i])) {
@@ -2549,7 +2562,7 @@ class MapTrashBinHook(MacroElement):
                             if (matchedMarker) return;
                             if (isMarkerMatch(sub)) {
                                 matchedMarker = sub;
-                                if (typeof L.MarkerClusterGroup !== 'undefined' && layer instanceof L.MarkerClusterGroup) {
+                                if (typeof layer.zoomToShowLayer === 'function') {
                                     parentCluster = layer;
                                 }
                             }
@@ -2557,28 +2570,95 @@ class MapTrashBinHook(MacroElement):
                     }
                 });
 
+                // Fallback: If not found in map layers, search getActiveClusterGroups
+                if (!matchedMarker && typeof getActiveClusterGroups === 'function') {
+                    var clusters = getActiveClusterGroups();
+                    for (var c = 0; c < clusters.length; c++) {
+                        var cGroup = clusters[c];
+                        if (cGroup && typeof cGroup.getLayers === 'function') {
+                            var cLayers2 = cGroup.getLayers();
+                            for (var j = 0; j < cLayers2.length; j++) {
+                                if (isMarkerMatch(cLayers2[j])) {
+                                    matchedMarker = cLayers2[j];
+                                    parentCluster = cGroup;
+                                    break;
+                                }
+                            }
+                        }
+                        if (matchedMarker) break;
+                    }
+                }
+
                 if (matchedMarker) {
-                    // Ensure visibility if hidden by PinFilterControl
                     if (matchedMarker._icon && matchedMarker._icon.style.display === 'none') {
                         matchedMarker._icon.style.display = '';
                     }
                     var mLatLng = matchedMarker.getLatLng();
-                    var focusZoom = Math.max(map.getZoom() || 6, 11);
+                    var focusZoom = Math.max(map.getZoom() || 6, 12);
+                    window._lastOpenPopupInfo = { lat: mLatLng.lat, lng: mLatLng.lng };
+
                     if (parentCluster && typeof parentCluster.zoomToShowLayer === 'function') {
                         parentCluster.zoomToShowLayer(matchedMarker, function() {
                             try { matchedMarker.openPopup(); } catch(e) {}
                         });
                     } else {
                         map.flyTo(mLatLng, focusZoom, { animate: true, duration: 0.65 });
+                        map.once('moveend', function() {
+                            try { matchedMarker.openPopup(); } catch(e) {}
+                        });
                         setTimeout(function() {
                             try { matchedMarker.openPopup(); } catch(e) {}
-                        }, 350);
+                        }, 700);
                     }
                 } else if (targetLat !== null && targetLng !== null) {
-                    var fallbackZoom = Math.max(map.getZoom() || 6, 11);
+                    var fallbackZoom = Math.max(map.getZoom() || 6, 12);
                     map.flyTo([targetLat, targetLng], fallbackZoom, { animate: true, duration: 0.65 });
                 }
             }
+
+            // Expose function and direct click bridge to parent window
+            try {
+                var pWin = window.parent;
+                if (pWin) {
+                    pWin._geoaiFocusMapPin = focusMapPinByCitation;
+                    var pDoc = pWin.document;
+                    if (pDoc && !pWin._geoaiCitationHookInstalled) {
+                        pWin._geoaiCitationHookInstalled = true;
+                        pDoc.addEventListener('click', function(e) {
+                            var target = e.target;
+                            if (!target || !target.closest) return;
+
+                            var pinCit = target.closest('.tactical-cit-pin');
+                            if (pinCit) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                var pinNum = pinCit.getAttribute('data-pin-number');
+                                var pLat = pinCit.getAttribute('data-lat');
+                                var pLng = pinCit.getAttribute('data-lng');
+                                var pLbl = pinCit.getAttribute('data-pin-label');
+                                focusMapPinByCitation({
+                                    number: pinNum ? parseInt(pinNum, 10) : null,
+                                    lat: (pLat && !isNaN(parseFloat(pLat))) ? parseFloat(pLat) : null,
+                                    lng: (pLng && !isNaN(parseFloat(pLng))) ? parseFloat(pLng) : null,
+                                    label: pLbl || null
+                                });
+                                return;
+                            }
+
+                            var srcCit = target.closest('.tactical-cit[data-cit-target], .tactical-cit-src, .tactical-cit-lead, .tactical-cit-ps');
+                            if (srcCit) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                var citId = srcCit.getAttribute('data-cit-target') || srcCit.textContent.replace(/[\\[\\]]/g, '').trim();
+                                if (typeof pWin._geoaiHandleSourceCitation === 'function') {
+                                    pWin._geoaiHandleSourceCitation(srcCit, citId, pDoc);
+                                }
+                                return;
+                            }
+                        }, true);
+                    }
+                }
+            } catch(e) {}
 
             // 1. Instant client-side visual feedback on map canvas clicks (0ms latency)
             map.on('click', function(e) {
@@ -4418,12 +4498,9 @@ st.markdown(f"""
 </style>
 """, unsafe_allow_html=True)
 
-# 0ms Instant Target HUD Bridge: listens to Leaflet map clicks/drawings in the iframe
-st.markdown("""<script>
+# 0ms Instant Target HUD Bridge: listens to Leaflet map clicks/drawings and interactive citations
+st.html("""<script>
 (function() {
-    if (window._geoaiSelectionBridgeInstalled) return;
-    window._geoaiSelectionBridgeInstalled = true;
-
     function postToMapIframes(payload) {
         try {
             var iframes = document.querySelectorAll('iframe');
@@ -4435,13 +4512,110 @@ st.markdown("""<script>
         } catch (err) {}
     }
 
+    function handleSourceCitation(srcCit, targetId, doc) {
+        var rawId = targetId || (srcCit && srcCit.getAttribute && srcCit.getAttribute('data-cit-target')) || (srcCit && srcCit.textContent) || '';
+        var normId = rawId.replace(/[\\[\\]]/g, '').trim().toUpperCase();
+        if (!normId) return;
+
+        var chatMsg = (srcCit && srcCit.closest) ? (srcCit.closest('div[data-testid="stChatMessage"]') || doc) : doc;
+
+        // 1. Expand the 'Verified Sources' expander if closed
+        var expanders = chatMsg.querySelectorAll('div[data-testid="stExpander"], details:not(.geoai-source-detail)');
+        for (var eIdx = 0; eIdx < expanders.length; eIdx++) {
+            var exp = expanders[eIdx];
+            if ((exp.textContent || '').indexOf('Verified Sources') !== -1) {
+                var detailsTag = exp.tagName === 'DETAILS' ? exp : exp.querySelector('details');
+                var summaryTag = exp.querySelector('summary') || exp.querySelector('[data-testid="stExpanderStepChevron"]') || exp.querySelector('div');
+
+                var isAlreadyOpen = false;
+                if (detailsTag && detailsTag.open) {
+                    isAlreadyOpen = true;
+                } else if (summaryTag && summaryTag.getAttribute('aria-expanded') === 'true') {
+                    isAlreadyOpen = true;
+                } else if (exp.classList.contains('open') || exp.getAttribute('data-state') === 'expanded') {
+                    isAlreadyOpen = true;
+                }
+
+                if (!isAlreadyOpen) {
+                    if (summaryTag) {
+                        try { summaryTag.click(); } catch(err) { if (detailsTag) detailsTag.open = true; }
+                    } else if (detailsTag) {
+                        detailsTag.open = true;
+                    }
+                }
+                break;
+            }
+        }
+
+        // 2. Find and activate matching source card
+        function activateCard(card) {
+            if (!card) return;
+            card.open = true;
+            card.classList.add('geoai-source-detail--highlight');
+            try {
+                card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } catch(e) {
+                try { card.scrollIntoView(true); } catch(e2) {}
+            }
+            setTimeout(function() {
+                card.classList.remove('geoai-source-detail--highlight');
+            }, 2500);
+        }
+
+        function findCard(scope) {
+            var allCards = (scope || doc).querySelectorAll('details.geoai-source-detail');
+            if (!allCards || !allCards.length) return null;
+
+            for (var c = 0; c < allCards.length; c++) {
+                var cId = (allCards[c].getAttribute('data-cit-id') || '').trim().toUpperCase();
+                if (cId === normId) return allCards[c];
+            }
+
+            for (var t = 0; t < allCards.length; t++) {
+                var tEl = allCards[t].querySelector('.geoai-source-title') || allCards[t];
+                var tText = (tEl.textContent || '').toUpperCase();
+                if (tText.indexOf('[' + normId + ']') !== -1) return allCards[t];
+            }
+
+            if (normId.startsWith('S')) {
+                var numS = parseInt(normId.substring(1), 10);
+                if (!isNaN(numS) && numS >= 1 && numS <= allCards.length) {
+                    return allCards[numS - 1];
+                }
+            }
+
+            if (normId.startsWith('L')) {
+                var numL = parseInt(normId.substring(1), 10);
+                if (!isNaN(numL) && numL >= 1 && numL <= allCards.length) {
+                    return allCards[numL - 1];
+                }
+            }
+
+            return allCards[0] || null;
+        }
+
+        [10, 60, 150, 300, 500].forEach(function(delay) {
+            setTimeout(function() {
+                var card = findCard(chatMsg) || findCard(doc);
+                if (card) {
+                    activateCard(card);
+                }
+            }, delay);
+        });
+    }
+
+    window._geoaiHandleSourceCitation = handleSourceCitation;
+
+    if (window._geoaiSelectionBridgeInstalled) return;
+    window._geoaiSelectionBridgeInstalled = true;
+
     // 0ms Parent-to-Iframe Event Forwarding (Clear buttons, Chat Submit, Recon Scan)
     document.addEventListener('click', function(e) {
         var target = e.target;
         if (!target || !target.closest) return;
 
         // 0a. Interactive Location Citation Badge ([1], [2]) -> 0ms Map Zoom & Focus + Popup
-        var pinCit = target.closest('.tactical-cit-pin[data-pin-number]');
+        var pinCit = target.closest('.tactical-cit-pin');
         if (pinCit) {
             e.preventDefault();
             e.stopPropagation();
@@ -4449,60 +4623,27 @@ st.markdown("""<script>
             var pLat = pinCit.getAttribute('data-lat');
             var pLng = pinCit.getAttribute('data-lng');
             var pLbl = pinCit.getAttribute('data-pin-label');
-            postToMapIframes({
+            var payload = {
                 type: 'GEOAI_FOCUS_PIN',
                 number: pinNum ? parseInt(pinNum, 10) : null,
-                lat: pLat ? parseFloat(pLat) : null,
-                lng: pLng ? parseFloat(pLng) : null,
+                lat: (pLat && !isNaN(parseFloat(pLat))) ? parseFloat(pLat) : null,
+                lng: (pLng && !isNaN(parseFloat(pLng))) ? parseFloat(pLng) : null,
                 label: pLbl || null
-            });
+            };
+            if (typeof window._geoaiFocusMapPin === 'function') {
+                window._geoaiFocusMapPin(payload);
+            }
+            postToMapIframes(payload);
             return;
         }
 
         // 0b. Interactive Source Citation Badge ([S1], [L1], [P1-S1]) -> Expand Verified Sources & Open Inspect Card
-        var srcCit = target.closest('.tactical-cit[data-cit-target]');
+        var srcCit = target.closest('.tactical-cit[data-cit-target], .tactical-cit-src, .tactical-cit-lead, .tactical-cit-ps');
         if (srcCit) {
             e.preventDefault();
             e.stopPropagation();
-            var citId = srcCit.getAttribute('data-cit-target');
-            if (citId) {
-                var chatMsg = srcCit.closest('div[data-testid="stChatMessage"]') || document;
-                // Find the Verified Sources Streamlit expander inside this message
-                var allDetails = chatMsg.querySelectorAll('details');
-                var expanderDetails = null;
-                for (var dIdx = 0; dIdx < allDetails.length; dIdx++) {
-                    var det = allDetails[dIdx];
-                    if (!det.classList.contains('geoai-source-detail')) {
-                        var sumEl = det.querySelector('summary');
-                        if (sumEl && (sumEl.textContent || '').indexOf('Verified Sources') !== -1) {
-                            expanderDetails = det;
-                            break;
-                        }
-                    }
-                }
-                if (expanderDetails && !expanderDetails.open) {
-                    var expSum = expanderDetails.querySelector('summary');
-                    if (expSum) {
-                        try { expSum.click(); } catch(err) { expanderDetails.open = true; }
-                    } else {
-                        expanderDetails.open = true;
-                    }
-                }
-                setTimeout(function() {
-                    var targetCard = chatMsg.querySelector('details.geoai-source-detail[data-cit-id="' + citId + '"]') ||
-                                     document.querySelector('details.geoai-source-detail[data-cit-id="' + citId + '"]');
-                    if (targetCard) {
-                        targetCard.open = true;
-                        targetCard.classList.add('geoai-source-detail--highlight');
-                        try {
-                            targetCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                        } catch(err) {}
-                        setTimeout(function() {
-                            targetCard.classList.remove('geoai-source-detail--highlight');
-                        }, 2000);
-                    }
-                }, 80);
-            }
+            var citId = srcCit.getAttribute('data-cit-target') || srcCit.textContent.replace(/[\\[\\]]/g, '').trim();
+            handleSourceCitation(srcCit, citId, document);
             return;
         }
 
@@ -4653,7 +4794,7 @@ st.markdown("""<script>
 })();
 </script>
 <div id="geoai-instant-pill-slot" style="display: none;"></div>
-""", unsafe_allow_html=True)
+""", unsafe_allow_javascript=True)
 
 
 # ==============================================================================
