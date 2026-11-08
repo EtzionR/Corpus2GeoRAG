@@ -524,7 +524,9 @@ def format_regional_distribution_html(
 ) -> str:
     """
     Render hierarchical regional sector distribution markup for the assistant message expander.
-    - Converts Oblast/Region headers into interactive .tactical-sector-btn buttons/links with data-sector-bbox.
+    - Each region is an interactive foldable card (<details class='tactical-sector-card'>)
+      with a compact summary row and an unfolded drawer containing its operational pins.
+    - Converts Oblast/Region headers into interactive .tactical-sector-btn buttons with data-sector-bbox.
     - Converts place pin numbers into clickable .tactical-cit-pin badges (triggering 0ms Leaflet flyTo + popup).
     - Includes a 0ms 'Reset Sector Filter' button to restore full map view and remove pin dimming.
     """
@@ -549,26 +551,40 @@ def format_regional_distribution_html(
             f"data-pin-number='{pin_num}'{coord_attrs}{lbl_attr} title='{title}'>#{pin_num}</a>"
         )
 
-    def _render_pins_span(places_list: list, limit: int = 8) -> str:
+    def _render_pins_grid(places_list: list, limit: int = 24) -> str:
         if not places_list:
             return ""
         rendered = [_render_pin_badge(p) for p in places_list[:limit]]
-        more = "..." if len(places_list) > limit else ""
-        return f"<span class='tactical-reg-pins'>*(pins: {', '.join(rendered)}{more})*</span>"
+        more_badge = ""
+        if len(places_list) > limit:
+            remaining = len(places_list) - limit
+            more_badge = f"<span class='tactical-more-pins'>+{remaining} more in sector</span>"
+        return (
+            f"<div class='tactical-pins-section'>"
+            f"<div class='tactical-pins-label'>Operational Pins ({len(places_list)})</div>"
+            f"<div class='tactical-pins-grid tactical-reg-pins'>{' '.join(rendered)} {more_badge}</div>"
+            f"</div>"
+        )
 
     html_parts = []
+    html_parts.append("<div class='tactical-sector-container'>")
 
-    # Reset control header
+    total_sectors = len(regions) if isinstance(regions, (list, dict)) else 1
+
+    # Header toolbar with Reset button
     html_parts.append(
-        "<div style='margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;'>"
-        "<span style='font-size: 0.78rem; color: #94a3b8; letter-spacing: 0.05em; text-transform: uppercase;'>Tactical Sector Filter</span>"
+        "<div class='tactical-sector-toolbar'>"
+        "<div class='tactical-sector-title'>"
+        "<span>🛡️ TACTICAL SECTORS</span> "
+        f"<code>{total_sectors} SECTORS</code>"
+        "</div>"
         "<button type='button' class='tactical-sector-btn tactical-sector-reset-btn' data-sector-action='reset' "
-        "title='Reset sector zoom and clear pin dimming' style='font-size: 0.75rem; padding: 1px 6px;'>🌐 All Sectors</button>"
+        "title='Reset sector zoom and clear pin dimming'>🌐 All Sectors</button>"
         "</div>"
     )
 
     if isinstance(regions, list):
-        for r_node in regions:
+        for idx, r_node in enumerate(regions):
             if not isinstance(r_node, dict):
                 continue
             r_id = str(r_node.get("id", "Unknown"))
@@ -594,15 +610,10 @@ def format_regional_distribution_html(
             r_bbox_attr = f" data-sector-bbox='{_json.dumps(r_bbox)}'" if r_bbox else ""
             r_pins_attr = f" data-sector-pins='{_json.dumps(all_node_places)}'" if all_node_places else ""
 
+            icon = "🌐" if ("ukraine" in r_id.lower() or r_node.get("place_type") == "country") else ("🏛️" if ("oblast" in r_id.lower() or r_node.get("place_type") == "state") else "📍")
+
+            children_html = []
             if children:
-                html_parts.append(
-                    f"<div class='tactical-reg-item'>"
-                    f"<button type='button' class='tactical-sector-btn' data-sector-name='{_html.escape(r_id, quote=True)}'"
-                    f"{r_bbox_attr}{r_pins_attr} data-sector-count='{r_cnt}' "
-                    f"title='Focus map on {r_id} sector'>🌐 <strong>{_html.escape(r_id)}</strong> — <code>{r_cnt}</code> places</button>"
-                    f"{_render_pins_span(r_places, limit=8)}"
-                    f"</div>"
-                )
                 for child in children:
                     c_id = str(child.get("id", "Unknown"))
                     c_cnt = child.get("count", 0)
@@ -616,23 +627,49 @@ def format_regional_distribution_html(
                     c_bbox = compute_sector_bounding_box(c_places, pin_coords)
                     c_bbox_attr = f" data-sector-bbox='{_json.dumps(c_bbox)}'" if c_bbox else ""
                     c_pins_attr = f" data-sector-pins='{_json.dumps(c_places)}'" if c_places else ""
-                    html_parts.append(
-                        f"<div class='tactical-reg-child'>"
+                    c_icon = "🏛️" if "oblast" in c_id.lower() else "📍"
+
+                    children_html.append(
+                        f"<details class='tactical-sector-card tactical-sector-child-card'>"
+                        f"<summary class='tactical-sector-summary'>"
+                        f"<div class='tactical-sector-header-left'>"
+                        f"<span class='tactical-chevron'>▶</span>"
+                        f"<span class='tactical-sector-icon'>{c_icon}</span>"
+                        f"<span class='tactical-sector-name'>{_html.escape(c_id)}</span>"
+                        f"<span class='tactical-sector-count'>{c_cnt} places</span>"
+                        f"</div>"
                         f"<button type='button' class='tactical-sector-btn' data-sector-name='{_html.escape(c_id, quote=True)}'"
                         f"{c_bbox_attr}{c_pins_attr} data-sector-count='{c_cnt}' "
-                        f"title='Focus map on {c_id} sector'>📍 <strong>{_html.escape(c_id)}</strong> — <code>{c_cnt}</code> places</button>"
-                        f"{_render_pins_span(c_places, limit=6)}"
+                        f"title='Focus map on {c_id} sector'>🎯 Focus</button>"
+                        f"</summary>"
+                        f"<div class='tactical-sector-drawer'>"
+                        f"{_render_pins_grid(c_places, limit=20)}"
                         f"</div>"
+                        f"</details>"
                     )
-            else:
-                html_parts.append(
-                    f"<div class='tactical-reg-item'>"
-                    f"<button type='button' class='tactical-sector-btn' data-sector-name='{_html.escape(r_id, quote=True)}'"
-                    f"{r_bbox_attr}{r_pins_attr} data-sector-count='{r_cnt}' "
-                    f"title='Focus map on {r_id} sector'>📍 <strong>{_html.escape(r_id)}</strong> — <code>{r_cnt}</code> places</button>"
-                    f"{_render_pins_span(r_places, limit=8)}"
-                    f"</div>"
-                )
+
+            child_block = "".join(children_html)
+            pins_block = _render_pins_grid(r_places, limit=24)
+
+            html_parts.append(
+                f"<details class='tactical-sector-card'>"
+                f"<summary class='tactical-sector-summary'>"
+                f"<div class='tactical-sector-header-left'>"
+                f"<span class='tactical-chevron'>▶</span>"
+                f"<span class='tactical-sector-icon'>{icon}</span>"
+                f"<span class='tactical-sector-name'>{_html.escape(r_id)}</span>"
+                f"<span class='tactical-sector-count'>{r_cnt} places</span>"
+                f"</div>"
+                f"<button type='button' class='tactical-sector-btn' data-sector-name='{_html.escape(r_id, quote=True)}'"
+                f"{r_bbox_attr}{r_pins_attr} data-sector-count='{r_cnt}' "
+                f"title='Focus map on {r_id} sector'>🎯 Focus</button>"
+                f"</summary>"
+                f"<div class='tactical-sector-drawer'>"
+                f"{child_block}"
+                f"{pins_block}"
+                f"</div>"
+                f"</details>"
+            )
 
     elif isinstance(regions, dict):
         for reg_name, count in sorted(regions.items(), key=lambda x: str(x[0])):
@@ -644,16 +681,28 @@ def format_regional_distribution_html(
             r_bbox = compute_sector_bounding_box(matched_pins, pin_coords) if matched_pins else None
             r_bbox_attr = f" data-sector-bbox='{_json.dumps(r_bbox)}'" if r_bbox else ""
             r_pins_attr = f" data-sector-pins='{_json.dumps(matched_pins)}'" if matched_pins else ""
+            icon = "🏛️" if "oblast" in r_name_str.lower() else "📍"
 
             html_parts.append(
-                f"<div class='tactical-reg-item'>"
+                f"<details class='tactical-sector-card'>"
+                f"<summary class='tactical-sector-summary'>"
+                f"<div class='tactical-sector-header-left'>"
+                f"<span class='tactical-chevron'>▶</span>"
+                f"<span class='tactical-sector-icon'>{icon}</span>"
+                f"<span class='tactical-sector-name'>{_html.escape(r_name_str)}</span>"
+                f"<span class='tactical-sector-count'>{count} places</span>"
+                f"</div>"
                 f"<button type='button' class='tactical-sector-btn' data-sector-name='{_html.escape(r_name_str, quote=True)}'"
                 f"{r_bbox_attr}{r_pins_attr} data-sector-count='{count}' "
-                f"title='Focus map on {r_name_str} sector'>📍 <strong>{_html.escape(r_name_str)}</strong> — <code>{count}</code> places/events</button>"
-                f"{_render_pins_span(matched_pins, limit=8)}"
+                f"title='Focus map on {r_name_str} sector'>🎯 Focus</button>"
+                f"</summary>"
+                f"<div class='tactical-sector-drawer'>"
+                f"{_render_pins_grid(matched_pins, limit=24)}"
                 f"</div>"
+                f"</details>"
             )
 
+    html_parts.append("</div>")
     return "\n".join(html_parts)
 
 
@@ -2826,16 +2875,16 @@ class MapTrashBinHook(MacroElement):
 
             function focusMapSector(payload) {
                 if (!payload) return;
-                var action = payload.action || 'focus';
-                var sName = payload.sector || null;
+                var sName = payload.name || payload.sector || null;
                 var bbox = payload.bbox;
+                var action = payload.action;
                 var targetPins = (payload.pins && Array.isArray(payload.pins)) ? payload.pins.map(Number) : [];
 
                 if (!window._initialMapBounds && map.getBounds) {
                     try { window._initialMapBounds = map.getBounds(); } catch(err) {}
                 }
 
-                if (action === 'reset' || !sName) {
+                if (action === 'reset' || (!sName && !bbox)) {
                     window._activeSectorName = null;
                     window._activeSectorPins = null;
                     window._activeSectorBbox = null;
@@ -2851,6 +2900,9 @@ class MapTrashBinHook(MacroElement):
                 window._activeSectorBbox = bbox;
 
                 applySectorHighlighting();
+                setTimeout(applySectorHighlighting, 120);
+                setTimeout(applySectorHighlighting, 350);
+                setTimeout(applySectorHighlighting, 750);
 
                 if (bbox && Array.isArray(bbox) && bbox.length === 4) {
                     var south = Math.min(Number(bbox[0]), Number(bbox[2]));
@@ -2885,6 +2937,37 @@ class MapTrashBinHook(MacroElement):
                 var west = (activeBbox && Array.isArray(activeBbox) && activeBbox.length === 4) ? Math.min(Number(activeBbox[1]), Number(activeBbox[3])) : null;
                 var east = (activeBbox && Array.isArray(activeBbox) && activeBbox.length === 4) ? Math.max(Number(activeBbox[1]), Number(activeBbox[3])) : null;
 
+                function checkMarkerInSector(m) {
+                    if (!m) return false;
+                    var pNum = null;
+                    var iconHtml = (m.options && m.options.icon && m.options.icon.options && m.options.icon.options.html) ? String(m.options.icon.options.html) : '';
+                    var mMatch = iconHtml.match(/<span>(\\d+)<\\/span>/);
+                    if (mMatch) pNum = parseInt(mMatch[1], 10);
+                    if (pNum === null) {
+                        var pContent = '';
+                        try { if (m.getPopup && m.getPopup()) pContent = String(m.getPopup().getContent() || ''); } catch(e) {}
+                        var pMatch = pContent.match(/#(\\d+)/) || pContent.match(/(\\d+)\\./);
+                        if (pMatch) pNum = parseInt(pMatch[1], 10);
+                    }
+                    if (pNum === null) {
+                        var tContent = '';
+                        try { if (m.getTooltip && m.getTooltip()) tContent = String(m.getTooltip().getContent() || ''); } catch(e) {}
+                        var tMatch = tContent.match(/#?(\\d+)/);
+                        if (tMatch) pNum = parseInt(tMatch[1], 10);
+                    }
+
+                    if (pNum !== null && activePins.indexOf(pNum) !== -1) {
+                        return true;
+                    }
+                    if (south !== null && north !== null && west !== null && east !== null && m.getLatLng) {
+                        var ll = m.getLatLng();
+                        if (ll && ll.lat >= (south - 0.003) && ll.lat <= (north + 0.003) && ll.lng >= (west - 0.003) && ll.lng <= (east + 0.003)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
                 function processMarker(m) {
                     if (!m) return;
                     var iconEl = m._icon;
@@ -2897,33 +2980,7 @@ class MapTrashBinHook(MacroElement):
                         return;
                     }
 
-                    var inSector = false;
-                    var pNum = null;
-                    var iconHtml = (m.options && m.options.icon && m.options.icon.options && m.options.icon.options.html) ? String(m.options.icon.options.html) : '';
-                    var mMatch = iconHtml.match(/<span>(\\d+)<\\/span>/);
-                    if (mMatch) pNum = parseInt(mMatch[1], 10);
-                    if (pNum === null) {
-                        var pContent = '';
-                        try { if (m.getPopup && m.getPopup()) pContent = String(m.getPopup().getContent() || ''); } catch(e) {}
-                        var pMatch = pContent.match(/#(\\d+)/);
-                        if (pMatch) pNum = parseInt(pMatch[1], 10);
-                    }
-                    if (pNum === null) {
-                        var tContent = '';
-                        try { if (m.getTooltip && m.getTooltip()) tContent = String(m.getTooltip().getContent() || ''); } catch(e) {}
-                        var tMatch = tContent.match(/#?(\\d+)/);
-                        if (tMatch) pNum = parseInt(tMatch[1], 10);
-                    }
-
-                    if (pNum !== null && activePins.indexOf(pNum) !== -1) {
-                        inSector = true;
-                    } else if (south !== null && north !== null && west !== null && east !== null && m.getLatLng) {
-                        var ll = m.getLatLng();
-                        if (ll && ll.lat >= (south - 0.002) && ll.lat <= (north + 0.002) && ll.lng >= (west - 0.002) && ll.lng <= (east + 0.002)) {
-                            inSector = true;
-                        }
-                    }
-
+                    var inSector = checkMarkerInSector(m);
                     if (inSector) {
                         iconEl.classList.remove('geoai-sector--dimmed');
                         iconEl.classList.add('geoai-sector--highlighted');
@@ -2933,33 +2990,55 @@ class MapTrashBinHook(MacroElement):
                     }
                 }
 
-                function searchAndApply(group) {
-                    if (!group) return;
-                    if (group instanceof L.Marker) {
-                        processMarker(group);
-                        return;
-                    }
-                    if (typeof group.eachLayer === 'function') {
-                        group.eachLayer(function(child) {
-                            if (child instanceof L.Marker) {
-                                processMarker(child);
-                            } else if (typeof child.eachLayer === 'function' || typeof child.getLayers === 'function') {
-                                searchAndApply(child);
+                function inspectLayer(layer) {
+                    if (!layer) return;
+                    if (layer instanceof L.Marker) {
+                        processMarker(layer);
+                    } else if (typeof L.MarkerCluster !== 'undefined' && layer instanceof L.MarkerCluster) {
+                        var cIcon = layer._icon;
+                        if (cIcon) {
+                            if (!hasActiveFilter) {
+                                cIcon.classList.remove('geoai-sector--dimmed', 'geoai-sector--highlighted');
+                            } else {
+                                var cInSector = false;
+                                if (typeof layer.getAllChildMarkers === 'function') {
+                                    var kids = layer.getAllChildMarkers();
+                                    for (var k = 0; k < kids.length; k++) {
+                                        if (checkMarkerInSector(kids[k])) { cInSector = true; break; }
+                                    }
+                                } else {
+                                    cInSector = checkMarkerInSector(layer);
+                                }
+                                if (cInSector) {
+                                    cIcon.classList.remove('geoai-sector--dimmed');
+                                    cIcon.classList.add('geoai-sector--highlighted');
+                                } else {
+                                    cIcon.classList.remove('geoai-sector--highlighted');
+                                    cIcon.classList.add('geoai-sector--dimmed');
+                                }
                             }
-                        });
+                        }
+                    } else if (typeof L.MarkerClusterGroup !== 'undefined' && layer instanceof L.MarkerClusterGroup) {
+                        if (typeof layer.eachLayer === 'function') {
+                            layer.eachLayer(processMarker);
+                        }
+                    } else if (layer.eachLayer) {
+                        try { layer.eachLayer(inspectLayer); } catch(e) {}
                     }
                 }
 
-                searchAndApply(map);
+                map.eachLayer(inspectLayer);
 
-                if (typeof getActiveClusterGroups === 'function') {
-                    var clusters = getActiveClusterGroups();
-                    for (var c = 0; c < clusters.length; c++) {
-                        if (clusters[c] && typeof clusters[c].eachLayer === 'function') {
-                            clusters[c].eachLayer(processMarker);
+                // Sweep markerPane to clean up when reset
+                try {
+                    var markerPane = map.getPanes ? map.getPanes().markerPane : null;
+                    if (markerPane && !hasActiveFilter) {
+                        var icons = markerPane.querySelectorAll('.leaflet-marker-icon, .marker-cluster');
+                        for (var i = 0; i < icons.length; i++) {
+                            icons[i].classList.remove('geoai-sector--dimmed', 'geoai-sector--highlighted');
                         }
                     }
-                }
+                } catch(err) {}
             }
 
             // Expose function and direct click bridge to parent window
@@ -3031,6 +3110,7 @@ class MapTrashBinHook(MacroElement):
                                     var resetPayload = {
                                         type: 'GEOAI_FOCUS_SECTOR',
                                         action: 'reset',
+                                        name: null,
                                         sector: null,
                                         bbox: null,
                                         pins: []
@@ -3065,6 +3145,7 @@ class MapTrashBinHook(MacroElement):
                                 var payload = {
                                     type: 'GEOAI_FOCUS_SECTOR',
                                     action: wasActive ? 'reset' : 'focus',
+                                    name: wasActive ? null : sName,
                                     sector: wasActive ? null : sName,
                                     bbox: wasActive ? null : bboxArr,
                                     pins: wasActive ? [] : pinsArr
@@ -3082,6 +3163,11 @@ class MapTrashBinHook(MacroElement):
             } catch(e) {}
 
             map.on('moveend zoomend', function() {
+                if (window._activeSectorName && typeof applySectorHighlighting === 'function') {
+                    applySectorHighlighting();
+                }
+            });
+            map.on('layeradd spiderfied unspiderfied', function() {
                 if (window._activeSectorName && typeof applySectorHighlighting === 'function') {
                     applySectorHighlighting();
                 }
@@ -4237,14 +4323,132 @@ st.markdown(f"""
         box-shadow: 0 0 4px rgba(245, 158, 11, 0.2);
     }}
 
-    /* Phase 2: Tactical Sector Buttons & Regional Tree */
-    .tactical-sector-btn {{
-        background: rgba(15, 23, 42, 0.75);
+    /* Phase 2: Tactical Sector Cards & Foldable Regional Tree */
+    .tactical-sector-container {{
+        background: rgba(11, 19, 32, 0.7);
+        border: 1px solid rgba(56, 189, 248, 0.2);
+        border-radius: 8px;
+        padding: 8px 10px;
+        margin: 6px 0 10px 0;
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    }}
+    .tactical-sector-toolbar {{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 6px;
+        margin-bottom: 6px;
+        border-bottom: 1px solid rgba(56, 189, 248, 0.15);
+    }}
+    .tactical-sector-title {{
+        font-size: 0.74rem;
+        font-weight: 700;
+        color: #94a3b8;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }}
+    .tactical-sector-title code {{
+        background: rgba(56, 189, 248, 0.12);
+        color: #38bdf8;
+        padding: 1px 6px;
+        border-radius: 3px;
+        font-size: 0.70rem;
+    }}
+    .tactical-sector-reset-btn {{
+        background: rgba(15, 23, 42, 0.85);
         border: 1px solid rgba(56, 189, 248, 0.35);
         color: #38bdf8;
         border-radius: 4px;
-        padding: 3px 8px;
+        padding: 2px 8px;
+        font-size: 0.74rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }}
+    .tactical-sector-reset-btn:hover {{
+        background: rgba(56, 189, 248, 0.2);
+        color: #f0f9ff;
+        border-color: #38bdf8;
+        box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+    }}
+    .tactical-sector-card {{
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(56, 189, 248, 0.18);
+        border-radius: 6px;
+        margin: 4px 0;
+        overflow: hidden;
+        transition: border-color 0.15s ease, background-color 0.15s ease;
+    }}
+    .tactical-sector-card:hover {{
+        border-color: rgba(56, 189, 248, 0.4);
+        background: rgba(15, 23, 42, 0.85);
+    }}
+    .tactical-sector-card[open] {{
+        border-color: rgba(56, 189, 248, 0.5);
+        background: rgba(15, 23, 42, 0.9);
+    }}
+    .tactical-sector-summary {{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 10px;
+        cursor: pointer;
+        user-select: none;
+        list-style: none;
+        gap: 8px;
+    }}
+    .tactical-sector-summary::-webkit-details-marker {{
+        display: none;
+    }}
+    .tactical-sector-header-left {{
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        min-width: 0;
+    }}
+    .tactical-chevron {{
+        font-size: 0.68rem;
+        color: #38bdf8;
+        transition: transform 0.2s ease;
+        display: inline-block;
+        line-height: 1;
+    }}
+    .tactical-sector-card[open] > .tactical-sector-summary .tactical-chevron {{
+        transform: rotate(90deg);
+    }}
+    .tactical-sector-name {{
         font-size: 0.82rem;
+        font-weight: 600;
+        color: #f1f5f9;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }}
+    .tactical-sector-count {{
+        background: rgba(56, 189, 248, 0.12);
+        color: #38bdf8;
+        border: 1px solid rgba(56, 189, 248, 0.25);
+        border-radius: 10px;
+        padding: 1px 7px;
+        font-size: 0.70rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        white-space: nowrap;
+    }}
+    .tactical-sector-btn {{
+        background: rgba(56, 189, 248, 0.12);
+        border: 1px solid rgba(56, 189, 248, 0.4);
+        color: #38bdf8;
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.74rem;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.15s ease;
@@ -4252,20 +4456,53 @@ st.markdown(f"""
         align-items: center;
         gap: 4px;
         text-decoration: none;
-        margin: 2px 0;
+        white-space: nowrap;
+        flex-shrink: 0;
     }}
     .tactical-sector-btn:hover {{
-        background: rgba(56, 189, 248, 0.2);
-        border-color: #38bdf8;
-        color: #f0f9ff;
-        box-shadow: 0 0 8px rgba(56, 189, 248, 0.45);
-        transform: translateY(-1px);
-    }}
-    .tactical-sector-btn.active {{
-        background: rgba(56, 189, 248, 0.35);
+        background: rgba(56, 189, 248, 0.25);
         border-color: #38bdf8;
         color: #ffffff;
-        box-shadow: 0 0 12px rgba(56, 189, 248, 0.7);
+        box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+    }}
+    .tactical-sector-btn.active {{
+        background: rgba(56, 189, 248, 0.45);
+        border-color: #38bdf8;
+        color: #ffffff;
+        box-shadow: 0 0 14px rgba(56, 189, 248, 0.85);
+    }}
+    .tactical-sector-drawer {{
+        padding: 8px 12px 10px 24px;
+        border-top: 1px solid rgba(56, 189, 248, 0.12);
+        background: rgba(10, 15, 26, 0.45);
+    }}
+    .tactical-pins-section {{
+        margin-top: 4px;
+    }}
+    .tactical-pins-label {{
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: #64748b;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+    }}
+    .tactical-pins-grid {{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        align-items: center;
+    }}
+    .tactical-more-pins {{
+        font-size: 0.72rem;
+        color: #64748b;
+        padding: 2px 6px;
+        font-style: italic;
+    }}
+    .tactical-sector-child-card {{
+        margin: 4px 0 6px 0;
+        background: rgba(15, 23, 42, 0.5);
+        border: 1px solid rgba(56, 189, 248, 0.15);
     }}
     .tactical-reg-item {{
         margin: 3px 0;
@@ -5198,6 +5435,7 @@ components.html(
                     var resetPayload = {
                         type: 'GEOAI_FOCUS_SECTOR',
                         action: 'reset',
+                        name: null,
                         sector: null,
                         bbox: null,
                         pins: []
@@ -5232,6 +5470,7 @@ components.html(
                 var payload = {
                     type: 'GEOAI_FOCUS_SECTOR',
                     action: wasActive ? 'reset' : 'focus',
+                    name: wasActive ? null : sName,
                     sector: wasActive ? null : sName,
                     bbox: wasActive ? null : bboxArr,
                     pins: wasActive ? [] : pinsArr
@@ -6713,12 +6952,22 @@ with col2:
                 }
 
                 /* Phase 2: Regional Sector Filtering & Highlighting */
-                .geoai-sector--dimmed {
-                    opacity: 0.22 !important;
-                    filter: grayscale(85%) !important;
+                .geoai-sector--dimmed,
+                .geoai-sector--dimmed.leaflet-marker-icon,
+                .geoai-sector--dimmed.marker-cluster,
+                .geoai-sector--dimmed.geoai-cluster-wrap,
+                .geoai-sector--dimmed .geoai-diamond,
+                .geoai-sector--dimmed .geoai-teardrop,
+                .geoai-sector--dimmed .geoai-dot,
+                .geoai-sector--dimmed .geoai-cluster {
+                    opacity: 0.16 !important;
+                    filter: grayscale(90%) contrast(70%) !important;
                     transition: opacity 0.25s ease, filter 0.25s ease !important;
                 }
-                .geoai-sector--highlighted {
+                .geoai-sector--highlighted,
+                .geoai-sector--highlighted.leaflet-marker-icon,
+                .geoai-sector--highlighted .geoai-diamond,
+                .geoai-sector--highlighted .geoai-teardrop {
                     opacity: 1.0 !important;
                     transform: scale(1.18) !important;
                     filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.95)) drop-shadow(0 0 4px rgba(56, 189, 248, 0.8)) !important;
@@ -6729,6 +6978,17 @@ with col2:
                 .geoai-sector--highlighted .geoai-teardrop {
                     border-color: #38bdf8 !important;
                     box-shadow: 0 0 12px rgba(56, 189, 248, 0.9) !important;
+                }
+                .geoai-sector--highlighted .geoai-dot {
+                    opacity: 1.0 !important;
+                    transform: scale(1.6) !important;
+                    background: #38bdf8 !important;
+                    box-shadow: 0 0 10px #38bdf8 !important;
+                }
+                .geoai-sector--highlighted.geoai-cluster-wrap .geoai-cluster {
+                    border-color: #38bdf8 !important;
+                    box-shadow: 0 0 14px rgba(56, 189, 248, 0.9) !important;
+                    color: #ffffff !important;
                 }
 
                 /* Instant Client-Side Pin Filter Toggles */
