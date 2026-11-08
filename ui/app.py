@@ -81,6 +81,7 @@ if not _BOOTSTRAP_DONE:
 
 # Core Streamlit and mapping imports
 import streamlit as st
+import streamlit.components.v1 as components
 import folium
 from folium.plugins import Draw, MarkerCluster
 from branca.element import MacroElement
@@ -2492,10 +2493,10 @@ class MapTrashBinHook(MacroElement):
                     var cls = (m._icon && m._icon.className) ? m._icon.className : (m.options && m.options.icon && m.options.icon.options && m.options.icon.options.className ? m.options.icon.options.className : '');
                     if (cls.indexOf('geoai-pin--target') !== -1 || cls.indexOf('geoai-pin--corner') !== -1) return false;
 
-                    // 1. Match by coordinate if provided
+                    // 1. Match by coordinate if provided (0.0003 deg is ~30m tolerance)
                     if (targetLat !== null && targetLng !== null) {
                         var ll = m.getLatLng();
-                        if (Math.abs(ll.lat - targetLat) < 0.0002 && Math.abs(ll.lng - targetLng) < 0.0002) {
+                        if (Math.abs(ll.lat - targetLat) < 0.0003 && Math.abs(ll.lng - targetLng) < 0.0003) {
                             return true;
                         }
                     }
@@ -2508,7 +2509,10 @@ class MapTrashBinHook(MacroElement):
                                 pContent = String(m.getPopup().getContent() || '');
                             }
                         } catch(e) {}
-                        if (pContent.indexOf('#' + targetNum + ' ') !== -1 || pContent.indexOf('★ #' + targetNum) !== -1 || pContent.indexOf('#' + targetNum + '<') !== -1) {
+                        if (pContent.indexOf('#' + targetNum + ' ') !== -1 || 
+                            pContent.indexOf('★ #' + targetNum) !== -1 || 
+                            pContent.indexOf('#' + targetNum + '<') !== -1 ||
+                            pContent.indexOf('#' + targetNum + ':') !== -1) {
                             return true;
                         }
                         var tContent = '';
@@ -2517,11 +2521,11 @@ class MapTrashBinHook(MacroElement):
                                 tContent = String(m.getTooltip().getContent() || '');
                             }
                         } catch(e) {}
-                        if (tContent.indexOf(targetNum + '. ') === 0) {
+                        if (tContent.indexOf(targetNum + '. ') === 0 || tContent.indexOf('#' + targetNum) !== -1) {
                             return true;
                         }
                         var iconHtml = (m.options && m.options.icon && m.options.icon.options && m.options.icon.options.html) ? String(m.options.icon.options.html) : '';
-                        if (iconHtml.indexOf('<span>' + targetNum + '</span>') !== -1) {
+                        if (iconHtml.indexOf('<span>' + targetNum + '</span>') !== -1 || iconHtml.indexOf('>' + targetNum + '<') !== -1) {
                             return true;
                         }
                     }
@@ -2541,45 +2545,62 @@ class MapTrashBinHook(MacroElement):
                     return false;
                 }
 
-                // Search top-level layers and MarkerClusterGroups
-                map.eachLayer(function(layer) {
-                    if (matchedMarker) return;
-                    if (isMarkerMatch(layer)) {
-                        matchedMarker = layer;
+                // Recursive layer traversal function to visit FeatureGroups and MarkerClusterGroups
+                function searchLayers(layerGroup) {
+                    if (!layerGroup || matchedMarker) return;
+                    if (isMarkerMatch(layerGroup)) {
+                        matchedMarker = layerGroup;
                         return;
                     }
-                    if (layer && typeof layer.zoomToShowLayer === 'function' && typeof layer.getLayers === 'function') {
-                        var cLayers = layer.getLayers();
-                        for (var i = 0; i < cLayers.length; i++) {
-                            if (isMarkerMatch(cLayers[i])) {
-                                matchedMarker = cLayers[i];
-                                parentCluster = layer;
+                    if (typeof layerGroup.zoomToShowLayer === 'function' && typeof layerGroup.getLayers === 'function') {
+                        var clusterLayers = layerGroup.getLayers();
+                        for (var i = 0; i < clusterLayers.length; i++) {
+                            if (isMarkerMatch(clusterLayers[i])) {
+                                matchedMarker = clusterLayers[i];
+                                parentCluster = layerGroup;
                                 return;
                             }
                         }
-                    } else if (layer && typeof layer.eachLayer === 'function') {
-                        layer.eachLayer(function(sub) {
+                    }
+                    if (typeof layerGroup.eachLayer === 'function') {
+                        layerGroup.eachLayer(function(child) {
                             if (matchedMarker) return;
-                            if (isMarkerMatch(sub)) {
-                                matchedMarker = sub;
-                                if (typeof layer.zoomToShowLayer === 'function') {
-                                    parentCluster = layer;
+                            if (isMarkerMatch(child)) {
+                                matchedMarker = child;
+                                if (typeof layerGroup.zoomToShowLayer === 'function') {
+                                    parentCluster = layerGroup;
                                 }
+                                return;
+                            }
+                            if (typeof child.getLayers === 'function' || typeof child.eachLayer === 'function') {
+                                if (typeof child.zoomToShowLayer === 'function' && typeof child.getLayers === 'function') {
+                                    var cLayers2 = child.getLayers();
+                                    for (var k = 0; k < cLayers2.length; k++) {
+                                        if (isMarkerMatch(cLayers2[k])) {
+                                            matchedMarker = cLayers2[k];
+                                            parentCluster = child;
+                                            return;
+                                        }
+                                    }
+                                }
+                                searchLayers(child);
                             }
                         });
                     }
-                });
+                }
 
-                // Fallback: If not found in map layers, search getActiveClusterGroups
+                searchLayers(map);
+
+                // Fallback: search getActiveClusterGroups if registered
                 if (!matchedMarker && typeof getActiveClusterGroups === 'function') {
                     var clusters = getActiveClusterGroups();
                     for (var c = 0; c < clusters.length; c++) {
                         var cGroup = clusters[c];
                         if (cGroup && typeof cGroup.getLayers === 'function') {
-                            var cLayers2 = cGroup.getLayers();
-                            for (var j = 0; j < cLayers2.length; j++) {
-                                if (isMarkerMatch(cLayers2[j])) {
-                                    matchedMarker = cLayers2[j];
+                            var cLayers3 = cGroup.getLayers();
+                            for (var j = 0; j < cLayers3.length; j++) {
+                                if (isMarkerMatch(cLayers3[j])) {
+                                    matchedMarker = cLayers3[j];
                                     parentCluster = cGroup;
                                     break;
                                 }
@@ -2594,7 +2615,7 @@ class MapTrashBinHook(MacroElement):
                         matchedMarker._icon.style.display = '';
                     }
                     var mLatLng = matchedMarker.getLatLng();
-                    var focusZoom = Math.max(map.getZoom() || 6, 12);
+                    var focusZoom = Math.max(map.getZoom() || 6, 13);
                     window._lastOpenPopupInfo = { lat: mLatLng.lat, lng: mLatLng.lng };
 
                     if (parentCluster && typeof parentCluster.zoomToShowLayer === 'function') {
@@ -2611,8 +2632,20 @@ class MapTrashBinHook(MacroElement):
                         }, 700);
                     }
                 } else if (targetLat !== null && targetLng !== null) {
-                    var fallbackZoom = Math.max(map.getZoom() || 6, 12);
+                    var fallbackZoom = Math.max(map.getZoom() || 6, 13);
                     map.flyTo([targetLat, targetLng], fallbackZoom, { animate: true, duration: 0.65 });
+                    map.once('moveend', function() {
+                        searchLayers(map);
+                        if (matchedMarker) {
+                            if (parentCluster && typeof parentCluster.zoomToShowLayer === 'function') {
+                                parentCluster.zoomToShowLayer(matchedMarker, function() {
+                                    try { matchedMarker.openPopup(); } catch(e) {}
+                                });
+                            } else {
+                                try { matchedMarker.openPopup(); } catch(e) {}
+                            }
+                        }
+                    });
                 }
             }
 
@@ -2621,6 +2654,14 @@ class MapTrashBinHook(MacroElement):
                 var pWin = window.parent;
                 if (pWin) {
                     pWin._geoaiFocusMapPin = focusMapPinByCitation;
+
+                    // If a focus request arrived before this map iframe finished mounting, process it now
+                    if (pWin._geoaiPendingFocusPin) {
+                        var pending = pWin._geoaiPendingFocusPin;
+                        pWin._geoaiPendingFocusPin = null;
+                        setTimeout(function() { focusMapPinByCitation(pending); }, 400);
+                    }
+
                     var pDoc = pWin.document;
                     if (pDoc && !pWin._geoaiCitationHookInstalled) {
                         pWin._geoaiCitationHookInstalled = true;
@@ -2636,12 +2677,16 @@ class MapTrashBinHook(MacroElement):
                                 var pLat = pinCit.getAttribute('data-lat');
                                 var pLng = pinCit.getAttribute('data-lng');
                                 var pLbl = pinCit.getAttribute('data-pin-label');
-                                focusMapPinByCitation({
+                                var payload = {
+                                    type: 'GEOAI_FOCUS_PIN',
                                     number: pinNum ? parseInt(pinNum, 10) : null,
                                     lat: (pLat && !isNaN(parseFloat(pLat))) ? parseFloat(pLat) : null,
                                     lng: (pLng && !isNaN(parseFloat(pLng))) ? parseFloat(pLng) : null,
                                     label: pLbl || null
-                                });
+                                };
+                                if (typeof pWin._geoaiFocusMapPin === 'function') {
+                                    pWin._geoaiFocusMapPin(payload);
+                                }
                                 return;
                             }
 
@@ -2659,6 +2704,27 @@ class MapTrashBinHook(MacroElement):
                     }
                 }
             } catch(e) {}
+
+            // Handle popup citation clicks inside Leaflet canvas
+            map.on('popupopen', function(e) {
+                var popupEl = e.popup && e.popup.getElement ? e.popup.getElement() : null;
+                if (popupEl && !popupEl._geoaiCitBound) {
+                    popupEl._geoaiCitBound = true;
+                    popupEl.addEventListener('click', function(evt) {
+                        var srcCit = evt.target && evt.target.closest && evt.target.closest('.tactical-cit[data-cit-target], .tactical-cit-src, .tactical-cit-lead, .tactical-cit-ps');
+                        if (srcCit) {
+                            evt.preventDefault();
+                            evt.stopPropagation();
+                            var citId = srcCit.getAttribute('data-cit-target') || srcCit.textContent.replace(/[\\[\\]]/g, '').trim();
+                            try {
+                                if (pWin && typeof pWin._geoaiHandleSourceCitation === 'function') {
+                                    pWin._geoaiHandleSourceCitation(null, citId, pWin.document);
+                                }
+                            } catch(err) {}
+                        }
+                    }, true);
+                }
+            });
 
             // 1. Instant client-side visual feedback on map canvas clicks (0ms latency)
             map.on('click', function(e) {
@@ -4490,6 +4556,20 @@ st.markdown(f"""
         flex-shrink: 0;
         transition: all 0.15s ease;
     }}
+    
+    /* Hide the zero-height parent bridge iframe completely to prevent visual artifacts */
+    iframe[title="geoai-parent-bridge"],
+    iframe[srcdoc*="geoai-parent-bridge"],
+    div[data-testid="stCustomComponentV1"]:has(iframe[srcdoc*="geoai-parent-bridge"]),
+    div[data-testid="stElementContainer"]:has(iframe[srcdoc*="geoai-parent-bridge"]) {{
+        display: none !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        max-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+    }}
     .geoai-source-detail[open] .geoai-source-badge {{
         color: #f87171;
         border-color: rgba(248, 113, 113, 0.3);
@@ -4499,302 +4579,324 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # 0ms Instant Target HUD Bridge: listens to Leaflet map clicks/drawings and interactive citations
-st.html("""<script>
-(function() {
-    function postToMapIframes(payload) {
-        try {
-            var iframes = document.querySelectorAll('iframe');
-            for (var i = 0; i < iframes.length; i++) {
-                if (iframes[i].contentWindow) {
-                    iframes[i].contentWindow.postMessage(payload, '*');
-                }
-            }
-        } catch (err) {}
-    }
+components.html(
+    """<!-- geoai-parent-bridge -->
+    <div id="geoai-parent-bridge" style="display:none;"></div>
+    <script>
+    (function() {
+        var pWin = window.parent;
+        if (!pWin) return;
+        var pDoc = pWin.document;
+        if (!pDoc) return;
 
-    function handleSourceCitation(srcCit, targetId, doc) {
-        var rawId = targetId || (srcCit && srcCit.getAttribute && srcCit.getAttribute('data-cit-target')) || (srcCit && srcCit.textContent) || '';
-        var normId = rawId.replace(/[\\[\\]]/g, '').trim().toUpperCase();
-        if (!normId) return;
-
-        var chatMsg = (srcCit && srcCit.closest) ? (srcCit.closest('div[data-testid="stChatMessage"]') || doc) : doc;
-
-        // 1. Expand the 'Verified Sources' expander if closed
-        var expanders = chatMsg.querySelectorAll('div[data-testid="stExpander"], details:not(.geoai-source-detail)');
-        for (var eIdx = 0; eIdx < expanders.length; eIdx++) {
-            var exp = expanders[eIdx];
-            if ((exp.textContent || '').indexOf('Verified Sources') !== -1) {
-                var detailsTag = exp.tagName === 'DETAILS' ? exp : exp.querySelector('details');
-                var summaryTag = exp.querySelector('summary') || exp.querySelector('[data-testid="stExpanderStepChevron"]') || exp.querySelector('div');
-
-                var isAlreadyOpen = false;
-                if (detailsTag && detailsTag.open) {
-                    isAlreadyOpen = true;
-                } else if (summaryTag && summaryTag.getAttribute('aria-expanded') === 'true') {
-                    isAlreadyOpen = true;
-                } else if (exp.classList.contains('open') || exp.getAttribute('data-state') === 'expanded') {
-                    isAlreadyOpen = true;
-                }
-
-                if (!isAlreadyOpen) {
-                    if (summaryTag) {
-                        try { summaryTag.click(); } catch(err) { if (detailsTag) detailsTag.open = true; }
-                    } else if (detailsTag) {
-                        detailsTag.open = true;
+        function postToMapIframes(payload) {
+            try {
+                var iframes = pDoc.querySelectorAll('iframe');
+                for (var i = 0; i < iframes.length; i++) {
+                    if (iframes[i].contentWindow) {
+                        iframes[i].contentWindow.postMessage(payload, '*');
                     }
                 }
-                break;
-            }
+            } catch (err) {}
         }
 
-        // 2. Find and activate matching source card
-        function activateCard(card) {
-            if (!card) return;
-            card.open = true;
-            card.classList.add('geoai-source-detail--highlight');
-            try {
-                card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            } catch(e) {
-                try { card.scrollIntoView(true); } catch(e2) {}
+        function handleSourceCitation(srcCit, targetId, doc) {
+            doc = doc || pDoc;
+            var rawId = targetId || (srcCit && srcCit.getAttribute && srcCit.getAttribute('data-cit-target')) || (srcCit && srcCit.textContent) || '';
+            var normId = rawId.replace(/[\\[\\]]/g, '').trim().toUpperCase();
+            if (!normId) return;
+
+            var chatMsg = (srcCit && srcCit.closest) ? (srcCit.closest('div[data-testid="stChatMessage"]') || srcCit.closest('.stChatMessage') || doc) : doc;
+
+            // 1. Expand the 'Verified Sources' expander if closed
+            var expanders = chatMsg.querySelectorAll('div[data-testid="stExpander"], details[data-testid="stExpander"], [data-testid="stExpander"]');
+            if (!expanders.length) {
+                expanders = doc.querySelectorAll('div[data-testid="stExpander"], details[data-testid="stExpander"], [data-testid="stExpander"]');
             }
-            setTimeout(function() {
-                card.classList.remove('geoai-source-detail--highlight');
-            }, 2500);
-        }
+            for (var eIdx = 0; eIdx < expanders.length; eIdx++) {
+                var exp = expanders[eIdx];
+                var expText = (exp.textContent || '').toLowerCase();
+                if (expText.indexOf('sources') !== -1 || expText.indexOf('verified') !== -1 || expText.indexOf('📑') !== -1) {
+                    var detailsTag = exp.tagName === 'DETAILS' ? exp : exp.querySelector('details');
+                    var summaryTag = exp.querySelector('summary') || exp.querySelector('[data-testid="stExpanderStepChevron"]') || exp.querySelector('button');
 
-        function findCard(scope) {
-            var allCards = (scope || doc).querySelectorAll('details.geoai-source-detail');
-            if (!allCards || !allCards.length) return null;
+                    var isAlreadyOpen = false;
+                    if (detailsTag && detailsTag.open) {
+                        isAlreadyOpen = true;
+                    } else if (summaryTag && summaryTag.getAttribute('aria-expanded') === 'true') {
+                        isAlreadyOpen = true;
+                    } else if (exp.classList.contains('open') || exp.getAttribute('data-state') === 'expanded') {
+                        isAlreadyOpen = true;
+                    }
 
-            for (var c = 0; c < allCards.length; c++) {
-                var cId = (allCards[c].getAttribute('data-cit-id') || '').trim().toUpperCase();
-                if (cId === normId) return allCards[c];
-            }
-
-            for (var t = 0; t < allCards.length; t++) {
-                var tEl = allCards[t].querySelector('.geoai-source-title') || allCards[t];
-                var tText = (tEl.textContent || '').toUpperCase();
-                if (tText.indexOf('[' + normId + ']') !== -1) return allCards[t];
-            }
-
-            if (normId.startsWith('S')) {
-                var numS = parseInt(normId.substring(1), 10);
-                if (!isNaN(numS) && numS >= 1 && numS <= allCards.length) {
-                    return allCards[numS - 1];
+                    if (!isAlreadyOpen) {
+                        if (summaryTag && summaryTag.click) {
+                            try { summaryTag.click(); } catch(err) { if (detailsTag) detailsTag.open = true; }
+                        } else if (detailsTag) {
+                            detailsTag.open = true;
+                        }
+                    }
+                    break;
                 }
             }
 
-            if (normId.startsWith('L')) {
-                var numL = parseInt(normId.substring(1), 10);
-                if (!isNaN(numL) && numL >= 1 && numL <= allCards.length) {
-                    return allCards[numL - 1];
+            // 2. Find and activate matching source card
+            function activateCard(card) {
+                if (!card) return;
+                card.open = true;
+                card.classList.add('geoai-source-detail--highlight');
+                try {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } catch(e) {
+                    try { card.scrollIntoView(true); } catch(e2) {}
                 }
+                setTimeout(function() {
+                    card.classList.remove('geoai-source-detail--highlight');
+                }, 3000);
             }
 
-            return allCards[0] || null;
-        }
+            function findCard(scope) {
+                var allCards = (scope || doc).querySelectorAll('details.geoai-source-detail');
+                if (!allCards || !allCards.length) return null;
 
-        [10, 60, 150, 300, 500].forEach(function(delay) {
-            setTimeout(function() {
-                var card = findCard(chatMsg) || findCard(doc);
-                if (card) {
-                    activateCard(card);
+                // A. Exact data-cit-id match (e.g. data-cit-id="S1" or "P3-S1")
+                for (var c = 0; c < allCards.length; c++) {
+                    var cId = (allCards[c].getAttribute('data-cit-id') || '').trim().toUpperCase();
+                    if (cId === normId) return allCards[c];
                 }
-            }, delay);
-        });
-    }
 
-    window._geoaiHandleSourceCitation = handleSourceCitation;
+                // B. Suffix or substring match (e.g. "P3-S1" matches "S1" or vice-versa)
+                for (var c2 = 0; c2 < allCards.length; c2++) {
+                    var cId2 = (allCards[c2].getAttribute('data-cit-id') || '').trim().toUpperCase();
+                    if (cId2.indexOf(normId) !== -1 || normId.indexOf(cId2) !== -1) return allCards[c2];
+                }
 
-    if (window._geoaiSelectionBridgeInstalled) return;
-    window._geoaiSelectionBridgeInstalled = true;
+                // C. Header text match (e.g. "[S1]" or "[P3-S1]")
+                for (var t = 0; t < allCards.length; t++) {
+                    var tEl = allCards[t].querySelector('.geoai-source-title') || allCards[t];
+                    var tText = (tEl.textContent || '').toUpperCase();
+                    if (tText.indexOf('[' + normId + ']') !== -1 || tText.indexOf(normId) !== -1) return allCards[t];
+                }
 
-    // 0ms Parent-to-Iframe Event Forwarding (Clear buttons, Chat Submit, Recon Scan)
-    document.addEventListener('click', function(e) {
-        var target = e.target;
-        if (!target || !target.closest) return;
+                // D. Numeric fallback: e.g. "S1" -> 1st card, "S2" -> 2nd card
+                var numDigits = normId.match(/\\d+/);
+                if (numDigits) {
+                    var sIndex = parseInt(numDigits[0], 10) - 1;
+                    if (sIndex >= 0 && sIndex < allCards.length) {
+                        return allCards[sIndex];
+                    }
+                }
 
-        // 0a. Interactive Location Citation Badge ([1], [2]) -> 0ms Map Zoom & Focus + Popup
-        var pinCit = target.closest('.tactical-cit-pin');
-        if (pinCit) {
-            e.preventDefault();
-            e.stopPropagation();
-            var pinNum = pinCit.getAttribute('data-pin-number');
-            var pLat = pinCit.getAttribute('data-lat');
-            var pLng = pinCit.getAttribute('data-lng');
-            var pLbl = pinCit.getAttribute('data-pin-label');
-            var payload = {
-                type: 'GEOAI_FOCUS_PIN',
-                number: pinNum ? parseInt(pinNum, 10) : null,
-                lat: (pLat && !isNaN(parseFloat(pLat))) ? parseFloat(pLat) : null,
-                lng: (pLng && !isNaN(parseFloat(pLng))) ? parseFloat(pLng) : null,
-                label: pLbl || null
-            };
-            if (typeof window._geoaiFocusMapPin === 'function') {
-                window._geoaiFocusMapPin(payload);
+                return allCards[0] || null;
             }
-            postToMapIframes(payload);
-            return;
-        }
 
-        // 0b. Interactive Source Citation Badge ([S1], [L1], [P1-S1]) -> Expand Verified Sources & Open Inspect Card
-        var srcCit = target.closest('.tactical-cit[data-cit-target], .tactical-cit-src, .tactical-cit-lead, .tactical-cit-ps');
-        if (srcCit) {
-            e.preventDefault();
-            e.stopPropagation();
-            var citId = srcCit.getAttribute('data-cit-target') || srcCit.textContent.replace(/[\\[\\]]/g, '').trim();
-            handleSourceCitation(srcCit, citId, document);
-            return;
-        }
-
-        // 1. Instant preview pill Clear button
-        var instClr = target.closest('[data-geoai-action="clear"]');
-        if (instClr) {
-            var slot = document.getElementById('geoai-instant-pill-slot');
-            if (slot) {
-                slot.style.display = 'none';
-                slot.innerHTML = '';
-            }
-            postToMapIframes({ type: 'GEOAI_PARENT_CMD', action: 'clear' });
-            return;
-        }
-
-        // 1b. Instant preview pill Recon button
-        var instRec = target.closest('[data-geoai-action="recon"]');
-        if (instRec) {
-            postToMapIframes({ type: 'GEOAI_QUERY_STATE', state: 'querying' });
-            var realBtn = document.querySelector('button[key="run_chat_recon"]') || Array.from(document.querySelectorAll('button')).find(function(b) {
-                return (b.textContent || '').indexOf('Recon') !== -1;
+            [0, 35, 110, 260, 520].forEach(function(delay) {
+                setTimeout(function() {
+                    var card = findCard(chatMsg) || findCard(doc);
+                    if (card) {
+                        activateCard(card);
+                    }
+                }, delay);
             });
-            if (realBtn) {
-                realBtn.click();
-            }
-            return;
         }
 
-        // 2. Streamlit Clear / Reset buttons -> 0ms visual cleanup in map iframe
-        var btn = target.closest('button');
-        if (btn) {
-            var txt = (btn.textContent || '').trim();
-            if (
-                txt.indexOf('❌ Clear') !== -1 ||
-                txt.indexOf('Clear Box') !== -1 ||
-                txt.indexOf('Clear Point') !== -1 ||
-                txt.indexOf('Reset Map Layers') !== -1 ||
-                txt.indexOf('Clear Map & Console') !== -1
-            ) {
-                var slot2 = document.getElementById('geoai-instant-pill-slot');
-                if (slot2) {
-                    slot2.style.display = 'none';
-                    slot2.innerHTML = '';
+        pWin._geoaiHandleSourceCitation = handleSourceCitation;
+
+        if (pWin._geoaiSelectionBridgeInstalled) return;
+        pWin._geoaiSelectionBridgeInstalled = true;
+
+        // 0ms Parent-to-Iframe Event Forwarding (Clear buttons, Chat Submit, Recon Scan, Citations)
+        pDoc.addEventListener('click', function(e) {
+            var target = e.target;
+            if (!target || !target.closest) return;
+
+            // 0a. Interactive Location Citation Badge ([1], [2]) -> 0ms Map Zoom & Focus + Popup
+            var pinCit = target.closest('.tactical-cit-pin');
+            if (pinCit) {
+                e.preventDefault();
+                e.stopPropagation();
+                var pinNum = pinCit.getAttribute('data-pin-number');
+                var pLat = pinCit.getAttribute('data-lat');
+                var pLng = pinCit.getAttribute('data-lng');
+                var pLbl = pinCit.getAttribute('data-pin-label');
+                var payload = {
+                    type: 'GEOAI_FOCUS_PIN',
+                    number: pinNum ? parseInt(pinNum, 10) : null,
+                    lat: (pLat && !isNaN(parseFloat(pLat))) ? parseFloat(pLat) : null,
+                    lng: (pLng && !isNaN(parseFloat(pLng))) ? parseFloat(pLng) : null,
+                    label: pLbl || null
+                };
+                if (typeof pWin._geoaiFocusMapPin === 'function') {
+                    pWin._geoaiFocusMapPin(payload);
+                } else {
+                    pWin._geoaiPendingFocusPin = payload;
                 }
-                postToMapIframes({ type: 'GEOAI_PARENT_CMD', action: 'clear_visuals' });
+                postToMapIframes(payload);
                 return;
             }
-            // 3. Recon Scan or Chat Submit button -> 0ms querying scanline + pulse
-            var inChatInput = Boolean(btn.closest('div[data-testid="stChatInput"]'));
-            if (
-                txt.indexOf('Recon') !== -1 ||
-                btn.getAttribute('data-testid') === 'stChatInputSubmitButton' ||
-                inChatInput
-            ) {
+
+            // 0b. Interactive Source Citation Badge ([S1], [L1], [P1-S1]) -> Expand Verified Sources & Open Inspect Card
+            var srcCit = target.closest('.tactical-cit[data-cit-target], .tactical-cit-src, .tactical-cit-lead, .tactical-cit-ps');
+            if (srcCit) {
+                e.preventDefault();
+                e.stopPropagation();
+                var citId = srcCit.getAttribute('data-cit-target') || srcCit.textContent.replace(/[\\[\\]]/g, '').trim();
+                handleSourceCitation(srcCit, citId, pDoc);
+                return;
+            }
+
+            // 1. Instant preview pill Clear button
+            var instClr = target.closest('[data-geoai-action="clear"]');
+            if (instClr) {
+                var slot = pDoc.getElementById('geoai-instant-pill-slot');
+                if (slot) {
+                    slot.style.display = 'none';
+                    slot.innerHTML = '';
+                }
+                postToMapIframes({ type: 'GEOAI_PARENT_CMD', action: 'clear' });
+                return;
+            }
+
+            // 1b. Instant preview pill Recon button
+            var instRec = target.closest('[data-geoai-action="recon"]');
+            if (instRec) {
                 postToMapIframes({ type: 'GEOAI_QUERY_STATE', state: 'querying' });
-            }
-        }
-    }, true);
-
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            var ta = e.target && e.target.closest && e.target.closest('div[data-testid="stChatInput"] textarea');
-            if (ta && ta.value && ta.value.trim().length > 0) {
-                postToMapIframes({ type: 'GEOAI_QUERY_STATE', state: 'querying' });
-            }
-        }
-    }, true);
-
-    window.addEventListener('message', function(event) {
-        if (!event.data) return;
-        if (event.data.type === 'GEOAI_PARENT_CMD') {
-            if (event.data.action === 'trigger_recon') {
-                var reconBtn = document.querySelector('.st-key-run_chat_recon button') ||
-                    document.querySelector('button[key="run_chat_recon"]') ||
-                    Array.from(document.querySelectorAll('button')).find(function(b) {
-                        return (b.textContent || '').indexOf('Recon') !== -1;
-                    });
-                if (reconBtn) {
-                    try { reconBtn.click(); } catch(e) {}
+                var realBtn = pDoc.querySelector('button[key="run_chat_recon"]') || Array.from(pDoc.querySelectorAll('button')).find(function(b) {
+                    return (b.textContent || '').indexOf('Recon') !== -1;
+                });
+                if (realBtn) {
+                    realBtn.click();
                 }
-            } else if (event.data.action === 'trigger_clear') {
-                var clearBtn = document.querySelector('.st-key-clear_chat_pts button') ||
-                    document.querySelector('button[key="clear_chat_pts"]') ||
-                    Array.from(document.querySelectorAll('button')).find(function(b) {
-                        return (b.textContent || '').indexOf('Clear') !== -1;
-                    });
-                if (clearBtn) {
-                    try { clearBtn.click(); } catch(e) {}
-                }
+                return;
             }
-            return;
-        }
-        if (event.data.type !== 'GEOAI_SELECTION_EVENT') return;
-        var data = event.data;
-        var slot = document.getElementById('geoai-instant-pill-slot');
-        if (!slot) return;
 
-        if (data.action === 'clear') {
-            slot.style.display = 'none';
-            slot.innerHTML = '';
-            return;
-        }
-
-        var pillHtml = '';
-        if (data.action === 'set_point') {
-            var plat = Number(data.lat).toFixed(4);
-            var plng = Number(data.lng).toFixed(4);
-            pillHtml = "<div class='geo-docked-pill' title='Attached Tactical Target: (" + plat + "°, " + plng + "°)'>" +
-                       "<span class='geo-pill-icon'>📍</span>" +
-                       "<span class='geo-pill-label'>TARGET:</span>" +
-                       "<span class='geo-pill-coord'>(" + plat + "°, " + plng + "°)</span>" +
-                       "</div>";
-        } else if (data.action === 'set_bbox') {
-            var sw_lat = Number(data.sw[0]).toFixed(4);
-            var sw_lng = Number(data.sw[1]).toFixed(4);
-            var ne_lat = Number(data.ne[0]).toFixed(4);
-            var ne_lng = Number(data.ne[1]).toFixed(4);
-            pillHtml = "<div class='geo-docked-pill geo-docked-pill-stacked' title='Bounding Box AOI: Lower-Left (" + sw_lat + "°, " + sw_lng + "°) | Upper-Right (" + ne_lat + "°, " + ne_lng + "°)'>" +
-                       "<span class='geo-pill-icon'>📦</span>" +
-                       "<div class='geo-pill-stack'>" +
-                       "<div class='geo-pill-row'><span class='geo-pill-sublabel'>SW:</span><span class='geo-pill-coord'>" + sw_lat + "°, " + sw_lng + "°</span></div>" +
-                       "<div class='geo-pill-row'><span class='geo-pill-sublabel'>NE:</span><span class='geo-pill-coord'>" + ne_lat + "°, " + ne_lng + "°</span></div>" +
-                       "</div></div>";
-        }
-
-        if (pillHtml) {
-            slot.innerHTML = "<div class='geoai-instant-pill-row'>" +
-                             "<div class='geoai-instant-pill-col-left'>" + pillHtml + "</div>" +
-                             "<div class='geoai-instant-pill-col-mid'><div class='geoai-instant-btn' data-geoai-action='clear' style='cursor:pointer;'>❌ Clear</div></div>" +
-                             "<div class='geoai-instant-pill-col-right'><div class='geoai-instant-btn' data-geoai-action='recon' style='cursor:pointer;'>🔍 Recon</div></div>" +
-                             "</div>";
-            slot.style.display = 'block';
-        }
-    });
-
-    // Forward window resize to map iframes to keep Leaflet tiles synchronized
-    function forwardResizeToIframes() {
-        try {
-            var mapIframes = document.querySelectorAll('iframe');
-            for (var i = 0; i < mapIframes.length; i++) {
-                if (mapIframes[i].contentWindow) {
-                    mapIframes[i].contentWindow.dispatchEvent(new Event('resize'));
+            // 2. Streamlit Clear / Reset buttons -> 0ms visual cleanup in map iframe
+            var btn = target.closest('button');
+            if (btn) {
+                var txt = (btn.textContent || '').trim();
+                if (
+                    txt.indexOf('❌ Clear') !== -1 ||
+                    txt.indexOf('Clear Box') !== -1 ||
+                    txt.indexOf('Clear Point') !== -1 ||
+                    txt.indexOf('Reset Map Layers') !== -1 ||
+                    txt.indexOf('Clear Map & Console') !== -1
+                ) {
+                    var slot2 = pDoc.getElementById('geoai-instant-pill-slot');
+                    if (slot2) {
+                        slot2.style.display = 'none';
+                        slot2.innerHTML = '';
+                    }
+                    postToMapIframes({ type: 'GEOAI_PARENT_CMD', action: 'clear_visuals' });
+                    return;
+                }
+                // 3. Recon Scan or Chat Submit button -> 0ms querying scanline + pulse
+                var inChatInput = Boolean(btn.closest('div[data-testid="stChatInput"]'));
+                if (
+                    txt.indexOf('Recon') !== -1 ||
+                    btn.getAttribute('data-testid') === 'stChatInputSubmitButton' ||
+                    inChatInput
+                ) {
+                    postToMapIframes({ type: 'GEOAI_QUERY_STATE', state: 'querying' });
+                    return;
                 }
             }
-        } catch(e) {}
-    }
-    window.addEventListener('resize', forwardResizeToIframes);
-})();
-</script>
-<div id="geoai-instant-pill-slot" style="display: none;"></div>
-""", unsafe_allow_javascript=True)
+        }, true);
+
+        pDoc.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                var ta = e.target && e.target.closest && e.target.closest('div[data-testid="stChatInput"] textarea');
+                if (ta && ta.value && ta.value.trim().length > 0) {
+                    postToMapIframes({ type: 'GEOAI_QUERY_STATE', state: 'querying' });
+                }
+            }
+        }, true);
+
+        pWin.addEventListener('message', function(event) {
+            if (!event.data) return;
+            if (event.data.type === 'GEOAI_PARENT_CMD') {
+                if (event.data.action === 'trigger_recon') {
+                    var reconBtn = pDoc.querySelector('.st-key-run_chat_recon button') ||
+                        pDoc.querySelector('button[key="run_chat_recon"]') ||
+                        Array.from(pDoc.querySelectorAll('button')).find(function(b) {
+                            return (b.textContent || '').indexOf('Recon') !== -1;
+                        });
+                    if (reconBtn) {
+                        try { reconBtn.click(); } catch(e) {}
+                    }
+                } else if (event.data.action === 'trigger_clear') {
+                    var clearBtn = pDoc.querySelector('.st-key-clear_chat_pts button') ||
+                        pDoc.querySelector('button[key="clear_chat_pts"]') ||
+                        Array.from(pDoc.querySelectorAll('button')).find(function(b) {
+                            return (b.textContent || '').indexOf('Clear') !== -1;
+                        });
+                    if (clearBtn) {
+                        try { clearBtn.click(); } catch(e) {}
+                    }
+                }
+                return;
+            }
+            if (event.data.type !== 'GEOAI_SELECTION_EVENT') return;
+            var data = event.data;
+            var slot = pDoc.getElementById('geoai-instant-pill-slot');
+            if (!slot) return;
+
+            if (data.action === 'clear') {
+                slot.style.display = 'none';
+                slot.innerHTML = '';
+                return;
+            }
+
+            var pillHtml = '';
+            if (data.action === 'set_point') {
+                var plat = Number(data.lat).toFixed(4);
+                var plng = Number(data.lng).toFixed(4);
+                pillHtml = "<div class='geo-docked-pill' title='Attached Tactical Target: (" + plat + "°, " + plng + "°)'>" +
+                           "<span class='geo-pill-icon'>📍</span>" +
+                           "<span class='geo-pill-label'>TARGET:</span>" +
+                           "<span class='geo-pill-coord'>(" + plat + "°, " + plng + "°)</span>" +
+                           "</div>";
+            } else if (data.action === 'set_bbox') {
+                var sw_lat = Number(data.sw[0]).toFixed(4);
+                var sw_lng = Number(data.sw[1]).toFixed(4);
+                var ne_lat = Number(data.ne[0]).toFixed(4);
+                var ne_lng = Number(data.ne[1]).toFixed(4);
+                pillHtml = "<div class='geo-docked-pill geo-docked-pill-stacked' title='Bounding Box AOI: Lower-Left (" + sw_lat + "°, " + sw_lng + "°) | Upper-Right (" + ne_lat + "°, " + ne_lng + "°)'>" +
+                           "<span class='geo-pill-icon'>📦</span>" +
+                           "<div class='geo-pill-stack'>" +
+                           "<div class='geo-pill-row'><span class='geo-pill-sublabel'>SW:</span><span class='geo-pill-coord'>" + sw_lat + "°, " + sw_lng + "°</span></div>" +
+                           "<div class='geo-pill-row'><span class='geo-pill-sublabel'>NE:</span><span class='geo-pill-coord'>" + ne_lat + "°, " + ne_lng + "°</span></div>" +
+                           "</div></div>";
+            }
+
+            if (pillHtml) {
+                slot.innerHTML = "<div class='geoai-instant-pill-row'>" +
+                                 "<div class='geoai-instant-pill-col-left'>" + pillHtml + "</div>" +
+                                 "<div class='geoai-instant-pill-col-mid'><div class='geoai-instant-btn' data-geoai-action='clear' style='cursor:pointer;'>❌ Clear</div></div>" +
+                                 "<div class='geoai-instant-pill-col-right'><div class='geoai-instant-btn' data-geoai-action='recon' style='cursor:pointer;'>🔍 Recon</div></div>" +
+                                 "</div>";
+                slot.style.display = 'block';
+            }
+        });
+
+        // Forward window resize to map iframes to keep Leaflet tiles synchronized
+        function forwardResizeToIframes() {
+            try {
+                var mapIframes = pDoc.querySelectorAll('iframe');
+                for (var i = 0; i < mapIframes.length; i++) {
+                    if (mapIframes[i].contentWindow) {
+                        mapIframes[i].contentWindow.dispatchEvent(new Event('resize'));
+                    }
+                }
+            } catch(e) {}
+        }
+        window.addEventListener('resize', forwardResizeToIframes);
+    pWin.addEventListener('resize', forwardResizeToIframes);
+    })();
+    </script>""",
+    height=0,
+    width=0,
+)
+st.html('<div id="geoai-instant-pill-slot" style="display: none;"></div>')
 
 
 # ==============================================================================

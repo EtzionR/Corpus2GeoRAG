@@ -110,7 +110,9 @@ try:
             pass
 
     _warmup_thread = threading.Thread(target=_warmup_graph_worker, daemon=True, name="GeoAI-GraphPrewarm")
-    _warmup_thread.start()
+    _GRAPH_WARMUP_LOCK = threading.Lock()
+    if "pytest" not in sys.modules and not os.environ.get("PYTEST_CURRENT_TEST"):
+        _warmup_thread.start()
 except Exception as _import_err:
     logger.debug("GeoRAG backend not importable directly: %s", _import_err)
 
@@ -1187,7 +1189,8 @@ def query_geo_agent(
                                 doc_clean = f"{doc_clean} <span style='color:#94a3b8; font-size:0.85em;'>(¶{int(para_idx) + 1})</span>"
                     else:
                         doc_clean = s_ptr
-                    src_lines.append(f"<div style='margin-bottom:2px;'>• <b style='color:#00e5ff;'>[{tag}]</b> {doc_clean}</div>")
+                    tag_badge = f"<a href='#geoai-src-{tag}' class='tactical-cit tactical-cit-ps' data-cit-target='{tag}' style='cursor:pointer;' title='Click to inspect source'>[{tag}]</a>"
+                    src_lines.append(f"<div style='margin-bottom:2px;'>• <b style='color:#00e5ff;'>{tag_badge}</b> {doc_clean}</div>")
                 more_count = len(sources_list) - len(diverse_sources)
                 more_html = f"<div style='color:#94a3b8; font-size:0.85em; margin-top:2px;'><i>(+{more_count} more sources)</i></div>" if more_count > 0 else ""
                 src_html = (

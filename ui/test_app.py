@@ -3110,6 +3110,47 @@ class TestPhase1BackendChangesIntegration:
         assert "focusMapPinByCitation" in script
         assert "GEOAI_FOCUS_PIN" in script
         assert "zoomToShowLayer" in script
+        assert "searchLayers" in script
+        assert "components.html(" in app_code
+        assert "geoai-parent-bridge" in app_code
+        assert "_geoaiHandleSourceCitation" in app_code
+
+    def test_popup_sources_list_interactive_citation_badges(self, monkeypatch):
+        """Verify pin popups embed clickable citation badges for evidence sources."""
+        import geo_agent
+        fake_raw = {
+            "answer": "Bakhmut saw heavy drone strikes [1].",
+            "geo_locations": [
+                {
+                    "name": "Bakhmut",
+                    "number": 1,
+                    "lat": 48.589,
+                    "lon": 38.002,
+                    "kind": "town",
+                    "role": "primary",
+                    "why": "HEAVILY CONTESTED in 10 records",
+                    "sources": ["TEXT_101", "TEXT_102"]
+                }
+            ],
+            "citations": [],
+            "sources": []
+        }
+        monkeypatch.setattr(geo_agent, "_BACKEND_AVAILABLE", True)
+        monkeypatch.setattr(geo_agent, "_backend_query", lambda **kw: fake_raw)
+        monkeypatch.setattr(geo_agent, "_backend_get_source_text", lambda ptr: {"pointer": ptr, "document": f"Doc for {ptr}", "section": "General", "text": "Sample text"})
+        if hasattr(geo_agent.get_source_text, "cache_clear"):
+            geo_agent.get_source_text.cache_clear()
+
+        resp = geo_agent.query_geo_agent(
+            text_prompt="Where were drone attacks?",
+            api_key="sk-or-test"
+        )
+        assert resp.layers
+        pin1 = next((l for l in resp.layers if l.data and l.data.get("number") == 1), None)
+        assert pin1 is not None
+        assert "tactical-cit" in pin1.popup
+        assert "data-cit-target=" in pin1.popup
+        assert "[P1-S1]" in pin1.popup
 
     def test_format_tactical_citations_preserves_links_and_plain_text(self):
         """Verify format_tactical_citations does not mangle markdown links or plain brackets."""
@@ -3136,3 +3177,1053 @@ class TestPhase1BackendChangesIntegration:
         assert "geo_locations" in msg
         assert len(msg["geo_locations"]) == 1
         assert msg["geo_locations"][0]["label"] == "Kharkiv"
+
+
+
+# ==============================================================================
+# PHASE 1.1: Static Performance & Invariant Auditing (AST / Lint Tests)
+# ==============================================================================
+class TestPhase1StaticPerformanceAndInvariantAuditing:
+    """
+    Static AST and source-level invariant tests guaranteeing:
+    1. `st_folium` strictly constrains `returned_objects` and disables `return_on_hover`.
+    2. Custom Leaflet controls/hooks preserve client-side debounce and cooldown timers.
+    3. Knowledge graph lookups and bootstrap logic use proper caching and once-per-process guards.
+    4. No illegal `st.rerun()` calls exist in early queueing or map click/draw handlers.
+    5. Container heights remain constant and dense layer lists do not explode widget IDs.
+    """
+
+    @staticmethod
+    def _parse_ast(filename: str):
+        import ast
+        import os
+        filepath = os.path.join(os.path.dirname(__file__), filename)
+        with open(filepath, "r", encoding="utf-8") as f:
+            source = f.read()
+        return ast.parse(source, filename=filename), source
+
+    def test_ast_st_folium_strict_returned_objects_and_zero_hover(self):
+        """
+        Rule 1.1: Assert every `st_folium(...)` call in `app.py` explicitly restricts
+        `returned_objects` to `["last_clicked", "last_active_drawing", "all_drawings"]`,
+        sets `return_on_hover=False`, passes `feature_group_to_add`, and uses a fixed height.
+        """
+        import ast
+
+        tree, _ = self._parse_ast("app.py")
+        st_folium_calls = []
+
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Call):
+                func_name = None
+                if isinstance(node.func, ast.Name):
+                    func_name = node.func.id
+                elif isinstance(node.func, ast.Attribute):
+                    func_name = node.func.attr
+                if func_name == "st_folium":
+                    st_folium_calls.append(node)
+
+        assert len(st_folium_calls) >= 1, "Expected at least one st_folium() call in app.py"
+
+        allowed_returned_objects = ["last_clicked", "last_active_drawing", "all_drawings"]
+        forbidden_returned_objects = {"bounds", "zoom", "center", "last_object_clicked", "last_object_clicked_popup", "last_object_clicked_tooltip"}
+
+        for call in st_folium_calls:
+            kw_map = {kw.arg: kw.value for kw in call.keywords if kw.arg is not None}
+
+            # 1. Verify returned_objects is explicitly specified and strictly minimal
+            assert "returned_objects" in kw_map, (
+                f"st_folium() at line {call.lineno} must explicitly pass `returned_objects`"
+            )
+            ret_node = kw_map["returned_objects"]
+            assert isinstance(ret_node, ast.List), (
+                f"st_folium() `returned_objects` at line {call.lineno} must be a list literal"
+            )
+            actual_keys = [
+                elt.value for elt in ret_node.elts
+                if isinstance(elt, ast.Constant) and isinstance(elt.value, str)
+            ]
+            assert actual_keys == allowed_returned_objects, (
+                f"st_folium() at line {call.lineno} has returned_objects={actual_keys}; "
+                f"expected strictly {allowed_returned_objects}"
+            )
+            assert not (set(actual_keys) & forbidden_returned_objects), (
+                f"st_folium() at line {call.lineno} includes pan/zoom rerun triggers: "
+                f"{set(actual_keys) & forbidden_returned_objects}"
+            )
+
+            # 2. Verify return_on_hover=False
+            assert "return_on_hover" in kw_map, (
+                f"st_folium() at line {call.lineno} must explicitly set `return_on_hover=False`"
+            )
+            hover_node = kw_map["return_on_hover"]
+            assert isinstance(hover_node, ast.Constant) and hover_node.value is False, (
+                f"st_folium() at line {call.lineno} must set `return_on_hover=False`"
+            )
+
+            # 3. Verify feature_group_to_add is used for dynamic layers
+            assert "feature_group_to_add" in kw_map, (
+                f"st_folium() at line {call.lineno} must pass `feature_group_to_add` to avoid map re-instantiation"
+            )
+
+            # 4. Verify fixed integer height (Rule 3.1)
+            assert "height" in kw_map, f"st_folium() at line {call.lineno} must set a constant height"
+            height_node = kw_map["height"]
+            assert isinstance(height_node, ast.Constant) and isinstance(height_node.value, int), (
+                f"st_folium() height at line {call.lineno} must be a constant integer"
+            )
+
+    def test_ast_and_dom_leaflet_controls_maintain_debounce_and_cooldown_thresholds(self):
+        """
+        Rule 1.2: Verify custom Leaflet controls (`PinFilterControl`, `MapTrashBinHook`)
+        maintain client-side debouncing (>=100ms) for marker filtering/counts, >=500ms
+        post-draw cooldown to suppress synthetic corner clicks, and payload deduplication.
+        """
+        import re
+        import folium
+        import app
+
+        _, app_source = self._parse_ast("app.py")
+
+        # 1. Verify PinFilterControl debouncedRefreshPinCounts uses clearTimeout + setTimeout >= 100ms
+        assert "debouncedRefreshPinCounts" in app_source
+        assert "clearTimeout(_refreshTimer)" in app_source
+        debounce_match = re.search(
+            r"function\s+debouncedRefreshPinCounts\s*\(\s*delay\s*\)\s*\{[^}]*setTimeout\s*\(\s*refreshPinCounts\s*,\s*delay\s*\|\|\s*(\d+)\s*\)",
+            app_source,
+            re.DOTALL,
+        )
+        assert debounce_match is not None, (
+            "PinFilterControl must debounce refreshPinCounts via setTimeout(refreshPinCounts, delay || <ms>)"
+        )
+        debounce_ms = int(debounce_match.group(1))
+        assert 100 <= debounce_ms <= 500, (
+            f"PinFilterControl debounce threshold {debounce_ms}ms out of bounds [100ms, 500ms]"
+        )
+
+        # 2. Verify client-side style toggling (0ms DOM filter without server round-trip)
+        assert "layer._icon.style.display" in app_source
+        assert "geoai-hide-primary-pins" in app_source
+        assert "geoai-hide-context-pins" in app_source
+        assert "geoai-hide-uncertain-pins" in app_source
+
+        # 3. Verify MapTrashBinHook post-draw cooldown >= 500ms and immediate dispatch deduplication
+        m = folium.Map()
+        app.MapTrashBinHook().add_to(m)
+        hook_script = m.get_root().render()
+
+        cooldown_match = re.search(
+            r"map\._justDrew\s*=\s*false.*?\},\s*(\d+)\s*\)",
+            hook_script,
+            re.DOTALL,
+        )
+        assert cooldown_match is not None, "MapTrashBinHook must reset map._justDrew after a cooldown timeout"
+        cooldown_ms = int(cooldown_match.group(1))
+        assert cooldown_ms >= 500, (
+            f"MapTrashBinHook post-draw cooldown {cooldown_ms}ms is too short (<500ms) to block corner clicks"
+        )
+        assert "JSON.stringify(g.previous_data) !== JSON.stringify(u)" in hook_script, (
+            "geoaiImmediateDispatch must deduplicate identical payloads via JSON.stringify(g.previous_data)"
+        )
+
+    def test_ast_caching_decorators_and_bootstrap_hygiene(self):
+        """
+        Rule 2.1 & 2.2: Assert `get_source_text` is decorated with `@functools.lru_cache(maxsize=4096)`,
+        `app.py` guards dependency checks behind `_BOOTSTRAP_DONE`, and no unguarded
+        `importlib.reload()` calls exist in module scope.
+        """
+        import ast
+        import geo_agent
+
+        # 1. Runtime & AST check on geo_agent.get_source_text
+        assert hasattr(geo_agent.get_source_text, "cache_info"), (
+            "geo_agent.get_source_text must be wrapped with @functools.lru_cache"
+        )
+        info = geo_agent.get_source_text.cache_info()
+        assert info.maxsize is not None and info.maxsize >= 4096, (
+            f"geo_agent.get_source_text LRU cache maxsize={info.maxsize} must be >= 4096"
+        )
+
+        ga_tree, _ = self._parse_ast("geo_agent.py")
+        found_get_source_text = False
+        for node in ast.walk(ga_tree):
+            if isinstance(node, ast.FunctionDef) and node.name == "get_source_text":
+                found_get_source_text = True
+                assert len(node.decorator_list) >= 1, "get_source_text must have @functools.lru_cache decorator"
+        assert found_get_source_text
+
+        # 2. Verify app.py bootstrap hygiene (Rule 2.1)
+        app_tree, app_source = self._parse_ast("app.py")
+        assert "_BOOTSTRAP_DONE" in app_source, (
+            "app.py must guard dependency bootstrapping with `_BOOTSTRAP_DONE` so it runs once per process"
+        )
+        assert '"source_metadata_cache"' in app_source, (
+            "app.py must maintain `source_metadata_cache` in st.session_state"
+        )
+
+        # Ensure no unguarded top-level expression/assignment calls importlib.reload
+        for stmt in app_tree.body:
+            if isinstance(stmt, (ast.Expr, ast.Assign)):
+                for sub in ast.walk(stmt):
+                    if isinstance(sub, ast.Call) and isinstance(sub.func, ast.Attribute):
+                        if sub.func.attr == "reload":
+                            pytest.fail(
+                                f"Illegal unguarded top-level `reload()` call found in app.py at line {sub.lineno}"
+                            )
+
+    def test_ast_no_illegal_st_rerun_in_early_queue_or_map_click_draw_paths(self):
+        """
+        Verify via AST analysis that:
+        1. Section 2c (early query ingestion & queueing) and Section 2b (early map event ingestion)
+           contain ZERO `st.rerun()` calls.
+        2. Inside `render_tactical_map_fragment`, `st.rerun()` is NEVER called during
+           normal map clicks, rectangle AOI drawing, point drawing, or trash deletion;
+           only `action == "recon"` may trigger a full-app rerun.
+        3. Pure helper functions never invoke `st.rerun()`.
+        """
+        import ast
+
+        app_tree, app_source = self._parse_ast("app.py")
+        lines = app_source.splitlines()
+
+        # Find all st.rerun() call line numbers across app.py
+        rerun_lines = []
+        for node in ast.walk(app_tree):
+            if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
+                if isinstance(node.func.value, ast.Name) and node.func.value.id == "st" and node.func.attr == "rerun":
+                    rerun_lines.append(node.lineno)
+
+        assert len(rerun_lines) > 0, "Expected to locate valid st.rerun() calls in app.py"
+
+        # 1. Locate Section 2c and Section 2b line bounds
+        sec_2c_line = next(i + 1 for i, l in enumerate(lines) if "2c. Early Query Ingestion & Queueing" in l)
+        sec_2b_line = next(i + 1 for i, l in enumerate(lines) if "2b. Early Map Event Ingestion" in l)
+        sec_3_line = next(i + 1 for i, l in enumerate(lines) if "3. Sidebar Utility Controls & Intelligence Dashboard" in l)
+        assert sec_2c_line < sec_2b_line < sec_3_line
+
+        illegal_early_reruns = [ln for ln in rerun_lines if sec_2c_line <= ln < sec_3_line]
+        assert illegal_early_reruns == [], (
+            f"Illegal st.rerun() found in Section 2c/2b (lines {sec_2c_line}-{sec_3_line}): {illegal_early_reruns}"
+        )
+
+        # 2. Inspect `render_tactical_map_fragment` AST
+        fragment_fn = next(
+            node for node in ast.walk(app_tree)
+            if isinstance(node, ast.FunctionDef) and node.name == "render_tactical_map_fragment"
+        )
+        fragment_reruns = []
+        for node in ast.walk(fragment_fn):
+            if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
+                if isinstance(node.func.value, ast.Name) and node.func.value.id == "st" and node.func.attr == "rerun":
+                    fragment_reruns.append(node.lineno)
+
+        assert len(fragment_reruns) == 1, (
+            f"render_tactical_map_fragment must have at most 1 st.rerun() (solely for 'recon' action), "
+            f"found {len(fragment_reruns)} at lines {fragment_reruns}"
+        )
+        recon_rerun_line = fragment_reruns[0]
+        surrounding_window = "\n".join(lines[max(0, recon_rerun_line - 65):recon_rerun_line + 2])
+        assert '"recon"' in surrounding_window, (
+            f"st.rerun() in render_tactical_map_fragment at line {recon_rerun_line} is outside the 'recon' handler"
+        )
+
+        # 3. Verify pure helper functions contain zero st.rerun() calls
+        pure_helpers = {
+            "_is_drawing_corner_release",
+            "_build_raw_request_payload",
+            "_build_assistant_message",
+            "_build_error_assistant_message",
+            "clear_spatial_selection",
+            "clear_map_and_console",
+            "make_pin_icon",
+            "color_token",
+            "bbox_style",
+            "_popup_card",
+            "_highlight_text_spans",
+            "format_tactical_citations",
+            "_render_subgraph_modal_html",
+        }
+        for node in ast.walk(app_tree):
+            if isinstance(node, ast.FunctionDef) and node.name in pure_helpers:
+                for sub in ast.walk(node):
+                    if isinstance(sub, ast.Call) and isinstance(sub.func, ast.Attribute):
+                        if isinstance(sub.func.value, ast.Name) and sub.func.value.id == "st" and sub.func.attr == "rerun":
+                            pytest.fail(
+                                f"Pure helper `{node.name}` must never call st.rerun() (line {sub.lineno})"
+                            )
+
+    def test_ast_ui_layout_stability_and_widget_explosion_guards(self):
+        """
+        Rule 3.1 & 3.2: Verify `chat_container_height` is a constant integer literal
+        (preventing vertical chat bounce) and dense layer lists (>10 items) use bulk controls.
+        """
+        import ast
+
+        app_tree, app_source = self._parse_ast("app.py")
+
+        # 1. Verify chat_container_height is assigned a constant integer (never ternary IfExp)
+        height_assignments = []
+        for node in ast.walk(app_tree):
+            if isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if isinstance(target, ast.Name) and target.id == "chat_container_height":
+                        height_assignments.append(node.value)
+
+        assert len(height_assignments) >= 1, "chat_container_height assignment not found in app.py"
+        for val_node in height_assignments:
+            assert isinstance(val_node, ast.Constant) and isinstance(val_node.value, int), (
+                f"Rule 3.1 violation: chat_container_height must be a constant int, got {ast.dump(val_node)}"
+            )
+
+        # 2. Verify Rule 3.2 widget explosion guard for dense tactical layers
+        assert "if total_layers > 10:" in app_source, (
+            "Rule 3.2 violation: app.py must guard against instantiating individual delete buttons when total_layers > 10"
+        )
+        assert "<details class='geoai-source-detail'" in app_source, (
+            "Rule 3.2 violation: Source inspect drawers must use native HTML <details> instead of per-source Streamlit widgets"
+        )
+
+
+# ==============================================================================
+# PHASE 1.2: Execution Timing & Latency Ceilings (Micro-Benchmarks)
+# ==============================================================================
+class TestPhase1ExecutionTimingAndLatencyCeilings:
+    """
+    Micro-benchmark suite enforcing strict millisecond latency ceilings across:
+    1. UI component rendering pipeline setup (`make_pin_icon`, `color_token`, `bbox_style`,
+       `_popup_card`, `_highlight_text_spans`, `format_tactical_citations`, `_render_subgraph_modal_html`).
+    2. Leaflet control & hook template synthesis (`MapTrashBinHook`, `SelectionSyncHook`).
+    3. `geo_agent.py` payload ingestion, GeoJSON parsing, and LRU-cached graph lookups.
+    4. High-load (250–500 points) spatial hydration, `MarkerCluster` partitioning, and bbox normalization.
+    """
+
+    def test_benchmark_pin_icon_and_style_token_rendering_pipeline(self, micro_benchmark, latency_ceiling):
+        """
+        Benchmark `make_pin_icon`, `color_token`, and `bbox_style`.
+        Ceilings:
+        - Single `make_pin_icon` call across all 6 role/shape variants: mean <= 1.0ms, P95 <= 2.0ms
+        - Batch synthesis of 100 numbered/role icons: total <= 25.0ms
+        - `color_token` + `bbox_style` lookup: mean <= 0.2ms
+        """
+        import app
+
+        variants = [
+            {"kind": "place", "role": "primary", "uncertain": False, "number": 1, "shape": "diamond"},
+            {"kind": "place", "role": "primary", "uncertain": False, "number": 2, "shape": "teardrop"},
+            {"kind": "place", "role": "context", "uncertain": False, "number": None, "shape": "diamond"},
+            {"kind": "place", "role": "primary", "uncertain": True, "number": 3, "shape": "diamond"},
+            {"kind": "event", "role": "primary", "uncertain": False, "number": 4, "shape": "teardrop"},
+            {"kind": "place", "role": "target", "uncertain": False, "number": None, "shape": "diamond"},
+            {"kind": "place", "role": "bbox_corner", "uncertain": False, "number": None, "corner": "sw"},
+        ]
+
+        for spec in variants:
+            stats = micro_benchmark(
+                app.make_pin_icon,
+                kind=spec["kind"],
+                role=spec["role"],
+                uncertain=spec["uncertain"],
+                number=spec["number"],
+                corner=spec.get("corner"),
+                shape=spec.get("shape"),
+                iterations=25,
+                warmup=3,
+                max_mean_ms=1.0,
+                max_p95_ms=2.0,
+                label=f"make_pin_icon[{spec['role']}/{spec.get('shape', 'corner')}]",
+            )
+            assert stats.mean_ms <= 1.0
+
+        with latency_ceiling(25.0, label="batch_100_make_pin_icon"):
+            for i in range(100):
+                spec = variants[i % len(variants)]
+                icon = app.make_pin_icon(
+                    kind=spec["kind"],
+                    role=spec["role"],
+                    uncertain=spec["uncertain"],
+                    number=(i + 1) if spec["number"] else None,
+                    corner=spec.get("corner"),
+                    shape=spec.get("shape"),
+                )
+                assert icon is not None
+
+        micro_benchmark(
+            lambda: (
+                app.color_token("blue", role="primary"),
+                app.color_token("cadetblue", role="context"),
+                app.color_token("orange", uncertain=True),
+                app.bbox_style("selected"),
+                app.bbox_style("querying"),
+                app.bbox_style("answered"),
+            ),
+            iterations=50,
+            warmup=5,
+            max_mean_ms=0.2,
+            max_p95_ms=0.5,
+            label="color_token_and_bbox_style_lookup",
+        )
+
+    def test_benchmark_popup_card_text_highlighting_and_citation_badges(self, micro_benchmark):
+        """
+        Benchmark HTML card synthesis, interval highlighting, citation badge regex transformation,
+        and interactive SVG subgraph modal rendering.
+        Ceilings:
+        - `_popup_card`: mean <= 0.5ms
+        - `_highlight_text_spans`: mean <= 2.0ms
+        - `format_tactical_citations`: mean <= 5.0ms
+        - `_render_subgraph_modal_html`: mean <= 15.0ms
+        """
+        import app
+
+        micro_benchmark(
+            app._popup_card,
+            title="Kharkiv Railway Junction",
+            rows=[("LAT", "50.00450°"), ("LNG", "36.23120°"), ("ROLE", "PRIMARY #1")],
+            chip="PRIMARY // PLACE",
+            footer="Grounded in [P1-S1]",
+            token="primary",
+            iterations=30,
+            warmup=3,
+            max_mean_ms=0.5,
+            max_p95_ms=1.2,
+            label="_popup_card",
+        )
+
+        sample_passage = (
+            "In October 1941, German forces entered Kharkiv and established administrative "
+            "checkpoints near the central railway station, Dzerzhinsky Square, and the tractor factory "
+            "district while partisan units retreated toward Chuhuiv and Izium."
+        ) * 3
+        intervals = [[17, 30], [39, 46], [96, 119], [124, 142], [210, 217]]
+        micro_benchmark(
+            app._highlight_text_spans,
+            sample_passage,
+            intervals,
+            iterations=25,
+            warmup=3,
+            max_mean_ms=2.0,
+            max_p95_ms=4.0,
+            label="_highlight_text_spans",
+        )
+
+        markdown_answer = (
+            "### Spatial Intelligence Synthesis\n"
+            "Primary engagements occurred at **Kharkiv** [1], **Chuhuiv** [2, 3], and **Izium** [4]. "
+            "Additional logistical staging points were identified across sectors [1, 2, 5, 6] "
+            "with corroborating testimony in [S1], [L1], and [P1-S1]."
+        )
+        micro_benchmark(
+            app.format_tactical_citations,
+            markdown_answer,
+            iterations=25,
+            warmup=3,
+            max_mean_ms=5.0,
+            max_p95_ms=10.0,
+            label="format_tactical_citations",
+        )
+
+        sample_subgraph = {
+            "nodes": [
+                {"id": "P1", "label": "#1 Kharkiv", "type": "LOC", "role": "primary", "pin_number": 1},
+                {"id": "P2", "label": "Chuhuiv", "type": "LOC", "role": "context"},
+                {"id": "TEXT_50333", "label": "[S1] Archive Doc", "type": "TEXT", "role": "source", "evidence": "Archival testimony."},
+                {"id": "ORG_1", "label": "6th Army", "type": "ORG", "role": "entity"},
+            ],
+            "edges": [
+                {"from": "P1", "to": "TEXT_50333", "label": "cited_in [S1]", "kind": "provenance"},
+                {"from": "P1", "to": "P2", "label": "INSIDE", "kind": "hierarchy"},
+                {"from": "ORG_1", "to": "P1", "label": "OPERATED_IN", "kind": "relation"},
+            ],
+        }
+        micro_benchmark(
+            app._render_subgraph_modal_html,
+            sample_subgraph,
+            query_title="Kharkiv operations",
+            iterations=15,
+            warmup=2,
+            max_mean_ms=15.0,
+            max_p95_ms=25.0,
+            label="_render_subgraph_modal_html",
+        )
+
+    def test_benchmark_leaflet_hooks_and_control_template_compilation(self, micro_benchmark):
+        """
+        Benchmark Folium HTML/JS synthesis for `MapTrashBinHook` (which embeds `PinFilterControl`
+        and `TacticalTargetHudControl`) and `SelectionSyncHook`.
+        Ceiling: mean <= 80.0ms per full map hook compilation.
+        """
+        import folium
+        import app
+
+        def _compile_map_hooks():
+            m = folium.Map(location=[49.0, 32.0], zoom_start=6, tiles=None)
+            app.MapTrashBinHook().add_to(m)
+            app.SelectionSyncHook(
+                has_selection=True,
+                clear_seq=1,
+                bbox_state="selected",
+                is_querying=False,
+                bbox_bounds=[[49.0, 31.0], [50.5, 33.0]],
+                active_point=(50.45, 30.52),
+                pin_shape="diamond",
+            ).add_to(m)
+            return m.get_root().render()
+
+        stats = micro_benchmark(
+            _compile_map_hooks,
+            iterations=8,
+            warmup=1,
+            max_mean_ms=80.0,
+            max_p95_ms=130.0,
+            label="compile_map_hooks_and_controls",
+        )
+        assert stats.mean_ms <= 80.0
+
+    def test_benchmark_geo_agent_payload_ingestion_and_evidence_formatting(self, micro_benchmark):
+        """
+        Benchmark `app._build_raw_request_payload`, `geo_agent.format_evidence_popup_html`,
+        `geo_agent.extract_answer_subgraph`, and `geo_agent.query_geo_agent` mock pipeline.
+        Ceilings:
+        - `_build_raw_request_payload`: mean <= 1.0ms
+        - `format_evidence_popup_html`: mean <= 2.0ms
+        - `extract_answer_subgraph`: mean <= 25.0ms
+        - `query_geo_agent` (mock fallback): mean <= 15.0ms
+        """
+        import app
+        import geo_agent
+
+        turns = [
+            {"query": "Analyze sector [50.45, 30.52]", "response": {"answer": "Kyiv sector analysis complete [1]."}},
+            {"query": "Follow up on surrounding rail junctions", "response": {"answer": "Fastiv and Darnytsia identified [2]."}},
+        ]
+
+        micro_benchmark(
+            app._build_raw_request_payload,
+            text_prompt="Identify defensive perimeters",
+            selected_point=(50.4501, 30.5234),
+            bounding_box=((50.2, 30.2), (50.7, 30.8)),
+            agent_turns=turns,
+            iterations=40,
+            warmup=4,
+            max_mean_ms=1.0,
+            max_p95_ms=2.0,
+            label="_build_raw_request_payload",
+        )
+
+        micro_benchmark(
+            geo_agent.format_evidence_popup_html,
+            "event: Battle of Kyiv (1941) in 18 records, event: Defense of Kyiv Arsenal in 6 records, fortification hub",
+            ["TEXT_50333", "TEXT_1001"],
+            iterations=30,
+            warmup=3,
+            max_mean_ms=2.0,
+            max_p95_ms=4.0,
+            label="format_evidence_popup_html",
+        )
+
+        sample_raw_response = {
+            "answer": "Operations centered on Kyiv Arsenal [1].",
+            "geo_locations": [
+                {
+                    "id": "Kyiv Arsenal",
+                    "number": 1,
+                    "name": "Kyiv Arsenal",
+                    "label": "Kyiv Arsenal",
+                    "lat": 50.442,
+                    "lon": 30.541,
+                    "role": "primary",
+                    "kind": "place",
+                    "why": "event: Battle of Kyiv in 12 records",
+                    "sources": ["TEXT_50333"],
+                }
+            ],
+            "citations": [{"id": "P1-S1", "pointer": "TEXT_50333", "place_number": 1, "snippet": "Evidence 1"}],
+            "sources": ["TEXT_50333"],
+        }
+        micro_benchmark(
+            geo_agent.extract_answer_subgraph,
+            sample_raw_response,
+            iterations=15,
+            warmup=2,
+            max_mean_ms=25.0,
+            max_p95_ms=40.0,
+            label="extract_answer_subgraph",
+        )
+
+        micro_benchmark(
+            geo_agent.query_geo_agent,
+            text_prompt="Identify defensive positions around Kyiv",
+            selected_point=(50.4501, 30.5234),
+            bounding_box=None,
+            agent_turns=turns,
+            force_mock=True,
+            iterations=15,
+            warmup=2,
+            max_mean_ms=15.0,
+            max_p95_ms=25.0,
+            label="query_geo_agent_mock_pipeline",
+        )
+
+    def test_benchmark_get_source_text_lru_cache_sub_millisecond_throughput(self, monkeypatch, latency_ceiling):
+        """
+        Rule 2.2: Verify 1,000 repeated calls to `get_source_text(pointer)` hit the
+        in-memory LRU cache and complete in < 5.0ms total (< 0.005ms per lookup).
+        """
+        import geo_agent
+
+        backend_call_count = 0
+
+        def _fake_backend_lookup(pointer: str):
+            nonlocal backend_call_count
+            backend_call_count += 1
+            return {
+                "pointer": pointer,
+                "text": "Full archival paragraph text for " + pointer,
+                "document": "Kharkiv Operations",
+                "section": "October 1941",
+            }
+
+        monkeypatch.setattr(geo_agent, "_BACKEND_AVAILABLE", True)
+        monkeypatch.setattr(geo_agent, "_backend_get_source_text", _fake_backend_lookup)
+        geo_agent.get_source_text.cache_clear()
+
+        # Cold lookup
+        first = geo_agent.get_source_text("TEXT_99999")
+        assert first is not None and first["document"] == "Kharkiv Operations"
+        assert backend_call_count == 1
+
+        # 1,000 warm LRU cache lookups must complete in < 5.0ms total
+        with latency_ceiling(5.0, label="1000_lru_cached_get_source_text_lookups"):
+            for _ in range(1000):
+                res = geo_agent.get_source_text("TEXT_99999")
+                assert res is first
+
+        info = geo_agent.get_source_text.cache_info()
+        assert backend_call_count == 1, "LRU cache failed: backend was invoked more than once"
+        assert info.hits >= 1000
+        assert info.misses == 1
+
+    def test_benchmark_high_load_250_and_500_points_ingestion_and_geojson_parsing(
+        self,
+        monkeypatch,
+        high_volume_rag_payload_factory,
+        latency_ceiling,
+    ):
+        """
+        Benchmark `query_geo_agent` live-adapter hydration and spatial GeoJSON boundary parsing
+        under high loads:
+        - 250 spatial points + primary GeoJSON polygons + region bbox: <= 120.0ms
+        - 500 spatial points + primary GeoJSON polygons + region bbox: <= 250.0ms
+        """
+        import geo_agent
+
+        payload_250 = high_volume_rag_payload_factory(n_points=250, primary_count=12, uncertain_count=8)
+        payload_500 = high_volume_rag_payload_factory(n_points=500, primary_count=20, uncertain_count=15)
+
+        monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-v1-perf-benchmark-key")
+        monkeypatch.setattr(geo_agent, "_BACKEND_AVAILABLE", True)
+
+        # 1. Benchmark 250-point payload hydration
+        monkeypatch.setattr(geo_agent, "_backend_query", lambda *a, **kw: payload_250)
+        with latency_ceiling(120.0, label="query_geo_agent_ingest_250_points"):
+            resp_250 = geo_agent.query_geo_agent(
+                text_prompt="High-load 250-point spatial scan",
+                bounding_box=((47.5, 30.5), (51.5, 35.5)),
+            )
+        # 250 markers + 12 primary polygon shapes + 1 query bbox = 263+ layers
+        assert len(resp_250.layers) >= 260
+
+        # 2. Benchmark 500-point payload hydration
+        monkeypatch.setattr(geo_agent, "_backend_query", lambda *a, **kw: payload_500)
+        with latency_ceiling(250.0, label="query_geo_agent_ingest_500_points"):
+            resp_500 = geo_agent.query_geo_agent(
+                text_prompt="High-load 500-point spatial scan",
+                bounding_box=((47.5, 30.5), (51.5, 35.5)),
+            )
+        assert len(resp_500.layers) >= 520
+
+    def test_benchmark_high_load_500_points_marker_clustering_and_bbox_normalization(
+        self,
+        monkeypatch,
+        high_volume_rag_payload_factory,
+        bbox_input_factory,
+        latency_ceiling,
+    ):
+        """
+        Rule 4.1 & 4.2: Benchmark bounding-box normalization (1,000 calls <= 15.0ms)
+        and Folium `MarkerCluster` vs primary pin layer partitioning for 500 spatial points (<= 150.0ms).
+        """
+        import folium
+        from folium.plugins import MarkerCluster
+        import geo_agent
+
+        # 1. Benchmark 1,000 `to_bounding_box` normalizations across all 4 corner permutations
+        perms = bbox_input_factory["make_corner_permutations"](30.512345, 48.123456, 36.987654, 51.654321)
+        with latency_ceiling(15.0, label="1000_to_bounding_box_normalizations"):
+            for i in range(1000):
+                c1, c2 = perms[i % 4]
+                ll, ur = geo_agent.to_bounding_box(c1, c2)
+                assert ll[0] < ur[0] and ll[1] < ur[1]
+
+        # 2. Hydrate 500 layers and benchmark Folium partitioning (primary -> fg, context -> MarkerCluster)
+        payload_500 = high_volume_rag_payload_factory(n_points=500, primary_count=15, uncertain_count=10)
+        monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-v1-perf-benchmark-key")
+        monkeypatch.setattr(geo_agent, "_BACKEND_AVAILABLE", True)
+        monkeypatch.setattr(geo_agent, "_backend_query", lambda *a, **kw: payload_500)
+        resp_500 = geo_agent.query_geo_agent(text_prompt="Cluster 500 points")
+
+        with latency_ceiling(150.0, label="partition_and_cluster_500_folium_layers"):
+            tactical_layers_fg = folium.FeatureGroup(name="Tactical AI Layers")
+            context_cluster = MarkerCluster(
+                name="Context Places Cluster",
+                options={"maxClusterRadius": 38, "spiderfyOnMaxZoom": True, "disableClusteringAtZoom": 14},
+            )
+            context_cluster.add_to(tactical_layers_fg)
+
+            primary_pin_count = 0
+            clustered_context_count = 0
+
+            for layer in resp_500.layers:
+                if layer.layer_type == "marker":
+                    role = layer.data.get("role", "primary")
+                    number = layer.data.get("number")
+                    is_background_context = (role == "context" and not number)
+                    target_container = context_cluster if is_background_context else tactical_layers_fg
+                    if is_background_context:
+                        clustered_context_count += 1
+                    else:
+                        primary_pin_count += 1
+
+                    folium.Marker(
+                        location=[layer.data["lat"], layer.data["lng"]],
+                        tooltip=layer.tooltip,
+                    ).add_to(target_container)
+
+        assert primary_pin_count == 25  # 15 primary + 10 uncertain (all numbered)
+        assert clustered_context_count == 475  # 475 unnumbered context points routed to MarkerCluster
+
+
+# ==============================================================================
+# PHASE 1.3: Responsiveness & State Loop Verification
+# ==============================================================================
+class TestPhase1ResponsivenessAndStateLoopVerification:
+    """
+    Simulate rapid, repeated UI state transitions to guarantee:
+    1. Consecutive map point clicks update state in 1 pass with 0 `st.rerun()` calls.
+    2. Rapid AOI bounding-box resizes and synthetic corner release clicks never degrade
+       the BBox into a point or trigger orphan reruns.
+    3. Rapid chat submissions lock `pending_query` in Section 2c before Section 2b cleanup,
+       preserve history window bounds (`agent_turns <= 5`, `rag_logs <= 50`), and maintain
+       strict user/assistant turn parity.
+    4. Interleaved operator chaos sequences complete with zero state desyncs.
+    """
+
+    def test_rapid_consecutive_map_point_clicks_single_pass_zero_reruns(
+        self,
+        streamlit_state_simulator,
+        latency_ceiling,
+    ):
+        """
+        Simulate 50 rapid consecutive map clicks across distinct coordinates plus duplicate
+        clicks on the same coordinate. Assert:
+        - `rerun_count == 0` (handled 100% in a single pass without secondary reruns)
+        - `selected_points` always matches the latest clicked coordinate `[(lat, lng)]`
+        - `bounding_box` remains `None`
+        - Total execution time for 50 click transitions <= 25.0ms
+        """
+        sim = streamlit_state_simulator
+
+        with latency_ceiling(25.0, label="50_rapid_consecutive_map_point_clicks"):
+            for i in range(50):
+                lat = round(48.0 + (i * 0.05), 5)
+                lng = round(31.0 + (i * 0.05), 5)
+                state = sim.simulate_point_click(lat, lng, now_ts=1000.0 + i * 2.0)
+                assert state["selected_points"] == [(lat, lng)]
+                assert state["bounding_box"] is None
+                assert state["last_clicked"] == (lat, lng)
+
+                # Duplicate click on identical coordinate must be a no-op
+                state_dup = sim.simulate_point_click(lat, lng, now_ts=1000.0 + i * 2.0 + 0.1)
+                assert state_dup["selected_points"] == [(lat, lng)]
+
+        assert sim.rerun_count == 0, (
+            f"Map canvas clicks must not trigger full-script st.rerun(), got {sim.rerun_count}"
+        )
+
+    def test_rapid_aoi_bbox_resizing_and_corner_click_immunity(
+        self,
+        streamlit_state_simulator,
+        latency_ceiling,
+    ):
+        """
+        Simulate 25 rapid AOI bounding-box draws/resizes immediately followed by synthetic
+        Leaflet mouse-release clicks on all 4 corners (both within and after the post-draw
+        cooldown window). Assert:
+        - `rerun_count == 0`
+        - `bounding_box` always reflects the resized normalized `((south, west), (north, east))` tuple
+        - `selection_mode` remains `"Bounding Box"` (never degrades into a point on corner release)
+        - Total execution time <= 25.0ms
+        """
+        sim = streamlit_state_simulator
+        # Start with a selected point to verify BBox draw overrides it immediately
+        sim.simulate_point_click(50.45, 30.52, now_ts=100.0)
+        assert sim.state["selected_points"] == [(50.45, 30.52)]
+
+        with latency_ceiling(25.0, label="25_rapid_bbox_resizes_and_corner_clicks"):
+            for i in range(25):
+                west = round(30.0 + i * 0.1, 5)
+                south = round(48.0 + i * 0.1, 5)
+                east = round(32.0 + i * 0.1, 5)
+                north = round(50.0 + i * 0.1, 5)
+                draw_ts = 200.0 + i * 10.0
+                expected_bbox = ((south, west), (north, east))
+
+                state = sim.simulate_bbox_draw(west, south, east, north, now_ts=draw_ts)
+                assert state["bounding_box"] == expected_bbox
+                assert state["selection_mode"] == "Bounding Box"
+
+                # Simulate synthetic corner clicks both immediately (draw_ts + 0.05s) and after 5s
+                corners = [
+                    (south, west),
+                    (north, west),
+                    (north, east),
+                    (south, east),
+                ]
+                for c_idx, (c_lat, c_lng) in enumerate(corners):
+                    st_after = sim.simulate_point_click(
+                        c_lat,
+                        c_lng,
+                        now_ts=draw_ts + (0.05 if c_idx < 2 else 5.0),
+                    )
+                    assert st_after["bounding_box"] == expected_bbox, (
+                        f"Corner click ({c_lat}, {c_lng}) destroyed bounding_box on iteration {i}"
+                    )
+                    assert st_after["selection_mode"] == "Bounding Box"
+
+        assert sim.rerun_count == 0
+
+    def test_rapid_chat_submissions_early_queue_locking_and_sliding_window_bounds(
+        self,
+        streamlit_state_simulator,
+        latency_ceiling,
+    ):
+        """
+        Simulate 10 rapid back-to-back chat submissions alternating between point-targeted,
+        BBox-targeted, and global text queries. Verify:
+        1. Section 2c locks `pending_query` with the active BBox/point even if the user
+           took >30 seconds to type the prompt.
+        2. Each submission executes inexactly 1 rerun cycle (no orphan cascades).
+        3. `agent_turns` is strictly capped at 5 turns (`len(agent_turns) <= 5`).
+        4. User and assistant messages maintain strict 1:1 turn parity.
+        """
+        sim = streamlit_state_simulator
+        captured_requests = []
+
+        def _fast_stub_agent(text_prompt=None, selected_point=None, bounding_box=None, agent_turns=None, **kw):
+            captured_requests.append({
+                "text_prompt": text_prompt,
+                "selected_point": selected_point,
+                "bounding_box": bounding_box,
+                "history_len": len(agent_turns or []),
+            })
+            return AgentResponse(
+                answer=f"Ack: {text_prompt} [1]",
+                layers=[
+                    MapLayer(
+                        name="Pin 1",
+                        layer_type="marker",
+                        data={"lat": 50.0, "lng": 30.0, "role": "primary", "number": 1},
+                        color="red",
+                    )
+                ],
+                sources=["TEXT_1001"],
+                raw_response={"answer": f"Ack: {text_prompt} [1]", "geo_locations": [{"number": 1, "label": "Pin 1"}]},
+            )
+
+        with latency_ceiling(50.0, label="10_rapid_chat_submissions_lifecycle"):
+            for i in range(10):
+                if i % 3 == 0:
+                    # Simulate BBox draw followed by 45-second typing delay before Enter
+                    sim.simulate_bbox_draw(30.0, 49.0, 31.0, 50.0, now_ts=1000.0 + i * 100.0)
+                elif i % 3 == 1:
+                    sim.simulate_point_click(50.45, 30.52, now_ts=1000.0 + i * 100.0)
+
+                reruns_before = sim.rerun_count
+                sim.simulate_chat_submit(f"Tactical query #{i + 1}", agent_fn=_fast_stub_agent)
+                assert sim.rerun_count == reruns_before + 1, (
+                    f"Chat submission #{i + 1} must trigger exactly 1 flush rerun"
+                )
+
+                # Verify spatial selection was locked into the request AND cleared post-query
+                req = captured_requests[-1]
+                if i % 3 == 0:
+                    assert req["bounding_box"] == ((49.0, 30.0), (50.0, 31.0))
+                    assert req["selected_point"] is None
+                elif i % 3 == 1:
+                    assert req["selected_point"] == (50.45, 30.52)
+                    assert req["bounding_box"] is None
+                else:
+                    assert req["selected_point"] is None and req["bounding_box"] is None
+
+                assert sim.state["selected_points"] == []
+                assert sim.state["bounding_box"] is None
+                assert sim.state["pending_query"] is None
+                assert len(sim.state["agent_turns"]) <= 5
+
+        # Welcome message (1) + 10 * (user + assistant) = 21 messages
+        assert len(sim.state["messages"]) == 21
+        assert len(sim.state["agent_turns"]) == 5
+
+    def test_interleaved_40_step_operator_chaos_state_machine(
+        self,
+        streamlit_state_simulator,
+        latency_ceiling,
+    ):
+        """
+        Execute a 40-step interleaved operator workflow:
+        - Point selections -> BBox override -> Corner clicks -> Trash clear ->
+          Point selection -> Recon scan -> Answered-pin click immunity ->
+          BBox draw -> Chat submit -> Clear Map & Console reset.
+        Assert zero state desyncs and < 50.0ms total execution time.
+        """
+        sim = streamlit_state_simulator
+
+        def _stub_agent(text_prompt=None, selected_point=None, bounding_box=None, agent_turns=None, **kw):
+            return AgentResponse(
+                answer="Tactical synthesis [1].",
+                layers=[
+                    MapLayer(
+                        name="Kharkiv",
+                        layer_type="marker",
+                        data={"lat": 49.9935, "lng": 36.2304, "role": "primary", "number": 1},
+                        color="red",
+                    )
+                ],
+                sources=["TEXT_50333"],
+                raw_response={"answer": "Tactical synthesis [1].", "geo_locations": [{"number": 1, "label": "Kharkiv"}]},
+            )
+
+        with latency_ceiling(50.0, label="40_step_interleaved_operator_chaos"):
+            for cycle in range(4):
+                base_ts = 5000.0 + cycle * 500.0
+
+                # Step 1-2: Click two points consecutively
+                sim.simulate_point_click(49.5, 31.5, now_ts=base_ts + 1.0)
+                sim.simulate_point_click(49.6, 31.6, now_ts=base_ts + 3.0)
+                assert sim.state["selected_points"] == [(49.6, 31.6)]
+
+                # Step 3-4: Draw BBox (overrides point) + corner click immunity
+                sim.simulate_bbox_draw(31.0, 49.0, 33.0, 51.0, now_ts=base_ts + 5.0)
+                sim.simulate_point_click(51.0, 33.0, now_ts=base_ts + 5.2)
+                assert sim.state["bounding_box"] == ((49.0, 31.0), (51.0, 33.0))
+                assert sim.state["selection_mode"] == "Bounding Box"
+
+                # Step 5: Trash clear
+                sim.simulate_trash_delete()
+                assert sim.state["bounding_box"] is None and sim.state["selected_points"] == []
+
+                # Step 6-7: Select point and submit chat
+                sim.simulate_point_click(50.45, 30.52, now_ts=base_ts + 10.0)
+                sim.simulate_chat_submit(f"Cycle {cycle} query", agent_fn=_stub_agent)
+                assert len(sim.state["map_layers"]) == 1
+
+                # Step 8: Click directly on the answered tactical pin (49.9935, 36.2304)
+                # Must NOT spawn a new selection crosshair over the answered pin
+                sim.simulate_point_click(49.9935, 36.2304, now_ts=base_ts + 20.0)
+                assert sim.state["selected_points"] == []
+
+                # Step 9: Trigger popup Recon action
+                sim.simulate_point_click(
+                    48.5,
+                    32.5,
+                    feature_props={"action": "recon", "targetType": "point", "lat": 48.5, "lng": 32.5},
+                    now_ts=base_ts + 25.0,
+                )
+                assert sim.state["pending_query"] is not None
+                assert sim.state["pending_query"]["is_recon"] is True
+                sim.state["pending_query"] = None
+
+                # Step 10: Reset state on final cycle
+                if cycle == 3:
+                    sim.reset()
+                    assert sim.state["selected_points"] == []
+                    assert sim.state["bounding_box"] is None
+                    assert sim.state["map_layers"] == []
+                    assert sim.state["agent_turns"] == []
+                    assert len(sim.state["messages"]) == 1
+
+
+
+# ==============================================================================
+# PHASE 2: Future-Proofing, File-Pairing & Quality Gate Enforcement Tests
+# ==============================================================================
+class TestPhase2QualityEnforcementAndFutureProofing:
+    """
+    Verify that the automated quality gate (`verify_quality_gate.py`), test runners
+    (`run_tests.bat`, `run_tests.sh`), pre-commit hook (`.githooks/pre-commit`),
+    and developer guidelines (`AGENTS.md`, `README.md`) enforce the mandatory
+    Test-Driven & Zero-Latency Definition of Done.
+    """
+
+    def test_verify_quality_gate_file_pairing_and_static_invariants(self, tmp_path):
+        """
+        Verify `verify_quality_gate.py` passes on the current workspace and blocks
+        untested `.py` modules when added without matching test definitions in `test_app.py`.
+        """
+        from pathlib import Path
+        import verify_quality_gate
+
+        workspace_dir = Path(__file__).resolve().parent
+        ok_pair, pair_errors = verify_quality_gate.audit_file_and_symbol_test_pairing(workspace_dir)
+        assert ok_pair, f"File-pairing audit failed: {pair_errors}"
+
+        ok_ast, ast_errors = verify_quality_gate.audit_static_performance_invariants(workspace_dir)
+        assert ok_ast, f"Static AST invariant audit failed: {ast_errors}"
+
+        # Simulate adding a new untested module in an isolated temp directory
+        (tmp_path / "test_app.py").write_text(
+            "\n".join(f"def test_dummy_{i}(): pass" for i in range(verify_quality_gate.MIN_REQUIRED_TESTS)),
+            encoding="utf-8",
+        )
+        (tmp_path / "untested_feature.py").write_text(
+            "def compute_sector_heatmap():\n    return []\n",
+            encoding="utf-8",
+        )
+        ok_untested, untested_errors = verify_quality_gate.audit_file_and_symbol_test_pairing(tmp_path)
+        assert not ok_untested
+        assert any("untested_feature.py" in err for err in untested_errors)
+
+    def test_enforcement_scripts_and_pre_commit_hooks_exist(self):
+        """
+        Verify `run_tests.bat`, `run_tests.sh`, `.githooks/pre-commit`, `AGENTS.md`,
+        and `README.md` exist and codify the Definition of Done and non-zero exit gates.
+        """
+        from pathlib import Path
+
+        workspace_dir = Path(__file__).resolve().parent
+        bat_path = workspace_dir / "run_tests.bat"
+        sh_path = workspace_dir / "run_tests.sh"
+        hook_path = workspace_dir / ".githooks" / "pre-commit"
+        agents_path = workspace_dir / "AGENTS.md"
+        readme_path = workspace_dir / "README.md"
+
+        assert bat_path.exists(), "run_tests.bat must exist"
+        assert sh_path.exists(), "run_tests.sh must exist"
+        assert hook_path.exists(), ".githooks/pre-commit must exist"
+
+        bat_text = bat_path.read_text(encoding="utf-8")
+        assert "verify_quality_gate.py" in bat_text
+        assert "exit /b" in bat_text.lower()
+
+        sh_text = sh_path.read_text(encoding="utf-8")
+        assert "verify_quality_gate.py" in sh_text
+        assert "set -e" in sh_text
+
+        hook_text = hook_path.read_text(encoding="utf-8")
+        assert "verify_quality_gate.py" in hook_text
+
+        agents_text = agents_path.read_text(encoding="utf-8")
+        assert "Definition of Done" in agents_text
+
+        readme_text = readme_path.read_text(encoding="utf-8")
+        assert "Definition of Done" in readme_text
