@@ -3411,6 +3411,69 @@ class TestPhase2RegionalSectorFiltering:
         assert "data-pin-number='1'" in reg_html
         assert "data-pin-label='Avdiivka'" in reg_html
 
+    def test_sector_cluster_breakout_and_nondestructive_leaflet_transform(self):
+        """
+        Verify that:
+        1. `applySectorHighlighting` breaks out matching sector markers from `L.MarkerClusterGroup`
+           into `window._sectorBreakoutGroup` and restores them on sector reset/change.
+        2. `.geoai-sector--highlighted` NEVER applies `transform: scale(...)` to `.leaflet-marker-icon`,
+           preventing Leaflet's `transform: translate3d(X, Y, 0)` positioning from collapsing pins to (0, 0).
+        3. `make_pin_icon` embeds `data-pin-num` and `.geoai-dot-num` on context pins.
+        4. `#geoai-instant-pill-slot` stays hidden (`slot.style.display = 'none'`) so no top HUD bar leaks above columns.
+        5. `format_regional_distribution_html` deduplicates repeated pin numbers in `places`.
+        """
+        import folium
+        import app
+
+        # 1. Context pin icon carries data-pin-num and .geoai-dot-num
+        ctx_icon = app.make_pin_icon("cadetblue", number=9, role="context")
+        ctx_html = ctx_icon.options.get("html", "")
+        assert "data-pin-num='9'" in ctx_html
+        assert "<i class='geoai-dot-num'>9</i>" in ctx_html
+
+        # 2. Cluster breakout logic in MapTrashBinHook
+        m = folium.Map()
+        app.MapTrashBinHook().add_to(m)
+        script = m.get_root().render()
+        assert "_sectorBreakoutGroup" in script
+        assert "_brokenOutSectorState" in script
+        assert "cg.removeLayer(cm)" in script
+        assert "window._sectorBreakoutGroup.addLayer(cm)" in script
+        assert "item.clusterGroup.addLayer(item.marker)" in script
+
+        # 3. Verify CSS never overwrites .leaflet-marker-icon transform
+        with open("app.py", "r", encoding="utf-8") as f:
+            src = f.read()
+        assert ".geoai-sector--highlighted,\n                .geoai-sector--highlighted.leaflet-marker-icon {\n                    opacity: 1.0 !important;\n                    z-index: 10000 !important;" in src
+        assert ".geoai-sector--highlighted .geoai-diamond {\n                    transform: rotate(45deg) scale(1.18) !important;" in src
+        assert ".geoai-sector--highlighted .geoai-dot .geoai-dot-num" in src
+
+        # 4. Verify top pill slot never un-hides above the two columns
+        assert "slot.style.display = 'block';" not in src
+        assert "#geoai-instant-pill-slot" in src
+
+        # 5. Verify duplicate pin numbers in regions are deduplicated
+        dup_regions = [
+            {
+                "id": "Ukraine",
+                "place_type": "country",
+                "count": 26,
+                "places": [1, 4, 5, 5],
+                "children": [
+                    {
+                        "id": "Donetsk",
+                        "place_type": "state",
+                        "count": 26,
+                        "places": [1, 4, 5, 5, 30, 30, 32, 32],
+                        "children": [],
+                    }
+                ],
+            }
+        ]
+        dedup_html = app.format_regional_distribution_html(dup_regions, pin_coords={1: (48.0, 37.8), 4: (48.1, 37.9), 5: (48.2, 38.0)})
+        assert "data-sector-pins='[1, 4, 5, 30, 32]'" in dedup_html
+        assert "<details class='tactical-sector-card' open>" in dedup_html
+
 
 # ==============================================================================
 # PHASE 1.1: Static Performance & Invariant Auditing (AST / Lint Tests)
