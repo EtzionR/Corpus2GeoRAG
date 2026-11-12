@@ -1168,7 +1168,7 @@ class TestRAGDebugLogging:
         with open("app.py", "r", encoding="utf-8") as f:
             code = f.read()
 
-        ops_pos = code.find("st.subheader(\"🛠️ Operations\")")
+        ops_pos = code.find("st.subheader(\"Operations\")")
         spatial_pos = code.find("st.subheader(\"🎯 Spatial Targeting\")")
         rag_btn_pos = code.find("📋 RAG Debug Logs")
         keep_pts_pos = code.find("Retain target pin after query")
@@ -5170,3 +5170,241 @@ class TestDeferredPointSelectionSync:
             return _get_map_string(m)
 
         micro_benchmark(_compile, iterations=10, max_mean_ms=80.0, label="MapTrashBinHook+gate compilation")
+
+
+class TestOfflineTypographyAndBundledFonts:
+    """Verify 3-tier offline typography (Chakra Petch, Plus Jakarta Sans, JetBrains Mono) and zero fallbacks."""
+
+    def test_bundled_woff2_files_exist_and_have_valid_headers(self):
+        import font_assets
+
+        assert font_assets.FONTS_DIR.is_dir(), "Bundled fonts directory must exist"
+        assert len(font_assets.FONT_SPECS) >= 11
+        for family, weight, filename, unicode_range in font_assets.FONT_SPECS:
+            p = font_assets.FONTS_DIR / filename
+            assert p.is_file(), f"Missing bundled font asset: {p}"
+            raw = p.read_bytes()
+            assert len(raw) > 1000, f"Font asset {filename} unexpectedly small"
+            assert raw[:4] == b"wOF2", f"Invalid WOFF2 magic header in {filename}: {raw[:4]!r}"
+            assert unicode_range.startswith("U+")
+            assert family in ("Chakra Petch", "Plus Jakarta Sans", "JetBrains Mono")
+            assert weight
+
+    def test_embedded_font_face_css_and_style_block(self, tmp_path):
+        import font_assets
+
+        css = font_assets.get_embedded_font_face_css()
+        for fam in ("Chakra Petch", "Plus Jakarta Sans", "JetBrains Mono"):
+            assert f"font-family: '{fam}'" in css
+        assert "data:font/woff2;base64," in css
+        assert "https://fonts.googleapis.com" not in css
+
+        block = font_assets.get_font_style_block()
+        assert f"<style id='{font_assets.FONT_STYLE_ELEMENT_ID}'>" in block
+        assert block.endswith("</style>")
+
+        # Graceful behavior when a custom fonts directory is empty
+        empty_css = font_assets.get_embedded_font_face_css(fonts_dir=tmp_path)
+        assert empty_css == ""
+
+    def test_iframe_font_sync_js_and_resizer_theme_css(self, tmp_path):
+        import font_assets
+        import app
+
+        js = font_assets.build_iframe_font_sync_js()
+        assert "window.geoaiSyncEmbeddedFonts" in js
+        assert font_assets.FONT_STYLE_ELEMENT_ID in js
+        if _NODE_BIN:
+            p = tmp_path / "font_sync.js"
+            p.write_text(js, encoding="utf-8")
+            proc = _subprocess.run([_NODE_BIN, "--check", str(p)], capture_output=True, text=True, timeout=30)
+            assert proc.returncode == 0, proc.stderr
+
+        resizer_css = app.build_resizer_theme_css()
+        assert font_assets.FONT_DISPLAY in resizer_css
+        assert font_assets.FONT_BODY in resizer_css
+        assert "Courier New" not in resizer_css
+
+    def test_three_tier_typography_assignments_and_no_courier_fallback(self):
+        from pathlib import Path
+        import font_assets
+
+        root = Path(__file__).resolve().parent
+        app_src = (root / "app.py").read_text(encoding="utf-8")
+        ga_src = (root / "geo_agent.py").read_text(encoding="utf-8")
+        cfg_src = (root / ".streamlit" / "config.toml").read_text(encoding="utf-8")
+
+        assert 'font = "sans serif"' in cfg_src
+        assert "Courier New" not in app_src
+        assert "Courier New" not in ga_src
+        assert "Fira Code" not in app_src
+        assert "fonts.googleapis.com" not in app_src
+        assert "fonts.googleapis.com" not in ga_src
+
+        assert font_assets.FONT_DISPLAY.startswith("'Chakra Petch'")
+        assert font_assets.FONT_BODY.startswith("'Plus Jakarta Sans'")
+        assert font_assets.FONT_MONO.startswith("'JetBrains Mono'")
+
+        # Action buttons & Recon map HUD button must use Chakra Petch (FONT_DISPLAY)
+        assert "div.stButton button," in app_src
+        assert 'div[data-testid="stButton"] button p' in app_src
+        assert "font-family: {FONT_DISPLAY} !important;" in app_src
+        assert "font-family: __FONT_DISPLAY__;\n                    text-transform: uppercase;" in app_src
+        # Suggested follow-ups keep readable Plus Jakarta Sans body font
+        assert 'div[class*="st-key-btn_fu_"] button' in app_src
+        assert "font-family: {FONT_BODY} !important;" in app_src
+        # Subgraph modal embeds offline fonts and uses Chakra Petch + Plus Jakarta Sans + JetBrains Mono
+        import app
+        modal_html = app._render_subgraph_modal_html(
+            {"nodes": [{"id": "n1", "label": "Kyiv", "type": "LOC", "role": "primary"}], "edges": []},
+            query_title="Test",
+        )
+        assert "data:font/woff2;base64," in modal_html
+        assert "'Chakra Petch'" in modal_html
+        assert "'Plus Jakarta Sans'" in modal_html
+        assert "'JetBrains Mono'" in modal_html
+
+    def test_map_trash_bin_hook_embeds_font_sync_without_template_leaks(self):
+        import folium
+        from streamlit_folium import _get_map_string
+        import app
+
+        m = folium.Map()
+        app.MapTrashBinHook().add_to(m)
+        script = _get_map_string(m)
+        assert "this.font_sync_js" not in script
+        assert "this.resizer_theme_css_js" not in script
+        assert "this.font_display_js" not in script
+        assert "window.geoaiSyncEmbeddedFonts" in script
+        assert "'Chakra Petch'" in script
+
+    def test_geo_agent_popup_uses_plus_jakarta_and_popup_wrap(self, monkeypatch):
+        import geo_agent
+
+        mock_resp = geo_agent.query_geo_agent(text_prompt="Kyiv", force_mock=True)
+        mock_markers = [l for l in mock_resp.layers if l.layer_type == "marker" and l.popup]
+        assert mock_markers
+        assert "font-family:monospace" not in mock_markers[0].popup
+
+        def fake_query(text_prompt, geo_location=None, chat_history=None, api_key=None):
+            return {
+                "answer": "Kyiv [1].",
+                "answer_plain": "Kyiv.",
+                "status": "answered",
+                "grounded": True,
+                "geo_locations": [
+                    {
+                        "number": 1,
+                        "id": "Kyiv",
+                        "label": "Kyiv",
+                        "kind": "city",
+                        "role": "primary",
+                        "geometry": {"type": "Point", "coordinates": [30.5241, 50.4500]},
+                        "why": "Capital city",
+                        "sources": [],
+                    }
+                ],
+                "citations": [],
+                "sources": [],
+            }
+
+        monkeypatch.setattr(geo_agent, "_BACKEND_AVAILABLE", True)
+        monkeypatch.setattr(geo_agent, "_backend_query", fake_query)
+        live_resp = geo_agent.query_geo_agent(text_prompt="Kyiv", api_key="sk-or-test-key")
+        live_markers = [l for l in live_resp.layers if l.layer_type == "marker" and l.popup]
+        assert live_markers
+        sample_html = live_markers[0].popup
+        assert "geoai-popup-wrap" in sample_html
+        assert "'Plus Jakarta Sans'" in sample_html
+        assert "font-family:monospace" not in sample_html
+
+    def test_benchmark_embedded_font_css_and_modal_latency(self, micro_benchmark):
+        import font_assets
+        import app
+
+        # Warm cache once before micro-benchmark
+        font_assets.get_embedded_font_face_css()
+        font_assets.get_font_style_block()
+        font_assets.build_iframe_font_sync_js()
+        app.build_resizer_theme_css()
+
+        micro_benchmark(font_assets.get_embedded_font_face_css, iterations=200, max_mean_ms=0.05, label="get_embedded_font_face_css (warm)")
+        micro_benchmark(font_assets.get_font_style_block, iterations=200, max_mean_ms=0.05, label="get_font_style_block (warm)")
+        micro_benchmark(font_assets.build_iframe_font_sync_js, iterations=200, max_mean_ms=0.05, label="build_iframe_font_sync_js (warm)")
+        micro_benchmark(app.build_resizer_theme_css, iterations=200, max_mean_ms=0.05, label="build_resizer_theme_css (warm)")
+
+        sample_sg = {
+            "nodes": [{"id": f"LOC_{i}", "label": f"Node {i}", "type": "LOC", "role": "primary"} for i in range(12)],
+            "edges": [{"source": f"LOC_{i}", "target": f"LOC_{(i+1)%12}", "label": "NEAR"} for i in range(12)],
+        }
+        micro_benchmark(
+            app._render_subgraph_modal_html,
+            sample_sg,
+            query_title="Benchmark Subgraph",
+            iterations=25,
+            max_mean_ms=15.0,
+            label="_render_subgraph_modal_html (with embedded fonts)",
+        )
+
+    def test_session_telemetry_and_layer_legend_html_and_icon_free_titles(self, micro_benchmark):
+        from pathlib import Path
+        import app
+
+        telemetry_html = app.render_session_telemetry_html(2, 5)
+        assert "geoai-telemetry-grid" in telemetry_html
+        assert "Chat Messages" in telemetry_html
+        assert "Active Layers" in telemetry_html
+        assert ">02<" in telemetry_html
+        assert ">05<" in telemetry_html
+        assert ">00<" in app.render_session_telemetry_html(-1, 0)
+        assert ">125<" in app.render_session_telemetry_html(125, 12)
+
+        legend_html = app.render_layer_legend_html()
+        assert "geoai-legend-list" in legend_html
+        assert legend_html.count("geoai-legend-swatch") == 3
+        assert "<b>Primary Place</b> &mdash; numbered &amp; cited" in legend_html
+        assert "<b>Event</b> &mdash; tactical focus" in legend_html
+        assert "<b>Uncertain</b> &mdash; inferred coordinates" in legend_html
+
+        app_src = (Path(__file__).resolve().parent / "app.py").read_text(encoding="utf-8")
+        assert "<div class='sidebar-title'>GEO-AI COMMAND</div>" in app_src
+        assert 'st.subheader("Agent Connection")' in app_src
+        assert 'st.subheader("Operations")' in app_src
+        assert 'st.subheader("Session Telemetry")' in app_src
+        assert 'st.subheader("Layer Legend")' in app_src
+        assert '@st.dialog("RAG Agent Telemetry & Debug Logs"' in app_src
+
+        micro_benchmark(app.render_session_telemetry_html, 2, 5, iterations=200, max_mean_ms=0.05, label="render_session_telemetry_html")
+        micro_benchmark(app.render_layer_legend_html, iterations=200, max_mean_ms=0.05, label="render_layer_legend_html")
+
+    def test_count_chat_messages_excludes_welcome_message(self, micro_benchmark):
+        import app
+
+        flagged_welcome = {
+            "role": "assistant",
+            "is_welcome": True,
+            "content": "Welcome to the GeoAI Spatial Intelligence Hub.",
+        }
+        legacy_welcome = {
+            "role": "assistant",
+            "content": "Welcome to the GeoAI Spatial Intelligence Hub.\nClick map.",
+        }
+        user_msg = {"role": "user", "content": "Show bases near Tripoli"}
+        assistant_msg = {"role": "assistant", "content": "Found 2 locations.", "is_live": True}
+
+        assert app.count_chat_messages(None) == 0
+        assert app.count_chat_messages([]) == 0
+        assert app.count_chat_messages([flagged_welcome]) == 0
+        assert app.count_chat_messages([legacy_welcome]) == 0
+        assert app.count_chat_messages([flagged_welcome, user_msg, assistant_msg]) == 2
+        assert app.count_chat_messages([legacy_welcome, user_msg, assistant_msg]) == 2
+        assert app.count_chat_messages([{"role": "assistant", "content": "Custom reply"}]) == 1
+        assert app.count_chat_messages([user_msg, {"role": "assistant", "content": "Welcome to the GeoAI"}]) == 2
+
+        micro_benchmark(
+            app.count_chat_messages,
+            [flagged_welcome, user_msg, assistant_msg],
+            iterations=200,
+            max_mean_ms=0.05,
+            label="count_chat_messages",
+        )

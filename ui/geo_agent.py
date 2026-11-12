@@ -30,6 +30,13 @@ from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
+try:
+    from font_assets import FONT_BODY, FONT_DISPLAY, FONT_MONO
+except ImportError:
+    FONT_DISPLAY = "'Chakra Petch', 'Plus Jakarta Sans', 'Segoe UI', sans-serif"
+    FONT_BODY = "'Plus Jakarta Sans', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif"
+    FONT_MONO = "'JetBrains Mono', Consolas, monospace"
+
 __all__ = [
     "MapLayer",
     "AgentResponse",
@@ -1202,7 +1209,7 @@ def query_geo_agent(
                 )
             header_title = f"#{number} {label}" if number is not None else label
             popup_content = (
-                f"<div style='font-family:monospace; padding:6px;'>"
+                f'<div class="geoai-popup-wrap" style="font-family:{FONT_BODY}; padding:6px;">'
                 f"<b>★ {header_title}</b><br>"
                 f"ID: <code>{node_id}</code><br>"
                 f"TYPE: <code>{kind.upper()}</code> ({role})<br>"

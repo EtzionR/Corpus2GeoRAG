@@ -30,6 +30,7 @@ import sys
 import re
 import time
 import json
+import functools
 from datetime import datetime
 import subprocess
 import importlib.util
@@ -103,6 +104,14 @@ from geo_agent import (
     AgentResponse,
     query_geo_agent,
     to_bounding_box,
+)
+from font_assets import (
+    FONT_BODY,
+    FONT_DISPLAY,
+    FONT_MONO,
+    build_iframe_font_sync_js,
+    get_embedded_font_face_css,
+    get_font_style_block,
 )
 
 # Ensure get_source_text, extract_answer_subgraph, format_evidence_popup_html, API key persistence helpers, and AgentError are safely resolved even across hot-reloads
@@ -778,7 +787,7 @@ def _build_error_assistant_message(err_message: str) -> Dict[str, Any]:
     }
 
 
-@st.dialog("🛰️ RAG Agent Telemetry & Debug Logs", width="large")
+@st.dialog("RAG Agent Telemetry & Debug Logs", width="large")
 def show_rag_log_dialog():
     """Modal dialog displaying comprehensive raw JSON payloads, telemetry, and diagnostics for RAG calls."""
     logs: List[Dict[str, Any]] = st.session_state.get("rag_logs", [])
@@ -858,7 +867,7 @@ def show_rag_log_dialog():
                 st.json(selected_entry["error_details"])
 
     with tab_meta:
-        st.markdown(f"#### 🔍 Transaction #{selected_entry['id']} Diagnostics")
+        st.markdown(f"#### Transaction #{selected_entry['id']} Diagnostics")
         col_t1, col_t2 = st.columns(2)
         with col_t1:
             st.markdown(f"- **Timestamp:** `{selected_entry['timestamp']}`")
@@ -873,7 +882,7 @@ def show_rag_log_dialog():
                 st.markdown(f"- **Exception Class:** `{selected_entry['error_details'].get('error_type')}`")
 
         if selected_entry.get("error_details"):
-            st.markdown("##### ⚠️ Error Details & Diagnostic Tip")
+            st.markdown("##### Error Details & Diagnostic Tip")
             st.code(selected_entry["error_details"].get("message", ""), language="text")
 
     with tab_src:
@@ -960,12 +969,14 @@ def _render_subgraph_modal_html(subgraph_data: Dict[str, Any], query_title: str 
     nodes = list((subgraph_data or {}).get("nodes") or [])
     edges = list((subgraph_data or {}).get("edges") or [])
     payload_json = json.dumps({"nodes": nodes, "edges": edges, "query": query_title or ""})
+    font_face_css = get_embedded_font_face_css()
 
     return f"""<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8" />
 <style>
+{font_face_css}
   * {{ box-sizing: border-box; margin: 0; padding: 0; }}
   /* Dedicated Tactical Scrollbars (matching GeoAI chat console roller) */
   * {{
@@ -996,7 +1007,7 @@ def _render_subgraph_modal_html(subgraph_data: Dict[str, Any], query_title: str 
   body {{
     background: #080f18;
     color: #e2e8f0;
-    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    font-family: {FONT_BODY};
     overflow: hidden;
     user-select: none;
   }}
@@ -1031,7 +1042,7 @@ def _render_subgraph_modal_html(subgraph_data: Dict[str, Any], query_title: str 
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-family: {FONT_MONO};
     font-size: 11.5px;
     color: #94a3b8;
     background: rgba(15, 23, 42, 0.5);
@@ -1056,7 +1067,7 @@ def _render_subgraph_modal_html(subgraph_data: Dict[str, Any], query_title: str 
     height: 26px;
     font-size: 11px;
     color: #94a3b8;
-    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-family: {FONT_MONO};
     user-select: none;
   }}
   .sg-slider {{
@@ -1090,8 +1101,10 @@ def _render_subgraph_modal_html(subgraph_data: Dict[str, Any], query_title: str 
     font-weight: 600;
   }}
   .sg-btn {{
+    font-family: {FONT_DISPLAY};
     font-size: 12px;
     font-weight: 600;
+    letter-spacing: 0.04em;
     padding: 4px 10px;
     border-radius: 5px;
     cursor: pointer;
@@ -1185,8 +1198,10 @@ def _render_subgraph_modal_html(subgraph_data: Dict[str, Any], query_title: str 
     flex-shrink: 0;
   }}
   .sg-insp-title {{
-    font-size: 14px;
+    font-family: {FONT_DISPLAY};
+    font-size: 14.5px;
     font-weight: 700;
+    letter-spacing: 0.04em;
     color: #f8fafc;
     word-break: break-word;
   }}
@@ -1199,7 +1214,7 @@ def _render_subgraph_modal_html(subgraph_data: Dict[str, Any], query_title: str 
     flex-shrink: 0;
   }}
   .sg-insp-sub {{
-    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-family: {FONT_MONO};
     font-size: 12px;
     color: #38bdf8;
     margin-bottom: 8px;
@@ -1271,7 +1286,7 @@ def _render_subgraph_modal_html(subgraph_data: Dict[str, Any], query_title: str 
     background: rgba(0, 229, 255, 0.1);
   }}
   .sg-edge-rel {{
-    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-family: {FONT_MONO};
     color: #00e5ff;
     font-weight: 600;
   }}
@@ -1599,7 +1614,7 @@ function draw() {{
         ctx.globalAlpha = effAlpha;
         const mx = (u.x + v.x) / 2;
         const my = (u.y + v.y) / 2;
-        ctx.font = isHoveredRelation ? "bold 12.5px monospace" : "12px monospace";
+        ctx.font = isHoveredRelation ? "bold 12.5px 'JetBrains Mono', monospace" : "12px 'JetBrains Mono', monospace";
         ctx.fillStyle = isHoveredRelation ? "#00e5ff" : (active ? "#f8fafc" : "rgba(148, 163, 184, 0.85)");
         ctx.textAlign = "center";
         if (isHoveredRelation) {{
@@ -1661,7 +1676,7 @@ function draw() {{
     // Node caption
     ctx.save();
     ctx.globalAlpha = dimmed ? 0.32 : 1.0;
-    ctx.font = isSel ? "bold 12px sans-serif" : "12px sans-serif";
+    ctx.font = isSel ? "600 12px 'Plus Jakarta Sans', sans-serif" : "500 12px 'Plus Jakarta Sans', sans-serif";
     ctx.fillStyle = "#f8fafc";
     ctx.textAlign = "center";
     ctx.fillText(n.label, n.x, n.y + r + 15);
@@ -2300,6 +2315,64 @@ class SelectionSyncHook(MacroElement):
         self.pin_shape = (pin_shape or "diamond").strip().lower()
 
 
+@functools.lru_cache(maxsize=1)
+def build_resizer_theme_css() -> str:
+    """Return shared tactical HUD CSS for the adjustable_columns header iframe."""
+    return f"""
+        html, body {{
+            background: transparent !important;
+            font-family: {FONT_BODY} !important;
+            overflow: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }}
+        #root {{ min-height: 0 !important; height: 100% !important; }}
+        .column-indicator {{
+            background: rgba(13, 23, 38, 0.92) !important;
+            border-left: 3px solid #00e5ff !important;
+            border-top: 1px solid rgba(0, 229, 255, 0.35) !important;
+            border-right: 1px solid rgba(0, 229, 255, 0.35) !important;
+            border-bottom: 1px solid rgba(0, 229, 255, 0.35) !important;
+            border-radius: 4px !important;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.15) !important;
+            transition: background 0.15s ease !important;
+            box-sizing: border-box !important;
+        }}
+        .column-indicator:hover {{
+            background: rgba(0, 229, 255, 0.18) !important;
+            border-color: #00e5ff !important;
+            box-shadow: 0 0 14px rgba(0, 229, 255, 0.45) !important;
+        }}
+        .column-indicator,
+        .column-indicator > div,
+        .column-indicator div,
+        .column-indicator span {{
+            color: #00e5ff !important;
+            font-family: {FONT_DISPLAY} !important;
+            font-size: 14px !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.09em !important;
+            text-transform: uppercase !important;
+            opacity: 1 !important;
+            text-shadow: 0 0 10px rgba(0, 229, 255, 0.8) !important;
+        }}
+        .column-indicator:hover > div,
+        .column-indicator:hover div {{
+            color: #ffffff !important;
+            text-shadow: 0 0 14px #00e5ff !important;
+        }}
+        .resize-handle {{
+            background: rgba(0, 229, 255, 0.4) !important;
+            border-radius: 2px !important;
+            transition: background 0.2s ease, box-shadow 0.2s ease !important;
+        }}
+        .resize-handle:hover {{
+            background: #00e5ff !important;
+            box-shadow: 0 0 10px #00e5ff !important;
+        }}
+    """
+
+
 class MapTrashBinHook(MacroElement):
     """
     Folium MacroElement injecting client-side integration for the Leaflet Draw toolbar:
@@ -2318,6 +2391,11 @@ class MapTrashBinHook(MacroElement):
             var map = {{ this._parent.get_name() }};
             if (!map) return;
 
+{{ this.font_sync_js }}
+            if (window.geoaiSyncEmbeddedFonts) {
+                window.geoaiSyncEmbeddedFonts(document);
+            }
+
             if (typeof drawnItems !== 'undefined') {
                 window.drawnItems = drawnItems;
             }
@@ -2326,62 +2404,14 @@ class MapTrashBinHook(MacroElement):
             window._lastClearSeq = window._lastClearSeq || 0;
 
             // Apply matching cyan headers to adjustable_columns iframe from parent document
-            var RESIZER_THEME_CSS = `
-                html, body {
-                    background: transparent !important;
-                    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
-                    overflow: hidden !important;
-                    margin: 0 !important;
-                    padding: 0 !important;
-                }
-                #root { min-height: 0 !important; height: 100% !important; }
-                .column-indicator {
-                    background: rgba(13, 23, 38, 0.92) !important;
-                    border-left: 3px solid #00e5ff !important;
-                    border-top: 1px solid rgba(0, 229, 255, 0.35) !important;
-                    border-right: 1px solid rgba(0, 229, 255, 0.35) !important;
-                    border-bottom: 1px solid rgba(0, 229, 255, 0.35) !important;
-                    border-radius: 4px !important;
-                    box-shadow: 0 0 10px rgba(0, 229, 255, 0.15) !important;
-                    transition: background 0.15s ease !important;
-                    box-sizing: border-box !important;
-                }
-                .column-indicator:hover {
-                    background: rgba(0, 229, 255, 0.18) !important;
-                    border-color: #00e5ff !important;
-                    box-shadow: 0 0 14px rgba(0, 229, 255, 0.45) !important;
-                }
-                .column-indicator,
-                .column-indicator > div,
-                .column-indicator div,
-                .column-indicator span {
-                    color: #00e5ff !important;
-                    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
-                    font-size: 13px !important;
-                    font-weight: 700 !important;
-                    letter-spacing: 0.07em !important;
-                    text-transform: uppercase !important;
-                    opacity: 1 !important;
-                    text-shadow: 0 0 10px rgba(0, 229, 255, 0.8) !important;
-                }
-                .column-indicator:hover > div,
-                .column-indicator:hover div {
-                    color: #ffffff !important;
-                    text-shadow: 0 0 14px #00e5ff !important;
-                }
-                .resize-handle {
-                    background: rgba(0, 229, 255, 0.4) !important;
-                    border-radius: 2px !important;
-                    transition: background 0.2s ease, box-shadow 0.2s ease !important;
-                }
-                .resize-handle:hover {
-                    background: #00e5ff !important;
-                    box-shadow: 0 0 10px #00e5ff !important;
-                }
-            `;
+            var RESIZER_THEME_CSS = {{ this.resizer_theme_css_js }};
+            var GEOAI_FONT_DISPLAY = {{ this.font_display_js }};
 
             function applyResizerThemeToDoc(doc) {
                 if (!doc || (!doc.head && !doc.body)) return;
+                if (window.geoaiSyncEmbeddedFonts) {
+                    window.geoaiSyncEmbeddedFonts(doc);
+                }
                 var styleEl = doc.getElementById('geoai-resizer-hud-theme');
                 if (!styleEl) {
                     styleEl = doc.createElement('style');
@@ -2402,9 +2432,10 @@ class MapTrashBinHook(MacroElement):
                     var txt = inds[k].querySelector('div');
                     if (txt) {
                         txt.style.setProperty('color', '#00e5ff', 'important');
-                        txt.style.setProperty('font-size', '13px', 'important');
+                        txt.style.setProperty('font-family', GEOAI_FONT_DISPLAY, 'important');
+                        txt.style.setProperty('font-size', '14px', 'important');
                         txt.style.setProperty('font-weight', '700', 'important');
-                        txt.style.setProperty('letter-spacing', '0.07em', 'important');
+                        txt.style.setProperty('letter-spacing', '0.09em', 'important');
                         txt.style.setProperty('opacity', '1', 'important');
                         txt.style.setProperty('text-shadow', '0 0 10px rgba(0, 229, 255, 0.8)', 'important');
                     }
@@ -2412,6 +2443,9 @@ class MapTrashBinHook(MacroElement):
 
                 if (!doc._geoaiResizerObs && window.MutationObserver) {
                     doc._geoaiResizerObs = new MutationObserver(function() {
+                        if (window.geoaiSyncEmbeddedFonts) {
+                            window.geoaiSyncEmbeddedFonts(doc);
+                        }
                         var styleCheck = doc.getElementById('geoai-resizer-hud-theme');
                         if (!styleCheck) {
                             styleCheck = doc.createElement('style');
@@ -2426,8 +2460,10 @@ class MapTrashBinHook(MacroElement):
                             var subTxt = subInds[j].querySelector('div');
                             if (subTxt) {
                                 subTxt.style.setProperty('color', '#00e5ff', 'important');
-                                subTxt.style.setProperty('font-size', '13px', 'important');
+                                subTxt.style.setProperty('font-family', GEOAI_FONT_DISPLAY, 'important');
+                                subTxt.style.setProperty('font-size', '14px', 'important');
                                 subTxt.style.setProperty('font-weight', '700', 'important');
+                                subTxt.style.setProperty('letter-spacing', '0.09em', 'important');
                                 subTxt.style.setProperty('opacity', '1', 'important');
                                 subTxt.style.setProperty('text-shadow', '0 0 10px rgba(0, 229, 255, 0.8)', 'important');
                             }
@@ -4375,6 +4411,9 @@ class MapTrashBinHook(MacroElement):
         self.selection_layer_names = selection_layer_names or []
         self.has_active = has_active
         self.deferred_sync_js = build_deferred_selection_sync_js()
+        self.font_sync_js = build_iframe_font_sync_js()
+        self.resizer_theme_css_js = json.dumps(build_resizer_theme_css())
+        self.font_display_js = json.dumps(FONT_DISPLAY)
 
 # ==============================================================================
 # 1. Visual Theme Configurations & Page Setup (GeoAI Defense C2)
@@ -4661,6 +4700,62 @@ def _popup_card(
         f"</div>"
     )
 
+
+def _is_welcome_message(msg: Any, index: int = 0) -> bool:
+    """Return True when `msg` is the initial introductory welcome card."""
+    if not isinstance(msg, dict):
+        return False
+    if msg.get("is_welcome"):
+        return True
+    return (
+        index == 0
+        and msg.get("role") == "assistant"
+        and not msg.get("is_live")
+        and "Welcome to the GeoAI" in str(msg.get("content", ""))
+    )
+
+
+def count_chat_messages(messages: Optional[List[Dict[str, Any]]]) -> int:
+    """Count operator and assistant conversation turns, excluding the welcome message."""
+    if not messages:
+        return 0
+    return sum(1 for idx, msg in enumerate(messages) if not _is_welcome_message(msg, index=idx))
+
+
+def render_session_telemetry_html(chat_count: int, layer_count: int) -> str:
+    """Render compact 2-card tactical telemetry HTML for Chat Messages and Active Layers."""
+    chats_str = f"{max(0, int(chat_count)):02d}"
+    layers_str = f"{max(0, int(layer_count)):02d}"
+    return (
+        "<div class='geoai-telemetry-grid'>"
+        "<div class='geoai-telemetry-card'>"
+        "<div class='geoai-telemetry-label'>Chat Messages</div>"
+        f"<div class='geoai-telemetry-val'>{chats_str}</div>"
+        "</div>"
+        "<div class='geoai-telemetry-card'>"
+        "<div class='geoai-telemetry-label'>Active Layers</div>"
+        f"<div class='geoai-telemetry-val'>{layers_str}</div>"
+        "</div>"
+        "</div>"
+    )
+
+
+def render_layer_legend_html() -> str:
+    """Render rotated-diamond tactical layer legend matching the Defense C2 HUD design."""
+    items = (
+        ("#38bdf8", "Primary Place", "numbered &amp; cited"),
+        ("#ff4d6d", "Event", "tactical focus"),
+        ("#ffb020", "Uncertain", "inferred coordinates"),
+    )
+    rows = "".join(
+        "<div class='geoai-legend-item'>"
+        f"<span class='geoai-legend-swatch' style='background:{color};'></span>"
+        f"<span><b>{title}</b> &mdash; {desc}</span>"
+        "</div>"
+        for color, title, desc in items
+    )
+    return f"<div class='geoai-legend-list'>{rows}</div>"
+
 # Configure Streamlit page properties to use a responsive wide layout
 st.set_page_config(
     page_title=f"GeoAI Intelligence Hub [{t_cfg['name']}]",
@@ -4670,7 +4765,7 @@ st.set_page_config(
 )
 
 # Custom CSS for tactical HUD interface styling
-st.markdown(f"""
+st.markdown(f"""{get_font_style_block()}
 <style>
     /* Tactical Citations Styling */
     a.tactical-cit,
@@ -4680,7 +4775,7 @@ st.markdown(f"""
         margin: 0 2px;
         font-size: 0.82em;
         font-weight: 700;
-        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        font-family: {FONT_MONO};
         border-radius: 4px;
         vertical-align: baseline;
         transition: all 0.15s ease-in-out;
@@ -4725,7 +4820,7 @@ st.markdown(f"""
         border-radius: 8px;
         padding: 8px 10px;
         margin: 6px 0 10px 0;
-        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        font-family: {FONT_BODY};
     }}
     .tactical-sector-toolbar {{
         display: flex;
@@ -4736,7 +4831,8 @@ st.markdown(f"""
         border-bottom: 1px solid rgba(56, 189, 248, 0.15);
     }}
     .tactical-sector-title {{
-        font-size: 0.74rem;
+        font-family: {FONT_DISPLAY};
+        font-size: 0.78rem;
         font-weight: 700;
         color: #94a3b8;
         letter-spacing: 0.08em;
@@ -4746,6 +4842,7 @@ st.markdown(f"""
         gap: 6px;
     }}
     .tactical-sector-title code {{
+        font-family: {FONT_MONO};
         background: rgba(56, 189, 248, 0.12);
         color: #38bdf8;
         padding: 1px 6px;
@@ -4827,6 +4924,7 @@ st.markdown(f"""
         text-overflow: ellipsis;
     }}
     .tactical-sector-count {{
+        font-family: {FONT_MONO};
         background: rgba(56, 189, 248, 0.12);
         color: #38bdf8;
         border: 1px solid rgba(56, 189, 248, 0.25);
@@ -4838,6 +4936,7 @@ st.markdown(f"""
         white-space: nowrap;
     }}
     .tactical-sector-btn {{
+        font-family: {FONT_MONO};
         background: rgba(56, 189, 248, 0.12);
         border: 1px solid rgba(56, 189, 248, 0.4);
         color: #38bdf8;
@@ -4924,9 +5023,25 @@ st.markdown(f"""
         flex-wrap: wrap;
     }}
 
-    /* Global Typography */
-    html, body, [class*="css"], font, span, p, div, button, input {{
-        font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    /* Global Typography (3-Tier Tactical Hierarchy) */
+    :root, .stApp {{
+        --font: {FONT_BODY};
+        --monospace-font: {FONT_MONO};
+    }}
+    html, body, .stApp, [data-testid="stAppViewContainer"], [data-testid="stSidebar"],
+    p, li, label, input, textarea, select, [data-testid="stMarkdownContainer"] {{
+        font-family: {FONT_BODY};
+    }}
+    h1, h2, h3, h4,
+    [data-testid="stHeadingWithActionElements"] h1,
+    [data-testid="stHeadingWithActionElements"] h2,
+    [data-testid="stHeadingWithActionElements"] h3 {{
+        font-family: {FONT_DISPLAY} !important;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }}
+    code, pre, kbd, samp {{
+        font-family: {FONT_MONO} !important;
     }}
 
     /* Lock Viewport to Chrome Window - Zero Main Window Scrollbar */
@@ -5202,6 +5317,7 @@ st.markdown(f"""
         display: inline-block;
         padding: 5px 12px;
         border-radius: 4px;
+        font-family: {FONT_MONO};
         font-size: 0.82rem;
         font-weight: 700;
         letter-spacing: 0.06em;
@@ -5253,6 +5369,7 @@ st.markdown(f"""
         flex-shrink: 0;
     }}
     .geo-pill-label {{
+        font-family: {FONT_MONO};
         font-size: 0.70rem;
         font-weight: 700;
         letter-spacing: 0.08em;
@@ -5274,14 +5391,14 @@ st.markdown(f"""
         white-space: nowrap;
     }}
     .geo-pill-sublabel {{
-        font-family: 'JetBrains Mono', monospace;
+        font-family: {FONT_MONO};
         font-size: 0.62rem;
         font-weight: 700;
         color: {t_cfg['text_dim']};
         letter-spacing: 0.05em;
     }}
     .geo-pill-coord {{
-        font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+        font-family: {FONT_MONO};
         font-size: 0.74rem;
         font-weight: 700;
         color: {t_cfg['primary']};
@@ -5298,9 +5415,10 @@ st.markdown(f"""
         border-right: 1px solid {t_cfg['border_card']};
         border-bottom: 1px solid {t_cfg['border_card']};
         border-radius: 4px;
-        font-size: 0.88rem;
+        font-family: {FONT_DISPLAY};
+        font-size: 0.92rem;
         font-weight: 700;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.09em;
         text-transform: uppercase;
         margin-bottom: 0.45rem;
         color: {t_cfg['primary']};
@@ -5376,6 +5494,7 @@ st.markdown(f"""
 
     /* Operator inner content & header */
     .chat-role-tag.chat-role-operator {{
+        font-family: {FONT_MONO};
         text-align: right !important;
         color: #38bdf8 !important;
         letter-spacing: 0.08em;
@@ -5418,6 +5537,7 @@ st.markdown(f"""
 
     /* Geo-AI inner content & header */
     .chat-role-tag.chat-role-geoai {{
+        font-family: {FONT_MONO};
         text-align: left !important;
         color: {t_cfg['primary']} !important;
         letter-spacing: 0.08em;
@@ -5470,33 +5590,51 @@ st.markdown(f"""
     }}
 
     /* HUD Buttons */
-    div.stButton > button {{
-        font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
+    div.stButton button,
+    div[data-testid="stButton"] button,
+    div.stButton button p,
+    div[data-testid="stButton"] button p,
+    div.stButton button div[data-testid="stMarkdownContainer"],
+    div[data-testid="stButton"] button div[data-testid="stMarkdownContainer"] {{
+        font-family: {FONT_DISPLAY} !important;
         text-transform: uppercase !important;
         letter-spacing: 0.07em !important;
         font-weight: 600 !important;
+    }}
+    div.stButton button,
+    div[data-testid="stButton"] button {{
         border-radius: 3px !important;
         border: 1px solid {t_cfg['border_card']} !important;
         background: {t_cfg['bg_card']} !important;
         color: {t_cfg['text_main']} !important;
         transition: all 0.2s ease-in-out !important;
     }}
-    div.stButton > button:hover {{
+    div.stButton button:hover,
+    div[data-testid="stButton"] button:hover {{
         border-color: {t_cfg['primary']} !important;
         color: {t_cfg['primary']} !important;
         box-shadow: 0 0 12px {t_cfg['glow']} !important;
         background: rgba(0, 0, 0, 0.5) !important;
     }}
+    div[class*="st-key-btn_fu_"] button,
+    div[class*="st-key-btn_fu_"] button p,
+    div[class*="st-key-btn_area_sugg_"] button,
+    div[class*="st-key-btn_area_sugg_"] button p {{
+        font-family: {FONT_BODY} !important;
+        text-transform: none !important;
+        letter-spacing: 0.01em !important;
+        font-weight: 500 !important;
+    }}
 
     /* Telemetry Metrics */
     div[data-testid="stMetricValue"] {{
-        font-family: 'JetBrains Mono', monospace !important;
+        font-family: {FONT_MONO} !important;
         color: {t_cfg['primary']} !important;
         text-shadow: 0 0 10px {t_cfg['glow']} !important;
         font-size: 1.4rem !important;
     }}
     div[data-testid="stMetricLabel"] {{
-        font-family: 'JetBrains Mono', monospace !important;
+        font-family: {FONT_MONO} !important;
         text-transform: uppercase !important;
         letter-spacing: 0.08em !important;
         color: {t_cfg['text_dim']} !important;
@@ -5517,8 +5655,8 @@ st.markdown(f"""
     }}
     div[data-testid="stChatInput"] textarea {{
         color: {t_cfg['text_main']} !important;
-        font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
-        font-size: 0.85rem !important;
+        font-family: {FONT_BODY} !important;
+        font-size: 0.9rem !important;
     }}
     div[data-testid="stChatInput"] textarea:placeholder-shown {{
         white-space: nowrap !important;
@@ -5532,13 +5670,75 @@ st.markdown(f"""
 
     /* Sidebar Title */
     .sidebar-title {{
-        font-size: 1.15rem;
-        font-weight: 800;
+        font-family: {FONT_DISPLAY};
+        font-size: 1.12rem;
+        font-weight: 700;
         letter-spacing: 0.08em;
         text-transform: uppercase;
+        white-space: nowrap;
         color: {t_cfg['primary']};
         text-shadow: 0 0 10px {t_cfg['glow']};
         margin-bottom: 2px;
+    }}
+
+    /* Session Telemetry Cards & Tactical Layer Legend */
+    .geoai-telemetry-grid {{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 2px;
+        margin-bottom: 4px;
+    }}
+    .geoai-telemetry-card {{
+        background: rgba(8, 12, 17, 0.6);
+        border: 1px solid rgba(0, 229, 255, 0.18);
+        border-radius: 5px;
+        padding: 7px 10px;
+        min-width: 0;
+    }}
+    .geoai-telemetry-label {{
+        font-family: {FONT_MONO};
+        font-size: 0.63rem;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: {t_cfg['text_dim']};
+        line-height: 1.2;
+    }}
+    .geoai-telemetry-val {{
+        font-family: {FONT_MONO};
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: {t_cfg['primary']};
+        text-shadow: 0 0 10px {t_cfg['glow']};
+        line-height: 1.25;
+        margin-top: 2px;
+    }}
+    .geoai-legend-list {{
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-family: {FONT_BODY};
+        font-size: 0.78rem;
+        color: #cbd5e1;
+        margin-top: 2px;
+    }}
+    .geoai-legend-item {{
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        line-height: 1.35;
+    }}
+    .geoai-legend-swatch {{
+        width: 9px;
+        height: 9px;
+        transform: rotate(45deg);
+        flex-shrink: 0;
+        border-radius: 1px;
+    }}
+    .geoai-legend-item b {{
+        color: #f1f5f9;
+        font-weight: 600;
     }}
 
     /* Instant Client-Side Target HUD Pill Bridge (Hidden in favor of in-map #geoai_map_tactical_hud) */
@@ -5626,7 +5826,7 @@ st.markdown(f"""
         padding-right: 8px;
     }}
     .geoai-source-badge {{
-        font-family: 'JetBrains Mono', monospace;
+        font-family: {FONT_MONO};
         font-size: 0.70rem;
         font-weight: 600;
         color: #00e5ff;
@@ -6053,6 +6253,7 @@ if "messages" not in st.session_state:
     st.session_state.messages = [
         {
             "role": "assistant",
+            "is_welcome": True,
             "content": (
                 "👋 **Welcome to the GeoAI Spatial Intelligence Hub.**\n\n"
                 "• **Click map** to select locations of interest (manage in sidebar).\n"
@@ -6385,12 +6586,12 @@ if (
 # 3. Sidebar Utility Controls & Intelligence Dashboard
 # ==============================================================================
 with st.sidebar:
-    st.markdown("<div class='sidebar-title'>🌍 GEO-AI COMMAND</div>", unsafe_allow_html=True)
+    st.markdown("<div class='sidebar-title'>GEO-AI COMMAND</div>", unsafe_allow_html=True)
     st.caption("Multimodal Geocoded RAG Intelligence")
     st.markdown("---")
 
     # Agent Connection Credentials & Mode HUD Indicator
-    st.subheader("🔑 Agent Connection")
+    st.subheader("Agent Connection")
     api_key_input = st.text_input(
         "OpenRouter API Key:",
         type="password",
@@ -6415,7 +6616,7 @@ with st.sidebar:
     st.markdown("---")
 
     # Utility control buttons & operations (placed above Spatial Targeting)
-    st.subheader("🛠️ Operations")
+    st.subheader("Operations")
 
     st.toggle(
         "Show citations",
@@ -6514,22 +6715,18 @@ with st.sidebar:
     st.markdown("---")
 
     # Session metrics
-    st.subheader("📊 Session Telemetry")
-    col_m1, col_m2 = st.columns(2)
-    with col_m1:
-        st.metric("Chat Messages", len(st.session_state.messages))
-    with col_m2:
-        st.metric("Active Layers", len(st.session_state.map_layers))
-    st.metric("RAG Query Logs", len(st.session_state.get("rag_logs", [])))
+    st.subheader("Session Telemetry")
+    st.markdown(
+        render_session_telemetry_html(
+            chat_count=count_chat_messages(st.session_state.messages),
+            layer_count=len(st.session_state.map_layers),
+        ),
+        unsafe_allow_html=True,
+    )
 
     st.markdown("---")
-    _leg_shape = st.session_state.get("pin_shape", "Diamond")
-    st.markdown("### 🧭 Layer Legend")
-    st.markdown(f"- 🔷 **Sky Blue {_leg_shape} (`#`)**: **Primary Place** (numbered & cited in the answer)")
-    st.markdown(f"- 🔴 **Signal Red {_leg_shape} (`!`)**: **Event** or Tactical Focus")
-    st.markdown(f"- 🟠 **Dashed Amber {_leg_shape} (`?`)**: **Uncertain Location** (inferred coordinates)")
-    st.markdown("- 🔹 **Compact Dot / Cyan Ring**: **Context Place** & Cluster Count")
-    st.markdown("- 🎯 **Cyan Crosshair / Corner Brackets**: **Active Target** & Bounding Box")
+    st.subheader("Layer Legend")
+    st.markdown(render_layer_legend_html(), unsafe_allow_html=True)
 
 
 # ==============================================================================
@@ -6543,66 +6740,19 @@ col_labels = [
 # Split screen using streamlit_adjustable_columns with a 1 : 1.5 ratio and fixed key
 col1, col2 = adjustable_columns([1, 1.5], labels=col_labels, key="main_workspace_cols")
 
-# Apply matching glowing cyan color and 13px font to column header labels in adjustable_columns iframe
+# Apply matching glowing cyan color and Chakra Petch display font to column header labels in adjustable_columns iframe
 st.html(
     """<script>
 (function() {
-    var HUD_CSS = `
-        html, body {
-            background: transparent !important;
-            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
-            overflow: hidden !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-        #root { min-height: 0 !important; height: 100% !important; }
-        .column-indicator {
-            background: rgba(13, 23, 38, 0.92) !important;
-            border-left: 3px solid #00e5ff !important;
-            border-top: 1px solid rgba(0, 229, 255, 0.35) !important;
-            border-right: 1px solid rgba(0, 229, 255, 0.35) !important;
-            border-bottom: 1px solid rgba(0, 229, 255, 0.35) !important;
-            border-radius: 4px !important;
-            box-shadow: 0 0 10px rgba(0, 229, 255, 0.15) !important;
-            transition: background 0.15s ease !important;
-            box-sizing: border-box !important;
-        }
-        .column-indicator:hover {
-            background: rgba(0, 229, 255, 0.18) !important;
-            border-color: #00e5ff !important;
-            box-shadow: 0 0 14px rgba(0, 229, 255, 0.45) !important;
-        }
-        .column-indicator,
-        .column-indicator > div,
-        .column-indicator div,
-        .column-indicator span {
-            color: #00e5ff !important;
-            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
-            font-size: 13px !important;
-            font-weight: 700 !important;
-            letter-spacing: 0.07em !important;
-            text-transform: uppercase !important;
-            opacity: 1 !important;
-            text-shadow: 0 0 10px rgba(0, 229, 255, 0.8) !important;
-        }
-        .column-indicator:hover > div,
-        .column-indicator:hover div {
-            color: #ffffff !important;
-            text-shadow: 0 0 14px #00e5ff !important;
-        }
-        .resize-handle {
-            background: rgba(0, 229, 255, 0.4) !important;
-            border-radius: 2px !important;
-            transition: background 0.2s ease, box-shadow 0.2s ease !important;
-        }
-        .resize-handle:hover {
-            background: #00e5ff !important;
-            box-shadow: 0 0 10px #00e5ff !important;
-        }
-    `;
+    __GEOAI_FONT_SYNC_JS__
+    var HUD_CSS = __GEOAI_RESIZER_CSS__;
+    var GEOAI_FONT_DISPLAY = __GEOAI_FONT_DISPLAY__;
 
     function applyToDoc(doc) {
         if (!doc || (!doc.head && !doc.body)) return;
+        if (window.geoaiSyncEmbeddedFonts) {
+            window.geoaiSyncEmbeddedFonts(doc);
+        }
         var s = doc.getElementById('geoai-resizer-hud-theme');
         if (!s) {
             s = doc.createElement('style');
@@ -6623,9 +6773,10 @@ st.html(
             var txt = inds[k].querySelector('div');
             if (txt) {
                 txt.style.setProperty('color', '#00e5ff', 'important');
-                txt.style.setProperty('font-size', '13px', 'important');
+                txt.style.setProperty('font-family', GEOAI_FONT_DISPLAY, 'important');
+                txt.style.setProperty('font-size', '14px', 'important');
                 txt.style.setProperty('font-weight', '700', 'important');
-                txt.style.setProperty('letter-spacing', '0.07em', 'important');
+                txt.style.setProperty('letter-spacing', '0.09em', 'important');
                 txt.style.setProperty('opacity', '1', 'important');
                 txt.style.setProperty('text-shadow', '0 0 10px rgba(0, 229, 255, 0.8)', 'important');
             }
@@ -6633,6 +6784,9 @@ st.html(
 
         if (!doc._geoaiResizerObs && window.MutationObserver) {
             doc._geoaiResizerObs = new MutationObserver(function() {
+                if (window.geoaiSyncEmbeddedFonts) {
+                    window.geoaiSyncEmbeddedFonts(doc);
+                }
                 var sCheck = doc.getElementById('geoai-resizer-hud-theme');
                 if (!sCheck) {
                     sCheck = doc.createElement('style');
@@ -6647,9 +6801,10 @@ st.html(
                     var subTxt = subInds[j].querySelector('div');
                     if (subTxt) {
                         subTxt.style.setProperty('color', '#00e5ff', 'important');
-                        subTxt.style.setProperty('font-size', '13px', 'important');
+                        subTxt.style.setProperty('font-family', GEOAI_FONT_DISPLAY, 'important');
+                        subTxt.style.setProperty('font-size', '14px', 'important');
                         subTxt.style.setProperty('font-weight', '700', 'important');
-                        subTxt.style.setProperty('letter-spacing', '0.07em', 'important');
+                        subTxt.style.setProperty('letter-spacing', '0.09em', 'important');
                         subTxt.style.setProperty('opacity', '1', 'important');
                         subTxt.style.setProperty('text-shadow', '0 0 10px rgba(0, 229, 255, 0.8)', 'important');
                     }
@@ -6694,7 +6849,10 @@ st.html(
         window.addEventListener('resize', applyAllHeaders);
     }
 })();
-</script>""",
+</script>"""
+    .replace("__GEOAI_FONT_SYNC_JS__", build_iframe_font_sync_js())
+    .replace("__GEOAI_RESIZER_CSS__", json.dumps(build_resizer_theme_css()))
+    .replace("__GEOAI_FONT_DISPLAY__", json.dumps(FONT_DISPLAY)),
     unsafe_allow_javascript=True,
 )
 
@@ -6784,7 +6942,7 @@ with col2:
                 /* Zoom In / Out Buttons */
                 .geoai-map-dark .leaflet-control-zoom a,
                 .leaflet-container:not(.geoai-map-light) .leaflet-control-zoom a {
-                    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
+                    font-family: __FONT_MONO__ !important;
                     font-size: 16px !important;
                     font-weight: 700 !important;
                     line-height: 28px !important;
@@ -6835,7 +6993,7 @@ with col2:
 
                 .pin-filter-header {
                     color: #00e5ff !important;
-                    font-family: 'JetBrains Mono', monospace !important;
+                    font-family: __FONT_MONO__ !important;
                     font-size: 11px !important;
                     font-weight: 700 !important;
                     letter-spacing: 0.07em !important;
@@ -6852,7 +7010,7 @@ with col2:
                     border-radius: 4px !important;
                     box-shadow: 0 0 16px rgba(0, 229, 255, 0.3), 0 8px 24px rgba(0, 0, 0, 0.7) !important;
                     color: #e2e8f0 !important;
-                    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
+                    font-family: __FONT_BODY__ !important;
                     font-size: 11.5px !important;
                     padding: 8px 12px !important;
                 }
@@ -6890,7 +7048,7 @@ with col2:
                     border: 2px solid #00e5ff !important;
                     border-top: none !important;
                     color: #00e5ff !important;
-                    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
+                    font-family: __FONT_MONO__ !important;
                     font-size: 11px !important;
                     font-weight: 700 !important;
                     letter-spacing: 0.05em !important;
@@ -6912,7 +7070,7 @@ with col2:
                 .leaflet-container:not(.geoai-map-light) .leaflet-draw-actions a {
                     background-color: transparent !important;
                     color: #00e5ff !important;
-                    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
+                    font-family: __FONT_MONO__ !important;
                     font-size: 11px !important;
                     font-weight: 600 !important;
                 }
@@ -6943,7 +7101,7 @@ with col2:
                     background: rgba(14, 22, 32, 0.92) !important;
                     border: 1px solid rgba(0, 229, 255, 0.40) !important;
                     color: #00e5ff !important;
-                    font-family: 'JetBrains Mono', monospace !important;
+                    font-family: __FONT_MONO__ !important;
                     box-shadow: 0 0 8px rgba(0, 229, 255, 0.25) !important;
                 }
 
@@ -6973,7 +7131,7 @@ with col2:
                 }
 
                 .geoai-map-light .leaflet-control-zoom a {
-                    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
+                    font-family: __FONT_MONO__ !important;
                     font-size: 16px !important;
                     font-weight: 700 !important;
                     line-height: 28px !important;
@@ -7031,7 +7189,7 @@ with col2:
                     border-radius: 4px !important;
                     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
                     color: #0f172a !important;
-                    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
+                    font-family: __FONT_BODY__ !important;
                     font-size: 11.5px !important;
                     padding: 8px 12px !important;
                 }
@@ -7062,7 +7220,7 @@ with col2:
                     border: 2px solid #0f172a !important;
                     border-top: none !important;
                     color: #0f172a !important;
-                    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
+                    font-family: __FONT_MONO__ !important;
                     font-size: 11px !important;
                     font-weight: 700 !important;
                     letter-spacing: 0.05em !important;
@@ -7081,7 +7239,7 @@ with col2:
                 .geoai-map-light .leaflet-draw-actions a {
                     background-color: transparent !important;
                     color: #0f172a !important;
-                    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
+                    font-family: __FONT_MONO__ !important;
                     font-size: 11px !important;
                     font-weight: 600 !important;
                 }
@@ -7106,7 +7264,7 @@ with col2:
                     background: rgba(255, 255, 255, 0.92) !important;
                     border: 1px solid rgba(15, 23, 42, 0.25) !important;
                     color: #0f172a !important;
-                    font-family: 'JetBrains Mono', monospace !important;
+                    font-family: __FONT_MONO__ !important;
                 }
 
                 /* ========================================================================== */
@@ -7203,7 +7361,7 @@ with col2:
                 }
                 .geoai-diamond > span {
                     transform: rotate(-45deg);
-                    font: 700 11px/1 'JetBrains Mono', 'Fira Code', monospace;
+                    font: 700 11px/1 __FONT_MONO__;
                     color: var(--c, var(--geoai-primary));
                 }
                 .geoai-pin:hover .geoai-diamond {
@@ -7238,7 +7396,7 @@ with col2:
                     border-radius: 50%;
                     background: var(--geoai-uncertain);
                     color: #0b0f17;
-                    font: 700 10px/14px 'JetBrains Mono', monospace;
+                    font: 700 10px/14px __FONT_MONO__;
                     text-align: center;
                     font-style: normal;
                     box-shadow: 0 0 0 1.5px var(--geoai-halo);
@@ -7307,7 +7465,7 @@ with col2:
                     background: var(--geoai-core);
                     border: 1.5px solid var(--geoai-selection);
                     color: var(--geoai-selection);
-                    font: 700 12px/1 'JetBrains Mono', monospace;
+                    font: 700 12px/1 __FONT_MONO__;
                 }
                 .geoai-cluster--s1 {
                     width: 28px;
@@ -7372,7 +7530,7 @@ with col2:
                 }
                 .geoai-sector--highlighted .geoai-dot .geoai-dot-num {
                     display: inline-block !important;
-                    font: 700 9.5px/1 'JetBrains Mono', monospace !important;
+                    font: 700 9.5px/1 __FONT_MONO__ !important;
                     font-style: normal !important;
                     color: #f0f9ff !important;
                     letter-spacing: -0.03em !important;
@@ -7444,7 +7602,7 @@ with col2:
                     border: 1px solid rgba(0, 229, 255, 0.28);
                     border-radius: 3px;
                     padding: 2px 6px;
-                    font: 700 10px/1.3 'JetBrains Mono', 'Fira Code', monospace;
+                    font: 700 10px/1.3 __FONT_MONO__;
                     cursor: pointer;
                     transition: background 0.12s ease, border-color 0.12s ease;
                 }
@@ -7456,7 +7614,7 @@ with col2:
 
                 /* Unified Tactical Popup Card */
                 .geoai-card {
-                    font: 12px/1.45 'JetBrains Mono', 'Fira Code', monospace;
+                    font: 12px/1.45 __FONT_BODY__;
                     min-width: 200px;
                 }
                 .geoai-card__head {
@@ -7466,6 +7624,7 @@ with col2:
                     border-left: 3px solid var(--c, var(--geoai-primary));
                 }
                 .geoai-card__chip {
+                    font-family: __FONT_MONO__;
                     font-size: 10px;
                     font-weight: 700;
                     letter-spacing: 0.08em;
@@ -7473,8 +7632,10 @@ with col2:
                     text-transform: uppercase;
                 }
                 .geoai-card__title {
+                    font-family: __FONT_DISPLAY__;
                     font-weight: 700;
-                    font-size: 12.5px;
+                    font-size: 13px;
+                    letter-spacing: 0.03em;
                 }
                 .geoai-card__body {
                     display: grid;
@@ -7485,6 +7646,14 @@ with col2:
                 .geoai-card__body > span {
                     opacity: 0.78;
                     font-size: 11px;
+                }
+                .geoai-card__body > code,
+                .geoai-popup-wrap code {
+                    font-family: __FONT_MONO__;
+                }
+                .geoai-popup-wrap > b:first-of-type {
+                    font-family: __FONT_DISPLAY__;
+                    letter-spacing: 0.03em;
                 }
                 .geoai-card__footer {
                     margin-top: 6px;
@@ -7511,7 +7680,7 @@ with col2:
                     border-radius: 6px;
                     padding: 6px 10px;
                     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.65), 0 0 12px rgba(0, 229, 255, 0.25);
-                    font-family: 'JetBrains Mono', 'Segoe UI', monospace;
+                    font-family: __FONT_MONO__;
                     font-size: 11px;
                     color: #e2e8f0;
                     white-space: nowrap;
@@ -7558,7 +7727,9 @@ with col2:
                     padding: 3px 8px;
                     font-size: 11px;
                     font-weight: 600;
-                    font-family: inherit;
+                    font-family: __FONT_DISPLAY__;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
                     cursor: pointer;
                     border: none;
                     outline: none;
@@ -7589,6 +7760,9 @@ with col2:
                     box-shadow: 0 0 12px rgba(0, 229, 255, 0.5);
                 }
                 </style>"""
+                .replace("__FONT_DISPLAY__", FONT_DISPLAY)
+                .replace("__FONT_BODY__", FONT_BODY)
+                .replace("__FONT_MONO__", FONT_MONO)
             )
         )
 
