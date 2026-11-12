@@ -114,6 +114,108 @@ from font_assets import (
     get_font_style_block,
 )
 
+# Agent Geo-rgory (optional talking avatar, see avatar-georgory/README.md): if he can't load, the app runs without him
+try:
+    from pathlib import Path as _Path
+    for _georgory_dir in (
+        _Path(__file__).resolve().parent / "avatar-georgory",
+        _Path(__file__).resolve().parents[1] / "avatar-georgory",
+        _Path(__file__).resolve().parents[1] / "Corpus2GeoRAG" / "ui" / "avatar-georgory",
+    ):
+        if _georgory_dir.is_dir() and str(_georgory_dir) not in sys.path:
+            sys.path.append(str(_georgory_dir))
+    from agent_avatar import georgory
+except Exception as _georgory_err:
+    print(f"[Agent Geo-rgory] Disabled: {_georgory_err}")
+    georgory = None
+
+GEORGORY_BETA_SESSION_KEY = "georgory_beta_enabled"
+
+
+def is_georgory_beta_enabled(session_state: Optional[ Any ] = None) -> bool:
+    """Return True only when the Agent Geo-rgory module is loaded and the sidebar BETA switch is ON."""
+    if georgory is None:
+        return False
+    try:
+        ss = st.session_state if session_state is None else session_state
+        return bool(ss.get(GEORGORY_BETA_SESSION_KEY, False))
+    except Exception:
+        return False
+
+
+def deactivate_georgory_beta_state(session_state: Optional[ Any ] = None) -> bool:
+    """
+    Cleanly deactivate Agent Geo-rgory state when the BETA switch is OFF or toggled OFF mid-session.
+    Resets `georgory_on = False` and emits a one-shot browser speech/tour stop script on active->inactive transitions.
+    """
+    was_active = False
+    try:
+        ss = st.session_state if session_state is None else session_state
+        was_active = bool(
+            ss.get("_georgory_beta_was_enabled", False)
+            or ss.get("georgory_on", False)
+        )
+        ss["georgory_on"] = False
+        ss["_georgory_beta_was_enabled"] = False
+    except Exception:
+        return False
+
+    if was_active:
+        try:
+            st.html(
+                "<script>(function(){try{"
+                "if(window.speechSynthesis){window.speechSynthesis.cancel();}"
+                "if(window.parent&&window.parent.speechSynthesis){window.parent.speechSynthesis.cancel();}"
+                "var doc=window.parent?window.parent.document:document;"
+                "var fs=doc.querySelectorAll('iframe');"
+                "for(var i=0;i<fs.length;i++){try{"
+                "var w=fs[i].contentWindow;if(!w)continue;"
+                "if(w.Agent&&typeof w.Agent.stop==='function'){w.Agent.stop();}"
+                "if(w.speechSynthesis){w.speechSynthesis.cancel();}"
+                "var d=w.document;if(d){var ps=d.querySelectorAll('.georgory-ping');for(var j=0;j<ps.length;j++){ps[j].remove();}}"
+                "}catch(e){}}"
+                "}catch(e){}})();</script>",
+                unsafe_allow_javascript=True,
+            )
+        except Exception:
+            pass
+    return was_active
+
+
+def render_georgory_beta_sidebar() -> bool:
+    """
+    Render the Sidebar Master Switch ('Agent Geo-rgory (BETA)') under a badged BETA Add-ons section.
+    Defaults to OFF. When OFF, suppresses all Agent Geo-rgory UI/CSS/button hooks and cleans up active state.
+    """
+    if georgory is None:
+        deactivate_georgory_beta_state()
+        return False
+
+    if GEORGORY_BETA_SESSION_KEY not in st.session_state:
+        st.session_state[GEORGORY_BETA_SESSION_KEY] = False
+
+    st.markdown(
+        "<div class='geoai-beta-addon-header' style='display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;'>"
+        "<span style='font-weight:700; font-size:0.88rem; letter-spacing:0.06em; text-transform:uppercase; color:#e2e8f0;'>🧪 Beta Add-ons</span>"
+        "<span class='geo-badge' style='margin-bottom:0; padding:2px 8px; font-size:0.68rem; background:rgba(168,85,247,0.18); color:#c084fc; border-color:rgba(168,85,247,0.45); box-shadow:0 0 8px rgba(168,85,247,0.25);'>BETA</span>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
+    enabled = bool(
+        st.toggle(
+            "Agent Geo-rgory (BETA)",
+            key=GEORGORY_BETA_SESSION_KEY,
+            help="Opt-in BETA talking tour-guide add-on. Disabled by default; turn on to enable Agent Geo-rgory controls, chat button, and map tour narration.",
+        )
+    )
+    if enabled:
+        st.session_state["_georgory_beta_was_enabled"] = True
+        return True
+
+    deactivate_georgory_beta_state()
+    st.markdown("---")
+    return False
+
 # Ensure get_source_text, extract_answer_subgraph, format_evidence_popup_html, API key persistence helpers, and AgentError are safely resolved even across hot-reloads
 if not hasattr(geo_agent, "extract_answer_subgraph") or not hasattr(geo_agent, "format_evidence_popup_html") or not hasattr(geo_agent, "_is_event_article_title"):
     try:
@@ -760,6 +862,7 @@ def _build_assistant_message(resp: AgentResponse) -> Dict[str, Any]:
         "raw_response": getattr(resp, "raw_response", None),
         "geo_locations": (getattr(resp, "raw_response", {}) or {}).get("geo_locations", []),
         "layers": getattr(resp, "layers", []),
+        "avatar": (georgory.avatar_payload(resp) if georgory else None) if is_georgory_beta_enabled() else None,
     }
 
 
@@ -784,6 +887,7 @@ def _build_error_assistant_message(err_message: str) -> Dict[str, Any]:
         "subgraph": {"nodes": [], "edges": []},
         "raw_response": None,
         "layers": [],
+        "avatar": None,
     }
 
 
@@ -2390,6 +2494,7 @@ class MapTrashBinHook(MacroElement):
         (function() {
             var map = {{ this._parent.get_name() }};
             if (!map) return;
+            window.map = map;
 
 {{ this.font_sync_js }}
             if (window.geoaiSyncEmbeddedFonts) {
@@ -2479,9 +2584,13 @@ class MapTrashBinHook(MacroElement):
                     if (!pDoc) return;
                     var iframes = pDoc.querySelectorAll('iframe');
                     for (var i = 0; i < iframes.length; i++) {
-                        if ((iframes[i].title || '').indexOf('adjustable_columns') !== -1) {
+                        var iTitle = (iframes[i].title || '');
+                        if (iTitle.indexOf('adjustable_columns') !== -1) {
                             var doc = iframes[i].contentDocument || (iframes[i].contentWindow && iframes[i].contentWindow.document);
                             applyResizerThemeToDoc(doc);
+                        } else if (iTitle.indexOf('agent_avatar') !== -1 && window.geoaiSyncEmbeddedFonts) {
+                            var avDoc = iframes[i].contentDocument || (iframes[i].contentWindow && iframes[i].contentWindow.document);
+                            if (avDoc) window.geoaiSyncEmbeddedFonts(avDoc);
                         }
                     }
                 } catch(e) {}
@@ -6376,6 +6485,10 @@ if "selection_clear_seq" not in st.session_state:
     # Monotonic counter incremented when selection is cleared to guarantee client-side sync
     st.session_state.selection_clear_seq = 0
 
+if "georgory_beta_enabled" not in st.session_state:
+    # Master opt-in switch for the optional Agent Geo-rgory BETA tour-guide add-on (OFF by default)
+    st.session_state.georgory_beta_enabled = False
+
 # ==============================================================================
 # 2c. Early Query Ingestion & Queueing
 # ==============================================================================
@@ -6714,6 +6827,10 @@ with st.sidebar:
 
     st.markdown("---")
 
+    if georgory:
+        if render_georgory_beta_sidebar():
+            georgory.sidebar()
+
     # Session metrics
     st.subheader("Session Telemetry")
     st.markdown(
@@ -6818,9 +6935,13 @@ st.html(
         try {
             var iframes = document.querySelectorAll('iframe');
             for (var i = 0; i < iframes.length; i++) {
-                if ((iframes[i].title || '').indexOf('adjustable_columns') !== -1) {
+                var iTitle = (iframes[i].title || '');
+                if (iTitle.indexOf('adjustable_columns') !== -1) {
                     var doc = iframes[i].contentDocument || (iframes[i].contentWindow && iframes[i].contentWindow.document);
                     applyToDoc(doc);
+                } else if (iTitle.indexOf('agent_avatar') !== -1 && window.geoaiSyncEmbeddedFonts) {
+                    var avDoc = iframes[i].contentDocument || (iframes[i].contentWindow && iframes[i].contentWindow.document);
+                    if (avDoc) window.geoaiSyncEmbeddedFonts(avDoc);
                 }
             }
         } catch(e) {}
@@ -8179,6 +8300,11 @@ with col2:
         # Attach trash bin hook to integrate Leaflet Draw's trash icon with GeoAI selection removal
         MapTrashBinHook().add_to(m)
 
+        # Agent Geo-rgory (BETA): hidden/omitted until BETA switch is ON; when ON, stands beside map or over its left edge
+        if georgory:
+            if is_georgory_beta_enabled():
+                georgory.render(st.session_state.messages, busy=bool(st.session_state.get("pending_query")))
+
         # Render the interactive map component inside Streamlit
         # Uses returned_objects to ensure 0ms client-side pans and zooms with zero reruns (AGENTS.md Rule 1.1)
         map_data = st_folium(
@@ -8707,6 +8833,11 @@ with col1:
                 "is_recon": True,
             }
             st.rerun()
+
+    # Agent Geo-rgory's button sits inside the chat box, right of the send arrow (only when BETA switch is ON)
+    if georgory:
+        if is_georgory_beta_enabled():
+            georgory.chat_button()
 
     # Chat input box for user queries
     user_prompt = st.chat_input("Type a question (e.g. 'What units are stationed here?')...", key="geoai_chat_input")
