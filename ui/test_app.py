@@ -5577,6 +5577,9 @@ class TestAgentGeorgoryBetaIntegration:
         if app.georgory is not None:
             assert "'JetBrains Mono'" in app.georgory.THEME.get("--font-hud", "")
             assert 'div[data-testid="stColumn"] .st-key-TOGGLE button' in app.georgory._BUTTON_CSS
+            assert app.georgory.DEFAULTS["georgory_accent"] is False
+            assert app.georgory.DEFAULTS["georgory_pitch"] == 0.94
+            assert app.georgory.DEFAULTS["georgory_rate"] == 0.96
             briefing = app.georgory.build_briefing(
                 "Avdiivka [1, P1-S1] is fortified.",
                 [{"n": 1, "name": "Avdiivka", "lat": 48.14, "lon": 37.75, "kind": "city"}],

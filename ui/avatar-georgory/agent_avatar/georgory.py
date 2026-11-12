@@ -53,9 +53,9 @@ DEFAULTS = {
     "georgory_place": BESIDE_MAP,
     "georgory_mode": "Brief",     # "Brief" speaks ~3 sentences; "Full answer" speaks everything
     "georgory_tour": True,        # fly the map to each pin he names
-    "georgory_pitch": 0.62,
-    "georgory_rate": 0.88,
-    "georgory_accent": False,     # read English with a Russian voice
+    "georgory_pitch": 0.94,       # natural composed British baritone without formant distortion
+    "georgory_rate": 0.96,        # measured RP cadence
+    "georgory_accent": False,     # default: British en-GB voice; True = read English with a Russian voice
 }
 
 PIP_KEY = "georgory_pip"
@@ -436,7 +436,7 @@ def sidebar() -> None:
             st.slider("Pitch", 0.1, 1.5, step=0.02, key="georgory_pitch")
             st.slider("Rate", 0.5, 1.4, step=0.02, key="georgory_rate")
             st.toggle("Russian voice for English text", key="georgory_accent",
-                      help="Uses a ru-RU voice such as Microsoft Pavel or Dmitry. Quality depends on the browser.")
+                      help="Default uses an elegant British English (en-GB) voice such as Microsoft Ryan, Google UK English Male, Daniel, or George. Turn on to use a ru-RU voice instead.")
         st.caption("No sound? Click ▶ on the agent once: browsers block speech until you interact with the page.")
     st.markdown("---")
 
@@ -477,6 +477,7 @@ def _speak_latest(messages: Sequence[Mapping[str, Any]], busy: bool, hidden: boo
         callsign=CALLSIGN,
         colors=THEME,
         voice={
+            "lang": "en-GB",
             "pitch": _setting("georgory_pitch"),
             "rate": _setting("georgory_rate"),
             "russianAccent": _setting("georgory_accent"),

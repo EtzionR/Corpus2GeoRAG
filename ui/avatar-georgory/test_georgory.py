@@ -224,7 +224,7 @@ class TestAppIntegration:
             "assert app.georgory is None\n"
             "print('APP_OK')\n"
         )
-        run = subprocess.run([sys.executable, "-c", code], cwd=UI_DIR, capture_output=True, text=True, timeout=300)
+        run = subprocess.run([sys.executable, "-c", code], cwd=UI_DIR, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=300)
         assert "APP_OK" in run.stdout, run.stderr[-2000:]
 
     @needs_hooks
@@ -253,3 +253,70 @@ class TestAppIntegration:
     def test_a_failed_query_cannot_leave_him_stuck_on_decrypting(self):
         html = (HERE / "agent_avatar" / "frontend" / "index.html").read_text(encoding="utf-8")
         assert "data-test-script-state" in html and "BUSY_LIMIT_MS" in html and "watchBusy();" in html
+
+    def test_default_voice_prefers_elegant_british_male_over_us_and_female_voices(self, tmp_path):
+        import json
+        import shutil
+
+        assert DEFAULTS["georgory_accent"] is False
+        assert DEFAULTS["georgory_pitch"] == 0.94
+        assert DEFAULTS["georgory_rate"] == 0.96
+
+        html = (HERE / "agent_avatar" / "frontend" / "index.html").read_text(encoding="utf-8")
+        assert 'lang: "en-GB"' in html
+        assert '"Ryan"' in html and '"Google UK English Male"' in html and '"Daniel"' in html
+
+        node = shutil.which("node")
+        if node:
+            start_cfg = html.index("const DEFAULTS = {")
+            end_cfg = html.index("let CFG =", start_cfg)
+            start_pick = html.index("pick(voices, text) {")
+            end_pick = html.index("stop() {", start_pick)
+            js = (
+                html[start_cfg:end_cfg]
+                + "\nlet CFG = JSON.parse(JSON.stringify(DEFAULTS));\n"
+                + "const Speech = { " + html[start_pick:end_pick] + " };\n"
+                + """
+                const edgeVoices = [
+                  { name: "Microsoft David - English (United States)", lang: "en-US" },
+                  { name: "Microsoft Guy Online (Natural) - English (United States)", lang: "en-US" },
+                  { name: "Microsoft Libby Online (Natural) - English (United Kingdom)", lang: "en-GB" },
+                  { name: "Microsoft George - English (United Kingdom)", lang: "en-GB" },
+                  { name: "Microsoft Ryan Online (Natural) - English (United Kingdom)", lang: "en-GB" },
+                  { name: "Microsoft Dmitry Online (Natural) - Russian (Russia)", lang: "ru-RU" },
+                ];
+                const chromeVoices = [
+                  { name: "Google US English", lang: "en-US" },
+                  { name: "Google UK English Female", lang: "en-GB" },
+                  { name: "Google UK English Male", lang: "en-GB" },
+                ];
+                const macVoices = [
+                  { name: "Alex", lang: "en-US" },
+                  { name: "Samantha", lang: "en-US" },
+                  { name: "Daniel (Enhanced)", lang: "en-GB" },
+                ];
+                const fallbackVoices = [
+                  { name: "Microsoft David - English (United States)", lang: "en-US" },
+                  { name: "Microsoft Zira - English (United States)", lang: "en-US" },
+                ];
+                const out = {
+                  edge: Speech.pick(edgeVoices, "The target is Kyiv.").name,
+                  chrome: Speech.pick(chromeVoices, "The target is Kyiv.").name,
+                  mac: Speech.pick(macVoices, "The target is Kyiv.").name,
+                  fallback: Speech.pick(fallbackVoices, "The target is Kyiv.").name,
+                };
+                CFG.voice.russianAccent = true;
+                out.ruOverride = Speech.pick(edgeVoices, "The target is Kyiv.").name;
+                console.log(JSON.stringify(out));
+                """
+            )
+            p = tmp_path / "voice_pick.js"
+            p.write_text(js, encoding="utf-8")
+            run = subprocess.run([node, str(p)], stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=30)
+            assert run.returncode == 0, run.stderr
+            res = json.loads(run.stdout)
+            assert res["edge"] == "Microsoft Ryan Online (Natural) - English (United Kingdom)"
+            assert res["chrome"] == "Google UK English Male"
+            assert res["mac"] == "Daniel (Enhanced)"
+            assert res["fallback"] == "Microsoft David - English (United States)"
+            assert res["ruOverride"] == "Microsoft Dmitry Online (Natural) - Russian (Russia)"

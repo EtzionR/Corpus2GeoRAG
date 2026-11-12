@@ -485,16 +485,25 @@ const DEFAULTS = {
   transparent: false,       // no background panel (for a floating PIP over the map)
   emitEvents: false,        // component mode only: send {event, id} back to Python (triggers a rerun)
   voice: {
-    lang: "en",             // preferred language prefix for Latin text
+    lang: "en-GB",          // preferred locale for Latin text (poised British English by default)
+    fallbackLang: "en",     // fallback prefix if no en-GB voices are installed on the device
     cyrillicLang: "ru",     // used automatically when the text contains Cyrillic
     russianAccent: false,   // true = read English text with a Russian voice (heavy accent, quality varies)
-    name: null,             // substring of a specific voice name, e.g. "Pavel" or "David"
-    pitch: 0.62,            // 0..2 — low pitch = deep
-    rate: 0.88,             // 0.1..10 — slightly slow = composed / deadpan
+    name: null,             // substring of a specific voice name, e.g. "Ryan" or "Daniel"
+    pitch: 0.94,            // 0..2 — subtly poised baritone without distorting neural/RP formants
+    rate: 0.96,             // 0.1..10 — measured, articulate British briefing cadence
     volume: 1,
-    // Preference order when several voices match (male voices first).
-    prefer: ["Dmitry", "Pavel", "Guy", "Davis", "Christopher", "Eric", "Ryan", "Thomas", "David", "Mark", "George", "Daniel", "Male"],
-    avoid: ["Female", "Zira", "Irina", "Svetlana", "Aria", "Jenny", "Susan", "Hazel", "Samantha", "Libby", "Sonia", "Dariya"],
+    // Preference order when several voices match (elegant British male voices first, then fallbacks).
+    prefer: [
+      "Ryan", "Google UK English Male", "Thomas", "Daniel", "Arthur", "Oliver", "George",
+      "Jamie", "Alfie", "Elliot", "Noah", "British", "United Kingdom", "English (UK)",
+      "Dmitry", "Pavel", "Guy", "Davis", "Christopher", "Eric", "David", "Mark", "Male"
+    ],
+    avoid: [
+      "Female", "Zira", "Irina", "Svetlana", "Aria", "Jenny", "Susan", "Hazel", "Samantha",
+      "Libby", "Sonia", "Maisie", "Kate", "Serena", "Stephanie", "Fiona", "Martha", "Dariya",
+      "Google UK English Female"
+    ],
   },
   anim: {
     speed: 1,               // global multiplier for gesture choreography (2 = twice as fast)
@@ -1026,18 +1035,25 @@ const Speech = {
   },
   pick(voices, text) {
     const vc = CFG.voice, cyr = /[Ѐ-ӿ]/.test(text);
-    const lang = (cyr || vc.russianAccent ? vc.cyrillicLang : vc.lang || "en").toLowerCase();
+    const useRu = cyr || vc.russianAccent;
+    const primaryLang = (useRu ? vc.cyrillicLang : vc.lang || "en-GB").toLowerCase().replace("_", "-");
+    const baseLang = (useRu ? vc.cyrillicLang : vc.fallbackLang || primaryLang.split("-")[0] || "en").toLowerCase();
     if (vc.name) { const v = voices.find((x) => x.name.toLowerCase().includes(String(vc.name).toLowerCase())); if (v) return v; }
-    const pool = voices.filter((v) => v.lang.toLowerCase().startsWith(lang));
+    const normLang = (l) => String(l || "").toLowerCase().replace("_", "-");
+    let pool = voices.filter((v) => normLang(v.lang).startsWith(baseLang));
+    if (!pool.length) pool = voices;
     const score = (v) => {
       let s = 0;
+      const vl = normLang(v.lang);
+      if (vl.startsWith(primaryLang)) s += 180;
+      else if (vl.startsWith(baseLang)) s += 40;
       const i = vc.prefer.findIndex((p) => v.name.toLowerCase().includes(p.toLowerCase()));
       if (i >= 0) s += 100 - i;
       if (vc.avoid.some((p) => v.name.toLowerCase().includes(p.toLowerCase()))) s -= 200;
-      if (/natural|neural|online/i.test(v.name)) s += 20;
+      if (/natural|neural|online|premium|enhanced/i.test(v.name)) s += 25;
       return s;
     };
-    return pool.sort((a, b) => score(b) - score(a))[0] || null;
+    return pool.slice().sort((a, b) => score(b) - score(a))[0] || null;
   },
   stop() { if (this.supported) speechSynthesis.cancel(); this.current = null; },
 };
@@ -1056,6 +1072,7 @@ function speakChunk(text, offset, tok, voice) {
     const u = new SpeechSynthesisUtterance(text);
     const vc = CFG.voice;
     if (voice) { u.voice = voice; u.lang = voice.lang; }
+    else { u.lang = (vc.russianAccent || /[Ѐ-ӿ]/.test(text)) ? vc.cyrillicLang : (vc.lang || "en-GB"); }
     u.pitch = vc.pitch; u.rate = vc.rate; u.volume = vc.volume;
     Talk.rate = vc.rate;
     let started = false;
