@@ -5408,3 +5408,215 @@ class TestOfflineTypographyAndBundledFonts:
             max_mean_ms=0.05,
             label="count_chat_messages",
         )
+
+
+class TestAgentGeorgoryBetaIntegration:
+    """Verify optional Agent Geo-rgory BETA add-on toggle, zero-trace OFF state, ON hooks, and graceful fallback."""
+
+    @staticmethod
+    def _sample_response():
+        from geo_agent import AgentResponse
+
+        raw = {
+            "answer": "Key sector stops include Avdiivka [1, P1-S1] and Bakhmut [2, S2].",
+            "geo_locations": [
+                {
+                    "number": 1,
+                    "label": "Avdiivka",
+                    "role": "primary",
+                    "kind": "city",
+                    "geometry": {"type": "point", "coordinates": [37.75, 48.14]},
+                },
+                {
+                    "number": 2,
+                    "label": "Bakhmut",
+                    "role": "primary",
+                    "kind": "city",
+                    "geometry": {"type": "point", "coordinates": [38.00, 48.59]},
+                },
+            ],
+        }
+        return AgentResponse(answer=raw["answer"], raw_response=raw)
+
+    def test_beta_toggle_defaults_to_off_and_completely_omits_ui_and_payload_hooks(self, monkeypatch):
+        import app
+
+        assert app.GEORGORY_BETA_SESSION_KEY == "georgory_beta_enabled"
+
+        state = {}
+        monkeypatch.setattr(app.st, "session_state", state)
+        assert app.is_georgory_beta_enabled() is False
+
+        markdown_calls = []
+        toggle_calls = []
+        monkeypatch.setattr(app.st, "markdown", lambda body, **kw: markdown_calls.append(body))
+
+        def fake_toggle(label, **kw):
+            toggle_calls.append((label, kw))
+            state[kw["key"]] = False
+            return False
+
+        monkeypatch.setattr(app.st, "toggle", fake_toggle)
+
+        sidebar_enabled = app.render_georgory_beta_sidebar()
+        assert sidebar_enabled is False
+        assert len(toggle_calls) == 1
+        assert toggle_calls[0][0] == "Agent Geo-rgory (BETA)"
+        assert toggle_calls[0][1]["key"] == "georgory_beta_enabled"
+        assert any("BETA" in m and "Beta Add-ons" in m for m in markdown_calls)
+
+        # Ensure avatar_payload is NOT computed when BETA toggle is OFF
+        payload_calls = []
+        if app.georgory is not None:
+            monkeypatch.setattr(app.georgory, "avatar_payload", lambda r: payload_calls.append(r) or {"id": "x"})
+
+        msg = app._build_assistant_message(self._sample_response())
+        assert msg["avatar"] is None
+        assert payload_calls == [], "avatar_payload must not run when BETA toggle is OFF"
+
+        err_msg = app._build_error_assistant_message("Connection timeout")
+        assert err_msg["avatar"] is None
+
+    def test_beta_toggle_on_enables_sidebar_avatar_payload_and_clean_deactivation_when_turned_off(self, monkeypatch):
+        import app
+
+        if app.georgory is None:
+            pytest.skip("avatar-georgory sibling package not present")
+
+        state = {"georgory_beta_enabled": True, "georgory_on": True}
+        monkeypatch.setattr(app.st, "session_state", state)
+        monkeypatch.setattr(app.st, "markdown", lambda *a, **k: None)
+        monkeypatch.setattr(app.st, "toggle", lambda label, **kw: bool(state.get(kw["key"], False)))
+
+        html_calls = []
+        monkeypatch.setattr(app.st, "html", lambda body, **kw: html_calls.append(body))
+
+        assert app.is_georgory_beta_enabled() is True
+        assert app.render_georgory_beta_sidebar() is True
+        assert state.get("_georgory_beta_was_enabled") is True
+
+        msg = app._build_assistant_message(self._sample_response())
+        assert msg["avatar"] is not None
+        assert [p["n"] for p in msg["avatar"]["places"]] == [1, 2]
+
+        # Now switch BETA toggle OFF mid-session: state must deactivate and stop speech/touring immediately
+        state["georgory_beta_enabled"] = False
+        assert app.is_georgory_beta_enabled() is False
+        assert app.render_georgory_beta_sidebar() is False
+        assert state["georgory_on"] is False
+        assert state["_georgory_beta_was_enabled"] is False
+        assert len(html_calls) == 1
+        assert "speechSynthesis.cancel()" in html_calls[0]
+        assert "w.Agent.stop()" in html_calls[0]
+
+        # Subsequent reruns while OFF must not re-emit the stop script
+        assert app.render_georgory_beta_sidebar() is False
+        assert len(html_calls) == 1
+
+    def test_missing_avatar_georgory_module_graceful_fallback(self, monkeypatch):
+        import app
+
+        state = {"georgory_beta_enabled": True, "georgory_on": True}
+        monkeypatch.setattr(app.st, "session_state", state)
+        monkeypatch.setattr(app, "georgory", None)
+
+        assert app.is_georgory_beta_enabled() is False
+        assert app.render_georgory_beta_sidebar() is False
+        assert state["georgory_on"] is False
+        assert state["_georgory_beta_was_enabled"] is False
+
+        msg = app._build_assistant_message(self._sample_response())
+        assert msg["avatar"] is None
+
+        # Even if st.html raises, deactivate_georgory_beta_state must never raise
+        state["georgory_on"] = True
+        def boom_html(*a, **k):
+            raise RuntimeError("No active Streamlit script context")
+
+        monkeypatch.setattr(app.st, "html", boom_html)
+        app.deactivate_georgory_beta_state(state)
+        assert state["georgory_on"] is False
+        assert state["_georgory_beta_was_enabled"] is False
+
+    def test_app_hooks_compatibility_with_fragment_fonts_and_button_css(self):
+        from pathlib import Path
+        import folium
+        from streamlit_folium import _get_map_string
+        import app
+
+        app_src = (Path(__file__).resolve().parent / "app.py").read_text(encoding="utf-8")
+
+        # 1. Guarded import
+        assert "    from agent_avatar import georgory\nexcept Exception" in app_src.replace("\r\n", "\n")
+
+        # 2. Sidebar BETA toggle placed before Session Telemetry
+        sidebar_idx = app_src.index("if render_georgory_beta_sidebar():")
+        telemetry_idx = app_src.index('st.subheader("Session Telemetry")')
+        assert sidebar_idx < telemetry_idx
+
+        # 3. Map column render placed inside @st.fragment after MapTrashBinHook and before st_folium
+        frag_idx = app_src.index("def render_tactical_map_fragment():")
+        trash_idx = app_src.index("MapTrashBinHook().add_to(m)", frag_idx)
+        render_idx = app_src.index("georgory.render(", frag_idx)
+        folium_idx = app_src.index("map_data = st_folium(", frag_idx)
+        assert frag_idx < trash_idx < render_idx < folium_idx
+
+        # 4. Chat button placed right before st.chat_input
+        chat_btn_idx = app_src.index("georgory.chat_button()")
+        chat_in_idx = app_src.index("user_prompt = st.chat_input(")
+        assert chat_btn_idx < chat_in_idx
+
+        # 5. MapTrashBinHook exposes window.map = map for tour flyTo and syncs embedded fonts into agent_avatar iframe
+        m = folium.Map()
+        app.MapTrashBinHook().add_to(m)
+        script = _get_map_string(m)
+        assert "window.map = map;" in script
+        assert "iTitle.indexOf('agent_avatar') !== -1" in script
+        assert "iTitle.indexOf('agent_avatar') !== -1" in app_src
+
+        if app.georgory is not None:
+            assert "'JetBrains Mono'" in app.georgory.THEME.get("--font-hud", "")
+            assert 'div[data-testid="stColumn"] .st-key-TOGGLE button' in app.georgory._BUTTON_CSS
+            briefing = app.georgory.build_briefing(
+                "Avdiivka [1, P1-S1] is fortified.",
+                [{"n": 1, "name": "Avdiivka", "lat": 48.14, "lon": 37.75, "kind": "city"}],
+            )
+            assert "[P1-S1]" not in briefing["text"]
+            assert "[point:1] Avdiivka" in briefing["text"]
+
+    def test_benchmark_georgory_beta_helpers_and_payload_latency(self, monkeypatch, micro_benchmark, latency_ceiling):
+        import app
+
+        state_off = {"georgory_beta_enabled": False, "georgory_on": False}
+        monkeypatch.setattr(app.st, "session_state", state_off)
+        monkeypatch.setattr(app.st, "html", lambda *a, **k: None)
+
+        micro_benchmark(
+            app.is_georgory_beta_enabled,
+            state_off,
+            iterations=500,
+            max_mean_ms=0.05,
+            label="is_georgory_beta_enabled (OFF)",
+        )
+        micro_benchmark(
+            app.deactivate_georgory_beta_state,
+            state_off,
+            iterations=200,
+            max_mean_ms=0.1,
+            label="deactivate_georgory_beta_state",
+        )
+
+        resp = self._sample_response()
+        with latency_ceiling(5.0, label="_build_assistant_message x50 (BETA OFF)"):
+            for _ in range(50):
+                msg = app._build_assistant_message(resp)
+                assert msg["avatar"] is None
+
+        if app.georgory is not None:
+            state_on = {"georgory_beta_enabled": True, "georgory_on": True}
+            monkeypatch.setattr(app.st, "session_state", state_on)
+            with latency_ceiling(15.0, label="_build_assistant_message x50 (BETA ON)"):
+                for _ in range(50):
+                    msg = app._build_assistant_message(resp)
+                    assert msg["avatar"] is not None
+

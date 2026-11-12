@@ -25,7 +25,7 @@ import sys
 from typing import Dict, List, Set, Tuple
 
 
-MIN_REQUIRED_TESTS = 165
+MIN_REQUIRED_TESTS = 170
 EXEMPT_PYTHON_FILES = {
     "test_app.py",
     "conftest.py",
@@ -51,6 +51,9 @@ REQUIRED_SYMBOL_COVERAGE: Dict[str, List[str]] = {
         "format_regional_distribution_html",
         "build_deferred_selection_sync_js",
         "reconcile_deferred_map_selection",
+        "is_georgory_beta_enabled",
+        "deactivate_georgory_beta_state",
+        "render_georgory_beta_sidebar",
     ],
     "geo_agent.py": [
         "MapLayer",
