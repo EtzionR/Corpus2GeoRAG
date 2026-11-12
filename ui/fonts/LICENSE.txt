@@ -1,0 +1,20 @@
+GeoAI Defense C2 Bundled Web Fonts License Notice
+===================================================
+
+All font files in this directory are free, open-source fonts distributed under the
+SIL Open Font License, Version 1.1 (OFL-1.1):
+
+1. Chakra Petch (weights 600, 700; latin & latin-ext)
+   Copyright 2018 The Chakra Petch Project Authors (Cadson Demak)
+   https://fonts.google.com/specimen/Chakra+Petch
+
+2. Plus Jakarta Sans (variable weight 300-800; latin, latin-ext, cyrillic-ext)
+   Copyright 2020 The Plus Jakarta Sans Project Authors (Tokotype)
+   https://fonts.google.com/specimen/Plus+Jakarta+Sans
+
+3. JetBrains Mono (variable weight 300-700; latin, latin-ext, cyrillic, cyrillic-ext)
+   Copyright 2020 JetBrains s.r.o.
+   https://fonts.google.com/specimen/JetBrains+Mono
+
+Bundled locally as WOFF2 subsets so the UI renders identically offline with zero
+external CDN dependencies or fallback to system fonts.
