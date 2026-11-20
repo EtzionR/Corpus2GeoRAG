@@ -14,6 +14,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+import dates as D
 import graph_tools as T
 from graph_index import GraphIndex, Group
 from planner import QueryPlan
@@ -80,7 +81,7 @@ def retrieve(plan: QueryPlan, res: Resolution, gi: GraphIndex) -> Retrieval:
     start = time.time()
     route = {"place_lookup": _place_lookup, "area": _area, "area_topic": _area_topic, "about": _about,
              "relation": _about, "entity_places": _entity_places, "event_places": _event_places,
-             "event_list": _event_list, "common": _common, "follow_up": _about}.get(plan.type)
+             "event_list": _event_list, "common": _common, "follow_up": _about, "date": _date}.get(plan.type)
     if route is None:
         out = Retrieval(route="none")
         out.notes.append(f"question type {plan.type!r} has no fixed route; it goes to the LLM tool-loop "
@@ -89,11 +90,33 @@ def retrieve(plan: QueryPlan, res: Resolution, gi: GraphIndex) -> Retrieval:
         out = route(plan, res, gi)
     if plan.type in LIST_ROUTE_TYPES and out.places:
         out.places = T.tiered(out.places)   # specific places first, then regions, then countries (P2-53)
+    if plan.period and plan.type != "date":
+        _period_first(plan, out, gi)
     out.seconds = round(time.time() - start, 2)
     return out
 
 
-LIST_ROUTE_TYPES = {"entity_places", "event_places", "event_list", "area", "area_topic", "common"}
+LIST_ROUTE_TYPES = {"entity_places", "event_places", "event_list", "area", "area_topic", "common", "date"}
+
+
+def _period_first(plan, out: Retrieval, gi: GraphIndex) -> None:
+    """C2 (P2-80): a question with a period ("in 2023") reads what is dated in it first. Nothing is dropped,
+    because about half the paragraphs have no date: in a list, the places with paragraphs dated in the
+    period come first within their tier; the relation records dated in it come first; step ④ takes each
+    item's dated paragraphs first."""
+    if not D.has_dates(gi):
+        out.notes.append(f"the question names a period ({plan.period.label}), but this graph has no dates")
+        return
+    dated = D.texts_in(gi, plan.period)
+    for h in out.places + out.entities:
+        h.in_period = sum(1 for p in h.pointers if p.text_id in dated)
+    if plan.type in LIST_ROUTE_TYPES:
+        out.places.sort(key=lambda h: (T.tier(h), h.in_period == 0))   # stable: the route's order within each
+    out.records.sort(key=lambda r: not D.within(r.date, plan.period))
+    out.notes.append(f"period {plan.period.label}: {len(dated)} paragraphs are dated in it; "
+                     f"{sum(1 for h in out.places if h.in_period)} of {len(out.places)} places and "
+                     f"{sum(1 for r in out.records if D.within(r.date, plan.period))} of {len(out.records)} "
+                     f"records have one, and come first")
 
 
 def _groups(res: Resolution, types: Optional[set] = None) -> list[Group]:
@@ -342,6 +365,18 @@ def _about(plan, res, gi) -> Retrieval:
     run.out.entities = [h for h in hits if h.group.type in ("PER", "ORG") and h.group.id not in target_ids]
     # A place being asked about ("tell me about Kyiv", "number 2") comes first on the map, then what's linked.
     asked = [T.Hit(group=g, records=g.texts) for g in targets if g.place]
+    if plan.period and D.has_dates(gi) and not rels:
+        # C2 (P2-80): "What happened in Bakhmut in 2023?" also reads the paragraphs about the entity asked
+        # about that are dated in the period, not only those that link it to something else
+        dated = D.texts_in(gi, plan.period)
+        own = {g.id: [p for p in T.mentions(gi, g.id) if p.text_id in dated] for g in targets}
+        for h in asked:
+            h.pointers, h.pointers_total = own[h.group.id][:T.MAX_POINTERS], len(own[h.group.id])
+        run.out.entities = [T.Hit(group=g, records=len(own[g.id]), pointers=own[g.id][:T.MAX_POINTERS],
+                                  pointers_total=len(own[g.id])) for g in targets if not g.place and own[g.id]
+                            ] + run.out.entities
+        run.out.notes.append(f"{sum(len(v) for v in own.values())} paragraphs about "
+                             f"{', '.join(own)} are dated in {plan.period.label}")
     run.out.places = asked + [h for h in hits if h.group.place and h.group.id not in target_ids]
     # For "who" questions, read about the people found (the place asked about only if none of them
     # has an article); otherwise about the entity asked about, then the strongest links.
@@ -424,6 +459,27 @@ def _event_list(plan, res, gi) -> Retrieval:
             run.summary(gi, title, title)
     run.out.notes.append(f"{len(titles)} event articles found, longest first; {placed} placed on the map, "
                          f"at {len(run.out.places)} places")
+    return run.out
+
+
+def _date(plan, res, gi) -> Retrieval:
+    """C3 (P2-80): "What happened on 24 February 2022?" - the paragraphs with a date in the period, and the
+    places, people and organizations they mention. A date mention counts only if it lies inside the period:
+    "2022" doesn't date anything on 24 February."""
+    run = _Run("date: paragraphs dated in the period, and the places, people and organizations in them")
+    if not D.has_dates(gi):
+        run.out.notes.append("this graph has no dates (the graph without dates), so a date can't be looked up")
+        return run.out
+    period = plan.period
+    texts = run.call("texts_in_period", lambda: D.texts_in(gi, period), lambda t: _n(t, "paragraphs"),
+                     period=period.label, start=period.start, end=period.end)
+    keywords = topic_words(plan.keywords)
+    places, others = run.call("names_in_texts", lambda: T.names_in_texts(gi, texts, keywords),
+                              lambda r: f"{len(r[0])} places, {len(r[1])} people and organizations",
+                              keywords=keywords or "none")
+    run.out.places, run.out.entities = places, others
+    if keywords:
+        run.out.notes.append(f"only paragraphs that mention {', '.join(keywords)}")
     return run.out
 
 

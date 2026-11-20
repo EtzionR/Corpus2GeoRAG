@@ -27,7 +27,7 @@ Corpus → Texts → NER → Entities → Graph (+ Geocoding) → Agent → UI /
 |---|---|---|
 | Corpus collection | Data team | The articles, split into paragraphs |
 | Entity extraction (NER) | NER team | PER / ORG / LOC mentions with their positions |
-| Knowledge graph + geocoding | Graph team | `Graph_n_Geocoding/knowledge_graph.json.gz` (Vr6): 120,019 nodes, 64,301 of them paragraphs; 21 typed relations with confidence; points and polygons; the INSIDE hierarchy |
+| Knowledge graph + geocoding | Graph team | `Graph_n_Geocoding/with_dates/knowledge_graph.json.gz`, the graph with dates (the default since 2026-11-20): 167,061 nodes, 89,284 of them paragraphs and 9,202 dates; 21 typed relations with confidence; points and polygons; the INSIDE hierarchy; a date on each paragraph and relation record that has one. The graph without dates (`Graph_n_Geocoding/knowledge_graph.json.gz`) is the fallback |
 | **Agent (this folder)** | Agent team | Answers questions from the graph only |
 | UI + map | UI team | Calls the agent's two Python functions |
 
@@ -72,10 +72,12 @@ Tested on Python 3.14. Into the environment your app runs in:
 pip install -r AgentRag/requirements.txt
 ```
 
-The agent reads the graph team's file in place, `Graph_n_Geocoding/knowledge_graph.json.gz`, and
-never changes it. It's loaded on the first call (about 15 s) and kept in memory (about 1.1 GB) for
-the life of the app. After a `git pull` that updates the graph, restart the app. `GRAPH_PATH` in
-`.env` points at a different file.
+The agent reads the graph team's file in place, `Graph_n_Geocoding/with_dates/knowledge_graph.json.gz`
+(the graph with dates), and never changes it. It's loaded on the first call (about 15 s) and kept in
+memory (about 1.2 GB) for the life of the app. After a `git pull` that updates the graph, restart the
+app. `GRAPH_PATH` in `.env` points at a different file: to go back to the graph without dates, set it
+to the full path of `Graph_n_Geocoding/knowledge_graph.json.gz` (`.env.example` shows how). Everything
+works on both; on the graph without dates, questions about a date answer "no data".
 
 On loading, the agent leaves out paragraphs from reference sections ("See also", "Sources",
 "Further reading", "References"…: 5,021 paragraphs that list titles and books, not prose) and the
@@ -186,19 +188,19 @@ Input rules (breaking one raises `InvalidRequestError` naming the field):
 | `geo_locations` | **Every place found**, strongest first, numbered as the answer cites them. Big lists can hold hundreds (500 for "places connected to Zelenskyy"). |
 | `regions` | For lists: country → oblast tree, each with `count` (places inside) and `places` (numbers directly in it). Empty for short answers. |
 | `entities` | People and organizations involved (id, `PER`/`ORG`, role relative to the question, record count). |
-| `citations` | One per `[S2]` / `[L1]` in the answer: `pointer`, `article`, `section`, and `spans` (character positions of the entities in that paragraph, for highlighting). |
+| `citations` | One per `[S2]` / `[L1]` in the answer: `pointer`, `article`, `section`, `spans` (character positions of the entities in that paragraph, for highlighting), and `date` (the passage's date in words, e.g. `"24 February 2022"`, or `null`; the graph with dates only). |
 | `sources` | The pointers of everything the answer cites. |
 | `map` | `bbox` `[west, south, east, north]` to zoom to (around the places the question is about; with none, the places the answer discusses), and `highlight` (the discussed places' numbers). |
 | `follow_ups` | Up to 3 suggested next questions, ready to send as typed. |
 | `did_you_mean` | Other graph entries the question's names could have meant. |
 | `notes` | What each step noticed (prefixed ①–⑤), e.g. "Kyiv is inside: Ukraine", "the map point may be wrong". For debugging and transparency. |
-| `meta` | Question type, model, number of LLM calls, cost in USD, seconds. |
+| `meta` | Question type (`date` for "What happened on 24 February 2022?"), model, number of LLM calls, cost in USD, seconds. |
 
 Each entry of `geo_locations`:
 
 | Field | Meaning |
 |---|---|
-| `number` | The `[n]` in the answer, and what "tell me about number n" refers to. |
+| `number` | The `[n]` in the answer, and what "tell me about number n" refers to. A list numbers every place found; any other answer shows only the places it discusses (`map.showing` is `"discussed"`), numbered 1, 2, 3 … with no gaps. |
 | `id`, `label` | The graph's name for the place. |
 | `kind` | The geocoder's place type: `city`, `town`, `village`, `state` (an oblast), `country`, `road`, `building`… |
 | `role` | `primary`: the answer discusses it. `context`: found, for the map only. |
@@ -226,6 +228,20 @@ paragraph), or show `answer_plain` instead.
 Send previous results back in `chat_history`. "Tell me about number 13" then means place 13 of
 the previous result, including places on the map that the answer didn't discuss. "What about
 Soledar?" or "Tell me about Zelenskyy in the White House" work as well.
+
+### Dates (the graph with dates)
+
+- **A date or period in the question** ("What happened in Bakhmut in 2023?", "Who attacked Mariupol in
+  May 2022?", "Drone attacks in Kharkiv in 2024") puts the paragraphs and relation records dated in it
+  first. Nothing is dropped: about half the paragraphs have no date.
+- **Only a date** ("What happened on 24 February 2022?", "What happened in February 2022?", "Show me
+  where fighting happened in March 2022") reads the paragraphs that carry that date, and the places,
+  people and organizations named in the same sentence as it. `meta.question_type` is `date`.
+- **Every passage the answer reads carries its date**, so the answer can say when, in time order;
+  `citations[].date` gives it to the UI.
+
+Understood: a day, a month, a year, ranges ("from March to May 2022", "2014–2015"), "since …",
+"before …", seasons and "early/mid/late 2023". A month without a year ("in February") is not.
 
 ### `get_source_text(pointer) -> dict | None`
 
@@ -266,6 +282,7 @@ retrieve.py       ③ retrieve (routes)   graph_tools.py  graph walks used by th
 evidence.py       ④ evidence            writer.py     ⑤ write
 result.py         ⑥ result              schema.py     the input and output contract
 graph_index.py    loads the graph and builds the name indexes
+dates.py          the question's time words as a calendar range; each passage's date
 geo.py            distances, point-in-polygon, WKT, outline simplification (plain Python)
 llm_calls.py      every LLM call, with its model, tokens, cost and time
 agent.py          MODEL, get_llm() and the error classes
@@ -284,8 +301,12 @@ launch.py         what RUN_GEORAG.bat runs: Python environment, key, graph check
   Russia?" answers only "Russia is a country." The list and how to add them: MISSING_PAGES.md.
 - **A topic needs an area:** "Show me where drone attacks happened" asks the user to name a place or
   select one on the map; it doesn't search the whole graph (P2-75).
-- **Nested places stack on the map:** Washington, the White House and the Oval Office are separate
-  places at almost the same point. Clustering nearby pins helps.
+- **Nested places stack on the map:** a city and its districts, streets and buildings are separate
+  places at almost the same point. Clustering nearby pins helps. (In the graph with dates, the White
+  House and the Kremlin are organizations, so they have no pin; the Oval Office has none either.)
+- **Dates are the ones written near the text,** usually but not always the date of the event ("Wagner,
+  founded in 2014, captured Bakhmut" dates that record 2014). A list of events ("battles in 2023")
+  doesn't filter its events by date yet.
 - **Big lists are big:** up to ~500 KB for a question that finds 1,652 places. That's the places
   (about 300 bytes each: number, name, point, data line, a few pointers), not text: the answer is a
   few sentences, and paragraphs are never included, only their pointers. Fine in-process.

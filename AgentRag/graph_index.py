@@ -29,7 +29,10 @@ from geo import parse_wkt
 logger = logging.getLogger(__name__)
 
 HERE = Path(__file__).resolve().parent
-DEFAULT_GRAPH_PATH = HERE.parent / "Graph_n_Geocoding" / "knowledge_graph.json.gz"
+# P2-80: the graph with dates (its own README: Graph_n_Geocoding/with_dates/KNOWLEDGE_GRAPH_README.md). The graph
+# without dates stays next to it as the fallback: GRAPH_PATH in AgentRag/.env set to GRAPH_WITHOUT_DATES.
+DEFAULT_GRAPH_PATH = HERE.parent / "Graph_n_Geocoding" / "with_dates" / "knowledge_graph.json.gz"
+GRAPH_WITHOUT_DATES = HERE.parent / "Graph_n_Geocoding" / "knowledge_graph.json.gz"
 
 # Words that say what kind of thing a name is, not which one. Two names sharing only these
 # ("Russian Armed Forces" / "Ukrainian Air Force") are not the same thing.
@@ -82,6 +85,9 @@ PLACE_FIXES = {
     "U.K.": "United Kingdom",                    # a road in the Netherlands
     "Hrushevskoho Street": "Mykhaila Hrushevskoho Street",   # the Kyiv street, not one in Brovary Raion
     "Oval Office": "White House",                # a road in Alabama
+    # P2-79, the graph with dates (its NER spells these differently from the graph without dates)
+    "Donetsk city": "Donetsk",                   # Donetsk Way in Sheffield, as "Donetsk City" above
+    "Donetsk region": "Donetsk Oblast",          # a statistics office in Donetsk
 }
 # Names geocoded to a wrong spot with no right point anywhere in the graph: better no pin than a wrong one.
 # Mostly regions, former states and military districts matched to a shop, plaque or street of that name.
@@ -95,6 +101,7 @@ NO_POINT = {
     "Western Military District", "Central Military District", "Moscow Military District", "Kyiv Military District",
     "Eastern Europe", "Central Asia", "Latin America", "Indo-Pacific", "Global South", "Union State",
     "Eastern Front", "Western Front", "Danube Delta", "Taman Peninsula", "Volhynia", "Russia-Ukraine", "SIZO-2",
+    "St",   # P2-79: a fragment of "St Petersburg" or "St. ..." geocoded as the country São Tomé and Príncipe
 }
 # A region the graph has no outline for, made of the outlines of the places it consists of. Donbas was a
 # street in Skopje; its own article says "the Donbas usually refers to Donetsk Oblast and Luhansk Oblast".
@@ -185,18 +192,24 @@ def drop_reference_sections(G: nx.Graph) -> dict:
             "kept_for_hierarchy": len(containers)}
 
 
-def apply_place_fixes(G: nx.Graph, fixes: dict[str, str] = PLACE_FIXES) -> list[str]:
+def apply_place_fixes(G: nx.Graph, fixes: dict[str, str] = PLACE_FIXES) -> tuple[list[str], list[str]]:
     """Give each name in `fixes` the point and INSIDE parent of the node it maps to (P2-72). Returns the
-    names fixed; a name or source missing from this graph is skipped."""
-    fixed = []
+    names fixed, and the names whose source this graph has without a point: their own point is still the
+    wrong one, so they get none, as NO_POINT (P2-79: the graph with dates made White House an
+    organization, so the Oval Office was back on its road in Alabama). A name or source missing from this
+    graph is skipped."""
+    fixed, unfixable = [], []
     for name, source in fixes.items():
-        if name not in G or source not in G or G.nodes[source].get("latitude") is None:
+        if name not in G or source not in G:
+            continue
+        if G.nodes[source].get("latitude") is None:
+            unfixable.append(name)
             continue
         for k in GEO_FIELDS:
             G.nodes[name][k] = G.nodes[source].get(k)
         _set_inside_parent(G, name, _inside_parent(G, source), basis="place fix")
         fixed.append(name)
-    return fixed
+    return fixed, unfixable
 
 
 def _multipolygon_wkt(wkts: list[Optional[str]]) -> Optional[str]:
@@ -274,10 +287,12 @@ class GraphIndex:
     def __init__(self, G: nx.Graph):
         start = time.time()
         self.dropped = drop_reference_sections(G)
-        self.place_fixes = apply_place_fixes(G)
+        self.place_fixes, self.unfixable = apply_place_fixes(G)
+        no_point = NO_POINT | set(self.unfixable)
         self.parents_fixed = fix_cross_border_parents(G)
         self.G = G
-        self.entities = [n for n, d in G.nodes(data=True) if d.get("type") != "TEXT"]
+        # the graph with dates has DATE nodes (DATE_2022-02-24); they are calendar entries, not names to search
+        self.entities = [n for n, d in G.nodes(data=True) if d.get("type") not in ("TEXT", "DATE")]
         self.text_ids: dict[str, list[int]] = {}
         for n in self.entities:
             self.text_ids[n] = [G.nodes[m]["text_id"] for m in G.neighbors(n) if G.nodes[m].get("type") == "TEXT"]
@@ -290,10 +305,10 @@ class GraphIndex:
                 for w in set(words(key)):
                     self.by_word[w].add(n)
         self._build_articles()
-        self._clear_wrong_spots(NO_POINT)
+        self._clear_wrong_spots(no_point)
         self.composites = self._apply_composites(COMPOSITE_PLACES)
         self._build_groups()
-        self.no_point = self._clear_points(NO_POINT)
+        self.no_point = self._clear_points(no_point)
         self.index_seconds = round(time.time() - start, 1)
         self.load_seconds: Optional[float] = None
 
@@ -315,9 +330,10 @@ class GraphIndex:
         index.load_seconds = load_seconds
         index.path = str(path)
         logger.info("graph loaded from %s in %.1f s (%d nodes, %d edges); indexes in %.1f s; reference sections "
-                    "dropped: %s; points fixed: %s; parents fixed: %d; no point: %s; composites: %s", path,
-                    load_seconds, G.number_of_nodes(), G.number_of_edges(), index.index_seconds, index.dropped,
-                    index.place_fixes, index.parents_fixed, index.no_point, index.composites)
+                    "dropped: %s; points fixed: %s; fixes with no right point here: %s; parents fixed: %d; "
+                    "no point: %s; composites: %s", path, load_seconds, G.number_of_nodes(), G.number_of_edges(),
+                    index.index_seconds, index.dropped, index.place_fixes, index.unfixable, index.parents_fixed,
+                    index.no_point, index.composites)
         return index
 
     # --- articles (events live here: "Battle of Bakhmut" is an article, not a node) ----------

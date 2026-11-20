@@ -53,6 +53,12 @@ Citing: put a place's number in square brackets right after its name, like Kyiv 
 after the claim they support, like [S2] or [L1]. Cite at most two passages per claim (the clearest),
 and don't put place numbers and passage ids in the same brackets. Cite only numbers and ids that appear
 in the material.
+Dates: a passage may carry its date from the graph ("date: 24 February 2022"). Say when things happened
+where it helps, and tell events in time order. "date from earlier in the paragraph" is the last date
+before the passage, so it is probably but not surely when it happened: say "around" or leave it out. If
+a PERIOD ASKED line is given, answer about that period, and say so if the passages hardly cover it. A
+question about a date asks what happened then: tell it event by event, citing the passages. Never give
+a date that no passage carries.
 If a passage is marked LOW-CONFIDENCE, say the corpus only suggests it.
 If the graph's point for a place may be wrong, mention that.
 If the material doesn't answer the question, say so plainly instead of guessing.
@@ -136,6 +142,14 @@ def grounded_follow_ups(follow_ups: list[str], pack: EvidencePack) -> tuple[list
     return kept, dropped
 
 
+def renumber_places(text: str, numbers: dict[int, int]) -> str:
+    """Rewrite the place citations by `numbers` ([21] -> [5]); passage marks ([S2], [L1]) stay as they are."""
+    def swap(m):
+        tokens = re.split(r"\s*[,;]\s*", m.group(1))
+        return "[" + ", ".join(str(numbers.get(int(t), t)) if t.isdigit() else t for t in tokens) + "]"
+    return _CITATION.sub(swap, text)
+
+
 def strip_citations(text: str) -> str:
     """The text without [3] / [S2] marks: for follow-ups, and for UIs that show the answer plain.
     A run of marks goes with the commas between them ("since 2019 [L1], [S5]." -> "since 2019.")."""
@@ -161,6 +175,10 @@ def cut_unfinished(text: str) -> tuple[str, bool]:
     return (body[:ends[-1]], True) if ends else (body, False)
 
 
+# the "answer" field of JSON written as text, also when the text stops before the field's closing quote
+_ANSWER_FIELD = re.compile(r'"answer"\s*:\s*"((?:[^"\\]|\\.)*)', re.S)
+
+
 def draft_from_text(text: str) -> Optional[WriteDraft]:
     """A model that skips the structure sometimes writes the JSON as text, or just the answer."""
     body = text.strip()
@@ -170,6 +188,15 @@ def draft_from_text(text: str) -> Optional[WriteDraft]:
             return WriteDraft.model_validate(json.loads(fenced.group(0)))
         except (ValueError, ValidationError):
             pass
+    if body.startswith("{") or body.startswith("```"):
+        # JSON that doesn't parse (the free fallback model wrote 5,000 tokens of it, cut off): its answer
+        # field if it has one, else nothing - raw JSON is never shown as the answer (P2-79)
+        m = _ANSWER_FIELD.search(body)
+        try:
+            answer = json.loads('"' + m.group(1).rstrip("\\") + '"') if m else ""
+        except ValueError:
+            answer = ""
+        return WriteDraft(answer=answer) if len(answer.split()) >= 5 else None
     return WriteDraft(answer=body) if len(body.split()) >= 5 else None
 
 

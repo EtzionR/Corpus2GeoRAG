@@ -100,6 +100,7 @@ class CitationOut(BaseModel):
     article: str
     section: Optional[str] = None
     spans: list[list[int]] = Field(default_factory=list)   # the entities' positions in the paragraph
+    date: Optional[str] = None          # the graph with dates: the passage's date in words, e.g. "24 February 2022"
 
 
 class MapHint(BaseModel):

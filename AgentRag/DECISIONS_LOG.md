@@ -1173,6 +1173,63 @@ route lists everything linked to either country (2,798 places; no data in some r
 the graph can't tell who is a commander (people have no role, and commanders such as Gerasimov and Shoigu are only "mentioned with" the Russian Armed Forces, with no command link), and our list route doesn't yet apply the "only places in Ukraine" filter the planner records. A fix is designed and measured for a later stage (ideas list): about 114
 Ukrainian cities, towns and villages linked to the Russian Armed Forces.
 
+**P2-79. The graph with dates, and three fixes** (owner's go, 2026-11-20). The graph team published a
+second graph, `Graph_n_Geocoding/with_dates/` (167,061 nodes: the NER team's FlertDate model, with a
+DATE label, and 9,202 date nodes), and kept the graph without dates as it was (byte-identical to the
+one we tested on 2026-11-02). *Checked before switching:* the relation code is unchanged (the
+notebook differs only in paths and the date steps); where both graphs have the same two names in one
+sentence, 98.6 % of the relations are identical; typed records 101,650 → 97,356, from the new NER's
+names. All 2,285 articles are the same (the 15 missing core pages are still missing). *Ours:*
+- `DATE` nodes are not names (the one line the graph README asks for).
+- **Numbers without gaps.** An answer that isn't a list shows only the places it discusses (P2-65), but
+  they kept their rank in everything found: "Tell me about number 4" cited [1] [2] [3] [4] [6] [7] [10]
+  [11] [21] [22] [41] [54]. ⑥ now numbers the shown places 1, 2, 3 … and rewrites the answer's place
+  citations to match; "number N" reads the result's numbers, so it still finds the pin shown. Lists keep
+  their numbers. Before: gaps in 4 of 31 test answers; after: none, on both graphs.
+- **No pin in Alabama.** The new NER labels White House, Kremlin, USSR and the military districts as
+  organizations (no point). Our P2-72 fix gave the Oval Office the White House's point, so it had none
+  to take, and the Oval Office was back on its road in Anniston, Alabama, third among Zelenskyy's
+  places. A fix whose right node exists without a point now leaves the name with no pin. New wrong pins
+  of the new NER's spellings, found as in P2-72 (15+ paragraphs, low importance): "Donetsk city"
+  (Sheffield) and "Donetsk region" (an office in Donetsk) take Donetsk's and Donetsk Oblast's points;
+  "St" (São Tomé and Príncipe) gets none.
+- **Never raw JSON as the answer.** When Gemini fails, OpenRouter falls back to its free router; one
+  free model took 94 s and wrote 5,000 tokens of JSON as plain text, cut off, and the writer showed it.
+  Text that starts as JSON now gives its `answer` field, or the fallback answer. (The fallback model
+  stays: owner's choice.)
+*Measured* (all 37 questions, Gemini 2.5 Flash, about $0.07 a run): the project questions answer as
+before on both graphs, except q10, whose country filter the planner adds in only 2 of 6 tries on any
+graph (ideas list). v14 ("head of the Russian military") lost Gerasimov on the new graph: "General
+Staff", where his LEADS records are, ranks last among the organizations searched; fragile on both.
+Reported to the graph and NER teams in GRAPH_TEAM_ISSUES.md H, to the UI team in UI_TEAM_NOTES.md.
+
+**P2-80. Dates** (owner's go, 2026-11-20). The graph with dates gives every paragraph its date mentions
+(`from`/`to` calendar ranges) and every relation record the date written near it; the planner already
+extracted the question's `time_words`, unused. Three uses, all in code (`dates.py`), none in the
+planner's instructions, so the other questions' plans don't change:
+- **C1, every passage carries its date.** ④ gives each passage the dates inside it ("date: 24 February
+  2022"), or else the last one before it in the paragraph ("date from earlier in the paragraph"); the
+  write prompt asks to say when, in time order, and never to give a date no passage carries.
+  `citations[].date` passes it to the UI.
+- **C2, a period is read first.** The time words become a calendar range ("in 2023", "since February
+  2022", "from March to May 2022"; a month without a year is not a range). Nothing is dropped, since
+  about half the paragraphs have no date: in a list, the places with paragraphs dated in the period
+  come first within their tier; relation records dated in it come first; each item's dated passages
+  come first, and items with one are read first; "What happened in Bakhmut in 2023?" also reads
+  Bakhmut's own 2023 paragraphs.
+- **C3, a date alone.** "What happened on 24 February 2022?" named nothing, so it ended in no data. A
+  plan with a period and no name, concept or map selection is now the `date` type: the paragraphs with
+  a date inside the period (a coarser "2022" doesn't date anything on 24 February), and the places,
+  people and organizations named in the same sentence as that date, ranked by how many paragraphs do
+  so. A "where" question gets a list ("Show me where fighting happened in March 2022"); otherwise the
+  answer tells what happened, event by event.
+*Measured:* six date questions (set `dates`) answer on the graph with dates: 24 February 2022 finds
+438 paragraphs, 68 places on the answer's map (Hostomel, Kharkiv, Snake Island, Mariupol …), every
+passage dated that day; February 2022 is told day by day; "Drone attacks in Kharkiv in 2024" keeps to
+2024 and gives the dates. On the graph without dates, a date alone gives no data, as before.
+*Known:* a date is the one written near the text, usually but not always the event's; an event list
+("battles in 2023") doesn't filter by date yet.
+
 ### ④ Evidence pack
 
 **P2-15. Choosing the least text that answers.**
@@ -1257,3 +1314,6 @@ Things we chose not to do yet, kept here so we can pick them up if the results c
 | Ignore entities with non-Latin names (1,458, mostly words from native-language names in brackets, e.g. `Україні`) | Loading | Owner to decide; better fixed in NER (GRAPH_TEAM_ISSUES F2) | 2026-10-21 |
 | q10 ("Russia and Ukraine ... the same country") sometimes loses its country filter: 1,659 places instead of about 149 (2 of the last 3 runs) | ① Understand | Model variance; owner: record the answers for the MVP, fix in a later stage | 2026-10-31 |
 | q9: words written as a filter ("Ukrainian locations") are not a subject; words read both as a country and as an organization keep the organization; the list route applies the country filter by the country's outline (the INSIDE chain misses places such as Borodianka, whose chain ends at a misspelled " Ukrain") | ① / ③ | Owner: a later stage. Measured: 114 places instead of 2,798. A real "commanders" answer needs people's roles in the graph | 2026-11-01 |
+| v14 ("head of the Russian military"): when the Russian Armed Forces have no LEADS records, search the linked organizations of the same country first (General Staff holds Gerasimov's) | ③ Retrieve | Seen on the graph with dates (P2-79); not a project question | 2026-11-20 |
+| An event list with a period ("battles in 2023"): keep the events whose article is dated in it | ③ Retrieve | After the presentation (P2-80) | 2026-11-20 |
+| q10: a `common` question whose text says "country" gets the country filter even when the plan doesn't (one line in `_common`); the planner adds it in 2 of 6 tries | ③ Retrieve | Owner to decide (P2-79) | 2026-11-20 |

@@ -3,6 +3,32 @@
 Found while running `ui/app.py` against the agent (2026-10-29, updated 2026-10-31). We changed
 nothing in `ui/`; each item says what we saw and the change we suggest.
 
+## New: the graph with dates (2026-11-20)
+
+We changed nothing in `ui/`, and nothing in it has to change: the result has the same fields, and
+your new features (sector cards, citation links, battle popups, the avatar) work against it. What's
+different, so you know what you'll see:
+
+1. **The agent uses the graph with dates** (`Graph_n_Geocoding/with_dates/`), and `RUN_GEORAG.bat`
+   starts it. The graph without dates is the fallback: `GRAPH_PATH` in `AgentRag/.env`
+   (`AgentRag/.env.example` shows the line). Restart the app after changing it.
+2. **No more gaps in the numbers.** An answer that isn't a list puts only the places it talks about on
+   the map. Those places kept their rank from everything found, so "Tell me about number 4" showed
+   pins 1, 2, 3, 4, 6, 7, 10 … 54. Now they're numbered 1, 2, 3 … and the `[n]` in the answer
+   matches. "Tell me about number N" reads the new numbers, so it finds the pin the user sees.
+   Lists are unchanged (every place, numbered as before). `map.showing` still tells you which case it is.
+3. **Questions about dates.** "What happened on 24 February 2022?", "What happened in February
+   2022?", "Show me where fighting happened in March 2022" now answer (before: no data);
+   `meta.question_type` is `"date"`. A date in any other question ("What happened in Bakhmut in
+   2023?", "Drone attacks in Kharkiv in 2024") reads that period first.
+4. **One new optional field:** `citations[].date`, the passage's date in words (`"24 February 2022"`),
+   or `null`. If you want, show it next to the source link; nothing breaks if you don't.
+5. **Fewer wrong pins, a few gone:** the Oval Office is no longer pinned in Alabama. In this graph the
+   White House and the Kremlin are organizations, so they have no pin.
+
+Good questions for the demo: the three above, "Who attacked Mariupol in May 2022?", and "What happened
+in Kyiv on 24 February 2022?".
+
 ## Done: your ui/ has the fixes (2026-11-01)
 
 Your PR #33 applied items 1, 3, 6, 7 and 8 to `ui/`. `RUN_GEORAG.bat` in the repo root now runs your

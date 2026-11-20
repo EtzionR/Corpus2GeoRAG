@@ -175,3 +175,43 @@ Belgorod Oblast, Kursk, Dnipropetrovsk Oblast, Sumy Oblast, France, Belgorod; pl
 *What would help:* keep the new corpus (it adds 760 war articles, Zelenskyy among them), and
 force-include a short list of anchor pages like these, even if only their opening section (the
 agent uses the opening paragraph). It has to happen before the final NER and graph runs.
+
+---
+
+## H. The graph with dates (2026-11-20): what we saw, and what we handled on our side
+
+For the Graph & Geocoding team and the NER team. Nothing here needs a change from you before the
+presentation: we fixed it as the graph loads, as with the 15 pins before. It's here so you know.
+
+**It works.** The agent now uses `Graph_n_Geocoding/with_dates/knowledge_graph.json.gz` by default; the
+graph without dates stays as the fallback (`GRAPH_PATH` in `AgentRag/.env`). The one line your README
+asked for is in (`DATE` nodes are not names). On our 37 test questions, both graphs answer; the
+dates give us three new things: the date of every passage in the answer, a period in the question
+("in 2023") read first, and questions about a date alone ("What happened on 24 February 2022?",
+which found nothing before).
+
+**Relations: checked record by record, not only the totals.** Where both graphs have the same two
+names in the same sentence, 98.6 % of the relations are identical. The differences come from the
+new NER's names (about 11,700 sentence pairs new, 15,900 gone; typed records 101,650 → 97,356), not
+from the relation rules, which the notebook shows unchanged. We keep `confidence` ≥ 0.7 for a typed
+relation rather than the suggested 0.5: 80 % against 77 % accuracy, and the question we tried it on
+(who leads the Russian military) gained nothing from 0.5.
+
+**The new NER labels some places as organizations,** so they have no point: White House (99
+paragraphs), Kremlin (496), USSR, CIS, the Western / Central / Moscow military districts. Fair for the
+NER (they often stand for a government), but the map loses them. A side effect: our fix that gave the
+Oval Office the White House's point had no point to take, so the Oval Office was back on its road in
+Anniston, Alabama, in the top three places for Zelenskyy. *Ours:* a fix whose right node has no point
+now leaves the name with no pin.
+
+**New wrong pins** (names the new NER spells differently, found the same way as in B: places in 15+
+paragraphs geocoded with low importance):
+
+| Name | Paragraphs | Geocoded as | Ours, on load |
+|---|---|---|---|
+| Donetsk city | 17 | Donetsk Way, Sheffield, England (as "Donetsk City" before) | Donetsk's point |
+| Donetsk region | 25 | a statistics office in Donetsk | Donetsk Oblast's point |
+| St | 22 | the country São Tomé and Príncipe | no pin |
+
+**Better:** about 1,200 junk place names are gone (`United States'`, `Ukraine.`, `Raions`), and the
+fixes we had (Dnipro, Zaporizhzhia Oblast, Donetsk City …) all still apply.

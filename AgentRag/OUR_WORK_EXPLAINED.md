@@ -74,7 +74,7 @@ question costs about $0.002 and takes 1 to 8 seconds.
 - **We never edit other teams' work.** The graph file is read as is; corrections happen in memory
   when it loads. Problems go back to their owners as written notes: GRAPH_TEAM_ISSUES.md,
   MISSING_PAGES.md, UI_TEAM_NOTES.md, ner_review/, DATA_TEAM_DROPPED_ARTICLES.csv.
-- **209 automated tests**, plus the 10-question run before each commit.
+- **225 automated tests** (on both real graphs), plus the question runs before each commit.
 
 ---
 
@@ -325,14 +325,15 @@ mean".
 
 | | |
 |---|---|
-| Final graph | 149,085 nodes, 83,008 paragraphs, 2,285 articles, about 812,000 links |
+| Final graph (with dates, from 2026-11-20) | 160,857 nodes as loaded, 84,151 paragraphs, 2,285 articles, about 854,000 links; 9,202 date nodes. The graph without dates is the fallback |
 | LLM calls per question | 0 to 2 (fast path: none for planning) |
-| Cost per question | about $0.002; the 10-question run $0.019 |
-| Time per answer | 1 to 8 s (11 s for the 2,798-place q9) |
-| Automated tests | 209 |
+| Cost per question | about $0.002 ($0.006 for a question about a date); the 37-question run $0.07 |
+| Time per answer | 1 to 9 s |
+| Automated tests | 225 |
 | Recorded decisions | about 80 (DECISIONS_LOG.md) |
-| Data corrections at load | 11 points fixed, 34 wrong pins removed, 146 hierarchy links fixed, reference sections dropped |
+| Data corrections at load | 12 points fixed, 36 wrong pins removed, 143 hierarchy links fixed, reference sections dropped |
 | Project questions answered well | 12 of 14 (q9 misread, q10 partly), plus the original q11 |
+| Questions about dates | 6 of 6 (P2-80): "What happened on 24 February 2022?" and the like |
 
 ## 10. Where to find more
 

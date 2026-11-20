@@ -45,6 +45,7 @@ class Record(BaseModel):
     other: str                          # group id of the counterpart
     confidence: Optional[float] = None
     low_confidence: bool = False        # a typed relation accepted below MIN_CONFIDENCE (fallback, P2-45)
+    date: Optional[dict] = None         # the graph with dates: the date written near the record ({from, to, scope})
     pointer: Pointer
 
 
@@ -57,6 +58,7 @@ class Hit(BaseModel):
     role: Optional[Literal["acts", "acted_on", "mutual"]] = None   # relative to the entity asked about
     specificity: Optional[float] = None   # share of this item's paragraphs that link to the entity (P2-44)
     distance_m: Optional[float] = None
+    in_period: int = 0                  # of its paragraphs, how many are dated in the question's period (P2-80)
     pointers: list[Pointer] = Field(default_factory=list)
     pointers_total: int = 0
 
@@ -90,6 +92,7 @@ def entity_records(gi: GraphIndex, gid: str, relations: Optional[list[str]] = No
                         classifier_label=None if typed or rel == "CO_OCCURS_WITH" else rel,
                         subject=r.get("subject"), target=gid, other=other, confidence=conf,
                         low_confidence=typed and conf < MIN_CONFIDENCE,
+                        date={k: r["date"].get(k) for k in ("from", "to", "scope")} if r.get("date") else None,
                         pointer=Pointer(text_id=r["text_id"],
                                         spans=[[r["source_start"], r["source_end"]], [r["target_start"], r["target_end"]]])))
     return out
@@ -323,6 +326,57 @@ def article_places(gi: GraphIndex, title: str) -> list[Hit]:
                             pointers_total=len(ptrs)))
     hits.sort(key=lambda h: (-h.records, -h.group.texts))
     return hits
+
+
+_SENTENCE_BREAK = re.compile(r"[.!?]\s+[\"“(\[]?[A-Z0-9]")
+
+
+def _same_sentence(text: str, a: list[int], b: list[int]) -> bool:
+    """No sentence end between the two spans (an approximation: "U.S. Army" reads as a break)."""
+    first, second = sorted([a, b])
+    return first[1] >= second[0] or not _SENTENCE_BREAK.search(text, first[1], second[0] + 1)
+
+
+def names_in_texts(gi: GraphIndex, texts: dict[int, list[dict]],
+                   keywords: Optional[list[str]] = None) -> tuple[list[Hit], list[Hit]]:
+    """The geocoded places, and the people and organizations, named in the same sentence as one of the
+    paragraphs' dates (text id -> the date mentions that put it in the question's period), ranked by how
+    many paragraphs do so. With keywords, only paragraphs that contain one count. Each pointer marks the
+    name and the date, so the passage read is the sentence that says what happened then (P2-80)."""
+    by_group: dict[str, list[Pointer]] = {}
+    for tid, dated in texts.items():
+        node = f"TEXT_{tid}"
+        if node not in gi.G:
+            continue
+        text = gi.G.nodes[node]["text"]
+        kw = keyword_spans(text, keywords) if keywords else []
+        if keywords and not kw:
+            continue
+        date_spans = [[d["start"], d["end"]] for d in dated]
+        for m in gi.G.neighbors(node):
+            gid = gi.group_of.get(m)
+            if gid is None or gi.G.nodes[m]["type"] not in ("PER", "ORG", "LOC"):
+                continue
+            spans = []
+            for r in gi.G[node][m]["relations"].get("IN_THE_TEXT", []):
+                name = [r["start"], r["end"]]
+                near = [d for d in date_spans if _same_sentence(text, name, d)]
+                if near:
+                    spans += [name] + [d for d in near if d not in spans]
+            if spans:
+                by_group.setdefault(gid, []).append(Pointer(text_id=tid, spans=spans + kw))
+    places, others = [], []
+    for gid, ptrs in by_group.items():
+        g = gi.group(gid)
+        if g.type == "LOC" and not g.place:
+            continue
+        ptrs = _unique_pointers(ptrs)
+        hit = Hit(group=g, score=len(ptrs), records=len(ptrs), in_period=len(ptrs), pointers=ptrs[:MAX_POINTERS],
+                  pointers_total=len(ptrs))
+        (places if g.type == "LOC" else others).append(hit)
+    for hits in (places, others):
+        hits.sort(key=lambda h: (-h.records, -h.group.texts))
+    return places, others
 
 
 def lead_pointer(gi: GraphIndex, article: str) -> Optional[Pointer]:

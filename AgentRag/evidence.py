@@ -17,6 +17,7 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel, Field
 
+import dates as D
 from graph_index import GraphIndex
 import graph_tools as T
 from graph_tools import Pointer
@@ -67,6 +68,8 @@ class Passage(BaseModel):
     section: Optional[str] = None
     about: list[str] = Field(default_factory=list)   # "[3]" for place 3, an entity id, or a record
     low_confidence: bool = False
+    date: Optional[str] = None       # the graph with dates: the passage's dates in words (P2-80, C1)
+    date_scope: Optional[Literal["passage", "paragraph"]] = None   # "paragraph": from an earlier sentence
     words: int = 0
 
 
@@ -95,6 +98,7 @@ class EvidencePack(BaseModel):
     passages: list[Passage] = Field(default_factory=list)
     amounts: Amounts = Field(default_factory=Amounts)
     needs_area: bool = False               # a question about an area that has none: no place, no map selection
+    period: Optional[str] = None           # the period the question names, in words (P2-80)
     notes: list[str] = Field(default_factory=list)
 
 
@@ -146,23 +150,32 @@ def _cut_summary(text: str) -> str:
 # --- Building the pack -----------------------------------------------------------------------
 
 class _Item:
-    """Something to describe (a place, an entity or a relation record) and its pointers, best first."""
+    """Something to describe (a place, an entity or a relation record) and its pointers, best first:
+    with a period, the paragraphs dated in it first (P2-80, C2)."""
 
-    def __init__(self, label: str, pointers: list[Pointer], low_confidence: bool = False):
-        self.label, self.low_confidence = label, low_confidence
-        self.pointers = sorted(pointers, key=lambda p: -len(p.spans))
+    def __init__(self, label: str, pointers: list[Pointer], low_confidence: bool = False,
+                 dated: Optional[set[int]] = None, records: int = 0):
+        self.label, self.low_confidence, self.records = label, low_confidence, records
+        self.pointers = sorted(pointers, key=lambda p: (dated is not None and p.text_id not in dated, -len(p.spans)))
 
 
-def _items(plan: QueryPlan, ret: Retrieval, numbers: dict[str, int], shape: str) -> list[_Item]:
-    places = [_Item(f"[{numbers[h.group.id]}]", h.pointers) for h in ret.places]
-    entities = [_Item(h.group.id, h.pointers) for h in ret.entities]
+def _items(plan: QueryPlan, ret: Retrieval, numbers: dict[str, int], shape: str,
+           dated: Optional[set[int]] = None) -> list[_Item]:
+    places = [_Item(f"[{numbers[h.group.id]}]", h.pointers, dated=dated, records=h.records) for h in ret.places]
+    entities = [_Item(h.group.id, h.pointers, dated=dated, records=h.records) for h in ret.entities]
     records = [_Item(f"{r.subject or r.other} {r.relation} {r.target if r.subject != r.target else r.other}",
                      [r.pointer], r.low_confidence) for r in ret.records]
     if shape in ("fact", "drilldown"):
-        return records or (entities + places)
-    if plan.type in ("about", "relation"):
-        return records + entities + places
-    return places + entities
+        items = records or (entities + places)
+    elif plan.type in ("about", "relation"):
+        items = records + entities + places
+    elif plan.type == "date":   # what happened then: the most-mentioned names first, places and people alike
+        items = sorted(places + entities, key=lambda i: -i.records)
+    else:
+        items = places + entities
+    if dated is not None:   # with a period, the items that have a passage dated in it are read first (stable)
+        items.sort(key=lambda i: not (i.pointers and i.pointers[0].text_id in dated))
+    return items
 
 
 # --- Answer shapes (P2-48) -------------------------------------------------------------------
@@ -185,6 +198,10 @@ def choose_shape(plan: QueryPlan, ret: Retrieval) -> tuple[Shape, str]:
         return "fact", "who did what"
     if plan.needs == "detailed_text":
         return "explain", "the question asks for detail"
+    if plan.type == "date":   # "Show me where fighting happened in March 2022" is a list; "what happened" is not
+        if plan.needs == "locations" and len(ret.places) > LIST_MIN_PLACES:
+            return "list", f"{len(ret.places)} places in the period's paragraphs: the map carries them"
+        return "explain", "what happened in a period"
     if plan.type in LIST_TYPES and len(ret.places) > LIST_MIN_PLACES:
         return "list", f"{len(ret.places)} places found: the map carries them, the text stays short"
     return "explain", "a small result or a question about something"
@@ -203,6 +220,10 @@ def describe_search(plan: QueryPlan, ret: Retrieval) -> str:
     else:
         where = ""
     route = ret.route.split(":")[0]
+    if route == "date":
+        topic = f" and mention {', '.join(plan.keywords)}" if plan.keywords else ""
+        return (f"paragraphs with a date in {plan.period.label}{topic}; places, people and organizations "
+                f"ranked by how many of those paragraphs mention them")
     if route == "area_topic":
         found = f"places {where} whose paragraphs mention: {', '.join(plan.keywords) or 'the topic'}"
         return found + (f"; ranked by {', '.join(plan.relations)} records" if plan.relations else "")
@@ -230,9 +251,11 @@ def _short_address(address: Optional[str]) -> Optional[str]:
     return ", ".join(parts[:2] + parts[-1:]) if len(parts) > 3 else ", ".join(parts)
 
 
-def why_line(hit) -> str:
+def why_line(hit, period: Optional[str] = None) -> str:
     """One line of data about why a place is in the result - no LLM, no text from the corpus."""
     bits = []
+    if period and hit.in_period:
+        bits.append(f"{hit.in_period} paragraphs dated {period}")
     rels = [f"{k} in {v} record{'s' if v != 1 else ''}" for k, v in hit.relations.items() if k != "MENTIONED_WITH"][:3]
     if rels:
         bits.append(", ".join(rels))
@@ -254,16 +277,18 @@ def build_evidence(plan: QueryPlan, ret: Retrieval, gi: GraphIndex,
     shape, reason = choose_shape(plan, ret)
     budget = SHAPE_BUDGETS.get(shape, budget_words)
     numbers = {h.group.id: i for i, h in enumerate(ret.places, 1)}
+    period = plan.period.label if plan.period else None
+    dated = set(D.texts_in(gi, plan.period)) if plan.period and D.has_dates(gi) else None
     pack = EvidencePack(level="", shape=shape, shape_reason=reason, found_by=describe_search(plan, ret), places=[
         PlaceRef(number=numbers[h.group.id], id=h.group.id, label=h.group.id,
                  kind=(h.group.place.place_type if h.group.place else None) or h.group.type,
                  address=_short_address(h.group.place.address) if h.group.place else None, records=h.records,
                  uncertain=h.group.place.uncertain_reason if h.group.place and h.group.place.uncertain else None,
-                 why=why_line(h))
+                 why=why_line(h, period if plan.type != "date" else None))
         for h in ret.places],
         entities=[EntityRef(id=h.group.id, type=h.group.type, records=h.records, role=h.role) for h in ret.entities],
-        needs_area=plan.type in ("area", "area_topic") and ret.area_used is None)
-    items = _items(plan, ret, numbers, shape)
+        needs_area=plan.type in ("area", "area_topic") and ret.area_used is None, period=period)
+    items = _items(plan, ret, numbers, shape, dated)
     all_items = _items(plan, ret, numbers, "explain")   # amounts are measured over everything found
 
     windows: dict[tuple[int, int, int], None] = {}
@@ -299,8 +324,10 @@ def build_evidence(plan: QueryPlan, ret: Retrieval, gi: GraphIndex,
     used = 0
     for i, (s, text) in enumerate(summaries, 1):
         node = gi.text(s.pointer.text_id)
+        when, _ = D.passage_dates(node, 0, len(text))
         pack.passages.append(Passage(id=f"L{i}", kind="summary", text=text, text_id=s.pointer.text_id,
                                      article=s.article, section=node.get("title"), about=[s.about],
+                                     date=D.describe(when), date_scope="passage" if when else None,
                                      words=_words(text)))
         used += _words(text)
     if shape == "list":
@@ -326,11 +353,13 @@ def build_evidence(plan: QueryPlan, ret: Retrieval, gi: GraphIndex,
                 if used + words > budget:
                     skipped_for_budget += 1
                     continue
+                when, scope = D.passage_dates(node, a, b)
                 passage = Passage(id=f"S{len(by_window) + 1}", kind="paragraph" if use_paragraphs else "sentence",
                                   text=full[a:b], text_id=p.text_id, offset=a,
                                   spans=[[s - a, e - a] for s, e in p.spans if a <= s and e <= b],
                                   article=node["source"], section=node.get("title"), about=[item.label],
-                                  low_confidence=item.low_confidence, words=words)
+                                  low_confidence=item.low_confidence, date=D.describe(when), date_scope=scope,
+                                  words=words)
                 by_window[key] = passage
                 pack.passages.append(passage)
                 used += words
@@ -379,6 +408,8 @@ def render_for_llm(pack: EvidencePack, question: str) -> str:
     lines = [f"QUESTION: {question}", f"ANSWER SHAPE: {pack.shape} - {SHAPE_INSTRUCTIONS[pack.shape]}"]
     if pack.found_by:
         lines.append(f"FOUND BY: {pack.found_by}")
+    if pack.period:
+        lines.append(f"PERIOD ASKED: {pack.period} (passages dated in it come first)")
     lines.append("")
     if pack.places:
         described = [p for p in pack.places if p.in_text]
@@ -412,7 +443,9 @@ def render_for_llm(pack: EvidencePack, question: str) -> str:
             where = f'"{p.article}"' + (f" › {p.section}" if p.section else "")
             tag = "summary of " + where if p.kind == "summary" else f"about {', '.join(p.about)}; {where}"
             low = "; LOW-CONFIDENCE relation" if p.low_confidence else ""
-            lines.append(f"[{p.id}] ({tag}{low}) {p.text}")
+            when = (f"; date: {p.date}" if p.date_scope == "passage" else
+                    f"; date from earlier in the paragraph: {p.date}" if p.date else "")
+            lines.append(f"[{p.id}] ({tag}{low}{when}) {p.text}")
     else:
         lines.append("PASSAGES FROM THE CORPUS: none")
     if pack.notes:

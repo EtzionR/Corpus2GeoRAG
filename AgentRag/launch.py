@@ -23,7 +23,7 @@ VENV = AGENT / "venv"
 VENV_PYTHON = VENV / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
 ENV_FILE = AGENT / ".env"
 KEY_NAME = "OPENROUTER_API_KEY"
-GRAPH = ROOT / "Graph_n_Geocoding" / "knowledge_graph.json.gz"
+GRAPH = ROOT / "Graph_n_Geocoding" / "with_dates" / "knowledge_graph.json.gz"   # as graph_index.DEFAULT_GRAPH_PATH
 APP_DIR = ROOT / "ui"
 
 

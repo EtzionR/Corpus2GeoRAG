@@ -53,9 +53,9 @@ _graph: Optional[GraphIndex] = None
 
 
 def get_graph() -> GraphIndex:
-    """The knowledge graph (Graph_n_Geocoding/knowledge_graph.json.gz), loaded on first use and kept
-    for the life of the app (about 15 s and 1.1 GB, once). Restart the app to pick up a new graph.
-    GRAPH_PATH in .env points somewhere else."""
+    """The knowledge graph (Graph_n_Geocoding/with_dates/knowledge_graph.json.gz, the graph with dates), loaded
+    on first use and kept for the life of the app (about 15 s and 1.2 GB, once). Restart the app to pick up a
+    new graph. GRAPH_PATH in .env points somewhere else (the graph without dates: .env.example)."""
     global _graph
     if _graph is None:
         try:

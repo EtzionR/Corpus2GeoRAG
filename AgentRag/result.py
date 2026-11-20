@@ -18,7 +18,7 @@ from planner import QueryPlan
 from resolver import Resolution
 from retrieve import Retrieval
 from schema import (Alternative, CitationOut, EntityOut, Geometry, MapHint, Meta, PlaceOut, Result)
-from writer import Answer, strip_citations
+from writer import Answer, renumber_places, strip_citations
 
 MAX_SHAPES = 10            # outlines for at most this many places
 MAX_SHAPE_POINTS = 300     # points per outline, after simplification
@@ -131,6 +131,17 @@ def build_result(plan: QueryPlan, res: Resolution, ret: Retrieval, pack: Evidenc
     shown = places if show_all else ([p for p in places if p.role == "primary"] or places[:1])
     not_shown = len(places) - len(shown)
     places = shown
+    text = answer.text
+    if not show_all:
+        # P2-79: the places shown are numbered 1, 2, 3 ... and the answer's citations with them. They kept their
+        # rank in everything found, so "Tell me about number 4" showed [1] [2] [3] [4] [6] [7] [10] ... [54].
+        # "number N" in the next question reads these numbers, so it still finds the place the user sees.
+        new = {p.number: i for i, p in enumerate(places, 1)}
+        for p in places:
+            p.number = new[p.number]
+        text = renumber_places(text, new)
+        primary = [new[n] for n in primary if n in new]
+        about = [new[n] for n in about if n in new]
 
     passages = {p.id: p for p in pack.passages}
     citations = []
@@ -138,7 +149,8 @@ def build_result(plan: QueryPlan, res: Resolution, ret: Retrieval, pack: Evidenc
         p = passages.get(pid)
         if p:
             citations.append(CitationOut(id=pid, pointer=f"TEXT_{p.text_id}", article=p.article, section=p.section,
-                                         spans=[[p.offset + a, p.offset + b] for a, b in p.spans]))
+                                         spans=[[p.offset + a, p.offset + b] for a, b in p.spans],
+                                         date=p.date if p.date_scope == "passage" else None))
 
     alternatives = {}
     for e in res.entities:
@@ -149,7 +161,7 @@ def build_result(plan: QueryPlan, res: Resolution, ret: Retrieval, pack: Evidenc
     notes = ([f"① {n}" for n in plan.notes] + [f"② {n}" for n in res.notes] + [f"③ {n}" for n in ret.notes]
              + [f"④ {n}" for n in pack.notes] + [f"⑤ {n}" for n in answer.notes])
     return Result(
-        answer=answer.text, answer_plain=strip_citations(answer.text), status=answer.status, grounded=answer.grounded, shape=answer.shape,
+        answer=text, answer_plain=strip_citations(text), status=answer.status, grounded=answer.grounded, shape=answer.shape,
         geo_locations=places, regions=pack.regions,
         entities=[EntityOut(id=e.id, type=e.type, role=e.role, records=e.records) for e in pack.entities[:MAX_ENTITIES]],
         citations=citations, sources=list(dict.fromkeys(c.pointer for c in citations)),

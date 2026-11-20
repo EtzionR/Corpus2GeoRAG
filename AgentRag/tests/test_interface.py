@@ -121,7 +121,8 @@ def test_the_map_shows_only_the_discussed_places_unless_the_answer_is_a_list(mon
         EntityMention(text="Zelenskyy", name="Zelenskyy", kind="PER")]),
         answer=WriteDraft(answer="Zelenskyy visited Kharkiv [2].", places_discussed=[2]))
     result = query("Tell me about Zelenskyy")              # finds Ukraine, Kharkiv, Kyiv
-    assert result["shape"] != "list" and [(p["number"], p["id"]) for p in result["geo_locations"]] == [(2, "Kharkiv")]
+    assert result["shape"] != "list" and [(p["number"], p["id"]) for p in result["geo_locations"]] == [(1, "Kharkiv")]
+    assert result["answer"] == "Zelenskyy visited Kharkiv [1]."   # P2-79: numbered as shown, no jump from 1 to 2
     assert result["map"]["showing"] == "discussed" and result["map"]["not_shown"] == 2
 
 
