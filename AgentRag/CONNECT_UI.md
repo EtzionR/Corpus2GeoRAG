@@ -23,10 +23,9 @@ What's different in the values:
   `"event"`.
 - A list answer can carry hundreds of places (500 for "places connected to Zelenskyy").
 - The first call loads the graph: about 15 s and 1.1 GB of memory, once per app start.
-- `ui/geo_agent.py` sets `GRAPH_PATH` to `Graph_n_Geocoding/knowledge_graph.json` if that file
-  exists. That's the old graph, now deleted from `main`; if someone still has a local copy, the agent
-  would load it and fail. You can remove that block: the agent finds `knowledge_graph.json.gz` by
-  itself.
+- The agent loads the graph with dates (`Graph_n_Geocoding/with_dates/knowledge_graph.json.gz`) by
+  itself. `GRAPH_PATH` in `AgentRag/.env` switches to the graph without dates; `ui/geo_agent.py` only
+  clears a stale path to the old uncompressed `.json`, so both work.
 
 What's new, to use when you're ready: a "Show citations" toggle (section 6) and the other new
 fields (section 7).

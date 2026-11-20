@@ -1,12 +1,13 @@
 {
-  "_about": "Test questions for the agent. q1-q14 are the project's question list (q15, z1, z2 added 2026-10-21) (q1-q10: places connected to X; q11-q14: the four core types). v1-v13 are variants added to stress the understand step (typos, lower case, off-topic, follow-ups, map conflicts). In a geo_location, coordinates are [lon, lat]. chat_history uses the result shape query() returns.",
+  "_about": "Test questions for the agent. q1-q14 are the project's question list (q15, z1, z2 added 2026-10-21) (q1-q10: places connected to X; q11-q14: the four core types). v1-v14 are variants added to stress the understand step (typos, lower case, off-topic, follow-ups, map conflicts). d1-d6 ask about dates (the graph with dates, P2-80). In a geo_location, coordinates are [lon, lat]. chat_history uses the result shape query() returns.",
   "sets": {
     "core4": ["q11", "q12", "q13", "q14"],
     "focus": ["q1", "q3", "q10", "q11", "q12", "q13", "q14", "q15", "z1", "z2"],
     "focus7": ["q1", "q3", "q10", "q11", "q12", "q13", "q14"],
     "zelenskyy_pair": ["z1", "z2"],
     "project14": ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10", "q11", "q12", "q13", "q14"],
-    "understand_stress": ["v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13", "v14"]
+    "understand_stress": ["v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13", "v14"],
+    "dates": ["d1", "d2", "d3", "d4", "d5", "d6"]
   },
   "fixtures": {
     "kyiv_centre_point": {"type": "point", "coordinates": [30.5234, 50.4501]},
@@ -49,6 +50,12 @@
     {"id": "v11", "text": "Drone attacks in Kharkiv", "geo_location": "donbas_box", "note": "named place vs. map selection"},
     {"id": "v12", "text": "Which countries are connected to both Russia and Ukraine?", "note": "common"},
     {"id": "v13", "text": "Who was in charge of Ukraine's army during the counteroffensive?", "note": "concept + event"},
-    {"id": "v14", "text": "Tell me about the head of the Russian military", "note": "the original q11: concept + low-confidence LEADS (P2-45)"}
+    {"id": "v14", "text": "Tell me about the head of the Russian military", "note": "the original q11: concept + low-confidence LEADS (P2-45)"},
+    {"id": "d1", "text": "What happened on 24 February 2022?", "note": "a date only: the date route (P2-80, C3)"},
+    {"id": "d2", "text": "What happened in February 2022?", "note": "a month only: the date route, day by day"},
+    {"id": "d3", "text": "Show me where fighting happened in March 2022", "note": "date route + topic word: a list"},
+    {"id": "d4", "text": "What happened in Kyiv on 24 February 2022?", "note": "a place and a date: about, dated first (C2)"},
+    {"id": "d5", "text": "Who attacked Mariupol in May 2022?", "note": "relation records dated in the period first (C2)"},
+    {"id": "d6", "text": "Drone attacks in Kharkiv in 2024", "note": "area_topic, dated first (C2)"}
   ]
 }

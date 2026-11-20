@@ -139,6 +139,20 @@ def test_a_place_fix_takes_the_point_and_parent_of_the_right_node():
     assert "Dnipro City" in gi.group("Dnipro").names                  # same point now: one group
 
 
+def test_a_fix_whose_right_node_has_no_point_leaves_the_name_without_one():
+    from conftest import build_vr6_graph
+    from graph_index import GraphIndex
+    G = build_vr6_graph()
+    G.add_node("Oval Office", type="LOC", latitude=33.66, longitude=-85.83, place_type="road", importance=0.05,
+               address="Oval Office, Anniston, Alabama, United States", geometry_wkt="POINT (-85.83 33.66)")
+    G.add_node("White House", type="ORG")   # the graph with dates: an organization, no point (P2-79)
+    G.add_node("TEXT_8300", type="TEXT", text_id=8300, text="Oval Office talks.", source="Zelenskyy", index=0,
+               title=None, sub_title=None)
+    G.add_edge("Oval Office", "TEXT_8300", weight=1, relations={"IN_THE_TEXT": [{"start": 0, "end": 11}]})
+    gi = GraphIndex(G)
+    assert gi.unfixable == ["Oval Office"] and gi.group("Oval Office").place is None   # no pin in Alabama
+
+
 def test_a_parent_in_another_country_is_replaced_by_the_own_country():
     import graph_tools as T
     from conftest import build_vr6_graph

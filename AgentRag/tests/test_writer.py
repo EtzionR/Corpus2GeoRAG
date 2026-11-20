@@ -192,3 +192,19 @@ def test_the_write_step_retries_once(vr6_index):
     fake = FlakyWriter(WriteDraft(answer="Kyiv [1] is the capital [L1]."))
     answer = write(plan, pack, fake)
     assert fake.calls == 2 and answer.status == "answered" and answer.passages_cited == ["L1"]
+
+
+def test_cut_off_json_gives_its_answer_field_and_never_the_raw_json(vr6_index):
+    from writer import draft_from_text
+    cut = '{\n  "answer": "Kharkiv [1] is the second-largest city of Ukraine [L1]. It was shelled in 2022 and a'
+    assert draft_from_text(cut).answer.startswith("Kharkiv [1] is the second-largest city")   # P2-79
+    assert draft_from_text('{"places_discussed": [1, 2, 3], "follow_ups": ["What hap') is None
+    plan, pack = evidence_for(vr6_index, "place_lookup", ("Kyiv", "LOC"))
+    answer = write(plan, pack, PlainTextWriter('{"places_discussed": [1], "follow_ups": ["More'))
+    assert not answer.text.startswith("{")
+
+
+def test_place_citations_are_renumbered_and_passage_marks_kept():
+    from writer import renumber_places
+    text = "Paris [1] hosted talks with Germany [6] and France [21, S2]; see [S4] and [L1]."
+    assert renumber_places(text, {1: 1, 6: 2, 21: 3}) == "Paris [1] hosted talks with Germany [2] and France [3, S2]; see [S4] and [L1]."

@@ -214,7 +214,8 @@ def test_question_sets():
                                                         "q15", "z1", "z2"]
     assert harness.load_questions(["z2"])[0]["follows"] == "z1"
     assert [q["id"] for q in harness.load_questions(set_name="core4")] == ["q11", "q12", "q13", "q14"]
-    assert len(harness.load_questions(set_name="all")) == 31
+    assert len(harness.load_questions(set_name="all")) == 37
+    assert [q["id"] for q in harness.load_questions(set_name="dates")] == ["d1", "d2", "d3", "d4", "d5", "d6"]
     qs = {q["id"]: q for q in harness.load_questions(["q14", "v9"])}   # explicit ids win over sets
     assert qs["q14"]["geo"]["type"] == "polygon" and qs["v9"]["history"][0]["response"]["geo_locations"]
     with pytest.raises(ValueError):

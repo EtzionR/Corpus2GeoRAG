@@ -16,6 +16,7 @@ import openai
 from langchain_core.exceptions import OutputParserException
 from pydantic import BaseModel, Field, ValidationError
 
+from dates import Period, parse_period
 from llm_calls import LLMCall, structured_call
 
 logger = logging.getLogger(__name__)
@@ -34,6 +35,9 @@ QuestionType = Literal[
     "out_of_scope",   # unrelated to the corpus
     "other",          # anything else; goes to the LLM tool-loop fallback
 ]
+# "What happened on 24 February 2022?": a date and nothing else named (P2-80). Set by code from the time words,
+# never by the LLM, so the planner's instructions and the other questions' plans stay as they were.
+PlanType = Literal[QuestionType, "date"]
 Needs = Literal["locations", "short_text", "detailed_text"]
 PlaceKind = Literal["country", "region", "city", "town", "village", "district"]
 
@@ -113,7 +117,7 @@ class FollowUp(BaseModel):
 
 class QueryPlan(BaseModel):
     question: str
-    type: QuestionType
+    type: PlanType
     entities: list[EntityMention] = Field(default_factory=list)
     concepts: list[Concept] = Field(default_factory=list)
     relations: list[str] = Field(default_factory=list)
@@ -125,6 +129,7 @@ class QueryPlan(BaseModel):
     place_kinds: list[PlaceKind] = Field(default_factory=list)   # "Ukrainian cities" -> ["city"]
     needs: Needs = "short_text"
     time_words: list[str] = Field(default_factory=list)
+    period: Optional[Period] = None                # the time words as a calendar range (P2-80)
     follow_up: Optional[FollowUp] = None
     in_scope: bool = True
     source: Literal["fast_path", "llm", "keyword_fallback"]
@@ -342,6 +347,13 @@ def _finalize(draft: PlanDraft, question: str, area: Optional[Area], history: li
         # "Show me where the battle of Bakhmut occurred" asks for one place, not the event's 75 (P2-74)
         qtype = "place_lookup"
         notes.append("where one event happened: answered as a place lookup (its main place), not a list")
+    period = parse_period(draft.time_words)
+    if (period and not entities and not concepts and not use_map
+            and qtype in ("about", "other", "area", "area_topic", "entity_places", "event_places")):
+        # "What happened on 24 February 2022?" names nothing but a date: the paragraphs of that date (P2-80).
+        # Before, it had nothing to look up and ended in no data.
+        notes.append(f"only a date is named ({period.label}): answered from the paragraphs of that date")
+        qtype = "date"
 
     plan = QueryPlan(
         question=question, type=qtype, entities=entities, concepts=concepts, relations=relations,
@@ -350,7 +362,7 @@ def _finalize(draft: PlanDraft, question: str, area: Optional[Area], history: li
         place_country=draft.place_country.strip() if draft.place_country else None,
         place_kinds=list(dict.fromkeys(draft.place_kinds)),
         needs="locations" if qtype == "place_lookup" else draft.needs,
-        time_words=draft.time_words, follow_up=follow_up, in_scope=draft.in_scope,
+        time_words=draft.time_words, period=period, follow_up=follow_up, in_scope=draft.in_scope,
         source="llm", notes=notes)
     _set_radius(plan, draft.radius_m or radius_from_text(question), map_radius_m)
     return plan
