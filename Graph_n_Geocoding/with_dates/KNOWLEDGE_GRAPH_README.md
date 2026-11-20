@@ -7,7 +7,7 @@ This folder holds a second version of the knowledge graph, **with dates**. The v
 |---|---|---|
 | NER file | `post_NER_final.parquet` (`flair/ner-english-large`) | `post_NER_final_plus_date.parquet` (`idoschw3/FlertDate`) |
 | Dates | — | `DATE` nodes, `dates` on text nodes, `date` on relation records |
-| Size | 154,486 nodes, 798,102 edges | 167,061 nodes, about 860,000 edges (9,202 of the nodes are dates) |
+| Size | 154,486 nodes, 798,102 edges | 167,061 nodes, 861,670 edges (9,202 of the nodes are dates) |
 
 **What changed, in short:**
 
@@ -28,8 +28,8 @@ on the new NER), and once with them.
 
 * **Format:** NetworkX *node-link* JSON, undirected graph: `{"directed": false, "multigraph": false, "graph": {}, "nodes": [...], "links": [...]}`.
 * **Size:** 167,061 nodes — 89,284 texts, 68,575 entities (18,770 PER, 34,075 ORG, 15,730 LOC) and
-  9,202 dates (488 years, 1,332 months, 7,382 days) — and about 860,000 edges.
-* **File:** `knowledge_graph.json.gz`, 47 MB (gzip). The other files here are the caches the notebook reuses on its next run
+  9,202 dates (488 years, 1,332 months, 7,382 days) — and 861,670 edges.
+* **File:** `knowledge_graph.json.gz`, 49 MB (gzip). The other files here are the caches the notebook reuses on its next run
   (`geocoding_results.parquet`, `von_results.parquet`, `relation_fixes.parquet`).
 
 ---
@@ -208,7 +208,7 @@ Every edge has exactly four fields: `source`, `target`, `weight`, `relations` (r
 for a range). **Note:** the date is the one *written near* the relation, which is usually but not always the date of the event:
 in a sentence like *"Wagner, founded in 2014, captured Bakhmut"* the date of the record Wagner–Bakhmut would be 2014.
 
-Of the typed records (not `CO_OCCURS_WITH`), about 39 % have a date from their sentence, 15 % from their paragraph, and 46 %
+Of the typed records (not `CO_OCCURS_WITH`), about 38 % have a date from their sentence, 15 % from their paragraph, and 47 %
 none.
 
 The rest is as in the version without dates: one record = one sentence where the two entities appear together (or one per
