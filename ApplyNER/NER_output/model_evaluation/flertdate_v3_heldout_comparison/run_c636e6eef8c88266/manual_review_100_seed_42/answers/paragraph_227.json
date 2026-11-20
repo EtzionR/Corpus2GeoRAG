@@ -1,0 +1,352 @@
+{
+  "comparison_row_id": 227,
+  "Source": "2014 Novosvitlivka refugee convoy attack",
+  "Index": 0,
+  "Text": "On 18 August 2014, during the war in Donbas, a convoy of refugees fleeing heavy fighting near Novosvitlivka, Luhansk Oblast, Ukraine, was hit by an artillery strike. At least 17 people were killed in the strike which the Ukrainian government blamed on insurgents affiliated with the Luhansk People's Republic. The insurgents denied striking any convoy and blamed the attack on the Ukrainian government.",
+  "reviewed_at_utc": "2026-11-04T07:17:08.330676+00:00",
+  "original_predictions": [
+    {
+      "entity": "Donbas",
+      "label": "LOC",
+      "start": 37,
+      "end": 43
+    },
+    {
+      "entity": "Novosvitlivka",
+      "label": "LOC",
+      "start": 94,
+      "end": 107
+    },
+    {
+      "entity": "Luhansk Oblast",
+      "label": "LOC",
+      "start": 109,
+      "end": 123
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 125,
+      "end": 132
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 221,
+      "end": 230
+    },
+    {
+      "entity": "Luhansk People's Republic",
+      "label": "LOC",
+      "start": 283,
+      "end": 308
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 381,
+      "end": 390
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "18 August 2014",
+      "label": "DATE",
+      "start": 3,
+      "end": 17
+    },
+    {
+      "entity": "Donbas",
+      "label": "LOC",
+      "start": 37,
+      "end": 43
+    },
+    {
+      "entity": "Novosvitlivka",
+      "label": "LOC",
+      "start": 94,
+      "end": 107
+    },
+    {
+      "entity": "Luhansk Oblast",
+      "label": "LOC",
+      "start": 109,
+      "end": 123
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 125,
+      "end": 132
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 221,
+      "end": 230
+    },
+    {
+      "entity": "Luhansk People's Republic",
+      "label": "ORG",
+      "start": 283,
+      "end": 308
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 381,
+      "end": 390
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Donbas",
+      "label": "LOC",
+      "start": 37,
+      "end": 43
+    },
+    {
+      "entity": "Novosvitlivka",
+      "label": "LOC",
+      "start": 94,
+      "end": 107
+    },
+    {
+      "entity": "Luhansk Oblast",
+      "label": "LOC",
+      "start": 109,
+      "end": 123
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 125,
+      "end": 132
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 221,
+      "end": 230
+    },
+    {
+      "entity": "Luhansk People's Republic",
+      "label": "LOC",
+      "start": 283,
+      "end": 308
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 381,
+      "end": 390
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "18 August 2014",
+      "label": "DATE",
+      "start": 3,
+      "end": 17
+    },
+    {
+      "entity": "Donbas",
+      "label": "LOC",
+      "start": 37,
+      "end": 43
+    },
+    {
+      "entity": "Novosvitlivka",
+      "label": "LOC",
+      "start": 94,
+      "end": 107
+    },
+    {
+      "entity": "Luhansk Oblast",
+      "label": "LOC",
+      "start": 109,
+      "end": 123
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 125,
+      "end": 132
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 221,
+      "end": 230
+    },
+    {
+      "entity": "Luhansk People's Republic",
+      "label": "LOC",
+      "start": 283,
+      "end": 308
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 381,
+      "end": 390
+    }
+  ],
+  "gold": [
+    {
+      "entity": "18 August 2014",
+      "label": "DATE",
+      "start": 3,
+      "end": 17
+    },
+    {
+      "entity": "Donbas",
+      "label": "LOC",
+      "start": 37,
+      "end": 43
+    },
+    {
+      "entity": "Novosvitlivka",
+      "label": "LOC",
+      "start": 94,
+      "end": 107
+    },
+    {
+      "entity": "Luhansk Oblast",
+      "label": "LOC",
+      "start": 109,
+      "end": 123
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 125,
+      "end": 132
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 221,
+      "end": 230
+    },
+    {
+      "entity": "Luhansk People's Republic",
+      "label": "LOC",
+      "start": 283,
+      "end": 308
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 381,
+      "end": 390
+    }
+  ],
+  "history": [
+    {
+      "model": "v3",
+      "command": "label 7 LOC",
+      "before": [
+        {
+          "entity": "18 August 2014",
+          "label": "DATE",
+          "start": 3,
+          "end": 17
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 37,
+          "end": 43
+        },
+        {
+          "entity": "Novosvitlivka",
+          "label": "LOC",
+          "start": 94,
+          "end": 107
+        },
+        {
+          "entity": "Luhansk Oblast",
+          "label": "LOC",
+          "start": 109,
+          "end": 123
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 125,
+          "end": 132
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 221,
+          "end": 230
+        },
+        {
+          "entity": "Luhansk People's Republic",
+          "label": "ORG",
+          "start": 283,
+          "end": 308
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 381,
+          "end": 390
+        }
+      ],
+      "after": [
+        {
+          "entity": "18 August 2014",
+          "label": "DATE",
+          "start": 3,
+          "end": 17
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 37,
+          "end": 43
+        },
+        {
+          "entity": "Novosvitlivka",
+          "label": "LOC",
+          "start": 94,
+          "end": 107
+        },
+        {
+          "entity": "Luhansk Oblast",
+          "label": "LOC",
+          "start": 109,
+          "end": 123
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 125,
+          "end": 132
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 221,
+          "end": 230
+        },
+        {
+          "entity": "Luhansk People's Republic",
+          "label": "LOC",
+          "start": 283,
+          "end": 308
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 381,
+          "end": 390
+        }
+      ],
+      "at_utc": "2026-11-04T07:16:40.198514+00:00"
+    }
+  ]
+}

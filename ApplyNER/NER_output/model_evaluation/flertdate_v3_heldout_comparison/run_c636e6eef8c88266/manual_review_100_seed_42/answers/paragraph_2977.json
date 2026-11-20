@@ -1,0 +1,313 @@
+{
+  "comparison_row_id": 2977,
+  "Source": "Palace \"Ukraine\"",
+  "Index": 2,
+  "Text": "All of the architects were awarded Shevchenko National Prize (1971) for its design and construction. The building is trapezoidal, twenty-eight meters tall and consists of over 300 rooms. The exterior of the building, which was remodeled in 1996, is characteristic of the sober and functional Soviet architecture of its time. The interiors and equipment of the lobby as well as artistic rooms of the palace \"Ukraine\" are designed by the architect I. Karakis.",
+  "reviewed_at_utc": "2026-11-04T07:58:54.231201+00:00",
+  "original_predictions": [
+    {
+      "entity": "Shevchenko National Prize",
+      "label": "MISC",
+      "start": 35,
+      "end": 60
+    },
+    {
+      "entity": "Soviet",
+      "label": "MISC",
+      "start": 292,
+      "end": 298
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 407,
+      "end": 414
+    },
+    {
+      "entity": "I. Karakis",
+      "label": "PER",
+      "start": 446,
+      "end": 456
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Shevchenko National Prize",
+      "label": "MISC",
+      "start": 35,
+      "end": 60
+    },
+    {
+      "entity": "1971",
+      "label": "DATE",
+      "start": 62,
+      "end": 66
+    },
+    {
+      "entity": "1996",
+      "label": "DATE",
+      "start": 240,
+      "end": 244
+    },
+    {
+      "entity": "Soviet",
+      "label": "MISC",
+      "start": 292,
+      "end": 298
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 407,
+      "end": 414
+    },
+    {
+      "entity": "I. Karakis",
+      "label": "PER",
+      "start": 446,
+      "end": 456
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Shevchenko National Prize",
+      "label": "MISC",
+      "start": 35,
+      "end": 60
+    },
+    {
+      "entity": "Soviet",
+      "label": "MISC",
+      "start": 292,
+      "end": 298
+    },
+    {
+      "entity": "palace \"Ukraine\"",
+      "label": "LOC",
+      "start": 399,
+      "end": 415
+    },
+    {
+      "entity": "I. Karakis",
+      "label": "PER",
+      "start": 446,
+      "end": 456
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Shevchenko National Prize",
+      "label": "MISC",
+      "start": 35,
+      "end": 60
+    },
+    {
+      "entity": "1971",
+      "label": "DATE",
+      "start": 62,
+      "end": 66
+    },
+    {
+      "entity": "1996",
+      "label": "DATE",
+      "start": 240,
+      "end": 244
+    },
+    {
+      "entity": "Soviet",
+      "label": "MISC",
+      "start": 292,
+      "end": 298
+    },
+    {
+      "entity": "palace \"Ukraine\"",
+      "label": "LOC",
+      "start": 399,
+      "end": 415
+    },
+    {
+      "entity": "I. Karakis",
+      "label": "PER",
+      "start": 446,
+      "end": 456
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Shevchenko National Prize",
+      "label": "MISC",
+      "start": 35,
+      "end": 60
+    },
+    {
+      "entity": "1971",
+      "label": "DATE",
+      "start": 62,
+      "end": 66
+    },
+    {
+      "entity": "1996",
+      "label": "DATE",
+      "start": 240,
+      "end": 244
+    },
+    {
+      "entity": "Soviet",
+      "label": "MISC",
+      "start": 292,
+      "end": 298
+    },
+    {
+      "entity": "palace \"Ukraine\"",
+      "label": "LOC",
+      "start": 399,
+      "end": 415
+    },
+    {
+      "entity": "I. Karakis",
+      "label": "PER",
+      "start": 446,
+      "end": 456
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "span 3 | palace \"Ukraine\" | 1",
+      "before": [
+        {
+          "entity": "Shevchenko National Prize",
+          "label": "MISC",
+          "start": 35,
+          "end": 60
+        },
+        {
+          "entity": "Soviet",
+          "label": "MISC",
+          "start": 292,
+          "end": 298
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 407,
+          "end": 414
+        },
+        {
+          "entity": "I. Karakis",
+          "label": "PER",
+          "start": 446,
+          "end": 456
+        }
+      ],
+      "after": [
+        {
+          "entity": "Shevchenko National Prize",
+          "label": "MISC",
+          "start": 35,
+          "end": 60
+        },
+        {
+          "entity": "Soviet",
+          "label": "MISC",
+          "start": 292,
+          "end": 298
+        },
+        {
+          "entity": "palace \"Ukraine\"",
+          "label": "LOC",
+          "start": 399,
+          "end": 415
+        },
+        {
+          "entity": "I. Karakis",
+          "label": "PER",
+          "start": 446,
+          "end": 456
+        }
+      ],
+      "at_utc": "2026-11-04T07:58:40.941549+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "span 5 | palace \"Ukraine\" | 1",
+      "before": [
+        {
+          "entity": "Shevchenko National Prize",
+          "label": "MISC",
+          "start": 35,
+          "end": 60
+        },
+        {
+          "entity": "1971",
+          "label": "DATE",
+          "start": 62,
+          "end": 66
+        },
+        {
+          "entity": "1996",
+          "label": "DATE",
+          "start": 240,
+          "end": 244
+        },
+        {
+          "entity": "Soviet",
+          "label": "MISC",
+          "start": 292,
+          "end": 298
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 407,
+          "end": 414
+        },
+        {
+          "entity": "I. Karakis",
+          "label": "PER",
+          "start": 446,
+          "end": 456
+        }
+      ],
+      "after": [
+        {
+          "entity": "Shevchenko National Prize",
+          "label": "MISC",
+          "start": 35,
+          "end": 60
+        },
+        {
+          "entity": "1971",
+          "label": "DATE",
+          "start": 62,
+          "end": 66
+        },
+        {
+          "entity": "1996",
+          "label": "DATE",
+          "start": 240,
+          "end": 244
+        },
+        {
+          "entity": "Soviet",
+          "label": "MISC",
+          "start": 292,
+          "end": 298
+        },
+        {
+          "entity": "palace \"Ukraine\"",
+          "label": "LOC",
+          "start": 399,
+          "end": 415
+        },
+        {
+          "entity": "I. Karakis",
+          "label": "PER",
+          "start": 446,
+          "end": 456
+        }
+      ],
+      "at_utc": "2026-11-04T07:58:49.838379+00:00"
+    }
+  ]
+}

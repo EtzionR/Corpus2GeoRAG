@@ -1,0 +1,184 @@
+{
+  "comparison_row_id": 2298,
+  "Source": "List of military aid to Ukraine during the Russo-Ukrainian war",
+  "Index": 100,
+  "Text": "Revolver 860 Armed VTOL unmanned aerial vehicle [March, April or May 2022] (A few sold to Polish company. Subsequently transferred to Ukraine).",
+  "reviewed_at_utc": "2026-11-04T07:04:19.151591+00:00",
+  "original_predictions": [
+    {
+      "entity": "Revolver 860",
+      "label": "MISC",
+      "start": 0,
+      "end": 12
+    },
+    {
+      "entity": "Polish",
+      "label": "MISC",
+      "start": 90,
+      "end": 96
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 134,
+      "end": 141
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Revolver 860",
+      "label": "MISC",
+      "start": 0,
+      "end": 12
+    },
+    {
+      "entity": "2022",
+      "label": "DATE",
+      "start": 69,
+      "end": 73
+    },
+    {
+      "entity": "Polish",
+      "label": "MISC",
+      "start": 90,
+      "end": 96
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 134,
+      "end": 141
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Revolver 860",
+      "label": "MISC",
+      "start": 0,
+      "end": 12
+    },
+    {
+      "entity": "Polish",
+      "label": "MISC",
+      "start": 90,
+      "end": 96
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 134,
+      "end": 141
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Revolver 860",
+      "label": "MISC",
+      "start": 0,
+      "end": 12
+    },
+    {
+      "entity": "March, April or May 2022",
+      "label": "DATE",
+      "start": 49,
+      "end": 73
+    },
+    {
+      "entity": "Polish",
+      "label": "MISC",
+      "start": 90,
+      "end": 96
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 134,
+      "end": 141
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Revolver 860",
+      "label": "MISC",
+      "start": 0,
+      "end": 12
+    },
+    {
+      "entity": "March, April or May 2022",
+      "label": "DATE",
+      "start": 49,
+      "end": 73
+    },
+    {
+      "entity": "Polish",
+      "label": "MISC",
+      "start": 90,
+      "end": 96
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 134,
+      "end": 141
+    }
+  ],
+  "history": [
+    {
+      "model": "v3",
+      "command": "span 2 | March, April or May 2022 | 1",
+      "before": [
+        {
+          "entity": "Revolver 860",
+          "label": "MISC",
+          "start": 0,
+          "end": 12
+        },
+        {
+          "entity": "2022",
+          "label": "DATE",
+          "start": 69,
+          "end": 73
+        },
+        {
+          "entity": "Polish",
+          "label": "MISC",
+          "start": 90,
+          "end": 96
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 134,
+          "end": 141
+        }
+      ],
+      "after": [
+        {
+          "entity": "Revolver 860",
+          "label": "MISC",
+          "start": 0,
+          "end": 12
+        },
+        {
+          "entity": "March, April or May 2022",
+          "label": "DATE",
+          "start": 49,
+          "end": 73
+        },
+        {
+          "entity": "Polish",
+          "label": "MISC",
+          "start": 90,
+          "end": 96
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 134,
+          "end": 141
+        }
+      ],
+      "at_utc": "2026-11-04T07:04:11.698899+00:00"
+    }
+  ]
+}

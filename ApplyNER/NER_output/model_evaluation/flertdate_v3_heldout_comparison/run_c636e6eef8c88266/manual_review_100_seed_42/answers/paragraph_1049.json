@@ -1,0 +1,619 @@
+{
+  "comparison_row_id": 1049,
+  "Source": "Battle of Pisky",
+  "Index": 1,
+  "Text": "Pisky was a frontline settlement in Donetsk Oblast that is considered a ghost town, having had no significant civilian population since 2014. Located mere yards from separatist territory prior to the battle, Ukraine's 56th Motorized Brigade spent years fortifying the town, with garrison personnel fighting from basements and trenches, and using highway overpasses as staging areas. Donetsk People's Republic (DPR) authorities accused Ukraine of carrying out shelling attacks on Donetsk city from the areas of Pisky and Krasnohorivka.",
+  "reviewed_at_utc": "2026-11-04T07:31:45.803735+00:00",
+  "original_predictions": [
+    {
+      "entity": "Pisky",
+      "label": "LOC",
+      "start": 0,
+      "end": 5
+    },
+    {
+      "entity": "Donetsk Oblast",
+      "label": "LOC",
+      "start": 36,
+      "end": 50
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 208,
+      "end": 215
+    },
+    {
+      "entity": "56th Motorized Brigade",
+      "label": "ORG",
+      "start": 218,
+      "end": 240
+    },
+    {
+      "entity": "Donetsk People's Republic",
+      "label": "LOC",
+      "start": 383,
+      "end": 408
+    },
+    {
+      "entity": "DPR",
+      "label": "LOC",
+      "start": 410,
+      "end": 413
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 435,
+      "end": 442
+    },
+    {
+      "entity": "Donetsk",
+      "label": "LOC",
+      "start": 479,
+      "end": 486
+    },
+    {
+      "entity": "Pisky",
+      "label": "LOC",
+      "start": 510,
+      "end": 515
+    },
+    {
+      "entity": "Krasnohorivka",
+      "label": "LOC",
+      "start": 520,
+      "end": 533
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Pisky",
+      "label": "LOC",
+      "start": 0,
+      "end": 5
+    },
+    {
+      "entity": "Donetsk Oblast",
+      "label": "LOC",
+      "start": 36,
+      "end": 50
+    },
+    {
+      "entity": "2014",
+      "label": "DATE",
+      "start": 136,
+      "end": 140
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 208,
+      "end": 215
+    },
+    {
+      "entity": "56th Motorized Brigade",
+      "label": "ORG",
+      "start": 218,
+      "end": 240
+    },
+    {
+      "entity": "Donetsk People's Republic",
+      "label": "ORG",
+      "start": 383,
+      "end": 408
+    },
+    {
+      "entity": "DPR",
+      "label": "ORG",
+      "start": 410,
+      "end": 413
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 435,
+      "end": 442
+    },
+    {
+      "entity": "Donetsk",
+      "label": "LOC",
+      "start": 479,
+      "end": 486
+    },
+    {
+      "entity": "Pisky",
+      "label": "LOC",
+      "start": 510,
+      "end": 515
+    },
+    {
+      "entity": "Krasnohorivka",
+      "label": "LOC",
+      "start": 520,
+      "end": 533
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Pisky",
+      "label": "LOC",
+      "start": 0,
+      "end": 5
+    },
+    {
+      "entity": "Donetsk Oblast",
+      "label": "LOC",
+      "start": 36,
+      "end": 50
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 208,
+      "end": 215
+    },
+    {
+      "entity": "56th Motorized Brigade",
+      "label": "ORG",
+      "start": 218,
+      "end": 240
+    },
+    {
+      "entity": "Donetsk People's Republic",
+      "label": "LOC",
+      "start": 383,
+      "end": 408
+    },
+    {
+      "entity": "DPR",
+      "label": "LOC",
+      "start": 410,
+      "end": 413
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 435,
+      "end": 442
+    },
+    {
+      "entity": "Donetsk",
+      "label": "LOC",
+      "start": 479,
+      "end": 486
+    },
+    {
+      "entity": "Pisky",
+      "label": "LOC",
+      "start": 510,
+      "end": 515
+    },
+    {
+      "entity": "Krasnohorivka",
+      "label": "LOC",
+      "start": 520,
+      "end": 533
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Pisky",
+      "label": "LOC",
+      "start": 0,
+      "end": 5
+    },
+    {
+      "entity": "Donetsk Oblast",
+      "label": "LOC",
+      "start": 36,
+      "end": 50
+    },
+    {
+      "entity": "2014",
+      "label": "DATE",
+      "start": 136,
+      "end": 140
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 208,
+      "end": 215
+    },
+    {
+      "entity": "56th Motorized Brigade",
+      "label": "ORG",
+      "start": 218,
+      "end": 240
+    },
+    {
+      "entity": "Donetsk People's Republic",
+      "label": "LOC",
+      "start": 383,
+      "end": 408
+    },
+    {
+      "entity": "DPR",
+      "label": "LOC",
+      "start": 410,
+      "end": 413
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 435,
+      "end": 442
+    },
+    {
+      "entity": "Donetsk",
+      "label": "LOC",
+      "start": 479,
+      "end": 486
+    },
+    {
+      "entity": "Pisky",
+      "label": "LOC",
+      "start": 510,
+      "end": 515
+    },
+    {
+      "entity": "Krasnohorivka",
+      "label": "LOC",
+      "start": 520,
+      "end": 533
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Pisky",
+      "label": "LOC",
+      "start": 0,
+      "end": 5
+    },
+    {
+      "entity": "Donetsk Oblast",
+      "label": "LOC",
+      "start": 36,
+      "end": 50
+    },
+    {
+      "entity": "2014",
+      "label": "DATE",
+      "start": 136,
+      "end": 140
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 208,
+      "end": 215
+    },
+    {
+      "entity": "56th Motorized Brigade",
+      "label": "ORG",
+      "start": 218,
+      "end": 240
+    },
+    {
+      "entity": "Donetsk People's Republic",
+      "label": "LOC",
+      "start": 383,
+      "end": 408
+    },
+    {
+      "entity": "DPR",
+      "label": "LOC",
+      "start": 410,
+      "end": 413
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 435,
+      "end": 442
+    },
+    {
+      "entity": "Donetsk",
+      "label": "LOC",
+      "start": 479,
+      "end": 486
+    },
+    {
+      "entity": "Pisky",
+      "label": "LOC",
+      "start": 510,
+      "end": 515
+    },
+    {
+      "entity": "Krasnohorivka",
+      "label": "LOC",
+      "start": 520,
+      "end": 533
+    }
+  ],
+  "history": [
+    {
+      "model": "v3",
+      "command": "label 6 LOC",
+      "before": [
+        {
+          "entity": "Pisky",
+          "label": "LOC",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "entity": "Donetsk Oblast",
+          "label": "LOC",
+          "start": 36,
+          "end": 50
+        },
+        {
+          "entity": "2014",
+          "label": "DATE",
+          "start": 136,
+          "end": 140
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 208,
+          "end": 215
+        },
+        {
+          "entity": "56th Motorized Brigade",
+          "label": "ORG",
+          "start": 218,
+          "end": 240
+        },
+        {
+          "entity": "Donetsk People's Republic",
+          "label": "ORG",
+          "start": 383,
+          "end": 408
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 410,
+          "end": 413
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 435,
+          "end": 442
+        },
+        {
+          "entity": "Donetsk",
+          "label": "LOC",
+          "start": 479,
+          "end": 486
+        },
+        {
+          "entity": "Pisky",
+          "label": "LOC",
+          "start": 510,
+          "end": 515
+        },
+        {
+          "entity": "Krasnohorivka",
+          "label": "LOC",
+          "start": 520,
+          "end": 533
+        }
+      ],
+      "after": [
+        {
+          "entity": "Pisky",
+          "label": "LOC",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "entity": "Donetsk Oblast",
+          "label": "LOC",
+          "start": 36,
+          "end": 50
+        },
+        {
+          "entity": "2014",
+          "label": "DATE",
+          "start": 136,
+          "end": 140
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 208,
+          "end": 215
+        },
+        {
+          "entity": "56th Motorized Brigade",
+          "label": "ORG",
+          "start": 218,
+          "end": 240
+        },
+        {
+          "entity": "Donetsk People's Republic",
+          "label": "LOC",
+          "start": 383,
+          "end": 408
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 410,
+          "end": 413
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 435,
+          "end": 442
+        },
+        {
+          "entity": "Donetsk",
+          "label": "LOC",
+          "start": 479,
+          "end": 486
+        },
+        {
+          "entity": "Pisky",
+          "label": "LOC",
+          "start": 510,
+          "end": 515
+        },
+        {
+          "entity": "Krasnohorivka",
+          "label": "LOC",
+          "start": 520,
+          "end": 533
+        }
+      ],
+      "at_utc": "2026-11-04T07:31:13.568009+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "label 7 LOC",
+      "before": [
+        {
+          "entity": "Pisky",
+          "label": "LOC",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "entity": "Donetsk Oblast",
+          "label": "LOC",
+          "start": 36,
+          "end": 50
+        },
+        {
+          "entity": "2014",
+          "label": "DATE",
+          "start": 136,
+          "end": 140
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 208,
+          "end": 215
+        },
+        {
+          "entity": "56th Motorized Brigade",
+          "label": "ORG",
+          "start": 218,
+          "end": 240
+        },
+        {
+          "entity": "Donetsk People's Republic",
+          "label": "LOC",
+          "start": 383,
+          "end": 408
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 410,
+          "end": 413
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 435,
+          "end": 442
+        },
+        {
+          "entity": "Donetsk",
+          "label": "LOC",
+          "start": 479,
+          "end": 486
+        },
+        {
+          "entity": "Pisky",
+          "label": "LOC",
+          "start": 510,
+          "end": 515
+        },
+        {
+          "entity": "Krasnohorivka",
+          "label": "LOC",
+          "start": 520,
+          "end": 533
+        }
+      ],
+      "after": [
+        {
+          "entity": "Pisky",
+          "label": "LOC",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "entity": "Donetsk Oblast",
+          "label": "LOC",
+          "start": 36,
+          "end": 50
+        },
+        {
+          "entity": "2014",
+          "label": "DATE",
+          "start": 136,
+          "end": 140
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 208,
+          "end": 215
+        },
+        {
+          "entity": "56th Motorized Brigade",
+          "label": "ORG",
+          "start": 218,
+          "end": 240
+        },
+        {
+          "entity": "Donetsk People's Republic",
+          "label": "LOC",
+          "start": 383,
+          "end": 408
+        },
+        {
+          "entity": "DPR",
+          "label": "LOC",
+          "start": 410,
+          "end": 413
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 435,
+          "end": 442
+        },
+        {
+          "entity": "Donetsk",
+          "label": "LOC",
+          "start": 479,
+          "end": 486
+        },
+        {
+          "entity": "Pisky",
+          "label": "LOC",
+          "start": 510,
+          "end": 515
+        },
+        {
+          "entity": "Krasnohorivka",
+          "label": "LOC",
+          "start": 520,
+          "end": 533
+        }
+      ],
+      "at_utc": "2026-11-04T07:31:22.745424+00:00"
+    }
+  ]
+}

@@ -1,0 +1,214 @@
+{
+  "comparison_row_id": 239,
+  "Source": "2014 Russian sabotage activities in Ukraine",
+  "Index": 3,
+  "Text": "According to The Financial Times, Russia has been using the Snake virus since 2010 to infiltrate Ukraine's computer systems.",
+  "reviewed_at_utc": "2026-11-04T06:59:34.754944+00:00",
+  "original_predictions": [
+    {
+      "entity": "The Financial Times",
+      "label": "ORG",
+      "start": 13,
+      "end": 32
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 34,
+      "end": 40
+    },
+    {
+      "entity": "Snake",
+      "label": "MISC",
+      "start": 60,
+      "end": 65
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 97,
+      "end": 104
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "The Financial Times",
+      "label": "ORG",
+      "start": 13,
+      "end": 32
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 34,
+      "end": 40
+    },
+    {
+      "entity": "Snake virus",
+      "label": "MISC",
+      "start": 60,
+      "end": 71
+    },
+    {
+      "entity": "2010",
+      "label": "DATE",
+      "start": 78,
+      "end": 82
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 97,
+      "end": 104
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "The Financial Times",
+      "label": "ORG",
+      "start": 13,
+      "end": 32
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 34,
+      "end": 40
+    },
+    {
+      "entity": "Snake virus",
+      "label": "MISC",
+      "start": 60,
+      "end": 71
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 97,
+      "end": 104
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "The Financial Times",
+      "label": "ORG",
+      "start": 13,
+      "end": 32
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 34,
+      "end": 40
+    },
+    {
+      "entity": "Snake virus",
+      "label": "MISC",
+      "start": 60,
+      "end": 71
+    },
+    {
+      "entity": "2010",
+      "label": "DATE",
+      "start": 78,
+      "end": 82
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 97,
+      "end": 104
+    }
+  ],
+  "gold": [
+    {
+      "entity": "The Financial Times",
+      "label": "ORG",
+      "start": 13,
+      "end": 32
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 34,
+      "end": 40
+    },
+    {
+      "entity": "Snake virus",
+      "label": "MISC",
+      "start": 60,
+      "end": 71
+    },
+    {
+      "entity": "2010",
+      "label": "DATE",
+      "start": 78,
+      "end": 82
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 97,
+      "end": 104
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "span 3 | Snake virus | 1",
+      "before": [
+        {
+          "entity": "The Financial Times",
+          "label": "ORG",
+          "start": 13,
+          "end": 32
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 34,
+          "end": 40
+        },
+        {
+          "entity": "Snake",
+          "label": "MISC",
+          "start": 60,
+          "end": 65
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 97,
+          "end": 104
+        }
+      ],
+      "after": [
+        {
+          "entity": "The Financial Times",
+          "label": "ORG",
+          "start": 13,
+          "end": 32
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 34,
+          "end": 40
+        },
+        {
+          "entity": "Snake virus",
+          "label": "MISC",
+          "start": 60,
+          "end": 71
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 97,
+          "end": 104
+        }
+      ],
+      "at_utc": "2026-11-04T06:59:30.585187+00:00"
+    }
+  ]
+}

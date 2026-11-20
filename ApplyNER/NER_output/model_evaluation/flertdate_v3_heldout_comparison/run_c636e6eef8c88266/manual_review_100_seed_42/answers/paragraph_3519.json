@@ -1,0 +1,48 @@
+{
+  "comparison_row_id": 3519,
+  "Source": "Special Operations Forces (Russia)",
+  "Index": 145,
+  "Text": "An-26 transport aircraft",
+  "reviewed_at_utc": "2026-11-04T06:41:13.249870+00:00",
+  "original_predictions": [
+    {
+      "entity": "An-26",
+      "label": "MISC",
+      "start": 0,
+      "end": 5
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "An-26",
+      "label": "MISC",
+      "start": 0,
+      "end": 5
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "An-26",
+      "label": "MISC",
+      "start": 0,
+      "end": 5
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "An-26",
+      "label": "MISC",
+      "start": 0,
+      "end": 5
+    }
+  ],
+  "gold": [
+    {
+      "entity": "An-26",
+      "label": "MISC",
+      "start": 0,
+      "end": 5
+    }
+  ],
+  "history": []
+}

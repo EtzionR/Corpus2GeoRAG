@@ -27,8 +27,10 @@ Team & Deployment Notice:
 """
 
 import sys
+import re
 import time
 import json
+import functools
 from datetime import datetime
 import subprocess
 import importlib.util
@@ -80,6 +82,7 @@ if not _BOOTSTRAP_DONE:
 
 # Core Streamlit and mapping imports
 import streamlit as st
+import streamlit.components.v1 as components
 import folium
 from folium.plugins import Draw, MarkerCluster
 from branca.element import MacroElement
@@ -102,9 +105,131 @@ from geo_agent import (
     query_geo_agent,
     to_bounding_box,
 )
+from font_assets import (
+    FONT_BODY,
+    FONT_DISPLAY,
+    FONT_MONO,
+    build_iframe_font_sync_js,
+    get_embedded_font_face_css,
+    get_font_style_block,
+)
 
-# Ensure get_source_text, API key persistence helpers, and AgentError are safely resolved even across hot-reloads
+# Agent Geo-rgory (optional talking avatar, see avatar-georgory/README.md): if he can't load, the app runs without him
+try:
+    from pathlib import Path as _Path
+    for _georgory_dir in (
+        _Path(__file__).resolve().parent / "avatar-georgory",
+        _Path(__file__).resolve().parents[1] / "avatar-georgory",
+        _Path(__file__).resolve().parents[1] / "Corpus2GeoRAG" / "ui" / "avatar-georgory",
+    ):
+        if _georgory_dir.is_dir() and str(_georgory_dir) not in sys.path:
+            sys.path.append(str(_georgory_dir))
+    from agent_avatar import georgory
+except Exception as _georgory_err:
+    print(f"[Agent Geo-rgory] Disabled: {_georgory_err}")
+    georgory = None
+
+GEORGORY_BETA_SESSION_KEY = "georgory_beta_enabled"
+
+
+def is_georgory_beta_enabled(session_state: Optional[ Any ] = None) -> bool:
+    """Return True only when the Agent Geo-rgory module is loaded and the sidebar BETA switch is ON."""
+    if georgory is None:
+        return False
+    try:
+        ss = st.session_state if session_state is None else session_state
+        return bool(ss.get(GEORGORY_BETA_SESSION_KEY, False))
+    except Exception:
+        return False
+
+
+def deactivate_georgory_beta_state(session_state: Optional[ Any ] = None) -> bool:
+    """
+    Cleanly deactivate Agent Geo-rgory state when the BETA switch is OFF or toggled OFF mid-session.
+    Resets `georgory_on = False` and emits a one-shot browser speech/tour stop script on active->inactive transitions.
+    """
+    was_active = False
+    try:
+        ss = st.session_state if session_state is None else session_state
+        was_active = bool(
+            ss.get("_georgory_beta_was_enabled", False)
+            or ss.get("georgory_on", False)
+        )
+        ss["georgory_on"] = False
+        ss["_georgory_beta_was_enabled"] = False
+    except Exception:
+        return False
+
+    if was_active:
+        try:
+            st.html(
+                "<script>(function(){try{"
+                "if(window.speechSynthesis){window.speechSynthesis.cancel();}"
+                "if(window.parent&&window.parent.speechSynthesis){window.parent.speechSynthesis.cancel();}"
+                "var doc=window.parent?window.parent.document:document;"
+                "var fs=doc.querySelectorAll('iframe');"
+                "for(var i=0;i<fs.length;i++){try{"
+                "var w=fs[i].contentWindow;if(!w)continue;"
+                "if(w.Agent&&typeof w.Agent.stop==='function'){w.Agent.stop();}"
+                "if(w.speechSynthesis){w.speechSynthesis.cancel();}"
+                "var d=w.document;if(d){var ps=d.querySelectorAll('.georgory-ping');for(var j=0;j<ps.length;j++){ps[j].remove();}}"
+                "}catch(e){}}"
+                "}catch(e){}})();</script>",
+                unsafe_allow_javascript=True,
+            )
+        except Exception:
+            pass
+    return was_active
+
+
+def render_georgory_beta_sidebar() -> bool:
+    """
+    Render the Sidebar Master Switch ('Agent Geo-rgory (BETA)') under a badged BETA Add-ons section.
+    Defaults to OFF. When OFF, suppresses all Agent Geo-rgory UI/CSS/button hooks and cleans up active state.
+    """
+    if georgory is None:
+        deactivate_georgory_beta_state()
+        return False
+
+    if GEORGORY_BETA_SESSION_KEY not in st.session_state:
+        st.session_state[GEORGORY_BETA_SESSION_KEY] = False
+
+    st.markdown(
+        "<div class='geoai-beta-addon-header' style='display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;'>"
+        "<span style='font-weight:700; font-size:0.88rem; letter-spacing:0.06em; text-transform:uppercase; color:#e2e8f0;'>🧪 Beta Add-ons</span>"
+        "<span class='geo-badge' style='margin-bottom:0; padding:2px 8px; font-size:0.68rem; background:rgba(168,85,247,0.18); color:#c084fc; border-color:rgba(168,85,247,0.45); box-shadow:0 0 8px rgba(168,85,247,0.25);'>BETA</span>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
+    enabled = bool(
+        st.toggle(
+            "Agent Geo-rgory (BETA)",
+            key=GEORGORY_BETA_SESSION_KEY,
+            help="Opt-in BETA talking tour-guide add-on. Disabled by default; turn on to enable Agent Geo-rgory controls, chat button, and map tour narration.",
+        )
+    )
+    if enabled:
+        st.session_state["_georgory_beta_was_enabled"] = True
+        return True
+
+    deactivate_georgory_beta_state()
+    st.markdown("---")
+    return False
+
+# Ensure get_source_text, extract_answer_subgraph, format_evidence_popup_html, API key persistence helpers, and AgentError are safely resolved even across hot-reloads
+if not hasattr(geo_agent, "extract_answer_subgraph") or not hasattr(geo_agent, "format_evidence_popup_html") or not hasattr(geo_agent, "_is_event_article_title"):
+    try:
+        import importlib
+        geo_agent = importlib.reload(geo_agent)
+    except Exception:
+        pass
+
 get_source_text = getattr(geo_agent, "get_source_text", lambda pointer: None)
+extract_answer_subgraph = getattr(
+    geo_agent,
+    "extract_answer_subgraph",
+    lambda *a, **kw: {"nodes": [], "edges": []},
+)
 get_agent_env_path = getattr(geo_agent, "get_agent_env_path", lambda: None)
 persist_openrouter_api_key = getattr(
     geo_agent,
@@ -375,6 +500,336 @@ def _highlight_text_spans(text: str, spans: Optional[List[Any]]) -> str:
     return "".join(result)
 
 
+_CITATION_PATTERN = re.compile(
+    r'\[((?:(?:[0-9]+|S[0-9]+|L[0-9]+|P[0-9]+-S[0-9]+)\s*,\s*)*(?:[0-9]+|S[0-9]+|L[0-9]+|P[0-9]+-S[0-9]+))\]'
+)
+
+def format_tactical_citations(
+    content: str,
+    citations: Optional[List[Dict[str, Any]]] = None,
+    geo_locations: Optional[List[Dict[str, Any]]] = None,
+) -> str:
+    """
+    Format bracketed citations ([1], [S2], [L1], [P1-S1]) into interactive tactical hyperlink badges with hover tooltips.
+    - Clicking a location citation ([1]) focuses and zooms the Folium map on that marker and opens its popup (0ms client-side).
+    - Clicking a source citation ([S2], [L1], [P1-S1]) expands the Verified Sources drawer and opens that source's Inspect card.
+    Preserves standard markdown links like [text](url) and non-citation brackets.
+    """
+    import html as _html
+    if not content or not str(content).strip():
+        return content
+
+    pin_labels: Dict[int, str] = {}
+    pin_coords: Dict[int, Tuple[float, float]] = {}
+    if geo_locations and isinstance(geo_locations, list):
+        for loc in geo_locations:
+            if isinstance(loc, dict):
+                p_num = loc.get("number")
+                p_lbl = loc.get("label") or loc.get("name") or loc.get("id")
+                if p_num is not None:
+                    try:
+                        num_int = int(p_num)
+                        if p_lbl:
+                            pin_labels[num_int] = str(p_lbl)
+                        geom = loc.get("geometry")
+                        coords = geom.get("coordinates") if isinstance(geom, dict) else None
+                        if isinstance(coords, (list, tuple)) and len(coords) >= 2:
+                            pin_coords[num_int] = (float(coords[1]), float(coords[0]))
+                        elif "lat" in loc and "lng" in loc:
+                            pin_coords[num_int] = (float(loc["lat"]), float(loc["lng"]))
+                        elif "lat" in loc and "lon" in loc:
+                            pin_coords[num_int] = (float(loc["lat"]), float(loc["lon"]))
+                        elif "latitude" in loc and "longitude" in loc:
+                            pin_coords[num_int] = (float(loc["latitude"]), float(loc["longitude"]))
+                    except (ValueError, TypeError):
+                        pass
+
+    cit_labels: Dict[str, str] = {}
+    if citations and isinstance(citations, list):
+        for c in citations:
+            if isinstance(c, dict) and c.get("id"):
+                c_id = str(c["id"])
+                art = c.get("article") or c.get("pointer") or ""
+                sec = c.get("section")
+                full_desc = f"{art} — {sec}" if sec and art else (art or sec or "")
+                cit_labels[c_id] = full_desc
+
+    def _replace_cit_group(m: re.Match) -> str:
+        raw_items = [x.strip() for x in m.group(1).split(",") if x.strip()]
+        rendered = []
+        for item in raw_items:
+            if item.isdigit():
+                num = int(item)
+                lbl = pin_labels.get(num)
+                base_title = f"Map Marker #{num}: {lbl}" if lbl else f"Map Marker #{num}"
+                title = _html.escape(f"{base_title} (Click to zoom & focus on map)", quote=True)
+                coord = pin_coords.get(num)
+                coord_attrs = f" data-lat='{coord[0]:.6f}' data-lng='{coord[1]:.6f}'" if coord else ""
+                lbl_attr = f" data-pin-label='{_html.escape(lbl, quote=True)}'" if lbl else ""
+                rendered.append(
+                    f"<a href='#geoai-pin-{num}' class='tactical-cit tactical-cit-pin' "
+                    f"data-pin-number='{num}'{coord_attrs}{lbl_attr} title='{title}'>[{item}]</a>"
+                )
+            elif item.startswith("S") and item[1:].isdigit():
+                desc = cit_labels.get(item)
+                base_title = f"Source Passage {item}: {desc}" if desc else f"Source Passage {item}"
+                title = _html.escape(f"{base_title} (Click to inspect source)", quote=True)
+                rendered.append(
+                    f"<a href='#geoai-src-{item}' class='tactical-cit tactical-cit-src' "
+                    f"data-cit-target='{item}' title='{title}'>[{item}]</a>"
+                )
+            elif item.startswith("L") and item[1:].isdigit():
+                desc = cit_labels.get(item)
+                base_title = f"Article Summary {item}: {desc}" if desc else f"Article Summary {item}"
+                title = _html.escape(f"{base_title} (Click to inspect summary)", quote=True)
+                rendered.append(
+                    f"<a href='#geoai-src-{item}' class='tactical-cit tactical-cit-lead' "
+                    f"data-cit-target='{item}' title='{title}'>[{item}]</a>"
+                )
+            elif item.startswith("P") and "-S" in item:
+                desc = cit_labels.get(item)
+                base_title = f"Pin Evidence {item}: {desc}" if desc else f"Pin Evidence {item}"
+                title = _html.escape(f"{base_title} (Click to inspect evidence)", quote=True)
+                rendered.append(
+                    f"<a href='#geoai-src-{item}' class='tactical-cit tactical-cit-ps' "
+                    f"data-cit-target='{item}' title='{title}'>[{item}]</a>"
+                )
+            else:
+                rendered.append(f"[{item}]")
+        return " ".join(rendered)
+
+    return _CITATION_PATTERN.sub(_replace_cit_group, content)
+
+
+def compute_sector_bounding_box(
+    places: list,
+    pin_coords: dict | None = None,
+) -> list[float] | None:
+    """
+    Calculate the bounding box [south, west, north, east] for a sector's place/pin IDs.
+    Returns [min_lat, min_lng, max_lat, max_lng] rounded to 5 decimal places, or None if no coordinates.
+    """
+    if not places or not pin_coords:
+        return None
+    coords = []
+    for p in places:
+        try:
+            p_int = int(p)
+            if p_int in pin_coords:
+                coords.append(pin_coords[p_int])
+        except (ValueError, TypeError):
+            continue
+    if not coords:
+        return None
+    min_lat = min(c[0] for c in coords)
+    max_lat = max(c[0] for c in coords)
+    min_lng = min(c[1] for c in coords)
+    max_lng = max(c[1] for c in coords)
+    return [round(min_lat, 5), round(min_lng, 5), round(max_lat, 5), round(max_lng, 5)]
+
+
+def format_regional_distribution_html(
+    regions: any,
+    pin_coords: dict | None = None,
+    pin_labels: dict | None = None,
+) -> str:
+    """
+    Render hierarchical regional sector distribution markup for the assistant message expander.
+    - Each region is an interactive foldable card (<details class='tactical-sector-card'>)
+      with a compact summary row and an unfolded drawer containing its operational pins.
+    - Converts Oblast/Region headers into interactive .tactical-sector-btn buttons with data-sector-bbox.
+    - Converts place pin numbers into clickable .tactical-cit-pin badges (triggering 0ms Leaflet flyTo + popup).
+    - Includes a 0ms 'Reset Sector Filter' button to restore full map view and remove pin dimming.
+    """
+    import html as _html
+    import json as _json
+
+    if not regions:
+        return ""
+
+    pin_coords = pin_coords or {}
+    pin_labels = pin_labels or {}
+
+    def _render_pin_badge(pin_num: int) -> str:
+        lbl = pin_labels.get(pin_num)
+        base_title = f"Map Marker #{pin_num}: {lbl}" if lbl else f"Map Marker #{pin_num}"
+        title = _html.escape(f"{base_title} (Click to zoom & focus on map)", quote=True)
+        coord = pin_coords.get(pin_num)
+        coord_attrs = f" data-lat='{coord[0]:.6f}' data-lng='{coord[1]:.6f}'" if coord else ""
+        lbl_attr = f" data-pin-label='{_html.escape(lbl, quote=True)}'" if lbl else ""
+        return (
+            f"<a href='#geoai-pin-{pin_num}' class='tactical-cit tactical-cit-pin' "
+            f"data-pin-number='{pin_num}'{coord_attrs}{lbl_attr} title='{title}'>#{pin_num}</a>"
+        )
+
+    def _render_pins_grid(places_list: list, limit: int = 24) -> str:
+        if not places_list:
+            return ""
+        rendered = [_render_pin_badge(p) for p in places_list[:limit]]
+        more_badge = ""
+        if len(places_list) > limit:
+            remaining = len(places_list) - limit
+            more_badge = f"<span class='tactical-more-pins'>+{remaining} more in sector</span>"
+        return (
+            f"<div class='tactical-pins-section'>"
+            f"<div class='tactical-pins-label'>Operational Pins ({len(places_list)})</div>"
+            f"<div class='tactical-pins-grid tactical-reg-pins'>{' '.join(rendered)} {more_badge}</div>"
+            f"</div>"
+        )
+
+    html_parts = []
+    html_parts.append("<div class='tactical-sector-container'>")
+
+    if isinstance(regions, list):
+        total_sectors = sum(
+            len([c for c in (r.get("children") or []) if isinstance(c, dict)]) or 1
+            for r in regions
+            if isinstance(r, dict)
+        ) or len(regions)
+    elif isinstance(regions, dict):
+        total_sectors = len(regions)
+    else:
+        total_sectors = 1
+
+    # Header toolbar with Reset button
+    html_parts.append(
+        "<div class='tactical-sector-toolbar'>"
+        "<div class='tactical-sector-title'>"
+        "<span>🛡️ TACTICAL SECTORS</span> "
+        f"<code>{total_sectors} SECTORS</code>"
+        "</div>"
+        "<button type='button' class='tactical-sector-btn tactical-sector-reset-btn' data-sector-action='reset' "
+        "title='Reset sector zoom and clear pin dimming'>🌐 All Sectors</button>"
+        "</div>"
+    )
+
+    if isinstance(regions, list):
+        for idx, r_node in enumerate(regions):
+            if not isinstance(r_node, dict):
+                continue
+            r_id = str(r_node.get("id", "Unknown"))
+            r_cnt = r_node.get("count", 0)
+            raw_r_places = r_node.get("places") or []
+            r_places_raw = []
+            for p in raw_r_places:
+                try:
+                    r_places_raw.append(int(p))
+                except (ValueError, TypeError):
+                    pass
+            r_places = list(dict.fromkeys(r_places_raw))
+            children = [c for c in (r_node.get("children") or []) if isinstance(c, dict)]
+
+            all_node_places_raw = list(r_places)
+            for ch in children:
+                for cp in (ch.get("places") or []):
+                    try:
+                        all_node_places_raw.append(int(cp))
+                    except (ValueError, TypeError):
+                        pass
+            all_node_places = list(dict.fromkeys(all_node_places_raw))
+
+            r_bbox = compute_sector_bounding_box(all_node_places, pin_coords)
+            r_bbox_attr = f" data-sector-bbox='{_json.dumps(r_bbox)}'" if r_bbox else ""
+            r_pins_attr = f" data-sector-pins='{_json.dumps(all_node_places)}'" if all_node_places else ""
+
+            icon = "🌐" if ("ukraine" in r_id.lower() or r_node.get("place_type") == "country") else ("🏛️" if ("oblast" in r_id.lower() or r_node.get("place_type") == "state") else "📍")
+
+            children_html = []
+            if children:
+                for child in children:
+                    c_id = str(child.get("id", "Unknown"))
+                    c_cnt = child.get("count", 0)
+                    raw_c_places = child.get("places") or []
+                    c_places_raw = []
+                    for cp in raw_c_places:
+                        try:
+                            c_places_raw.append(int(cp))
+                        except (ValueError, TypeError):
+                            pass
+                    c_places = list(dict.fromkeys(c_places_raw))
+                    c_bbox = compute_sector_bounding_box(c_places, pin_coords)
+                    c_bbox_attr = f" data-sector-bbox='{_json.dumps(c_bbox)}'" if c_bbox else ""
+                    c_pins_attr = f" data-sector-pins='{_json.dumps(c_places)}'" if c_places else ""
+                    c_icon = "🏛️" if "oblast" in c_id.lower() else "📍"
+
+                    children_html.append(
+                        f"<details class='tactical-sector-card tactical-sector-child-card'>"
+                        f"<summary class='tactical-sector-summary'>"
+                        f"<div class='tactical-sector-header-left'>"
+                        f"<span class='tactical-chevron'>▶</span>"
+                        f"<span class='tactical-sector-icon'>{c_icon}</span>"
+                        f"<span class='tactical-sector-name' title='{_html.escape(c_id, quote=True)}'>{_html.escape(c_id)}</span>"
+                        f"<span class='tactical-sector-count'>{c_cnt} places</span>"
+                        f"</div>"
+                        f"<button type='button' class='tactical-sector-btn' data-sector-name='{_html.escape(c_id, quote=True)}'"
+                        f"{c_bbox_attr}{c_pins_attr} data-sector-count='{c_cnt}' "
+                        f"title='Focus map on {c_id} sector'>🎯 Focus</button>"
+                        f"</summary>"
+                        f"<div class='tactical-sector-drawer'>"
+                        f"{_render_pins_grid(c_places, limit=20)}"
+                        f"</div>"
+                        f"</details>"
+                    )
+
+            child_block = "".join(children_html)
+            pins_block = _render_pins_grid(r_places, limit=24)
+            open_attr = " open" if (children and len(regions) == 1) else ""
+
+            html_parts.append(
+                f"<details class='tactical-sector-card'{open_attr}>"
+                f"<summary class='tactical-sector-summary'>"
+                f"<div class='tactical-sector-header-left'>"
+                f"<span class='tactical-chevron'>▶</span>"
+                f"<span class='tactical-sector-icon'>{icon}</span>"
+                f"<span class='tactical-sector-name' title='{_html.escape(r_id, quote=True)}'>{_html.escape(r_id)}</span>"
+                f"<span class='tactical-sector-count'>{r_cnt} places</span>"
+                f"</div>"
+                f"<button type='button' class='tactical-sector-btn' data-sector-name='{_html.escape(r_id, quote=True)}'"
+                f"{r_bbox_attr}{r_pins_attr} data-sector-count='{r_cnt}' "
+                f"title='Focus map on {r_id} sector'>🎯 Focus</button>"
+                f"</summary>"
+                f"<div class='tactical-sector-drawer'>"
+                f"{child_block}"
+                f"{pins_block}"
+                f"</div>"
+                f"</details>"
+            )
+
+    elif isinstance(regions, dict):
+        for reg_name, count in sorted(regions.items(), key=lambda x: str(x[0])):
+            r_name_str = str(reg_name)
+            matched_pins = []
+            for p_num, lbl in pin_labels.items():
+                if r_name_str.lower() in lbl.lower() or lbl.lower() in r_name_str.lower():
+                    matched_pins.append(p_num)
+            r_bbox = compute_sector_bounding_box(matched_pins, pin_coords) if matched_pins else None
+            r_bbox_attr = f" data-sector-bbox='{_json.dumps(r_bbox)}'" if r_bbox else ""
+            r_pins_attr = f" data-sector-pins='{_json.dumps(matched_pins)}'" if matched_pins else ""
+            icon = "🏛️" if "oblast" in r_name_str.lower() else "📍"
+
+            html_parts.append(
+                f"<details class='tactical-sector-card'>"
+                f"<summary class='tactical-sector-summary'>"
+                f"<div class='tactical-sector-header-left'>"
+                f"<span class='tactical-chevron'>▶</span>"
+                f"<span class='tactical-sector-icon'>{icon}</span>"
+                f"<span class='tactical-sector-name'>{_html.escape(r_name_str)}</span>"
+                f"<span class='tactical-sector-count'>{count} places</span>"
+                f"</div>"
+                f"<button type='button' class='tactical-sector-btn' data-sector-name='{_html.escape(r_name_str, quote=True)}'"
+                f"{r_bbox_attr}{r_pins_attr} data-sector-count='{count}' "
+                f"title='Focus map on {r_name_str} sector'>🎯 Focus</button>"
+                f"</summary>"
+                f"<div class='tactical-sector-drawer'>"
+                f"{_render_pins_grid(matched_pins, limit=24)}"
+                f"</div>"
+                f"</details>"
+            )
+
+    html_parts.append("</div>")
+    return "\n".join(html_parts)
+
+
 def _build_assistant_message(resp: AgentResponse) -> Dict[str, Any]:
     """Build a standardized assistant message dictionary for st.session_state.messages."""
     ans_plain = getattr(resp, "answer_plain", "") or resp.answer
@@ -385,6 +840,9 @@ def _build_assistant_message(resp: AgentResponse) -> Dict[str, Any]:
         regions_val = dict(raw_regions)
     else:
         regions_val = {}
+    raw_subgraph = getattr(resp, "subgraph", None)
+    if not isinstance(raw_subgraph, dict) or not raw_subgraph.get("nodes"):
+        raw_subgraph = extract_answer_subgraph(resp)
     return {
         "role": "assistant",
         "content": resp.answer,
@@ -400,10 +858,40 @@ def _build_assistant_message(resp: AgentResponse) -> Dict[str, Any]:
         "map_bbox": getattr(resp, "map_bbox", None),
         "map_showing": getattr(resp, "map_showing", "all"),
         "map_not_shown": int(getattr(resp, "map_not_shown", 0) or 0),
+        "subgraph": raw_subgraph,
+        "raw_response": getattr(resp, "raw_response", None),
+        "geo_locations": (getattr(resp, "raw_response", {}) or {}).get("geo_locations", []),
+        "layers": getattr(resp, "layers", []),
+        "avatar": (georgory.avatar_payload(resp) if georgory else None) if is_georgory_beta_enabled() else None,
     }
 
 
-@st.dialog("🛰️ RAG Agent Telemetry & Debug Logs", width="large")
+def _build_error_assistant_message(err_message: str) -> Dict[str, Any]:
+    """Build a standardized assistant error card to preserve conversation turn parity."""
+    return {
+        "role": "assistant",
+        "content": f"⚠️ **Tactical Link Error:** {err_message}\n\n*Verify OpenRouter API key, network connectivity, and query boundaries in the sidebar telemetry panel.*",
+        "content_plain": f"Tactical Link Error: {err_message}",
+        "sources": [],
+        "citations": [],
+        "grounded": False,
+        "status": "error",
+        "is_live": False,
+        "is_error": True,
+        "follow_ups": [],
+        "regions": {},
+        "did_you_mean": None,
+        "map_bbox": None,
+        "map_showing": "all",
+        "map_not_shown": 0,
+        "subgraph": {"nodes": [], "edges": []},
+        "raw_response": None,
+        "layers": [],
+        "avatar": None,
+    }
+
+
+@st.dialog("RAG Agent Telemetry & Debug Logs", width="large")
 def show_rag_log_dialog():
     """Modal dialog displaying comprehensive raw JSON payloads, telemetry, and diagnostics for RAG calls."""
     logs: List[Dict[str, Any]] = st.session_state.get("rag_logs", [])
@@ -483,7 +971,7 @@ def show_rag_log_dialog():
                 st.json(selected_entry["error_details"])
 
     with tab_meta:
-        st.markdown(f"#### 🔍 Transaction #{selected_entry['id']} Diagnostics")
+        st.markdown(f"#### Transaction #{selected_entry['id']} Diagnostics")
         col_t1, col_t2 = st.columns(2)
         with col_t1:
             st.markdown(f"- **Timestamp:** `{selected_entry['timestamp']}`")
@@ -498,7 +986,7 @@ def show_rag_log_dialog():
                 st.markdown(f"- **Exception Class:** `{selected_entry['error_details'].get('error_type')}`")
 
         if selected_entry.get("error_details"):
-            st.markdown("##### ⚠️ Error Details & Diagnostic Tip")
+            st.markdown("##### Error Details & Diagnostic Tip")
             st.code(selected_entry["error_details"].get("message", ""), language="text")
 
     with tab_src:
@@ -520,12 +1008,18 @@ def show_rag_log_dialog():
                 sec_title = _clean_doc_title((text_data.get("section") if text_data else None) or cit_section)
                 para_idx = text_data.get("paragraph_index") if text_data else None
 
+                place_suffix = ""
+                if cit_meta.get("place_label"):
+                    p_num = cit_meta.get("place_number")
+                    p_num_str = f"#{p_num} " if p_num is not None else ""
+                    place_suffix = f" (Pin {p_num_str}{cit_meta['place_label']})"
+
                 if cit_id and doc_title:
-                    header_label = f"📄 [{cit_id}] {doc_title}"
+                    header_label = f"📄 [{cit_id}] {doc_title}{place_suffix}"
                 elif doc_title:
-                    header_label = f"📄 {doc_title}"
+                    header_label = f"📄 {doc_title}{place_suffix}"
                 else:
-                    header_label = f"📄 Source #{s_idx + 1}"
+                    header_label = f"📄 Source #{s_idx + 1}{place_suffix}"
                 if sec_title:
                     header_label += f" — *{sec_title}*"
 
@@ -536,12 +1030,20 @@ def show_rag_log_dialog():
                             meta_parts.append(f"**Section:** `{sec_title}`")
                         if para_idx is not None:
                             meta_parts.append(f"**Paragraph:** `#{para_idx + 1}`")
+                        if cit_meta.get("place_label"):
+                            p_num = cit_meta.get("place_number")
+                            p_num_str = f"#{p_num} " if p_num is not None else ""
+                            meta_parts.append(f"**Associated Pin:** `Pin {p_num_str}{cit_meta['place_label']}`")
                         st.markdown("  |  ".join(meta_parts))
                         st.markdown("**Verbatim Grounding Passage:**")
                         st.info(text_data.get("text", "No text passage available."))
                     else:
                         if doc_title:
                             st.markdown(f"**Document:** `{doc_title}`" + (f"  |  **Section:** `{sec_title}`" if sec_title else ""))
+                        if cit_meta.get("place_label"):
+                            p_num = cit_meta.get("place_number")
+                            p_num_str = f"#{p_num} " if p_num is not None else ""
+                            st.markdown(f"**Associated Pin:** `Pin {p_num_str}{cit_meta['place_label']}`")
                         st.caption("No verbatim text found in local graph.")
         else:
             st.caption("No knowledge graph source document pointers returned for this turn.")
@@ -560,6 +1062,948 @@ def show_rag_log_dialog():
         if st.button("🗑️ Clear Logs", use_container_width=True, help="Reset communication log history"):
             st.session_state.rag_logs = []
             st.rerun()
+
+
+def _render_subgraph_modal_html(subgraph_data: Dict[str, Any], query_title: str = "") -> str:
+    """
+    Build a self-contained HTML5/JS interactive force-directed & hierarchical graph canvas
+    with 0ms client-side node filtering (LOC, ORG, PER, TEXT), 1-hop neighborhood highlighting,
+    pan/zoom/drag physics, and a live Evidence & Node Inspector side panel.
+    """
+    nodes = list((subgraph_data or {}).get("nodes") or [])
+    edges = list((subgraph_data or {}).get("edges") or [])
+    payload_json = json.dumps({"nodes": nodes, "edges": edges, "query": query_title or ""})
+    font_face_css = get_embedded_font_face_css()
+
+    return f"""<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+{font_face_css}
+  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+  /* Dedicated Tactical Scrollbars (matching GeoAI chat console roller) */
+  * {{
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 229, 255, 0.28) rgba(0, 0, 0, 0.4);
+  }}
+  *::-webkit-scrollbar {{
+    width: 6px;
+    height: 6px;
+  }}
+  *::-webkit-scrollbar-track {{
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 3px;
+  }}
+  *::-webkit-scrollbar-thumb {{
+    background: rgba(0, 229, 255, 0.28);
+    border-radius: 3px;
+    border: 1px solid #00e5ff;
+    box-shadow: 0 0 6px rgba(0, 229, 255, 0.4);
+  }}
+  *::-webkit-scrollbar-thumb:hover {{
+    background: #00e5ff;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+  }}
+  *::-webkit-scrollbar-corner {{
+    background: transparent;
+  }}
+  body {{
+    background: #080f18;
+    color: #e2e8f0;
+    font-family: {FONT_BODY};
+    overflow: hidden;
+    user-select: none;
+  }}
+  .sg-root {{
+    display: flex;
+    flex-direction: column;
+    height: 525px;
+    width: 100%;
+    border: 1px solid rgba(0, 229, 255, 0.35);
+    border-radius: 8px;
+    background: #09111b;
+    overflow: hidden;
+    box-shadow: 0 0 22px rgba(0, 229, 255, 0.12);
+  }}
+  .sg-toolbar {{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #0d1826;
+    border-bottom: 1px solid rgba(0, 229, 255, 0.25);
+  }}
+  .sg-toolbar-group {{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }}
+  .sg-stat-readout {{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: {FONT_MONO};
+    font-size: 11.5px;
+    color: #94a3b8;
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 4px;
+    padding: 3px 8px;
+    user-select: none;
+    pointer-events: none;
+  }}
+  .sg-stat-num {{
+    color: #38bdf8;
+    font-weight: 700;
+  }}
+  .sg-slider-wrap {{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-radius: 4px;
+    padding: 2px 8px;
+    height: 26px;
+    font-size: 11px;
+    color: #94a3b8;
+    font-family: {FONT_MONO};
+    user-select: none;
+  }}
+  .sg-slider {{
+    -webkit-appearance: none;
+    appearance: none;
+    width: 65px;
+    height: 4px;
+    background: #1e293b;
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }}
+  .sg-slider::-webkit-slider-thumb {{
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #00e5ff;
+    cursor: pointer;
+    box-shadow: 0 0 6px #00e5ff;
+    transition: transform 0.1s ease;
+  }}
+  .sg-slider::-webkit-slider-thumb:hover {{
+    transform: scale(1.25);
+  }}
+  .sg-slider-val {{
+    color: #e2e8f0;
+    min-width: 26px;
+    text-align: right;
+    font-weight: 600;
+  }}
+  .sg-btn {{
+    font-family: {FONT_DISPLAY};
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 4px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: rgba(15, 23, 42, 0.8);
+    color: #cbd5e1;
+    transition: all 0.15s ease;
+  }}
+  .sg-btn:hover {{
+    border-color: #00e5ff;
+    color: #ffffff;
+  }}
+  .sg-btn.active {{
+    border-color: #00e5ff;
+    background: rgba(0, 229, 255, 0.2);
+    color: #00e5ff;
+    box-shadow: 0 0 8px rgba(0, 229, 255, 0.25);
+  }}
+  .sg-flt {{
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: opacity 0.15s ease, transform 0.1s ease;
+  }}
+  .sg-flt.off {{
+    opacity: 0.32;
+  }}
+  .sg-workspace {{
+    flex: 1;
+    display: grid;
+    grid-template-columns: 7fr 5fr;
+    overflow: hidden;
+    min-height: 0;
+  }}
+  .sg-canvas-wrap {{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 50%, #0f1f32 0%, #070d15 100%);
+    border-right: 1px solid rgba(0, 229, 255, 0.22);
+    overflow: hidden;
+  }}
+  #sg-canvas {{
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: grab;
+  }}
+  #sg-canvas:active {{
+    cursor: grabbing;
+  }}
+  .sg-canvas-hint {{
+    position: absolute;
+    bottom: 8px;
+    left: 10px;
+    font-size: 12px;
+    color: #94a3b8;
+    background: rgba(8, 14, 22, 0.82);
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    pointer-events: none;
+  }}
+  .sg-inspector {{
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    background: #080f18;
+    overflow: hidden;
+    user-select: text;
+    height: 100%;
+    min-height: 0;
+  }}
+  #sg-inspector-body {{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }}
+  .sg-insp-head {{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    margin-bottom: 8px;
+    flex-shrink: 0;
+  }}
+  .sg-insp-title {{
+    font-family: {FONT_DISPLAY};
+    font-size: 14.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #f8fafc;
+    word-break: break-word;
+  }}
+  .sg-insp-type {{
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }}
+  .sg-insp-sub {{
+    font-family: {FONT_MONO};
+    font-size: 12px;
+    color: #38bdf8;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+  }}
+  .sg-insp-summary {{
+    font-size: 12.5px;
+    color: #cbd5e1;
+    line-height: 1.45;
+    margin-bottom: 10px;
+    flex-shrink: 0;
+  }}
+  .sg-insp-evidence {{
+    font-size: 12.5px;
+    color: #e2e8f0;
+    background: rgba(14, 24, 38, 0.9);
+    border-left: 3px solid #00e5ff;
+    padding: 8px 10px;
+    border-radius: 4px;
+    line-height: 1.45;
+    margin-bottom: 10px;
+    max-height: 95px;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }}
+  .sg-edge-section {{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    margin-top: 4px;
+    overflow: hidden;
+  }}
+  .sg-edge-list {{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+    min-height: 0;
+    max-height: 295px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 6px;
+  }}
+  .sg-edge-item {{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    padding: 5px 8px;
+    border-radius: 4px;
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    font-size: 12px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: border-color 0.12s ease, background 0.12s ease;
+  }}
+    padding: 5px 8px;
+    border-radius: 4px;
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    font-size: 12px;
+    cursor: pointer;
+    transition: border-color 0.12s ease, background 0.12s ease;
+  }}
+  .sg-edge-item:hover {{
+    border-color: #00e5ff;
+    background: rgba(0, 229, 255, 0.1);
+  }}
+  .sg-edge-rel {{
+    font-family: {FONT_MONO};
+    color: #00e5ff;
+    font-weight: 600;
+  }}
+  .sg-edge-nbr {{
+    color: #f1f5f9;
+    font-weight: 600;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }}
+  .sg-footer {{
+    padding-top: 8px;
+    margin-top: 8px;
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #64748b;
+  }}
+</style>
+</head>
+<body>
+<div class="sg-root">
+  <div class="sg-toolbar">
+    <div class="sg-toolbar-group">
+      <div id="sg-stat-badge" class="sg-stat-readout"><span class="sg-stat-num" id="sg-stat-nodes">0</span> nodes <span style="opacity:0.35;">·</span> <span class="sg-stat-num" id="sg-stat-edges">0</span> relations</div>
+      <button id="btn-ly-force" class="sg-btn active" onclick="setLayoutMode('force')">⚡ Force Physics</button>
+      <button id="btn-ly-hier" class="sg-btn" onclick="setLayoutMode('hierarchical')">📐 Hierarchical Flow</button>
+      <button class="sg-btn" onclick="resetCamera()">⟲ Reset View</button>
+      <div class="sg-slider-wrap" title="Slide to adjust relation names opacity, or slide all the way to 0% to hide relation names and unclutter the graph">
+        <span style="font-weight:600; color:#cbd5e1; cursor:pointer;" onclick="toggleLabels()">Labels</span>
+        <input type="range" id="sg-label-slider" min="0" max="1" step="0.05" value="0.75" oninput="setLabelOpacity(this.value)" class="sg-slider" />
+        <span id="sg-label-pct" class="sg-slider-val">75%</span>
+      </div>
+    </div>
+    <div class="sg-toolbar-group">
+      <button id="flt-LOC" class="sg-flt" style="border:1px solid #00e5ff; background:rgba(0,229,255,0.16); color:#67e8f9;" onclick="toggleTypeFilter('LOC')">📍 LOC</button>
+      <button id="flt-ORG" class="sg-flt" style="border:1px solid #f59e0b; background:rgba(245,158,11,0.16); color:#fcd34d;" onclick="toggleTypeFilter('ORG')">🏛️ ORG</button>
+      <button id="flt-PER" class="sg-flt" style="border:1px solid #10b981; background:rgba(16,185,129,0.16); color:#6ee7b7;" onclick="toggleTypeFilter('PER')">👤 PER</button>
+      <button id="flt-TEXT" class="sg-flt" style="border:1px solid #a855f7; background:rgba(168,85,247,0.16); color:#d8b4fe;" onclick="toggleTypeFilter('TEXT')">📄 TEXT</button>
+    </div>
+  </div>
+
+  <div class="sg-workspace">
+    <div class="sg-canvas-wrap">
+      <canvas id="sg-canvas"></canvas>
+      <div class="sg-canvas-hint">💡 Drag nodes • Scroll to zoom • Click any node or relation to inspect</div>
+    </div>
+    <div class="sg-inspector">
+      <div id="sg-inspector-body"></div>
+      <div class="sg-footer">
+        <span title="Grounded answer graph shows only the specific locations, organizations, persons, and texts cited in this answer.">Grounded Answer Subgraph</span>
+        <span style="color:#38bdf8;" title="Canvas runs directly in your browser with 0 ms latency and 0 server reruns.">Client-Side Canvas • 0 ms Latency</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = {payload_json};
+const NODES = (DATA.nodes || []).map((n, i) => ({{
+  ...n,
+  x: 0,
+  y: 0,
+  vx: 0,
+  vy: 0,
+  idx: i
+}}));
+const EDGES = DATA.edges || [];
+
+const TYPE_CFG = {{
+  LOC:  {{ fill: "#00e5ff", border: "#a5f3fc", badge: "📍 LOC",  text: "#67e8f9" }},
+  ORG:  {{ fill: "#f59e0b", border: "#fde68a", badge: "🏛️ ORG",  text: "#fcd34d" }},
+  PER:  {{ fill: "#10b981", border: "#a7f3d0", badge: "👤 PER",  text: "#6ee7b7" }},
+  TEXT: {{ fill: "#a855f7", border: "#e9d5ff", badge: "📄 TEXT", text: "#d8b4fe" }}
+}};
+
+let layoutMode = "force";
+let filters = {{ LOC: true, ORG: true, PER: true, TEXT: true }};
+let selectedNode = NODES[0] || null;
+let hoveredNode = null;
+let draggingNode = null;
+let isPanning = false;
+let panStart = {{ x: 0, y: 0 }};
+let cam = {{ x: 0, y: 0, zoom: 1.0 }};
+let simSteps = 0;
+let labelOpacity = 0.75;
+let hoveredRelationKey = null;
+
+const canvas = document.getElementById("sg-canvas");
+const ctx = canvas.getContext("2d");
+
+function escapeHtml(str) {{
+  return String(str || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}}
+
+function updateCounts() {{
+  const counts = {{ LOC: 0, ORG: 0, PER: 0, TEXT: 0 }};
+  NODES.forEach(n => {{ counts[n.type] = (counts[n.type] || 0) + 1; }});
+  ["LOC", "ORG", "PER", "TEXT"].forEach(t => {{
+    const btn = document.getElementById("flt-" + t);
+    if (btn) {{
+      btn.textContent = TYPE_CFG[t].badge + " (" + (counts[t] || 0) + ")";
+    }}
+  }});
+  const visNodes = NODES.filter(n => filters[n.type]);
+  const visSet = new Set(visNodes.map(n => n.id));
+  const visEdges = EDGES.filter(e => visSet.has(e.from) && visSet.has(e.to));
+  const elNodes = document.getElementById("sg-stat-nodes");
+  const elEdges = document.getElementById("sg-stat-edges");
+  if (elNodes && elEdges) {{
+    elNodes.textContent = visNodes.length;
+    elEdges.textContent = visEdges.length;
+  }}
+}}
+
+window.setLabelOpacity = function(val) {{
+  labelOpacity = parseFloat(val);
+  const pct = Math.round(labelOpacity * 100);
+  const readout = document.getElementById("sg-label-pct");
+  if (readout) readout.textContent = pct === 0 ? "Off" : pct + "%";
+  draw();
+}};
+
+window.toggleLabels = function() {{
+  const slider = document.getElementById("sg-label-slider");
+  if (labelOpacity > 0) {{
+    if (slider) slider.value = 0;
+    window.setLabelOpacity(0);
+  }} else {{
+    if (slider) slider.value = 0.75;
+    window.setLabelOpacity(0.75);
+  }}
+}};
+
+window.hoverRelation = function(fromId, toId, label) {{
+  hoveredRelationKey = fromId + "||" + toId + "||" + label;
+  draw();
+}};
+
+window.unhoverRelation = function() {{
+  hoveredRelationKey = null;
+  draw();
+}};
+
+function initPositions() {{
+  const w = canvas.width || 520;
+  const h = canvas.height || 460;
+  const cx = w / 2;
+  const cy = h / 2;
+
+  if (layoutMode === "hierarchical") {{
+    const tiers = [
+      NODES.filter(n => n.type === "LOC" && n.role === "region"),
+      NODES.filter(n => n.type === "LOC" && n.role !== "region"),
+      NODES.filter(n => n.type === "ORG" || n.type === "PER"),
+      NODES.filter(n => n.type === "TEXT")
+    ].filter(t => t.length > 0);
+
+    tiers.forEach((tier, tIdx) => {{
+      const y = (h / (tiers.length + 1)) * (tIdx + 1);
+      tier.forEach((n, i) => {{
+        n.x = (w / (tier.length + 1)) * (i + 1);
+        n.y = y + ((i % 2 === 0 ? -1 : 1) * 10);
+        n.vx = 0;
+        n.vy = 0;
+      }});
+    }});
+    simSteps = 0;
+  }} else {{
+    const total = Math.max(NODES.length, 1);
+    NODES.forEach((n, i) => {{
+      if (i === 0 && n.role === "primary") {{
+        n.x = cx;
+        n.y = cy;
+      }} else {{
+        const angle = (2 * Math.PI * i) / total;
+        const rad = n.type === "TEXT" ? Math.min(w, h) * 0.36 : Math.min(w, h) * 0.25;
+        n.x = cx + rad * Math.cos(angle);
+        n.y = cy + rad * Math.sin(angle);
+      }}
+      n.vx = 0;
+      n.vy = 0;
+    }});
+    simSteps = 90;
+  }}
+}}
+
+function stepPhysics() {{
+  if (layoutMode !== "force" || simSteps <= 0) return;
+  simSteps--;
+  const w = canvas.width || 520;
+  const h = canvas.height || 460;
+  const cx = w / 2;
+  const cy = h / 2;
+  const visNodes = NODES.filter(n => filters[n.type]);
+
+  // Repulsion
+  for (let i = 0; i < visNodes.length; i++) {{
+    for (let j = i + 1; j < visNodes.length; j++) {{
+      const a = visNodes[i];
+      const b = visNodes[j];
+      let dx = b.x - a.x;
+      let dy = b.y - a.y;
+      let distSq = dx * dx + dy * dy + 1;
+      let dist = Math.sqrt(distSq);
+      let force = 3600 / distSq;
+      let fx = (dx / dist) * force;
+      let fy = (dy / dist) * force;
+      if (a !== draggingNode) {{ a.vx -= fx; a.vy -= fy; }}
+      if (b !== draggingNode) {{ b.vx += fx; b.vy += fy; }}
+    }}
+  }}
+
+  // Spring attraction along edges
+  const nodeMap = new Map(visNodes.map(n => [n.id, n]));
+  EDGES.forEach(e => {{
+    const u = nodeMap.get(e.from);
+    const v = nodeMap.get(e.to);
+    if (!u || !v) return;
+    let dx = v.x - u.x;
+    let dy = v.y - u.y;
+    let dist = Math.sqrt(dx * dx + dy * dy) || 1;
+    let targetLen = e.kind === "provenance" ? 135 : 115;
+    let force = (dist - targetLen) * 0.045;
+    let fx = (dx / dist) * force;
+    let fy = (dy / dist) * force;
+    if (u !== draggingNode) {{ u.vx += fx; u.vy += fy; }}
+    if (v !== draggingNode) {{ v.vx -= fx; v.vy -= fy; }}
+  }});
+
+  // Center gravity + velocity update
+  visNodes.forEach(n => {{
+    if (n === draggingNode) return;
+    n.vx += (cx - n.x) * 0.012;
+    n.vy += (cy - n.y) * 0.012;
+    n.vx *= 0.78;
+    n.vy *= 0.78;
+    n.x = Math.max(42, Math.min(w - 42, n.x + n.vx));
+    n.y = Math.max(36, Math.min(h - 42, n.y + n.vy));
+  }});
+}}
+
+function isAdjacent(a, b) {{
+  if (!a || !b) return false;
+  if (a.id === b.id) return true;
+  return EDGES.some(e => (e.from === a.id && e.to === b.id) || (e.to === a.id && e.from === b.id));
+}}
+
+function draw() {{
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.save();
+  ctx.translate(cam.x, cam.y);
+  ctx.scale(cam.zoom, cam.zoom);
+
+  const visNodes = NODES.filter(n => filters[n.type]);
+  const visMap = new Map(visNodes.map(n => [n.id, n]));
+  const focusNode = hoveredNode || selectedNode;
+
+  // Draw edges
+  EDGES.forEach(e => {{
+    const u = visMap.get(e.from);
+    const v = visMap.get(e.to);
+    if (!u || !v) return;
+
+    const active = focusNode && (focusNode.id === u.id || focusNode.id === v.id);
+    const isHoveredRelation = hoveredRelationKey && (
+      (e.from + "||" + e.to + "||" + e.label === hoveredRelationKey) ||
+      (e.to + "||" + e.from + "||" + e.label === hoveredRelationKey)
+    );
+
+    ctx.save();
+    ctx.beginPath();
+    if (hoveredRelationKey) {{
+      ctx.globalAlpha = isHoveredRelation ? 1.0 : 0.12;
+    }}
+
+    if (isHoveredRelation) {{
+      ctx.shadowColor = "#00e5ff";
+      ctx.shadowBlur = 18;
+      ctx.strokeStyle = "#00e5ff";
+      ctx.lineWidth = 3.6;
+    }} else if (e.kind === "provenance") {{
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = active ? "rgba(192, 132, 252, 0.92)" : "rgba(148, 163, 184, 0.28)";
+      ctx.lineWidth = active ? 2.2 : 1.2;
+    }} else if (e.kind === "hierarchy") {{
+      ctx.setLineDash([2, 3]);
+      ctx.strokeStyle = active ? "rgba(0, 229, 255, 0.95)" : "rgba(56, 189, 248, 0.35)";
+      ctx.lineWidth = active ? 2.2 : 1.2;
+    }} else {{
+      ctx.strokeStyle = active ? "rgba(251, 191, 36, 0.95)" : "rgba(148, 163, 184, 0.38)";
+      ctx.lineWidth = active ? 2.2 : 1.2;
+    }}
+    ctx.moveTo(u.x, u.y);
+    ctx.lineTo(v.x, v.y);
+    ctx.stroke();
+
+    // Directional arrow head
+    const angle = Math.atan2(v.y - u.y, v.x - u.x);
+    const targetR = v.type === "TEXT" ? 16 : 15;
+    const ax = v.x - Math.cos(angle) * (targetR + 3);
+    const ay = v.y - Math.sin(angle) * (targetR + 3);
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(ax, ay);
+    ctx.lineTo(ax - 7 * Math.cos(angle - Math.PI / 6), ay - 7 * Math.sin(angle - Math.PI / 6));
+    ctx.lineTo(ax - 7 * Math.cos(angle + Math.PI / 6), ay - 7 * Math.sin(angle + Math.PI / 6));
+    ctx.closePath();
+    ctx.fillStyle = ctx.strokeStyle;
+    ctx.fill();
+
+    // Edge label (controlled via clutter-reduction opacity slider)
+    const showLabel = isHoveredRelation || active || (labelOpacity > 0.02);
+    if (showLabel) {{
+      const effAlpha = isHoveredRelation ? 1.0 : (active ? Math.max(labelOpacity, 0.85) : labelOpacity);
+      if (effAlpha > 0.05) {{
+        ctx.save();
+        ctx.globalAlpha = effAlpha;
+        const mx = (u.x + v.x) / 2;
+        const my = (u.y + v.y) / 2;
+        ctx.font = isHoveredRelation ? "bold 12.5px 'JetBrains Mono', monospace" : "12px 'JetBrains Mono', monospace";
+        ctx.fillStyle = isHoveredRelation ? "#00e5ff" : (active ? "#f8fafc" : "rgba(148, 163, 184, 0.85)");
+        ctx.textAlign = "center";
+        if (isHoveredRelation) {{
+          ctx.shadowColor = "#00e5ff";
+          ctx.shadowBlur = 12;
+        }}
+        ctx.fillText(e.label, mx, my - 5);
+        ctx.restore();
+      }}
+    }}
+    ctx.restore();
+  }});
+
+  // Draw nodes
+  visNodes.forEach(n => {{
+    const cfg = TYPE_CFG[n.type] || TYPE_CFG.LOC;
+    const isSel = selectedNode && selectedNode.id === n.id;
+    const isHov = hoveredNode && hoveredNode.id === n.id;
+    const dimmed = hoveredNode && !isAdjacent(hoveredNode, n);
+    const isIncidentToHovered = hoveredRelationKey && (
+      hoveredRelationKey.startsWith(n.id + "||") ||
+      hoveredRelationKey.includes("||" + n.id + "||")
+    );
+    const r = n.role === "primary" ? 16 : (n.type === "TEXT" ? 13 : 14);
+
+    ctx.save();
+    if (hoveredRelationKey) {{
+      ctx.globalAlpha = isIncidentToHovered ? 1.0 : 0.22;
+      if (isIncidentToHovered) {{
+        ctx.shadowColor = cfg.fill;
+        ctx.shadowBlur = 22;
+      }}
+    }} else if (dimmed) {{
+      ctx.globalAlpha = 0.28;
+    }} else if (isSel || isHov) {{
+      ctx.shadowColor = cfg.fill;
+      ctx.shadowBlur = 15;
+    }}
+
+    ctx.beginPath();
+    if (n.type === "TEXT") {{
+      ctx.roundRect(n.x - 15, n.y - 11, 30, 22, 5);
+    }} else if (n.role === "region") {{
+      ctx.moveTo(n.x, n.y - r);
+      ctx.lineTo(n.x + r, n.y);
+      ctx.lineTo(n.x, n.y + r);
+      ctx.lineTo(n.x - r, n.y);
+      ctx.closePath();
+    }} else {{
+      ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+    }}
+    ctx.fillStyle = n.role === "context" ? "#0e7490" : cfg.fill;
+    ctx.fill();
+    ctx.lineWidth = isSel ? 3 : 1.6;
+    ctx.strokeStyle = isSel ? "#ffffff" : cfg.border;
+    ctx.stroke();
+    ctx.restore();
+
+    // Node caption
+    ctx.save();
+    ctx.globalAlpha = dimmed ? 0.32 : 1.0;
+    ctx.font = isSel ? "600 12px 'Plus Jakarta Sans', sans-serif" : "500 12px 'Plus Jakarta Sans', sans-serif";
+    ctx.fillStyle = "#f8fafc";
+    ctx.textAlign = "center";
+    ctx.fillText(n.label, n.x, n.y + r + 15);
+    ctx.restore();
+  }});
+
+  ctx.restore();
+}}
+
+function renderInspector(node) {{
+  const container = document.getElementById("sg-inspector-body");
+  if (!node) {{
+    container.innerHTML = "<div class='sg-insp-summary'>Select a node on the canvas to inspect its grounding metadata and connected relations.</div>";
+    return;
+  }}
+  const cfg = TYPE_CFG[node.type] || TYPE_CFG.LOC;
+  const incident = EDGES.filter(e => e.from === node.id || e.to === node.id);
+  const edgeRows = incident.map(e => {{
+    const otherId = e.from === node.id ? e.to : e.from;
+    const otherNode = NODES.find(n => n.id === otherId);
+    const otherLabel = otherNode ? otherNode.label : otherId;
+    const arrow = e.from === node.id ? "→" : "←";
+    const fEsc = (e.from || "").replace(/'/g, "\\\\'");
+    const tEsc = (e.to || "").replace(/'/g, "\\\\'");
+    const lEsc = (e.label || "").replace(/'/g, "\\\\'");
+    return `<div class="sg-edge-item" onclick="selectNodeById('${{escapeHtml(otherId).replace(/'/g, "\\\\'")}}')" onmouseenter="hoverRelation('${{fEsc}}', '${{tEsc}}', '${{lEsc}}')" onmouseleave="unhoverRelation()">
+      <span class="sg-edge-rel">${{escapeHtml(e.label)}}</span>
+      <span class="sg-edge-nbr">${{arrow}} ${{escapeHtml(otherLabel)}}</span>
+    </div>`;
+  }}).join("");
+
+  const evidenceHtml = node.evidence
+    ? `<div class="sg-insp-evidence">${{escapeHtml(node.evidence)}}</div>`
+    : "";
+
+  container.innerHTML = `
+    <div class="sg-insp-head">
+      <div class="sg-insp-title">${{escapeHtml(node.label)}}</div>
+      <span class="sg-insp-type" style="color:${{cfg.text}}; background:rgba(255,255,255,0.07); border:1px solid ${{cfg.fill}};">
+        ${{cfg.badge}}
+      </span>
+    </div>
+    <div class="sg-insp-sub">${{escapeHtml(node.subtitle || node.id)}}</div>
+    <div class="sg-insp-summary">${{escapeHtml(node.summary)}}</div>
+    ${{evidenceHtml}}
+    <div class="sg-edge-section">
+      <div style="font-size:12px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; flex-shrink:0;">
+        Connected Relations (${{incident.length}})
+      </div>
+      <div class="sg-edge-list">
+        ${{edgeRows || "<div style='font-size:12px; color:#64748b;'>No direct relations in current view.</div>"}}
+      </div>
+    </div>
+  `;
+}}
+
+window.selectNodeById = function(id) {{
+  const found = NODES.find(n => n.id === id);
+  if (found) {{
+    filters[found.type] = true;
+    const btn = document.getElementById("flt-" + found.type);
+    if (btn) btn.classList.remove("off");
+    selectedNode = found;
+    renderInspector(found);
+    updateCounts();
+    draw();
+  }}
+}};
+
+window.setLayoutMode = function(mode) {{
+  layoutMode = mode;
+  document.getElementById("btn-ly-force").classList.toggle("active", mode === "force");
+  document.getElementById("btn-ly-hier").classList.toggle("active", mode === "hierarchical");
+  cam = {{ x: 0, y: 0, zoom: 1.0 }};
+  initPositions();
+  draw();
+}};
+
+window.resetCamera = function() {{
+  cam = {{ x: 0, y: 0, zoom: 1.0 }};
+  initPositions();
+  draw();
+}};
+
+window.toggleTypeFilter = function(t) {{
+  filters[t] = !filters[t];
+  const btn = document.getElementById("flt-" + t);
+  if (btn) btn.classList.toggle("off", !filters[t]);
+  updateCounts();
+  draw();
+}};
+
+function toWorld(clientX, clientY) {{
+  const rect = canvas.getBoundingClientRect();
+  return {{
+    x: (clientX - rect.left - cam.x) / cam.zoom,
+    y: (clientY - rect.top - cam.y) / cam.zoom
+  }};
+}}
+
+function hitTest(wx, wy) {{
+  const vis = NODES.filter(n => filters[n.type]);
+  for (let i = vis.length - 1; i >= 0; i--) {{
+    const n = vis[i];
+    const dx = wx - n.x;
+    const dy = wy - n.y;
+    if (dx * dx + dy * dy <= 440) return n;
+  }}
+  return null;
+}}
+
+canvas.addEventListener("mousedown", e => {{
+  const pt = toWorld(e.clientX, e.clientY);
+  const hit = hitTest(pt.x, pt.y);
+  if (hit) {{
+    draggingNode = hit;
+    selectedNode = hit;
+    renderInspector(hit);
+    draw();
+  }} else {{
+    isPanning = true;
+    panStart = {{ x: e.clientX - cam.x, y: e.clientY - cam.y }};
+  }}
+}});
+
+canvas.addEventListener("mousemove", e => {{
+  const pt = toWorld(e.clientX, e.clientY);
+  if (draggingNode) {{
+    draggingNode.x = pt.x;
+    draggingNode.y = pt.y;
+    draw();
+    return;
+  }}
+  if (isPanning) {{
+    cam.x = e.clientX - panStart.x;
+    cam.y = e.clientY - panStart.y;
+    draw();
+    return;
+  }}
+  const hit = hitTest(pt.x, pt.y);
+  if (hit !== hoveredNode) {{
+    hoveredNode = hit;
+    canvas.style.cursor = hit ? "pointer" : "grab";
+    draw();
+  }}
+}});
+
+window.addEventListener("mouseup", () => {{
+  draggingNode = null;
+  isPanning = false;
+}});
+
+canvas.addEventListener("wheel", e => {{
+  e.preventDefault();
+  const factor = e.deltaY < 0 ? 1.1 : 0.9;
+  const nextZoom = Math.max(0.45, Math.min(2.4, cam.zoom * factor));
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  cam.x = mx - (mx - cam.x) * (nextZoom / cam.zoom);
+  cam.y = my - (my - cam.y) * (nextZoom / cam.zoom);
+  cam.zoom = nextZoom;
+  draw();
+}}, {{ passive: false }});
+
+function resize() {{
+  const p = canvas.parentElement;
+  if (!p) return;
+  canvas.width = p.clientWidth || 520;
+  canvas.height = p.clientHeight || 460;
+  initPositions();
+  draw();
+}}
+
+function animate() {{
+  if (simSteps > 0) {{
+    stepPhysics();
+    draw();
+  }}
+  requestAnimationFrame(animate);
+}}
+
+window.addEventListener("resize", resize);
+updateCounts();
+renderInspector(selectedNode);
+setTimeout(() => {{
+  resize();
+  animate();
+}}, 30);
+</script>
+</body>
+</html>"""
+
+
+@st.dialog("Answer Knowledge Subgraph", width="large")
+def show_answer_subgraph_dialog(msg_idx: int):
+    """Modal popup displaying the interactive knowledge subgraph (nodes, relations, and grounding texts) for a specific RAG answer."""
+    messages = st.session_state.get("messages", [])
+    if not (0 <= msg_idx < len(messages)):
+        st.warning("Selected message is no longer available in session history.")
+        return
+
+    msg = messages[msg_idx]
+    subgraph_data = msg.get("subgraph")
+    if not isinstance(subgraph_data, dict) or not subgraph_data.get("nodes"):
+        subgraph_data = extract_answer_subgraph(msg)
+        msg["subgraph"] = subgraph_data
+
+    nodes = subgraph_data.get("nodes", [])
+    if not nodes:
+        st.info("ℹ️ No knowledge graph nodes or grounding entities were linked to this response.")
+        return
+
+    # Find corresponding user question if immediately preceding this assistant turn
+    query_title = ""
+    if msg_idx > 0 and messages[msg_idx - 1].get("role") == "user":
+        query_title = str(messages[msg_idx - 1].get("content", ""))
+
+    if query_title:
+        st.caption(f"**Query Context:** *{query_title}*")
+
+    modal_html = _render_subgraph_modal_html(subgraph_data, query_title=query_title)
+    st.components.v1.html(modal_html, height=540, scrolling=False)
 
 def clear_spatial_selection(ignore_current_drawing: bool = True):
     """Clear all active spatial selections and reset drawing trackers to prevent rerun loops."""
@@ -596,6 +2040,338 @@ def clear_map_and_console(ignore_current_drawing: bool = True):
     st.session_state.agent_turns = []
     st.session_state.pending_query = None
     st.session_state.last_processed_chat_input = None
+    st.session_state.source_metadata_cache = {}
+    for k in list(st.session_state.keys()):
+        if isinstance(k, str) and k.startswith("src_meta_"):
+            del st.session_state[k]
+
+
+# ==============================================================================
+# Deferred Point-Selection Sync (zero Python reruns while the user clicks around the map)
+# ==============================================================================
+# Every `Streamlit.setComponentValue()` call from the map iframe forces a Python rerun of
+# `render_tactical_map_fragment()` (full Folium rebuild + feature group re-mount).
+# Point selections (canvas clicks, answer-pin popups, cluster clicks) are already rendered
+# 100% client-side (instant reticle, in-map HUD, docked pill), so Python only needs the
+# selection when the operator acts OUTSIDE the map (chat input, Recon button, sidebar).
+#
+# This gate wraps `window.Streamlit.setComponentValue` inside the map iframe:
+#   * Passive sends (streamlit-folium's own onMapClick / onLayerClick / debounced updates,
+#     and our click / popup handlers) are buffered: N clicks -> 0 reruns.
+#   * Explicit `geoaiImmediateDispatch()` sends (rectangle draw, trash/delete, Recon) pass
+#     through instantly and carry any buffered click along with them.
+#   * The buffer is flushed (exactly one rerun) when the map iframe loses focus, or on the
+#     first pointerdown / focusin / keydown in the parent Streamlit document.
+# Python-side, `reconcile_deferred_map_selection()` closes the remaining race where the
+# flushed click and a chat submit / recon arrive in the same full-script run.
+DEFERRED_SELECTION_SYNC_JS = r"""
+            // ---- GeoAI Deferred Selection Sync Gate (zero-rerun point selection) ----
+            (function installGeoaiDeferredSelectionGate() {
+                function geoaiCanonicalJson(v) {
+                    if (v === undefined) return 'null';
+                    if (v === null || typeof v !== 'object') return JSON.stringify(v);
+                    if (typeof v.toJSON === 'function') return geoaiCanonicalJson(v.toJSON());
+                    if (Array.isArray(v)) {
+                        return '[' + v.map(geoaiCanonicalJson).join(',') + ']';
+                    }
+                    var keys = Object.keys(v).filter(function(k) {
+                        return v[k] !== undefined && typeof v[k] !== 'function';
+                    }).sort();
+                    return '{' + keys.map(function(k) {
+                        return JSON.stringify(k) + ':' + geoaiCanonicalJson(v[k]);
+                    }).join(',') + '}';
+                }
+                window.geoaiCanonicalJson = geoaiCanonicalJson;
+
+                var gate = window._geoaiSyncGate;
+                if (!gate) {
+                    gate = window._geoaiSyncGate = {
+                        dirty: false,
+                        pending: null,
+                        bypass: false,
+                        lastSentKey: null,
+                        deferredCount: 0,
+                        sentCount: 0,
+                        flushCount: 0,
+                        origSend: null
+                    };
+                }
+
+                function installSendInterceptor() {
+                    var S = window.Streamlit;
+                    if (!S || typeof S.setComponentValue !== 'function') return false;
+                    if (S._geoaiGateInstalled) return true;
+                    var orig = S.setComponentValue;
+                    gate.origSend = function(v) { return orig.call(S, v); };
+                    if (window.__GLOBAL_DATA__ && window.__GLOBAL_DATA__.previous_data !== undefined) {
+                        gate.lastSentKey = geoaiCanonicalJson(window.__GLOBAL_DATA__.previous_data);
+                    }
+                    S.setComponentValue = function(v) {
+                        var key = geoaiCanonicalJson(v);
+                        if (gate.bypass) {
+                            gate.lastSentKey = key;
+                            gate.sentCount += 1;
+                            return orig.call(S, v);
+                        }
+                        // Passive (library / click) send: identical payloads are dropped, new ones buffered
+                        if (key === gate.lastSentKey) return;
+                        gate.pending = v;
+                        gate.dirty = true;
+                        gate.deferredCount += 1;
+                    };
+                    S._geoaiGateInstalled = true;
+                    return true;
+                }
+                installSendInterceptor();
+
+                function geoaiSendNow(u) {
+                    if (!installSendInterceptor()) return false;
+                    gate.bypass = true;
+                    try {
+                        window.Streamlit.setComponentValue(u);
+                    } finally {
+                        gate.bypass = false;
+                    }
+                    return true;
+                }
+
+                function geoaiBuildPayload() {
+                    var g = window.__GLOBAL_DATA__;
+                    var activeClick = g.lat_lng_clicked || g.last_object_clicked;
+                    var c = {
+                        last_clicked: activeClick,
+                        last_active_drawing: g.last_active_drawing,
+                        all_drawings: g.all_drawings
+                    };
+                    var u = {};
+                    if (g.returned_objects && Array.isArray(g.returned_objects)) {
+                        g.returned_objects.forEach(function(k) {
+                            if (c.hasOwnProperty(k)) u[k] = c[k];
+                        });
+                    } else {
+                        u = c;
+                    }
+                    return u;
+                }
+                window.geoaiBuildPayload = geoaiBuildPayload;
+
+                // Instant 0ms Component Value Dispatch (bypasses streamlit-folium's 250ms debounce
+                // and the deferred gate). Used ONLY for urgent actions: rectangle draw, delete, recon.
+                window.geoaiImmediateDispatch = function(mapInstance) {
+                    try {
+                        if (!window.__GLOBAL_DATA__ || !window.Streamlit || typeof window.Streamlit.setComponentValue !== 'function') return;
+                        var g = window.__GLOBAL_DATA__;
+                        var u = geoaiBuildPayload();
+                        var hadPending = gate.dirty;
+                        gate.dirty = false;
+                        gate.pending = null;
+                        if (hadPending || JSON.stringify(g.previous_data) !== JSON.stringify(u)) {
+                            if (hadPending || geoaiCanonicalJson(u) !== gate.lastSentKey) {
+                                g.previous_data = u;
+                                geoaiSendNow(u);
+                            } else {
+                                g.previous_data = u;
+                            }
+                        }
+                    } catch(err) {
+                        console.warn("[GeoAI] Immediate dispatch error:", err);
+                    }
+                };
+
+                // Mark a client-side-only selection change (point click / pin popup) without a rerun
+                window.geoaiMarkSelectionDirty = function() {
+                    installSendInterceptor();
+                    gate.dirty = true;
+                };
+
+                // Flush buffered selection to Python exactly once (no-op when nothing is pending)
+                window.geoaiFlushDeferredSelection = function(reason) {
+                    if (!gate.dirty) return false;
+                    gate.flushCount += 1;
+                    gate.lastFlushReason = reason || 'manual';
+                    window.geoaiImmediateDispatch(window.map || null);
+                    return true;
+                };
+
+                window.geoaiDeferredSyncStats = function() {
+                    return {
+                        dirty: gate.dirty,
+                        deferredCount: gate.deferredCount,
+                        sentCount: gate.sentCount,
+                        flushCount: gate.flushCount,
+                        lastFlushReason: gate.lastFlushReason || null
+                    };
+                };
+
+                // Flush triggers: map iframe loses focus / tab hidden
+                if (!window._geoaiFlushTriggersBound) {
+                    window._geoaiFlushTriggersBound = true;
+                    window.addEventListener('blur', function() {
+                        window.geoaiFlushDeferredSelection('iframe-blur');
+                    });
+                    try {
+                        document.addEventListener('visibilitychange', function() {
+                            if (document.visibilityState === 'hidden') {
+                                window.geoaiFlushDeferredSelection('visibility-hidden');
+                            }
+                        });
+                    } catch(e) {}
+                }
+
+                // Flush triggers: first interaction in the parent Streamlit document
+                // (chat input focus, Recon / suggestion buttons, sidebar) — bound once per parent.
+                try {
+                    var pw = window.parent;
+                    if (pw && pw !== window && pw.document) {
+                        pw.__geoaiFlushMapSelection = function(reason) {
+                            try { return window.geoaiFlushDeferredSelection(reason); } catch(e) { return false; }
+                        };
+                        if (!pw.__geoaiFlushListenersBound) {
+                            pw.__geoaiFlushListenersBound = true;
+                            ['pointerdown', 'focusin', 'keydown'].forEach(function(evName) {
+                                pw.document.addEventListener(evName, function() {
+                                    try {
+                                        if (typeof pw.__geoaiFlushMapSelection === 'function') {
+                                            pw.__geoaiFlushMapSelection('parent-' + evName);
+                                        }
+                                    } catch(e) {}
+                                }, true);
+                            });
+                        }
+                    }
+                } catch(e) {}
+            })();
+            // ---- End GeoAI Deferred Selection Sync Gate ----
+"""
+
+
+def build_deferred_selection_sync_js() -> str:
+    """Return the client-side deferred selection sync gate injected by `MapTrashBinHook`."""
+    return DEFERRED_SELECTION_SYNC_JS
+
+
+def reconcile_deferred_map_selection(
+    map_state: Optional[Dict[str, Any]],
+    session_state: Optional[Any] = None,
+) -> bool:
+    """
+    Apply a deferred point selection carried by `map_state` to session state.
+
+    Called in Section 2c right before a chat submit / recon request locks `pending_query`,
+    so a map click that was flushed in the same run as the submit is never dropped.
+    Rectangle drawings, deletions and recon actions are intentionally NOT handled here
+    (they keep their dedicated Section 2b / Section 5 paths).
+
+    Returns True when the active selection changed.
+    """
+    ss = session_state if session_state is not None else st.session_state
+    if ss.get("pending_query") or not isinstance(map_state, dict):
+        return False
+
+    drawing = map_state.get("last_active_drawing")
+    if isinstance(drawing, dict):
+        props = drawing.get("properties") or {}
+        geom = drawing.get("geometry") or {}
+        is_new_drawing = (
+            drawing != ss.get("last_processed_drawing")
+            and drawing != ss.get("ignored_drawing")
+        )
+        if is_new_drawing and (props.get("action") in ("recon", "delete") or geom.get("type") == "Polygon" or not geom):
+            return False
+        if is_new_drawing and geom.get("type") == "Point":
+            coords = geom.get("coordinates") or []
+            if len(coords) >= 2:
+                try:
+                    pt = (round(float(coords[1]), 5), round(float(coords[0]), 5))
+                except (TypeError, ValueError):
+                    pt = None
+                if pt is not None:
+                    ss.last_processed_drawing = drawing
+                    ss.ignored_drawing = None
+                    ss.last_clicked = pt
+                    changed = (
+                        ss.get("selected_points") != [pt]
+                        or ss.get("bounding_box") is not None
+                    )
+                    if changed:
+                        ss.selection_mode = "Point Selection"
+                        ss.selected_points = [pt]
+                        ss.bounding_box = None
+                        ss.answered_bbox = None
+                        ss.active_point = pt
+                        ss.active_tactical_scan = None
+                    return changed
+
+    clicked = map_state.get("last_clicked")
+    if not isinstance(clicked, dict) or "lat" not in clicked or "lng" not in clicked:
+        return False
+    try:
+        coord = (round(float(clicked["lat"]), 5), round(float(clicked["lng"]), 5))
+    except (TypeError, ValueError):
+        return False
+
+    if _is_drawing_corner_release(coord, ss.get("bounding_box")):
+        ss.last_clicked = coord
+        return False
+    if coord == ss.get("last_clicked"):
+        return False
+
+    ss.last_clicked = coord
+    if ss.get("selected_points") == [coord] and ss.get("bounding_box") is None:
+        return False
+    ss.selection_mode = "Point Selection"
+    ss.selected_points = [coord]
+    ss.bounding_box = None
+    ss.answered_bbox = None
+    ss.active_point = coord
+    ss.active_tactical_scan = None
+    return True
+
+
+def _peek_incoming_map_state() -> Optional[Dict[str, Any]]:
+    # 1. Inspect fresh incoming widget states directly from Streamlit's internal runner context.
+    # When a component calls setComponentValue(), Streamlit populates _new_widget_state
+    # with the incoming WebSocket payload BEFORE running the script, but SessionState.__getitem__
+    # will not expose it until register_widget() is called later during map rendering.
+    try:
+        from streamlit.runtime.state.session_state_proxy import get_session_state
+        ss = get_session_state()
+        raw_state = getattr(ss, "_state", None)
+        if raw_state is not None:
+            new_widgets = getattr(raw_state, "_new_widget_state", None)
+            if new_widgets is not None and hasattr(new_widgets, "states"):
+                for wid, item in new_widgets.states.items():
+                    val = getattr(item, "value", None)
+                    if val is not None and hasattr(val, "WhichOneof") and val.WhichOneof("value") == "json_value":
+                        try:
+                            parsed = json.loads(val.json_value)
+                            if isinstance(parsed, dict) and (
+                                "last_clicked" in parsed
+                                or "last_active_drawing" in parsed
+                                or "all_drawings" in parsed
+                                or "last_object_clicked" in parsed
+                            ):
+                                return parsed
+                        except Exception:
+                            pass
+                    elif isinstance(item, dict):
+                        if "last_clicked" in item or "last_active_drawing" in item or "all_drawings" in item or "last_object_clicked" in item:
+                            return item
+    except Exception:
+        pass
+
+    # 2. Prioritize 64-character hash keys directly from Streamlit session_state
+    for k in list(st.session_state.keys()):
+        if isinstance(k, str) and len(k) == 64:
+            v = st.session_state.get(k)
+            if isinstance(v, dict) and ("last_clicked" in v or "last_active_drawing" in v or "all_drawings" in v or "last_object_clicked" in v):
+                return v
+
+    # 3. Fallback to static widget key
+    s = st.session_state.get("geoai_tactical_map")
+    if isinstance(s, dict) and ("last_clicked" in s or "last_active_drawing" in s or "all_drawings" in s or "last_object_clicked" in s):
+        return s
+    return None
 
 
 class SelectionSyncHook(MacroElement):
@@ -643,6 +2419,64 @@ class SelectionSyncHook(MacroElement):
         self.pin_shape = (pin_shape or "diamond").strip().lower()
 
 
+@functools.lru_cache(maxsize=1)
+def build_resizer_theme_css() -> str:
+    """Return shared tactical HUD CSS for the adjustable_columns header iframe."""
+    return f"""
+        html, body {{
+            background: transparent !important;
+            font-family: {FONT_BODY} !important;
+            overflow: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }}
+        #root {{ min-height: 0 !important; height: 100% !important; }}
+        .column-indicator {{
+            background: rgba(13, 23, 38, 0.92) !important;
+            border-left: 3px solid #00e5ff !important;
+            border-top: 1px solid rgba(0, 229, 255, 0.35) !important;
+            border-right: 1px solid rgba(0, 229, 255, 0.35) !important;
+            border-bottom: 1px solid rgba(0, 229, 255, 0.35) !important;
+            border-radius: 4px !important;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.15) !important;
+            transition: background 0.15s ease !important;
+            box-sizing: border-box !important;
+        }}
+        .column-indicator:hover {{
+            background: rgba(0, 229, 255, 0.18) !important;
+            border-color: #00e5ff !important;
+            box-shadow: 0 0 14px rgba(0, 229, 255, 0.45) !important;
+        }}
+        .column-indicator,
+        .column-indicator > div,
+        .column-indicator div,
+        .column-indicator span {{
+            color: #00e5ff !important;
+            font-family: {FONT_DISPLAY} !important;
+            font-size: 14px !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.09em !important;
+            text-transform: uppercase !important;
+            opacity: 1 !important;
+            text-shadow: 0 0 10px rgba(0, 229, 255, 0.8) !important;
+        }}
+        .column-indicator:hover > div,
+        .column-indicator:hover div {{
+            color: #ffffff !important;
+            text-shadow: 0 0 14px #00e5ff !important;
+        }}
+        .resize-handle {{
+            background: rgba(0, 229, 255, 0.4) !important;
+            border-radius: 2px !important;
+            transition: background 0.2s ease, box-shadow 0.2s ease !important;
+        }}
+        .resize-handle:hover {{
+            background: #00e5ff !important;
+            box-shadow: 0 0 10px #00e5ff !important;
+        }}
+    """
+
+
 class MapTrashBinHook(MacroElement):
     """
     Folium MacroElement injecting client-side integration for the Leaflet Draw toolbar:
@@ -660,6 +2494,12 @@ class MapTrashBinHook(MacroElement):
         (function() {
             var map = {{ this._parent.get_name() }};
             if (!map) return;
+            window.map = map;
+
+{{ this.font_sync_js }}
+            if (window.geoaiSyncEmbeddedFonts) {
+                window.geoaiSyncEmbeddedFonts(document);
+            }
 
             if (typeof drawnItems !== 'undefined') {
                 window.drawnItems = drawnItems;
@@ -669,62 +2509,14 @@ class MapTrashBinHook(MacroElement):
             window._lastClearSeq = window._lastClearSeq || 0;
 
             // Apply matching cyan headers to adjustable_columns iframe from parent document
-            var RESIZER_THEME_CSS = `
-                html, body {
-                    background: transparent !important;
-                    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
-                    overflow: hidden !important;
-                    margin: 0 !important;
-                    padding: 0 !important;
-                }
-                #root { min-height: 0 !important; height: 100% !important; }
-                .column-indicator {
-                    background: rgba(13, 23, 38, 0.92) !important;
-                    border-left: 3px solid #00e5ff !important;
-                    border-top: 1px solid rgba(0, 229, 255, 0.35) !important;
-                    border-right: 1px solid rgba(0, 229, 255, 0.35) !important;
-                    border-bottom: 1px solid rgba(0, 229, 255, 0.35) !important;
-                    border-radius: 4px !important;
-                    box-shadow: 0 0 10px rgba(0, 229, 255, 0.15) !important;
-                    transition: background 0.15s ease !important;
-                    box-sizing: border-box !important;
-                }
-                .column-indicator:hover {
-                    background: rgba(0, 229, 255, 0.18) !important;
-                    border-color: #00e5ff !important;
-                    box-shadow: 0 0 14px rgba(0, 229, 255, 0.45) !important;
-                }
-                .column-indicator,
-                .column-indicator > div,
-                .column-indicator div,
-                .column-indicator span {
-                    color: #00e5ff !important;
-                    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
-                    font-size: 13px !important;
-                    font-weight: 700 !important;
-                    letter-spacing: 0.07em !important;
-                    text-transform: uppercase !important;
-                    opacity: 1 !important;
-                    text-shadow: 0 0 10px rgba(0, 229, 255, 0.8) !important;
-                }
-                .column-indicator:hover > div,
-                .column-indicator:hover div {
-                    color: #ffffff !important;
-                    text-shadow: 0 0 14px #00e5ff !important;
-                }
-                .resize-handle {
-                    background: rgba(0, 229, 255, 0.4) !important;
-                    border-radius: 2px !important;
-                    transition: background 0.2s ease, box-shadow 0.2s ease !important;
-                }
-                .resize-handle:hover {
-                    background: #00e5ff !important;
-                    box-shadow: 0 0 10px #00e5ff !important;
-                }
-            `;
+            var RESIZER_THEME_CSS = {{ this.resizer_theme_css_js }};
+            var GEOAI_FONT_DISPLAY = {{ this.font_display_js }};
 
             function applyResizerThemeToDoc(doc) {
                 if (!doc || (!doc.head && !doc.body)) return;
+                if (window.geoaiSyncEmbeddedFonts) {
+                    window.geoaiSyncEmbeddedFonts(doc);
+                }
                 var styleEl = doc.getElementById('geoai-resizer-hud-theme');
                 if (!styleEl) {
                     styleEl = doc.createElement('style');
@@ -745,9 +2537,10 @@ class MapTrashBinHook(MacroElement):
                     var txt = inds[k].querySelector('div');
                     if (txt) {
                         txt.style.setProperty('color', '#00e5ff', 'important');
-                        txt.style.setProperty('font-size', '13px', 'important');
+                        txt.style.setProperty('font-family', GEOAI_FONT_DISPLAY, 'important');
+                        txt.style.setProperty('font-size', '14px', 'important');
                         txt.style.setProperty('font-weight', '700', 'important');
-                        txt.style.setProperty('letter-spacing', '0.07em', 'important');
+                        txt.style.setProperty('letter-spacing', '0.09em', 'important');
                         txt.style.setProperty('opacity', '1', 'important');
                         txt.style.setProperty('text-shadow', '0 0 10px rgba(0, 229, 255, 0.8)', 'important');
                     }
@@ -755,6 +2548,9 @@ class MapTrashBinHook(MacroElement):
 
                 if (!doc._geoaiResizerObs && window.MutationObserver) {
                     doc._geoaiResizerObs = new MutationObserver(function() {
+                        if (window.geoaiSyncEmbeddedFonts) {
+                            window.geoaiSyncEmbeddedFonts(doc);
+                        }
                         var styleCheck = doc.getElementById('geoai-resizer-hud-theme');
                         if (!styleCheck) {
                             styleCheck = doc.createElement('style');
@@ -769,8 +2565,10 @@ class MapTrashBinHook(MacroElement):
                             var subTxt = subInds[j].querySelector('div');
                             if (subTxt) {
                                 subTxt.style.setProperty('color', '#00e5ff', 'important');
-                                subTxt.style.setProperty('font-size', '13px', 'important');
+                                subTxt.style.setProperty('font-family', GEOAI_FONT_DISPLAY, 'important');
+                                subTxt.style.setProperty('font-size', '14px', 'important');
                                 subTxt.style.setProperty('font-weight', '700', 'important');
+                                subTxt.style.setProperty('letter-spacing', '0.09em', 'important');
                                 subTxt.style.setProperty('opacity', '1', 'important');
                                 subTxt.style.setProperty('text-shadow', '0 0 10px rgba(0, 229, 255, 0.8)', 'important');
                             }
@@ -786,9 +2584,13 @@ class MapTrashBinHook(MacroElement):
                     if (!pDoc) return;
                     var iframes = pDoc.querySelectorAll('iframe');
                     for (var i = 0; i < iframes.length; i++) {
-                        if ((iframes[i].title || '').indexOf('adjustable_columns') !== -1) {
+                        var iTitle = (iframes[i].title || '');
+                        if (iTitle.indexOf('adjustable_columns') !== -1) {
                             var doc = iframes[i].contentDocument || (iframes[i].contentWindow && iframes[i].contentWindow.document);
                             applyResizerThemeToDoc(doc);
+                        } else if (iTitle.indexOf('agent_avatar') !== -1 && window.geoaiSyncEmbeddedFonts) {
+                            var avDoc = iframes[i].contentDocument || (iframes[i].contentWindow && iframes[i].contentWindow.document);
+                            if (avDoc) window.geoaiSyncEmbeddedFonts(avDoc);
                         }
                     }
                 } catch(e) {}
@@ -1039,38 +2841,9 @@ class MapTrashBinHook(MacroElement):
                 try { map.invalidateSize(); } catch(e) {}
             });
 
-            // Instant 0ms Component Value Dispatch to bypass streamlit-folium's 250ms artificial debounce
-            window.geoaiImmediateDispatch = function(mapInstance) {
-                try {
-                    if (!window.__GLOBAL_DATA__ || !window.Streamlit || typeof window.Streamlit.setComponentValue !== 'function') return;
-                    var g = window.__GLOBAL_DATA__;
-                    var activeClick = g.lat_lng_clicked || g.last_object_clicked;
-                    var c = {
-                        last_clicked: activeClick,
-                        last_active_drawing: g.last_active_drawing,
-                        all_drawings: g.all_drawings
-                    };
-                    var u = {};
-                    if (g.returned_objects && Array.isArray(g.returned_objects)) {
-                        g.returned_objects.forEach(function(k) {
-                            if (c.hasOwnProperty(k)) u[k] = c[k];
-                        });
-                    } else {
-                        u = c;
-                    }
-                    if (JSON.stringify(g.previous_data) !== JSON.stringify(u)) {
-                        g.previous_data = u;
-                        window.Streamlit.setComponentValue(u);
-                    }
-                } catch(err) {
-                    console.warn("[GeoAI] Immediate dispatch error:", err);
-                }
-            };
-            try {
-                if (typeof debouncedUpdateComponentValue === 'function') {
-                    debouncedUpdateComponentValue = window.geoaiImmediateDispatch;
-                }
-            } catch(e) {}
+            // Deferred selection sync gate + instant 0ms dispatch for urgent actions
+            // (see DEFERRED_SELECTION_SYNC_JS in app.py)
+{{ this.deferred_sync_js }}
 
             window._mapInitializing = true;
             setTimeout(function() { window._mapInitializing = false; }, 400);
@@ -1371,8 +3144,584 @@ class MapTrashBinHook(MacroElement):
                         window.__GLOBAL_DATA__.all_drawings = [];
                     }
                     updateTrashButtonState();
+                    window._activeSectorName = null;
+                    window._activeSectorPins = null;
+                    window._activeSectorBbox = null;
+                    if (typeof applySectorHighlighting === 'function') {
+                        applySectorHighlighting();
+                    }
                 } else if (ev.data.type === 'GEOAI_PIN_SHAPE' && ev.data.shape) {
                     setMapPinShape(ev.data.shape);
+                } else if (ev.data.type === 'GEOAI_FOCUS_PIN') {
+                    focusMapPinByCitation(ev.data);
+                } else if (ev.data.type === 'GEOAI_FOCUS_SECTOR') {
+                    focusMapSector(ev.data);
+                }
+            });
+
+            function focusMapPinByCitation(payload) {
+                if (!payload) return;
+                var targetNum = payload.number != null ? String(payload.number).trim() : null;
+                var targetLat = (payload.lat != null && !isNaN(Number(payload.lat))) ? Number(payload.lat) : null;
+                var targetLng = (payload.lng != null && !isNaN(Number(payload.lng))) ? Number(payload.lng) : null;
+                var targetLabel = payload.label ? String(payload.label).trim() : null;
+
+                var matchedMarker = null;
+                var parentCluster = null;
+
+                function isMarkerMatch(m) {
+                    if (!(m instanceof L.Marker) || !m.getLatLng) return false;
+                    var cls = (m._icon && m._icon.className) ? m._icon.className : (m.options && m.options.icon && m.options.icon.options && m.options.icon.options.className ? m.options.icon.options.className : '');
+                    if (cls.indexOf('geoai-pin--target') !== -1 || cls.indexOf('geoai-pin--corner') !== -1) return false;
+
+                    // 1. Match by coordinate if provided (0.0003 deg is ~30m tolerance)
+                    if (targetLat !== null && targetLng !== null) {
+                        var ll = m.getLatLng();
+                        if (Math.abs(ll.lat - targetLat) < 0.0003 && Math.abs(ll.lng - targetLng) < 0.0003) {
+                            return true;
+                        }
+                    }
+
+                    // 2. Match by pin number in popup HTML, tooltip, or icon HTML
+                    if (targetNum) {
+                        var pContent = '';
+                        try {
+                            if (m.getPopup && m.getPopup()) {
+                                pContent = String(m.getPopup().getContent() || '');
+                            }
+                        } catch(e) {}
+                        if (pContent.indexOf('#' + targetNum + ' ') !== -1 || 
+                            pContent.indexOf('★ #' + targetNum) !== -1 || 
+                            pContent.indexOf('#' + targetNum + '<') !== -1 ||
+                            pContent.indexOf('#' + targetNum + ':') !== -1) {
+                            return true;
+                        }
+                        var tContent = '';
+                        try {
+                            if (m.getTooltip && m.getTooltip()) {
+                                tContent = String(m.getTooltip().getContent() || '');
+                            }
+                        } catch(e) {}
+                        if (tContent.indexOf(targetNum + '. ') === 0 || tContent.indexOf('#' + targetNum) !== -1) {
+                            return true;
+                        }
+                        var iconHtml = (m.options && m.options.icon && m.options.icon.options && m.options.icon.options.html) ? String(m.options.icon.options.html) : '';
+                        if (iconHtml.indexOf('<span>' + targetNum + '</span>') !== -1 || iconHtml.indexOf('>' + targetNum + '<') !== -1) {
+                            return true;
+                        }
+                    }
+
+                    // 3. Match by label in popup
+                    if (targetLabel) {
+                        var pContent3 = '';
+                        try {
+                            if (m.getPopup && m.getPopup()) {
+                                pContent3 = String(m.getPopup().getContent() || '');
+                            }
+                        } catch(e) {}
+                        if (pContent3.toLowerCase().indexOf(targetLabel.toLowerCase()) !== -1) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                // Recursive layer traversal function to visit FeatureGroups and MarkerClusterGroups
+                function searchLayers(layerGroup) {
+                    if (!layerGroup || matchedMarker) return;
+                    if (isMarkerMatch(layerGroup)) {
+                        matchedMarker = layerGroup;
+                        return;
+                    }
+                    if (typeof layerGroup.zoomToShowLayer === 'function' && typeof layerGroup.getLayers === 'function') {
+                        var clusterLayers = layerGroup.getLayers();
+                        for (var i = 0; i < clusterLayers.length; i++) {
+                            if (isMarkerMatch(clusterLayers[i])) {
+                                matchedMarker = clusterLayers[i];
+                                parentCluster = layerGroup;
+                                return;
+                            }
+                        }
+                    }
+                    if (typeof layerGroup.eachLayer === 'function') {
+                        layerGroup.eachLayer(function(child) {
+                            if (matchedMarker) return;
+                            if (isMarkerMatch(child)) {
+                                matchedMarker = child;
+                                if (typeof layerGroup.zoomToShowLayer === 'function') {
+                                    parentCluster = layerGroup;
+                                }
+                                return;
+                            }
+                            if (typeof child.getLayers === 'function' || typeof child.eachLayer === 'function') {
+                                if (typeof child.zoomToShowLayer === 'function' && typeof child.getLayers === 'function') {
+                                    var cLayers2 = child.getLayers();
+                                    for (var k = 0; k < cLayers2.length; k++) {
+                                        if (isMarkerMatch(cLayers2[k])) {
+                                            matchedMarker = cLayers2[k];
+                                            parentCluster = child;
+                                            return;
+                                        }
+                                    }
+                                }
+                                searchLayers(child);
+                            }
+                        });
+                    }
+                }
+
+                searchLayers(map);
+
+                // Fallback: search getActiveClusterGroups if registered
+                if (!matchedMarker && typeof getActiveClusterGroups === 'function') {
+                    var clusters = getActiveClusterGroups();
+                    for (var c = 0; c < clusters.length; c++) {
+                        var cGroup = clusters[c];
+                        if (cGroup && typeof cGroup.getLayers === 'function') {
+                            var cLayers3 = cGroup.getLayers();
+                            for (var j = 0; j < cLayers3.length; j++) {
+                                if (isMarkerMatch(cLayers3[j])) {
+                                    matchedMarker = cLayers3[j];
+                                    parentCluster = cGroup;
+                                    break;
+                                }
+                            }
+                        }
+                        if (matchedMarker) break;
+                    }
+                }
+
+                if (matchedMarker) {
+                    if (matchedMarker._icon && matchedMarker._icon.style.display === 'none') {
+                        matchedMarker._icon.style.display = '';
+                    }
+                    var mLatLng = matchedMarker.getLatLng();
+                    var focusZoom = Math.max(map.getZoom() || 6, 13);
+                    window._lastOpenPopupInfo = { lat: mLatLng.lat, lng: mLatLng.lng };
+
+                    if (parentCluster && typeof parentCluster.zoomToShowLayer === 'function') {
+                        parentCluster.zoomToShowLayer(matchedMarker, function() {
+                            try { matchedMarker.openPopup(); } catch(e) {}
+                        });
+                    } else {
+                        map.flyTo(mLatLng, focusZoom, { animate: true, duration: 0.65 });
+                        map.once('moveend', function() {
+                            try { matchedMarker.openPopup(); } catch(e) {}
+                        });
+                        setTimeout(function() {
+                            try { matchedMarker.openPopup(); } catch(e) {}
+                        }, 700);
+                    }
+                } else if (targetLat !== null && targetLng !== null) {
+                    var fallbackZoom = Math.max(map.getZoom() || 6, 13);
+                    map.flyTo([targetLat, targetLng], fallbackZoom, { animate: true, duration: 0.65 });
+                    map.once('moveend', function() {
+                        searchLayers(map);
+                        if (matchedMarker) {
+                            if (parentCluster && typeof parentCluster.zoomToShowLayer === 'function') {
+                                parentCluster.zoomToShowLayer(matchedMarker, function() {
+                                    try { matchedMarker.openPopup(); } catch(e) {}
+                                });
+                            } else {
+                                try { matchedMarker.openPopup(); } catch(e) {}
+                            }
+                        }
+                    });
+                }
+            }
+
+            function focusMapSector(payload) {
+                if (!payload) return;
+                var sName = payload.name || payload.sector || null;
+                var bbox = payload.bbox;
+                var action = payload.action;
+                var targetPins = (payload.pins && Array.isArray(payload.pins)) ? payload.pins.map(Number) : [];
+
+                if (!window._initialMapBounds && map.getBounds) {
+                    try { window._initialMapBounds = map.getBounds(); } catch(err) {}
+                }
+
+                if (action === 'reset' || (!sName && !bbox)) {
+                    window._activeSectorName = null;
+                    window._activeSectorPins = null;
+                    window._activeSectorBbox = null;
+                    applySectorHighlighting();
+                    if (window._initialMapBounds) {
+                        try { map.fitBounds(window._initialMapBounds, { padding: [35, 35], animate: true, duration: 0.65 }); } catch(err) {}
+                    }
+                    return;
+                }
+
+                window._activeSectorName = sName;
+                window._activeSectorPins = targetPins;
+                window._activeSectorBbox = bbox;
+
+                applySectorHighlighting();
+                setTimeout(applySectorHighlighting, 120);
+                setTimeout(applySectorHighlighting, 350);
+                setTimeout(applySectorHighlighting, 750);
+
+                if (bbox && Array.isArray(bbox) && bbox.length === 4) {
+                    var south = Math.min(Number(bbox[0]), Number(bbox[2]));
+                    var north = Math.max(Number(bbox[0]), Number(bbox[2]));
+                    var west = Math.min(Number(bbox[1]), Number(bbox[3]));
+                    var east = Math.max(Number(bbox[1]), Number(bbox[3]));
+                    if (!isNaN(south) && !isNaN(north) && !isNaN(west) && !isNaN(east)) {
+                        if (Math.abs(north - south) < 0.005 && Math.abs(east - west) < 0.005) {
+                            south -= 0.03;
+                            north += 0.03;
+                            west -= 0.03;
+                            east += 0.03;
+                        }
+                        map.fitBounds([[south, west], [north, east]], {
+                            padding: [45, 45],
+                            maxZoom: 13,
+                            animate: true,
+                            duration: 0.75
+                        });
+                    }
+                }
+            }
+
+            function applySectorHighlighting() {
+                if (window._isApplyingSectorHighlight) return;
+                window._isApplyingSectorHighlight = true;
+                try {
+                    var activeSector = window._activeSectorName;
+                    var activePins = window._activeSectorPins || [];
+                    var activeBbox = window._activeSectorBbox;
+                    var hasActiveFilter = Boolean(activeSector);
+
+                    var south = (activeBbox && Array.isArray(activeBbox) && activeBbox.length === 4) ? Math.min(Number(activeBbox[0]), Number(activeBbox[2])) : null;
+                    var north = (activeBbox && Array.isArray(activeBbox) && activeBbox.length === 4) ? Math.max(Number(activeBbox[0]), Number(activeBbox[2])) : null;
+                    var west = (activeBbox && Array.isArray(activeBbox) && activeBbox.length === 4) ? Math.min(Number(activeBbox[1]), Number(activeBbox[3])) : null;
+                    var east = (activeBbox && Array.isArray(activeBbox) && activeBbox.length === 4) ? Math.max(Number(activeBbox[1]), Number(activeBbox[3])) : null;
+
+                    function checkMarkerInSector(m) {
+                        if (!m) return false;
+                        var pNum = null;
+                        var iconHtml = (m.options && m.options.icon && m.options.icon.options && m.options.icon.options.html) ? String(m.options.icon.options.html) : '';
+                        var dMatch = iconHtml.match(/data-pin-num=['"](\\d+)['"]/);
+                        if (dMatch) {
+                            pNum = parseInt(dMatch[1], 10);
+                        } else {
+                            var mMatch = iconHtml.match(/<span>(\\d+)<\\/span>/);
+                            if (mMatch) pNum = parseInt(mMatch[1], 10);
+                        }
+                        if (pNum === null) {
+                            var pContent = '';
+                            try { if (m.getPopup && m.getPopup()) pContent = String(m.getPopup().getContent() || ''); } catch(e) {}
+                            var pMatch = pContent.match(/#(\\d+)/) || pContent.match(/(\\d+)\\./);
+                            if (pMatch) pNum = parseInt(pMatch[1], 10);
+                        }
+                        if (pNum === null) {
+                            var tContent = '';
+                            try { if (m.getTooltip && m.getTooltip()) tContent = String(m.getTooltip().getContent() || ''); } catch(e) {}
+                            var tMatch = tContent.match(/#?(\\d+)/);
+                            if (tMatch) pNum = parseInt(tMatch[1], 10);
+                        }
+
+                        if (activePins.length > 0 && pNum !== null && !isNaN(pNum)) {
+                            return activePins.indexOf(pNum) !== -1;
+                        }
+                        if (south !== null && north !== null && west !== null && east !== null && m.getLatLng) {
+                            var ll = m.getLatLng();
+                            if (ll && ll.lat >= (south - 0.003) && ll.lat <= (north + 0.003) && ll.lng >= (west - 0.003) && ll.lng <= (east + 0.003)) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+
+                    // 1. Restore any previously broken-out cluster markers if sector changed or reset
+                    if (window._brokenOutSectorState && window._brokenOutSectorState.items && window._brokenOutSectorState.items.length > 0) {
+                        if (!hasActiveFilter || window._brokenOutSectorState.sector !== activeSector) {
+                            for (var b = 0; b < window._brokenOutSectorState.items.length; b++) {
+                                var item = window._brokenOutSectorState.items[b];
+                                try {
+                                    if (item.marker && item.marker._icon) {
+                                        item.marker._icon.classList.remove('geoai-sector--highlighted', 'geoai-sector--dimmed');
+                                    }
+                                    if (window._sectorBreakoutGroup && item.marker) {
+                                        window._sectorBreakoutGroup.removeLayer(item.marker);
+                                    }
+                                    if (item.clusterGroup && item.marker && map.hasLayer(item.clusterGroup)) {
+                                        item.clusterGroup.addLayer(item.marker);
+                                    }
+                                } catch(e) {}
+                            }
+                            window._brokenOutSectorState = { sector: null, items: [] };
+                        }
+                    }
+
+                    // 2. Break out matching sector markers from MarkerClusterGroups so all sector pins are individually visible
+                    if (hasActiveFilter) {
+                        if (!window._sectorBreakoutGroup) {
+                            window._sectorBreakoutGroup = L.layerGroup().addTo(map);
+                        } else if (!map.hasLayer(window._sectorBreakoutGroup)) {
+                            window._sectorBreakoutGroup.addTo(map);
+                        }
+                        if (!window._brokenOutSectorState || window._brokenOutSectorState.sector !== activeSector) {
+                            window._brokenOutSectorState = { sector: activeSector, items: [] };
+                        }
+
+                        var sectorClusters = [];
+                        function collectClusters(layer) {
+                            if (!layer) return;
+                            if (typeof L.MarkerClusterGroup !== 'undefined' && layer instanceof L.MarkerClusterGroup) {
+                                if (sectorClusters.indexOf(layer) === -1) sectorClusters.push(layer);
+                            } else if (layer !== window._sectorBreakoutGroup && layer.eachLayer) {
+                                try { layer.eachLayer(collectClusters); } catch(e) {}
+                            }
+                        }
+                        map.eachLayer(collectClusters);
+                        if (typeof getActiveClusterGroups === 'function') {
+                            var activeC = getActiveClusterGroups();
+                            for (var ac = 0; ac < activeC.length; ac++) {
+                                if (activeC[ac] && sectorClusters.indexOf(activeC[ac]) === -1) {
+                                    sectorClusters.push(activeC[ac]);
+                                }
+                            }
+                        }
+
+                        for (var cgIdx = 0; cgIdx < sectorClusters.length; cgIdx++) {
+                            var cg = sectorClusters[cgIdx];
+                            if (cg && typeof cg.getLayers === 'function') {
+                                var cgMarkers = cg.getLayers().slice();
+                                for (var mIdx = 0; mIdx < cgMarkers.length; mIdx++) {
+                                    var cm = cgMarkers[mIdx];
+                                    if (checkMarkerInSector(cm)) {
+                                        try {
+                                            cg.removeLayer(cm);
+                                            window._sectorBreakoutGroup.addLayer(cm);
+                                            window._brokenOutSectorState.items.push({ marker: cm, clusterGroup: cg });
+                                        } catch(e) {}
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    function processMarker(m) {
+                        if (!m) return;
+                        var iconEl = m._icon;
+                        if (!iconEl) return;
+                        var cls = iconEl.className || '';
+                        if (cls.indexOf('geoai-pin--target') !== -1 || cls.indexOf('geoai-pin--corner') !== -1) return;
+
+                        if (!hasActiveFilter) {
+                            iconEl.classList.remove('geoai-sector--dimmed', 'geoai-sector--highlighted');
+                            return;
+                        }
+
+                        var inSector = checkMarkerInSector(m);
+                        if (inSector) {
+                            iconEl.classList.remove('geoai-sector--dimmed');
+                            iconEl.classList.add('geoai-sector--highlighted');
+                        } else {
+                            iconEl.classList.remove('geoai-sector--highlighted');
+                            iconEl.classList.add('geoai-sector--dimmed');
+                        }
+                    }
+
+                    function inspectLayer(layer) {
+                        if (!layer) return;
+                        if (layer instanceof L.Marker) {
+                            processMarker(layer);
+                        } else if (typeof L.MarkerCluster !== 'undefined' && layer instanceof L.MarkerCluster) {
+                            var cIcon = layer._icon;
+                            if (cIcon) {
+                                if (!hasActiveFilter) {
+                                    cIcon.classList.remove('geoai-sector--dimmed', 'geoai-sector--highlighted');
+                                } else {
+                                    cIcon.classList.remove('geoai-sector--highlighted');
+                                    cIcon.classList.add('geoai-sector--dimmed');
+                                }
+                            }
+                        } else if (typeof L.MarkerClusterGroup !== 'undefined' && layer instanceof L.MarkerClusterGroup) {
+                            if (typeof layer.eachLayer === 'function') {
+                                layer.eachLayer(processMarker);
+                            }
+                        } else if (layer.eachLayer) {
+                            try { layer.eachLayer(inspectLayer); } catch(e) {}
+                        }
+                    }
+
+                    map.eachLayer(inspectLayer);
+
+                    // Sweep markerPane to dim remaining cluster bubbles or clean up when reset
+                    try {
+                        var markerPane = map.getPanes ? map.getPanes().markerPane : null;
+                        if (markerPane) {
+                            if (!hasActiveFilter) {
+                                var icons = markerPane.querySelectorAll('.leaflet-marker-icon, .marker-cluster, .geoai-cluster-wrap');
+                                for (var i = 0; i < icons.length; i++) {
+                                    icons[i].classList.remove('geoai-sector--dimmed', 'geoai-sector--highlighted');
+                                }
+                            } else {
+                                var clusterIcons = markerPane.querySelectorAll('.marker-cluster, .geoai-cluster-wrap');
+                                for (var c = 0; c < clusterIcons.length; c++) {
+                                    clusterIcons[c].classList.remove('geoai-sector--highlighted');
+                                    clusterIcons[c].classList.add('geoai-sector--dimmed');
+                                }
+                            }
+                        }
+                    } catch(err) {}
+                } finally {
+                    window._isApplyingSectorHighlight = false;
+                }
+            }
+
+            // Expose function and direct click bridge to parent window
+            try {
+                var pWin = window.parent;
+                if (pWin) {
+                    pWin._geoaiFocusMapPin = focusMapPinByCitation;
+                    pWin._geoaiFocusSector = focusMapSector;
+
+                    // If a focus request arrived before this map iframe finished mounting, process it now
+                    if (pWin._geoaiPendingFocusPin) {
+                        var pending = pWin._geoaiPendingFocusPin;
+                        pWin._geoaiPendingFocusPin = null;
+                        setTimeout(function() { focusMapPinByCitation(pending); }, 400);
+                    }
+
+                    var pDoc = pWin.document;
+                    if (pDoc && !pWin._geoaiCitationHookInstalled) {
+                        pWin._geoaiCitationHookInstalled = true;
+                        pDoc.addEventListener('click', function(e) {
+                            var target = e.target;
+                            if (!target || !target.closest) return;
+
+                            var pinCit = target.closest('.tactical-cit-pin');
+                            if (pinCit) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                var pinNum = pinCit.getAttribute('data-pin-number');
+                                var pLat = pinCit.getAttribute('data-lat');
+                                var pLng = pinCit.getAttribute('data-lng');
+                                var pLbl = pinCit.getAttribute('data-pin-label');
+                                var payload = {
+                                    type: 'GEOAI_FOCUS_PIN',
+                                    number: pinNum ? parseInt(pinNum, 10) : null,
+                                    lat: (pLat && !isNaN(parseFloat(pLat))) ? parseFloat(pLat) : null,
+                                    lng: (pLng && !isNaN(parseFloat(pLng))) ? parseFloat(pLng) : null,
+                                    label: pLbl || null
+                                };
+                                if (typeof pWin._geoaiFocusMapPin === 'function') {
+                                    pWin._geoaiFocusMapPin(payload);
+                                }
+                                return;
+                            }
+
+                            var srcCit = target.closest('.tactical-cit[data-cit-target], .tactical-cit-src, .tactical-cit-lead, .tactical-cit-ps');
+                            if (srcCit) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                var citId = srcCit.getAttribute('data-cit-target') || srcCit.textContent.replace(/[\\[\\]]/g, '').trim();
+                                if (typeof pWin._geoaiHandleSourceCitation === 'function') {
+                                    pWin._geoaiHandleSourceCitation(srcCit, citId, pDoc);
+                                }
+                                return;
+                            }
+
+                            // 0c. Regional Sector Button
+                            var sectorBtn = target.closest('.tactical-sector-btn, .tactical-sector-link, [data-sector-bbox]');
+                            if (sectorBtn) {
+                                e.preventDefault();
+                                e.stopPropagation();
+
+                                var isReset = sectorBtn.getAttribute('data-sector-action') === 'reset';
+                                var allSectorBtns = pDoc.querySelectorAll('.tactical-sector-btn, .tactical-sector-link');
+
+                                if (isReset) {
+                                    for (var b = 0; b < allSectorBtns.length; b++) {
+                                        allSectorBtns[b].classList.remove('active');
+                                    }
+                                    var resetPayload = {
+                                        type: 'GEOAI_FOCUS_SECTOR',
+                                        action: 'reset',
+                                        name: null,
+                                        sector: null,
+                                        bbox: null,
+                                        pins: []
+                                    };
+                                    focusMapSector(resetPayload);
+                                    if (typeof pWin._geoaiFocusSector === 'function' && pWin._geoaiFocusSector !== focusMapSector) {
+                                        pWin._geoaiFocusSector(resetPayload);
+                                    }
+                                    return;
+                                }
+
+                                var wasActive = sectorBtn.classList.contains('active');
+                                for (var i = 0; i < allSectorBtns.length; i++) {
+                                    allSectorBtns[i].classList.remove('active');
+                                }
+                                if (!wasActive) {
+                                    sectorBtn.classList.add('active');
+                                }
+
+                                var sName = sectorBtn.getAttribute('data-sector-name') || '';
+                                var rawBbox = sectorBtn.getAttribute('data-sector-bbox');
+                                var rawPins = sectorBtn.getAttribute('data-sector-pins');
+                                var bboxArr = null;
+                                if (rawBbox && rawBbox !== 'null') {
+                                    try { bboxArr = JSON.parse(rawBbox); } catch(err) {}
+                                }
+                                var pinsArr = [];
+                                if (rawPins && rawPins !== 'null') {
+                                    try { pinsArr = JSON.parse(rawPins); } catch(err) {}
+                                }
+
+                                var payload = {
+                                    type: 'GEOAI_FOCUS_SECTOR',
+                                    action: wasActive ? 'reset' : 'focus',
+                                    name: wasActive ? null : sName,
+                                    sector: wasActive ? null : sName,
+                                    bbox: wasActive ? null : bboxArr,
+                                    pins: wasActive ? [] : pinsArr
+                                };
+
+                                focusMapSector(payload);
+                                if (typeof pWin._geoaiFocusSector === 'function' && pWin._geoaiFocusSector !== focusMapSector) {
+                                    pWin._geoaiFocusSector(payload);
+                                }
+                                return;
+                            }
+                        }, true);
+                    }
+                }
+            } catch(e) {}
+
+            map.on('moveend zoomend', function() {
+                if (window._activeSectorName && typeof applySectorHighlighting === 'function') {
+                    applySectorHighlighting();
+                }
+            });
+            map.on('layeradd spiderfied unspiderfied', function() {
+                if (window._activeSectorName && typeof applySectorHighlighting === 'function') {
+                    applySectorHighlighting();
+                }
+            });
+
+            // Handle popup citation clicks inside Leaflet canvas
+            map.on('popupopen', function(e) {
+                var popupEl = e.popup && e.popup.getElement ? e.popup.getElement() : null;
+                if (popupEl && !popupEl._geoaiCitBound) {
+                    popupEl._geoaiCitBound = true;
+                    popupEl.addEventListener('click', function(evt) {
+                        var srcCit = evt.target && evt.target.closest && evt.target.closest('.tactical-cit[data-cit-target], .tactical-cit-src, .tactical-cit-lead, .tactical-cit-ps');
+                        if (srcCit) {
+                            evt.preventDefault();
+                            evt.stopPropagation();
+                            var citId = srcCit.getAttribute('data-cit-target') || srcCit.textContent.replace(/[\\[\\]]/g, '').trim();
+                            try {
+                                if (pWin && typeof pWin._geoaiHandleSourceCitation === 'function') {
+                                    pWin._geoaiHandleSourceCitation(null, citId, pWin.document);
+                                }
+                            } catch(err) {}
+                        }
+                    }, true);
                 }
             });
 
@@ -1433,11 +3782,13 @@ class MapTrashBinHook(MacroElement):
                     window.__GLOBAL_DATA__.last_active_drawing = null;
                     window.__GLOBAL_DATA__.all_drawings = [];
                 }
+                // Deferred sync: point selection is fully rendered client-side, so do NOT rerun
+                // Python now. The gate flushes once when the operator leaves the map.
                 try {
-                    if (typeof window.geoaiImmediateDispatch === "function") {
+                    if (typeof window.geoaiMarkSelectionDirty === "function") {
+                        window.geoaiMarkSelectionDirty();
+                    } else if (typeof window.geoaiImmediateDispatch === "function") {
                         window.geoaiImmediateDispatch(map);
-                    } else if (typeof updateComponentValue === "function") {
-                        updateComponentValue(map);
                     }
                 } catch(err) {}
             });
@@ -1516,11 +3867,13 @@ class MapTrashBinHook(MacroElement):
                                 console.warn("[GeoAI] Instant reticle marker error:", err);
                             }
 
+                            // Deferred sync: answer-pin selection is rendered client-side (reticle + HUD);
+                            // Python receives it once on flush instead of rerunning on every pin click.
                             try {
-                                if (typeof window.geoaiImmediateDispatch === 'function') {
+                                if (typeof window.geoaiMarkSelectionDirty === 'function') {
+                                    window.geoaiMarkSelectionDirty();
+                                } else if (typeof window.geoaiImmediateDispatch === 'function') {
                                     window.geoaiImmediateDispatch(map);
-                                } else if (typeof updateComponentValue === 'function') {
-                                    updateComponentValue(map);
                                 }
                             } catch(err) {}
                         }
@@ -2166,6 +4519,10 @@ class MapTrashBinHook(MacroElement):
         super().__init__()
         self.selection_layer_names = selection_layer_names or []
         self.has_active = has_active
+        self.deferred_sync_js = build_deferred_selection_sync_js()
+        self.font_sync_js = build_iframe_font_sync_js()
+        self.resizer_theme_css_js = json.dumps(build_resizer_theme_css())
+        self.font_display_js = json.dumps(FONT_DISPLAY)
 
 # ==============================================================================
 # 1. Visual Theme Configurations & Page Setup (GeoAI Defense C2)
@@ -2379,7 +4736,11 @@ def make_pin_icon(
     is_unc = bool(uncertain) or tok == "uncertain"
 
     if is_ctx:
-        html = "<div class='geoai-dot'></div>"
+        num_str = str(number).strip() if number is not None and str(number).strip() != "" else ""
+        if num_str:
+            html = f"<div class='geoai-dot' data-pin-num='{num_str}'><i class='geoai-dot-num'>{num_str}</i></div>"
+        else:
+            html = "<div class='geoai-dot'></div>"
         return folium.DivIcon(
             html=html,
             icon_size=(10, 10),
@@ -2448,6 +4809,62 @@ def _popup_card(
         f"</div>"
     )
 
+
+def _is_welcome_message(msg: Any, index: int = 0) -> bool:
+    """Return True when `msg` is the initial introductory welcome card."""
+    if not isinstance(msg, dict):
+        return False
+    if msg.get("is_welcome"):
+        return True
+    return (
+        index == 0
+        and msg.get("role") == "assistant"
+        and not msg.get("is_live")
+        and "Welcome to the GeoAI" in str(msg.get("content", ""))
+    )
+
+
+def count_chat_messages(messages: Optional[List[Dict[str, Any]]]) -> int:
+    """Count operator and assistant conversation turns, excluding the welcome message."""
+    if not messages:
+        return 0
+    return sum(1 for idx, msg in enumerate(messages) if not _is_welcome_message(msg, index=idx))
+
+
+def render_session_telemetry_html(chat_count: int, layer_count: int) -> str:
+    """Render compact 2-card tactical telemetry HTML for Chat Messages and Active Layers."""
+    chats_str = f"{max(0, int(chat_count)):02d}"
+    layers_str = f"{max(0, int(layer_count)):02d}"
+    return (
+        "<div class='geoai-telemetry-grid'>"
+        "<div class='geoai-telemetry-card'>"
+        "<div class='geoai-telemetry-label'>Chat Messages</div>"
+        f"<div class='geoai-telemetry-val'>{chats_str}</div>"
+        "</div>"
+        "<div class='geoai-telemetry-card'>"
+        "<div class='geoai-telemetry-label'>Active Layers</div>"
+        f"<div class='geoai-telemetry-val'>{layers_str}</div>"
+        "</div>"
+        "</div>"
+    )
+
+
+def render_layer_legend_html() -> str:
+    """Render rotated-diamond tactical layer legend matching the Defense C2 HUD design."""
+    items = (
+        ("#38bdf8", "Primary Place", "numbered &amp; cited"),
+        ("#ff4d6d", "Event", "tactical focus"),
+        ("#ffb020", "Uncertain", "inferred coordinates"),
+    )
+    rows = "".join(
+        "<div class='geoai-legend-item'>"
+        f"<span class='geoai-legend-swatch' style='background:{color};'></span>"
+        f"<span><b>{title}</b> &mdash; {desc}</span>"
+        "</div>"
+        for color, title, desc in items
+    )
+    return f"<div class='geoai-legend-list'>{rows}</div>"
+
 # Configure Streamlit page properties to use a responsive wide layout
 st.set_page_config(
     page_title=f"GeoAI Intelligence Hub [{t_cfg['name']}]",
@@ -2457,11 +4874,283 @@ st.set_page_config(
 )
 
 # Custom CSS for tactical HUD interface styling
-st.markdown(f"""
+st.markdown(f"""{get_font_style_block()}
 <style>
-    /* Global Typography */
-    html, body, [class*="css"], font, span, p, div, button, input {{
-        font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    /* Tactical Citations Styling */
+    a.tactical-cit,
+    .tactical-cit {{
+        display: inline-block;
+        padding: 1px 5px;
+        margin: 0 2px;
+        font-size: 0.82em;
+        font-weight: 700;
+        font-family: {FONT_MONO};
+        border-radius: 4px;
+        vertical-align: baseline;
+        transition: all 0.15s ease-in-out;
+        cursor: pointer !important;
+        text-decoration: none !important;
+    }}
+    a.tactical-cit:hover,
+    .tactical-cit:hover {{
+        transform: translateY(-1px);
+        filter: brightness(1.25);
+        text-decoration: none !important;
+    }}
+    .tactical-cit-pin {{
+        background: rgba(0, 229, 255, 0.15);
+        color: #00e5ff;
+        border: 1px solid rgba(0, 229, 255, 0.45);
+        box-shadow: 0 0 4px rgba(0, 229, 255, 0.2);
+    }}
+    .tactical-cit-src {{
+        background: rgba(0, 230, 118, 0.15);
+        color: #00e676;
+        border: 1px solid rgba(0, 230, 118, 0.45);
+        box-shadow: 0 0 4px rgba(0, 230, 118, 0.2);
+    }}
+    .tactical-cit-lead {{
+        background: rgba(168, 85, 247, 0.15);
+        color: #c084fc;
+        border: 1px solid rgba(168, 85, 247, 0.45);
+        box-shadow: 0 0 4px rgba(168, 85, 247, 0.2);
+    }}
+    .tactical-cit-ps {{
+        background: rgba(245, 158, 11, 0.15);
+        color: #fbbf24;
+        border: 1px solid rgba(245, 158, 11, 0.45);
+        box-shadow: 0 0 4px rgba(245, 158, 11, 0.2);
+    }}
+
+    /* Phase 2: Tactical Sector Cards & Foldable Regional Tree */
+    .tactical-sector-container {{
+        background: rgba(11, 19, 32, 0.7);
+        border: 1px solid rgba(56, 189, 248, 0.2);
+        border-radius: 8px;
+        padding: 8px 10px;
+        margin: 6px 0 10px 0;
+        font-family: {FONT_BODY};
+    }}
+    .tactical-sector-toolbar {{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 6px;
+        margin-bottom: 6px;
+        border-bottom: 1px solid rgba(56, 189, 248, 0.15);
+    }}
+    .tactical-sector-title {{
+        font-family: {FONT_DISPLAY};
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #94a3b8;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }}
+    .tactical-sector-title code {{
+        font-family: {FONT_MONO};
+        background: rgba(56, 189, 248, 0.12);
+        color: #38bdf8;
+        padding: 1px 6px;
+        border-radius: 3px;
+        font-size: 0.70rem;
+    }}
+    .tactical-sector-reset-btn {{
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid rgba(56, 189, 248, 0.35);
+        color: #38bdf8;
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.74rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }}
+    .tactical-sector-reset-btn:hover {{
+        background: rgba(56, 189, 248, 0.2);
+        color: #f0f9ff;
+        border-color: #38bdf8;
+        box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+    }}
+    .tactical-sector-card {{
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(56, 189, 248, 0.18);
+        border-radius: 6px;
+        margin: 4px 0;
+        overflow: hidden;
+        transition: border-color 0.15s ease, background-color 0.15s ease;
+    }}
+    .tactical-sector-card:hover {{
+        border-color: rgba(56, 189, 248, 0.4);
+        background: rgba(15, 23, 42, 0.85);
+    }}
+    .tactical-sector-card[open] {{
+        border-color: rgba(56, 189, 248, 0.5);
+        background: rgba(15, 23, 42, 0.9);
+    }}
+    .tactical-sector-summary {{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 10px;
+        cursor: pointer;
+        user-select: none;
+        list-style: none;
+        gap: 8px;
+    }}
+    .tactical-sector-summary::-webkit-details-marker {{
+        display: none;
+    }}
+    .tactical-sector-header-left {{
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        min-width: 0;
+    }}
+    .tactical-chevron {{
+        font-size: 0.68rem;
+        color: #38bdf8;
+        transition: transform 0.2s ease;
+        display: inline-block;
+        line-height: 1;
+    }}
+    .tactical-sector-card[open] > .tactical-sector-summary .tactical-chevron {{
+        transform: rotate(90deg);
+    }}
+    .tactical-sector-name {{
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #f1f5f9;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }}
+    .tactical-sector-count {{
+        font-family: {FONT_MONO};
+        background: rgba(56, 189, 248, 0.12);
+        color: #38bdf8;
+        border: 1px solid rgba(56, 189, 248, 0.25);
+        border-radius: 10px;
+        padding: 1px 7px;
+        font-size: 0.70rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        white-space: nowrap;
+    }}
+    .tactical-sector-btn {{
+        font-family: {FONT_MONO};
+        background: rgba(56, 189, 248, 0.12);
+        border: 1px solid rgba(56, 189, 248, 0.4);
+        color: #38bdf8;
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.74rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        text-decoration: none;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }}
+    .tactical-sector-btn:hover {{
+        background: rgba(56, 189, 248, 0.25);
+        border-color: #38bdf8;
+        color: #ffffff;
+        box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+    }}
+    .tactical-sector-btn.active {{
+        background: rgba(56, 189, 248, 0.45);
+        border-color: #38bdf8;
+        color: #ffffff;
+        box-shadow: 0 0 14px rgba(56, 189, 248, 0.85);
+    }}
+    .tactical-sector-drawer {{
+        padding: 6px 8px 8px 10px;
+        border-top: 1px solid rgba(56, 189, 248, 0.12);
+        background: rgba(10, 15, 26, 0.45);
+    }}
+    .tactical-pins-section {{
+        margin-top: 4px;
+    }}
+    .tactical-pins-label {{
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: #64748b;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+    }}
+    .tactical-pins-grid {{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        align-items: center;
+    }}
+    .tactical-more-pins {{
+        font-size: 0.72rem;
+        color: #64748b;
+        padding: 2px 6px;
+        font-style: italic;
+    }}
+    .tactical-sector-child-card {{
+        margin: 4px 0 6px 0;
+        background: rgba(15, 23, 42, 0.5);
+        border: 1px solid rgba(56, 189, 248, 0.15);
+    }}
+    .tactical-reg-item {{
+        margin: 3px 0;
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 6px;
+    }}
+    .tactical-reg-child {{
+        margin-left: 20px;
+        margin-top: 2px;
+        margin-bottom: 2px;
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 6px;
+    }}
+    .tactical-reg-pins {{
+        font-size: 0.80rem;
+        color: #94a3b8;
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        flex-wrap: wrap;
+    }}
+
+    /* Global Typography (3-Tier Tactical Hierarchy) */
+    :root, .stApp {{
+        --font: {FONT_BODY};
+        --monospace-font: {FONT_MONO};
+    }}
+    html, body, .stApp, [data-testid="stAppViewContainer"], [data-testid="stSidebar"],
+    p, li, label, input, textarea, select, [data-testid="stMarkdownContainer"] {{
+        font-family: {FONT_BODY};
+    }}
+    h1, h2, h3, h4,
+    [data-testid="stHeadingWithActionElements"] h1,
+    [data-testid="stHeadingWithActionElements"] h2,
+    [data-testid="stHeadingWithActionElements"] h3 {{
+        font-family: {FONT_DISPLAY} !important;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }}
+    code, pre, kbd, samp {{
+        font-family: {FONT_MONO} !important;
     }}
 
     /* Lock Viewport to Chrome Window - Zero Main Window Scrollbar */
@@ -2737,6 +5426,7 @@ st.markdown(f"""
         display: inline-block;
         padding: 5px 12px;
         border-radius: 4px;
+        font-family: {FONT_MONO};
         font-size: 0.82rem;
         font-weight: 700;
         letter-spacing: 0.06em;
@@ -2788,6 +5478,7 @@ st.markdown(f"""
         flex-shrink: 0;
     }}
     .geo-pill-label {{
+        font-family: {FONT_MONO};
         font-size: 0.70rem;
         font-weight: 700;
         letter-spacing: 0.08em;
@@ -2809,14 +5500,14 @@ st.markdown(f"""
         white-space: nowrap;
     }}
     .geo-pill-sublabel {{
-        font-family: 'JetBrains Mono', monospace;
+        font-family: {FONT_MONO};
         font-size: 0.62rem;
         font-weight: 700;
         color: {t_cfg['text_dim']};
         letter-spacing: 0.05em;
     }}
     .geo-pill-coord {{
-        font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+        font-family: {FONT_MONO};
         font-size: 0.74rem;
         font-weight: 700;
         color: {t_cfg['primary']};
@@ -2833,9 +5524,10 @@ st.markdown(f"""
         border-right: 1px solid {t_cfg['border_card']};
         border-bottom: 1px solid {t_cfg['border_card']};
         border-radius: 4px;
-        font-size: 0.88rem;
+        font-family: {FONT_DISPLAY};
+        font-size: 0.92rem;
         font-weight: 700;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.09em;
         text-transform: uppercase;
         margin-bottom: 0.45rem;
         color: {t_cfg['primary']};
@@ -2911,6 +5603,7 @@ st.markdown(f"""
 
     /* Operator inner content & header */
     .chat-role-tag.chat-role-operator {{
+        font-family: {FONT_MONO};
         text-align: right !important;
         color: #38bdf8 !important;
         letter-spacing: 0.08em;
@@ -2953,6 +5646,7 @@ st.markdown(f"""
 
     /* Geo-AI inner content & header */
     .chat-role-tag.chat-role-geoai {{
+        font-family: {FONT_MONO};
         text-align: left !important;
         color: {t_cfg['primary']} !important;
         letter-spacing: 0.08em;
@@ -3005,33 +5699,51 @@ st.markdown(f"""
     }}
 
     /* HUD Buttons */
-    div.stButton > button {{
-        font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
+    div.stButton button,
+    div[data-testid="stButton"] button,
+    div.stButton button p,
+    div[data-testid="stButton"] button p,
+    div.stButton button div[data-testid="stMarkdownContainer"],
+    div[data-testid="stButton"] button div[data-testid="stMarkdownContainer"] {{
+        font-family: {FONT_DISPLAY} !important;
         text-transform: uppercase !important;
         letter-spacing: 0.07em !important;
         font-weight: 600 !important;
+    }}
+    div.stButton button,
+    div[data-testid="stButton"] button {{
         border-radius: 3px !important;
         border: 1px solid {t_cfg['border_card']} !important;
         background: {t_cfg['bg_card']} !important;
         color: {t_cfg['text_main']} !important;
         transition: all 0.2s ease-in-out !important;
     }}
-    div.stButton > button:hover {{
+    div.stButton button:hover,
+    div[data-testid="stButton"] button:hover {{
         border-color: {t_cfg['primary']} !important;
         color: {t_cfg['primary']} !important;
         box-shadow: 0 0 12px {t_cfg['glow']} !important;
         background: rgba(0, 0, 0, 0.5) !important;
     }}
+    div[class*="st-key-btn_fu_"] button,
+    div[class*="st-key-btn_fu_"] button p,
+    div[class*="st-key-btn_area_sugg_"] button,
+    div[class*="st-key-btn_area_sugg_"] button p {{
+        font-family: {FONT_BODY} !important;
+        text-transform: none !important;
+        letter-spacing: 0.01em !important;
+        font-weight: 500 !important;
+    }}
 
     /* Telemetry Metrics */
     div[data-testid="stMetricValue"] {{
-        font-family: 'JetBrains Mono', monospace !important;
+        font-family: {FONT_MONO} !important;
         color: {t_cfg['primary']} !important;
         text-shadow: 0 0 10px {t_cfg['glow']} !important;
         font-size: 1.4rem !important;
     }}
     div[data-testid="stMetricLabel"] {{
-        font-family: 'JetBrains Mono', monospace !important;
+        font-family: {FONT_MONO} !important;
         text-transform: uppercase !important;
         letter-spacing: 0.08em !important;
         color: {t_cfg['text_dim']} !important;
@@ -3052,8 +5764,8 @@ st.markdown(f"""
     }}
     div[data-testid="stChatInput"] textarea {{
         color: {t_cfg['text_main']} !important;
-        font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
-        font-size: 0.85rem !important;
+        font-family: {FONT_BODY} !important;
+        font-size: 0.9rem !important;
     }}
     div[data-testid="stChatInput"] textarea:placeholder-shown {{
         white-space: nowrap !important;
@@ -3067,16 +5779,90 @@ st.markdown(f"""
 
     /* Sidebar Title */
     .sidebar-title {{
-        font-size: 1.15rem;
-        font-weight: 800;
+        font-family: {FONT_DISPLAY};
+        font-size: 1.12rem;
+        font-weight: 700;
         letter-spacing: 0.08em;
         text-transform: uppercase;
+        white-space: nowrap;
         color: {t_cfg['primary']};
         text-shadow: 0 0 10px {t_cfg['glow']};
         margin-bottom: 2px;
     }}
 
-    /* Instant Client-Side Target HUD Pill Bridge */
+    /* Session Telemetry Cards & Tactical Layer Legend */
+    .geoai-telemetry-grid {{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 2px;
+        margin-bottom: 4px;
+    }}
+    .geoai-telemetry-card {{
+        background: rgba(8, 12, 17, 0.6);
+        border: 1px solid rgba(0, 229, 255, 0.18);
+        border-radius: 5px;
+        padding: 7px 10px;
+        min-width: 0;
+    }}
+    .geoai-telemetry-label {{
+        font-family: {FONT_MONO};
+        font-size: 0.63rem;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: {t_cfg['text_dim']};
+        line-height: 1.2;
+    }}
+    .geoai-telemetry-val {{
+        font-family: {FONT_MONO};
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: {t_cfg['primary']};
+        text-shadow: 0 0 10px {t_cfg['glow']};
+        line-height: 1.25;
+        margin-top: 2px;
+    }}
+    .geoai-legend-list {{
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-family: {FONT_BODY};
+        font-size: 0.78rem;
+        color: #cbd5e1;
+        margin-top: 2px;
+    }}
+    .geoai-legend-item {{
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        line-height: 1.35;
+    }}
+    .geoai-legend-swatch {{
+        width: 9px;
+        height: 9px;
+        transform: rotate(45deg);
+        flex-shrink: 0;
+        border-radius: 1px;
+    }}
+    .geoai-legend-item b {{
+        color: #f1f5f9;
+        font-weight: 600;
+    }}
+
+    /* Instant Client-Side Target HUD Pill Bridge (Hidden in favor of in-map #geoai_map_tactical_hud) */
+    #geoai-instant-pill-slot,
+    div[data-testid="stHtml"]:has(#geoai-instant-pill-slot),
+    div[data-testid="stElementContainer"]:has(#geoai-instant-pill-slot) {{
+        display: none !important;
+        height: 0px !important;
+        min-height: 0px !important;
+        max-height: 0px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        border: none !important;
+    }}
     .geoai-instant-pill-row {{
         display: flex;
         gap: 8px;
@@ -3123,6 +5909,11 @@ st.markdown(f"""
         border-color: rgba(0, 229, 255, 0.35);
         background: rgba(14, 22, 32, 0.6);
     }}
+    .geoai-source-detail--highlight {{
+        border-color: #00e676 !important;
+        box-shadow: 0 0 12px rgba(0, 230, 118, 0.45) !important;
+        background: rgba(0, 230, 118, 0.12) !important;
+    }}
     .geoai-source-summary {{
         cursor: pointer;
         display: flex;
@@ -3144,7 +5935,7 @@ st.markdown(f"""
         padding-right: 8px;
     }}
     .geoai-source-badge {{
-        font-family: 'JetBrains Mono', monospace;
+        font-family: {FONT_MONO};
         font-size: 0.70rem;
         font-weight: 600;
         color: #00e5ff;
@@ -3155,6 +5946,20 @@ st.markdown(f"""
         flex-shrink: 0;
         transition: all 0.15s ease;
     }}
+    
+    /* Hide the zero-height parent bridge iframe completely to prevent visual artifacts */
+    iframe[title="geoai-parent-bridge"],
+    iframe[srcdoc*="geoai-parent-bridge"],
+    div[data-testid="stCustomComponentV1"]:has(iframe[srcdoc*="geoai-parent-bridge"]),
+    div[data-testid="stElementContainer"]:has(iframe[srcdoc*="geoai-parent-bridge"]) {{
+        display: none !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        max-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+    }}
     .geoai-source-detail[open] .geoai-source-badge {{
         color: #f87171;
         border-color: rgba(248, 113, 113, 0.3);
@@ -3163,176 +5968,389 @@ st.markdown(f"""
 </style>
 """, unsafe_allow_html=True)
 
-# 0ms Instant Target HUD Bridge: listens to Leaflet map clicks/drawings in the iframe
-st.markdown("""<script>
-(function() {
-    if (window._geoaiSelectionBridgeInstalled) return;
-    window._geoaiSelectionBridgeInstalled = true;
+# 0ms Instant Target HUD Bridge: listens to Leaflet map clicks/drawings and interactive citations
+components.html(
+    """<!-- geoai-parent-bridge -->
+    <div id="geoai-parent-bridge" style="display:none;"></div>
+    <script>
+    (function() {
+        var pWin = window.parent;
+        if (!pWin) return;
+        var pDoc = pWin.document;
+        if (!pDoc) return;
 
-    function postToMapIframes(payload) {
-        try {
-            var iframes = document.querySelectorAll('iframe');
-            for (var i = 0; i < iframes.length; i++) {
-                if (iframes[i].contentWindow) {
-                    iframes[i].contentWindow.postMessage(payload, '*');
+        function postToMapIframes(payload) {
+            try {
+                var iframes = pDoc.querySelectorAll('iframe');
+                for (var i = 0; i < iframes.length; i++) {
+                    if (iframes[i].contentWindow) {
+                        iframes[i].contentWindow.postMessage(payload, '*');
+                    }
                 }
-            }
-        } catch (err) {}
-    }
-
-    // 0ms Parent-to-Iframe Event Forwarding (Clear buttons, Chat Submit, Recon Scan)
-    document.addEventListener('click', function(e) {
-        var target = e.target;
-        if (!target || !target.closest) return;
-
-        // 1. Instant preview pill Clear button
-        var instClr = target.closest('[data-geoai-action="clear"]');
-        if (instClr) {
-            var slot = document.getElementById('geoai-instant-pill-slot');
-            if (slot) {
-                slot.style.display = 'none';
-                slot.innerHTML = '';
-            }
-            postToMapIframes({ type: 'GEOAI_PARENT_CMD', action: 'clear' });
-            return;
+            } catch (err) {}
         }
 
-        // 1b. Instant preview pill Recon button
-        var instRec = target.closest('[data-geoai-action="recon"]');
-        if (instRec) {
-            postToMapIframes({ type: 'GEOAI_QUERY_STATE', state: 'querying' });
-            var realBtn = document.querySelector('button[key="run_chat_recon"]') || Array.from(document.querySelectorAll('button')).find(function(b) {
-                return (b.textContent || '').indexOf('Recon') !== -1;
+        function handleSourceCitation(srcCit, targetId, doc) {
+            doc = doc || pDoc;
+            var rawId = targetId || (srcCit && srcCit.getAttribute && srcCit.getAttribute('data-cit-target')) || (srcCit && srcCit.textContent) || '';
+            var normId = rawId.replace(/[\\[\\]]/g, '').trim().toUpperCase();
+            if (!normId) return;
+
+            var chatMsg = (srcCit && srcCit.closest) ? (srcCit.closest('div[data-testid="stChatMessage"]') || srcCit.closest('.stChatMessage') || doc) : doc;
+
+            // 1. Expand the 'Verified Sources' expander if closed
+            var expanders = chatMsg.querySelectorAll('div[data-testid="stExpander"], details[data-testid="stExpander"], [data-testid="stExpander"]');
+            if (!expanders.length) {
+                expanders = doc.querySelectorAll('div[data-testid="stExpander"], details[data-testid="stExpander"], [data-testid="stExpander"]');
+            }
+            for (var eIdx = 0; eIdx < expanders.length; eIdx++) {
+                var exp = expanders[eIdx];
+                var expText = (exp.textContent || '').toLowerCase();
+                if (expText.indexOf('sources') !== -1 || expText.indexOf('verified') !== -1 || expText.indexOf('📑') !== -1) {
+                    var detailsTag = exp.tagName === 'DETAILS' ? exp : exp.querySelector('details');
+                    var summaryTag = exp.querySelector('summary') || exp.querySelector('[data-testid="stExpanderStepChevron"]') || exp.querySelector('button');
+
+                    var isAlreadyOpen = false;
+                    if (detailsTag && detailsTag.open) {
+                        isAlreadyOpen = true;
+                    } else if (summaryTag && summaryTag.getAttribute('aria-expanded') === 'true') {
+                        isAlreadyOpen = true;
+                    } else if (exp.classList.contains('open') || exp.getAttribute('data-state') === 'expanded') {
+                        isAlreadyOpen = true;
+                    }
+
+                    if (!isAlreadyOpen) {
+                        if (summaryTag && summaryTag.click) {
+                            try { summaryTag.click(); } catch(err) { if (detailsTag) detailsTag.open = true; }
+                        } else if (detailsTag) {
+                            detailsTag.open = true;
+                        }
+                    }
+                    break;
+                }
+            }
+
+            // 2. Find and activate matching source card
+            function activateCard(card) {
+                if (!card) return;
+                card.open = true;
+                card.classList.add('geoai-source-detail--highlight');
+                try {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } catch(e) {
+                    try { card.scrollIntoView(true); } catch(e2) {}
+                }
+                setTimeout(function() {
+                    card.classList.remove('geoai-source-detail--highlight');
+                }, 3000);
+            }
+
+            function findCard(scope) {
+                var allCards = (scope || doc).querySelectorAll('details.geoai-source-detail');
+                if (!allCards || !allCards.length) return null;
+
+                // A. Exact data-cit-id match (e.g. data-cit-id="S1" or "P3-S1")
+                for (var c = 0; c < allCards.length; c++) {
+                    var cId = (allCards[c].getAttribute('data-cit-id') || '').trim().toUpperCase();
+                    if (cId === normId) return allCards[c];
+                }
+
+                // B. Suffix or substring match (e.g. "P3-S1" matches "S1" or vice-versa)
+                for (var c2 = 0; c2 < allCards.length; c2++) {
+                    var cId2 = (allCards[c2].getAttribute('data-cit-id') || '').trim().toUpperCase();
+                    if (cId2.indexOf(normId) !== -1 || normId.indexOf(cId2) !== -1) return allCards[c2];
+                }
+
+                // C. Header text match (e.g. "[S1]" or "[P3-S1]")
+                for (var t = 0; t < allCards.length; t++) {
+                    var tEl = allCards[t].querySelector('.geoai-source-title') || allCards[t];
+                    var tText = (tEl.textContent || '').toUpperCase();
+                    if (tText.indexOf('[' + normId + ']') !== -1 || tText.indexOf(normId) !== -1) return allCards[t];
+                }
+
+                // D. Numeric fallback: e.g. "S1" -> 1st card, "S2" -> 2nd card
+                var numDigits = normId.match(/\\d+/);
+                if (numDigits) {
+                    var sIndex = parseInt(numDigits[0], 10) - 1;
+                    if (sIndex >= 0 && sIndex < allCards.length) {
+                        return allCards[sIndex];
+                    }
+                }
+
+                return allCards[0] || null;
+            }
+
+            [0, 35, 110, 260, 520].forEach(function(delay) {
+                setTimeout(function() {
+                    var card = findCard(chatMsg) || findCard(doc);
+                    if (card) {
+                        activateCard(card);
+                    }
+                }, delay);
             });
-            if (realBtn) {
-                realBtn.click();
-            }
-            return;
         }
 
-        // 2. Streamlit Clear / Reset buttons -> 0ms visual cleanup in map iframe
-        var btn = target.closest('button');
-        if (btn) {
-            var txt = (btn.textContent || '').trim();
-            if (
-                txt.indexOf('❌ Clear') !== -1 ||
-                txt.indexOf('Clear Box') !== -1 ||
-                txt.indexOf('Clear Point') !== -1 ||
-                txt.indexOf('Reset Map Layers') !== -1 ||
-                txt.indexOf('Clear Map & Console') !== -1
-            ) {
-                var slot2 = document.getElementById('geoai-instant-pill-slot');
-                if (slot2) {
-                    slot2.style.display = 'none';
-                    slot2.innerHTML = '';
+        pWin._geoaiHandleSourceCitation = handleSourceCitation;
+
+        if (pWin._geoaiSelectionBridgeInstalled) return;
+        pWin._geoaiSelectionBridgeInstalled = true;
+
+        // 0ms Parent-to-Iframe Event Forwarding (Clear buttons, Chat Submit, Recon Scan, Citations)
+        pDoc.addEventListener('click', function(e) {
+            var target = e.target;
+            if (!target || !target.closest) return;
+
+            // 0a. Interactive Location Citation Badge ([1], [2]) -> 0ms Map Zoom & Focus + Popup
+            var pinCit = target.closest('.tactical-cit-pin');
+            if (pinCit) {
+                e.preventDefault();
+                e.stopPropagation();
+                var pinNum = pinCit.getAttribute('data-pin-number');
+                var pLat = pinCit.getAttribute('data-lat');
+                var pLng = pinCit.getAttribute('data-lng');
+                var pLbl = pinCit.getAttribute('data-pin-label');
+                var payload = {
+                    type: 'GEOAI_FOCUS_PIN',
+                    number: pinNum ? parseInt(pinNum, 10) : null,
+                    lat: (pLat && !isNaN(parseFloat(pLat))) ? parseFloat(pLat) : null,
+                    lng: (pLng && !isNaN(parseFloat(pLng))) ? parseFloat(pLng) : null,
+                    label: pLbl || null
+                };
+                if (typeof pWin._geoaiFocusMapPin === 'function') {
+                    pWin._geoaiFocusMapPin(payload);
+                } else {
+                    pWin._geoaiPendingFocusPin = payload;
                 }
-                postToMapIframes({ type: 'GEOAI_PARENT_CMD', action: 'clear_visuals' });
+                postToMapIframes(payload);
                 return;
             }
-            // 3. Recon Scan or Chat Submit button -> 0ms querying scanline + pulse
-            var inChatInput = Boolean(btn.closest('div[data-testid="stChatInput"]'));
-            if (
-                txt.indexOf('Recon') !== -1 ||
-                btn.getAttribute('data-testid') === 'stChatInputSubmitButton' ||
-                inChatInput
-            ) {
+
+            // 0b. Interactive Source Citation Badge ([S1], [L1], [P1-S1]) -> Expand Verified Sources & Open Inspect Card
+            var srcCit = target.closest('.tactical-cit[data-cit-target], .tactical-cit-src, .tactical-cit-lead, .tactical-cit-ps');
+            if (srcCit) {
+                e.preventDefault();
+                e.stopPropagation();
+                var citId = srcCit.getAttribute('data-cit-target') || srcCit.textContent.replace(/[\\[\\]]/g, '').trim();
+                handleSourceCitation(srcCit, citId, pDoc);
+                return;
+            }
+
+            // 0c. Interactive Regional Sector Button / Header -> 0ms Map Bounding Box Zoom + Sector Pin Highlight
+            var sectorBtn = target.closest('.tactical-sector-btn, .tactical-sector-link, [data-sector-bbox]');
+            if (sectorBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var isReset = sectorBtn.getAttribute('data-sector-action') === 'reset';
+                var allSectorBtns = pDoc.querySelectorAll('.tactical-sector-btn, .tactical-sector-link');
+
+                if (isReset) {
+                    for (var b = 0; b < allSectorBtns.length; b++) {
+                        allSectorBtns[b].classList.remove('active');
+                    }
+                    var resetPayload = {
+                        type: 'GEOAI_FOCUS_SECTOR',
+                        action: 'reset',
+                        name: null,
+                        sector: null,
+                        bbox: null,
+                        pins: []
+                    };
+                    if (typeof pWin._geoaiFocusSector === 'function') {
+                        pWin._geoaiFocusSector(resetPayload);
+                    }
+                    postToMapIframes(resetPayload);
+                    return;
+                }
+
+                var wasActive = sectorBtn.classList.contains('active');
+                for (var i = 0; i < allSectorBtns.length; i++) {
+                    allSectorBtns[i].classList.remove('active');
+                }
+                if (!wasActive) {
+                    sectorBtn.classList.add('active');
+                }
+
+                var sName = sectorBtn.getAttribute('data-sector-name') || '';
+                var rawBbox = sectorBtn.getAttribute('data-sector-bbox');
+                var rawPins = sectorBtn.getAttribute('data-sector-pins');
+                var bboxArr = null;
+                if (rawBbox && rawBbox !== 'null') {
+                    try { bboxArr = JSON.parse(rawBbox); } catch(err) {}
+                }
+                var pinsArr = [];
+                if (rawPins && rawPins !== 'null') {
+                    try { pinsArr = JSON.parse(rawPins); } catch(err) {}
+                }
+
+                var payload = {
+                    type: 'GEOAI_FOCUS_SECTOR',
+                    action: wasActive ? 'reset' : 'focus',
+                    name: wasActive ? null : sName,
+                    sector: wasActive ? null : sName,
+                    bbox: wasActive ? null : bboxArr,
+                    pins: wasActive ? [] : pinsArr
+                };
+
+                if (typeof pWin._geoaiFocusSector === 'function') {
+                    pWin._geoaiFocusSector(payload);
+                }
+                postToMapIframes(payload);
+                return;
+            }
+
+            // 1. Instant preview pill Clear button
+            var instClr = target.closest('[data-geoai-action="clear"]');
+            if (instClr) {
+                var slot = pDoc.getElementById('geoai-instant-pill-slot');
+                if (slot) {
+                    slot.style.display = 'none';
+                    slot.innerHTML = '';
+                }
+                postToMapIframes({ type: 'GEOAI_PARENT_CMD', action: 'clear' });
+                return;
+            }
+
+            // 1b. Instant preview pill Recon button
+            var instRec = target.closest('[data-geoai-action="recon"]');
+            if (instRec) {
                 postToMapIframes({ type: 'GEOAI_QUERY_STATE', state: 'querying' });
-            }
-        }
-    }, true);
-
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            var ta = e.target && e.target.closest && e.target.closest('div[data-testid="stChatInput"] textarea');
-            if (ta && ta.value && ta.value.trim().length > 0) {
-                postToMapIframes({ type: 'GEOAI_QUERY_STATE', state: 'querying' });
-            }
-        }
-    }, true);
-
-    window.addEventListener('message', function(event) {
-        if (!event.data) return;
-        if (event.data.type === 'GEOAI_PARENT_CMD') {
-            if (event.data.action === 'trigger_recon') {
-                var reconBtn = document.querySelector('.st-key-run_chat_recon button') ||
-                    document.querySelector('button[key="run_chat_recon"]') ||
-                    Array.from(document.querySelectorAll('button')).find(function(b) {
-                        return (b.textContent || '').indexOf('Recon') !== -1;
-                    });
-                if (reconBtn) {
-                    try { reconBtn.click(); } catch(e) {}
+                var realBtn = pDoc.querySelector('button[key="run_chat_recon"]') || Array.from(pDoc.querySelectorAll('button')).find(function(b) {
+                    return (b.textContent || '').indexOf('Recon') !== -1;
+                });
+                if (realBtn) {
+                    realBtn.click();
                 }
-            } else if (event.data.action === 'trigger_clear') {
-                var clearBtn = document.querySelector('.st-key-clear_chat_pts button') ||
-                    document.querySelector('button[key="clear_chat_pts"]') ||
-                    Array.from(document.querySelectorAll('button')).find(function(b) {
-                        return (b.textContent || '').indexOf('Clear') !== -1;
-                    });
-                if (clearBtn) {
-                    try { clearBtn.click(); } catch(e) {}
-                }
+                return;
             }
-            return;
-        }
-        if (event.data.type !== 'GEOAI_SELECTION_EVENT') return;
-        var data = event.data;
-        var slot = document.getElementById('geoai-instant-pill-slot');
-        if (!slot) return;
 
-        if (data.action === 'clear') {
-            slot.style.display = 'none';
-            slot.innerHTML = '';
-            return;
-        }
-
-        var pillHtml = '';
-        if (data.action === 'set_point') {
-            var plat = Number(data.lat).toFixed(4);
-            var plng = Number(data.lng).toFixed(4);
-            pillHtml = "<div class='geo-docked-pill' title='Attached Tactical Target: (" + plat + "°, " + plng + "°)'>" +
-                       "<span class='geo-pill-icon'>📍</span>" +
-                       "<span class='geo-pill-label'>TARGET:</span>" +
-                       "<span class='geo-pill-coord'>(" + plat + "°, " + plng + "°)</span>" +
-                       "</div>";
-        } else if (data.action === 'set_bbox') {
-            var sw_lat = Number(data.sw[0]).toFixed(4);
-            var sw_lng = Number(data.sw[1]).toFixed(4);
-            var ne_lat = Number(data.ne[0]).toFixed(4);
-            var ne_lng = Number(data.ne[1]).toFixed(4);
-            pillHtml = "<div class='geo-docked-pill geo-docked-pill-stacked' title='Bounding Box AOI: Lower-Left (" + sw_lat + "°, " + sw_lng + "°) | Upper-Right (" + ne_lat + "°, " + ne_lng + "°)'>" +
-                       "<span class='geo-pill-icon'>📦</span>" +
-                       "<div class='geo-pill-stack'>" +
-                       "<div class='geo-pill-row'><span class='geo-pill-sublabel'>SW:</span><span class='geo-pill-coord'>" + sw_lat + "°, " + sw_lng + "°</span></div>" +
-                       "<div class='geo-pill-row'><span class='geo-pill-sublabel'>NE:</span><span class='geo-pill-coord'>" + ne_lat + "°, " + ne_lng + "°</span></div>" +
-                       "</div></div>";
-        }
-
-        if (pillHtml) {
-            slot.innerHTML = "<div class='geoai-instant-pill-row'>" +
-                             "<div class='geoai-instant-pill-col-left'>" + pillHtml + "</div>" +
-                             "<div class='geoai-instant-pill-col-mid'><div class='geoai-instant-btn' data-geoai-action='clear' style='cursor:pointer;'>❌ Clear</div></div>" +
-                             "<div class='geoai-instant-pill-col-right'><div class='geoai-instant-btn' data-geoai-action='recon' style='cursor:pointer;'>🔍 Recon</div></div>" +
-                             "</div>";
-            slot.style.display = 'block';
-        }
-    });
-
-    // Forward window resize to map iframes to keep Leaflet tiles synchronized
-    function forwardResizeToIframes() {
-        try {
-            var mapIframes = document.querySelectorAll('iframe');
-            for (var i = 0; i < mapIframes.length; i++) {
-                if (mapIframes[i].contentWindow) {
-                    mapIframes[i].contentWindow.dispatchEvent(new Event('resize'));
+            // 2. Streamlit Clear / Reset buttons -> 0ms visual cleanup in map iframe
+            var btn = target.closest('button');
+            if (btn) {
+                var txt = (btn.textContent || '').trim();
+                if (
+                    txt.indexOf('❌ Clear') !== -1 ||
+                    txt.indexOf('Clear Box') !== -1 ||
+                    txt.indexOf('Clear Point') !== -1 ||
+                    txt.indexOf('Reset Map Layers') !== -1 ||
+                    txt.indexOf('Clear Map & Console') !== -1
+                ) {
+                    var slot2 = pDoc.getElementById('geoai-instant-pill-slot');
+                    if (slot2) {
+                        slot2.style.display = 'none';
+                        slot2.innerHTML = '';
+                    }
+                    postToMapIframes({ type: 'GEOAI_PARENT_CMD', action: 'clear_visuals' });
+                    return;
+                }
+                // 3. Recon Scan or Chat Submit button -> 0ms querying scanline + pulse
+                var inChatInput = Boolean(btn.closest('div[data-testid="stChatInput"]'));
+                if (
+                    txt.indexOf('Recon') !== -1 ||
+                    btn.getAttribute('data-testid') === 'stChatInputSubmitButton' ||
+                    inChatInput
+                ) {
+                    postToMapIframes({ type: 'GEOAI_QUERY_STATE', state: 'querying' });
+                    return;
                 }
             }
-        } catch(e) {}
-    }
-    window.addEventListener('resize', forwardResizeToIframes);
-})();
-</script>
-<div id="geoai-instant-pill-slot" style="display: none;"></div>
-""", unsafe_allow_html=True)
+        }, true);
+
+        pDoc.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                var ta = e.target && e.target.closest && e.target.closest('div[data-testid="stChatInput"] textarea');
+                if (ta && ta.value && ta.value.trim().length > 0) {
+                    postToMapIframes({ type: 'GEOAI_QUERY_STATE', state: 'querying' });
+                }
+            }
+        }, true);
+
+        pWin.addEventListener('message', function(event) {
+            if (!event.data) return;
+            if (event.data.type === 'GEOAI_PARENT_CMD') {
+                if (event.data.action === 'trigger_recon') {
+                    var reconBtn = pDoc.querySelector('.st-key-run_chat_recon button') ||
+                        pDoc.querySelector('button[key="run_chat_recon"]') ||
+                        Array.from(pDoc.querySelectorAll('button')).find(function(b) {
+                            return (b.textContent || '').indexOf('Recon') !== -1;
+                        });
+                    if (reconBtn) {
+                        try { reconBtn.click(); } catch(e) {}
+                    }
+                } else if (event.data.action === 'trigger_clear') {
+                    var clearBtn = pDoc.querySelector('.st-key-clear_chat_pts button') ||
+                        pDoc.querySelector('button[key="clear_chat_pts"]') ||
+                        Array.from(pDoc.querySelectorAll('button')).find(function(b) {
+                            return (b.textContent || '').indexOf('Clear') !== -1;
+                        });
+                    if (clearBtn) {
+                        try { clearBtn.click(); } catch(e) {}
+                    }
+                }
+                return;
+            }
+            if (event.data.type !== 'GEOAI_SELECTION_EVENT') return;
+            var data = event.data;
+            var slot = pDoc.getElementById('geoai-instant-pill-slot');
+            if (!slot) return;
+
+            if (data.action === 'clear') {
+                slot.style.display = 'none';
+                slot.innerHTML = '';
+                return;
+            }
+
+            var pillHtml = '';
+            if (data.action === 'set_point') {
+                var plat = Number(data.lat).toFixed(4);
+                var plng = Number(data.lng).toFixed(4);
+                pillHtml = "<div class='geo-docked-pill' title='Attached Tactical Target: (" + plat + "°, " + plng + "°)'>" +
+                           "<span class='geo-pill-icon'>📍</span>" +
+                           "<span class='geo-pill-label'>TARGET:</span>" +
+                           "<span class='geo-pill-coord'>(" + plat + "°, " + plng + "°)</span>" +
+                           "</div>";
+            } else if (data.action === 'set_bbox') {
+                var sw_lat = Number(data.sw[0]).toFixed(4);
+                var sw_lng = Number(data.sw[1]).toFixed(4);
+                var ne_lat = Number(data.ne[0]).toFixed(4);
+                var ne_lng = Number(data.ne[1]).toFixed(4);
+                pillHtml = "<div class='geo-docked-pill geo-docked-pill-stacked' title='Bounding Box AOI: Lower-Left (" + sw_lat + "°, " + sw_lng + "°) | Upper-Right (" + ne_lat + "°, " + ne_lng + "°)'>" +
+                           "<span class='geo-pill-icon'>📦</span>" +
+                           "<div class='geo-pill-stack'>" +
+                           "<div class='geo-pill-row'><span class='geo-pill-sublabel'>SW:</span><span class='geo-pill-coord'>" + sw_lat + "°, " + sw_lng + "°</span></div>" +
+                           "<div class='geo-pill-row'><span class='geo-pill-sublabel'>NE:</span><span class='geo-pill-coord'>" + ne_lat + "°, " + ne_lng + "°</span></div>" +
+                           "</div></div>";
+            }
+
+            if (pillHtml) {
+                slot.innerHTML = "<div class='geoai-instant-pill-row'>" +
+                                 "<div class='geoai-instant-pill-col-left'>" + pillHtml + "</div>" +
+                                 "<div class='geoai-instant-pill-col-mid'><div class='geoai-instant-btn' data-geoai-action='clear' style='cursor:pointer;'>❌ Clear</div></div>" +
+                                 "<div class='geoai-instant-pill-col-right'><div class='geoai-instant-btn' data-geoai-action='recon' style='cursor:pointer;'>🔍 Recon</div></div>" +
+                                 "</div>";
+                slot.style.display = 'none';
+            }
+        });
+
+        // Forward window resize to map iframes to keep Leaflet tiles synchronized
+        function forwardResizeToIframes() {
+            try {
+                var mapIframes = pDoc.querySelectorAll('iframe');
+                for (var i = 0; i < mapIframes.length; i++) {
+                    if (mapIframes[i].contentWindow) {
+                        mapIframes[i].contentWindow.dispatchEvent(new Event('resize'));
+                    }
+                }
+            } catch(e) {}
+        }
+        window.addEventListener('resize', forwardResizeToIframes);
+    pWin.addEventListener('resize', forwardResizeToIframes);
+    })();
+    </script>""",
+    height=0,
+    width=0,
+)
+st.html('<div id="geoai-instant-pill-slot" style="display: none;"></div>')
 
 
 # ==============================================================================
@@ -3344,6 +6362,7 @@ if "messages" not in st.session_state:
     st.session_state.messages = [
         {
             "role": "assistant",
+            "is_welcome": True,
             "content": (
                 "👋 **Welcome to the GeoAI Spatial Intelligence Hub.**\n\n"
                 "• **Click map** to select locations of interest (manage in sidebar).\n"
@@ -3466,6 +6485,10 @@ if "selection_clear_seq" not in st.session_state:
     # Monotonic counter incremented when selection is cleared to guarantee client-side sync
     st.session_state.selection_clear_seq = 0
 
+if "georgory_beta_enabled" not in st.session_state:
+    # Master opt-in switch for the optional Agent Geo-rgory BETA tour-guide add-on (OFF by default)
+    st.session_state.georgory_beta_enabled = False
+
 # ==============================================================================
 # 2c. Early Query Ingestion & Queueing
 # ==============================================================================
@@ -3483,6 +6506,15 @@ _is_chat_submit = bool(
 )
 
 if not st.session_state.get("pending_query"):
+    # Deferred point selection: the map iframe buffers point clicks client-side and flushes them
+    # when the operator leaves the map. If that flush lands in the same run as this submit,
+    # apply it now so the query targets the point the operator actually sees on the map.
+    if _is_chat_submit or _incoming_recon:
+        try:
+            reconcile_deferred_map_selection(_peek_incoming_map_state())
+        except Exception as _reconcile_err:
+            print(f"[Deferred Selection Warning] Could not reconcile map selection: {_reconcile_err}")
+
     _is_bbox = st.session_state.get("bounding_box") is not None
     _active_pt = None if _is_bbox else (st.session_state.selected_points[0] if st.session_state.get("selected_points") else None)
     _active_bbox = st.session_state.get("bounding_box") if _is_bbox else None
@@ -3508,51 +6540,6 @@ if not st.session_state.get("pending_query"):
 # Ingests map clicks, drawings, and deletions before the sidebar and chat mount,
 # ensuring all UI panels reflect the newest spatial selection on the initial rerun
 # without requiring a second st.rerun() cascade.
-def _peek_incoming_map_state() -> Optional[Dict[str, Any]]:
-    # 1. Inspect fresh incoming widget states directly from Streamlit's internal runner context.
-    # When a component calls setComponentValue(), Streamlit populates _new_widget_state
-    # with the incoming WebSocket payload BEFORE running the script, but SessionState.__getitem__
-    # will not expose it until register_widget() is called later during map rendering.
-    try:
-        from streamlit.runtime.state.session_state_proxy import get_session_state
-        ss = get_session_state()
-        raw_state = getattr(ss, "_state", None)
-        if raw_state is not None:
-            new_widgets = getattr(raw_state, "_new_widget_state", None)
-            if new_widgets is not None and hasattr(new_widgets, "states"):
-                for wid, item in new_widgets.states.items():
-                    val = getattr(item, "value", None)
-                    if val is not None and hasattr(val, "WhichOneof") and val.WhichOneof("value") == "json_value":
-                        try:
-                            parsed = json.loads(val.json_value)
-                            if isinstance(parsed, dict) and (
-                                "last_clicked" in parsed
-                                or "last_active_drawing" in parsed
-                                or "all_drawings" in parsed
-                                or "last_object_clicked" in parsed
-                            ):
-                                return parsed
-                        except Exception:
-                            pass
-                    elif isinstance(item, dict):
-                        if "last_clicked" in item or "last_active_drawing" in item or "all_drawings" in item or "last_object_clicked" in item:
-                            return item
-    except Exception:
-        pass
-
-    # 2. Prioritize 64-character hash keys directly from Streamlit session_state
-    for k in list(st.session_state.keys()):
-        if isinstance(k, str) and len(k) == 64:
-            v = st.session_state.get(k)
-            if isinstance(v, dict) and ("last_clicked" in v or "last_active_drawing" in v or "all_drawings" in v or "last_object_clicked" in v):
-                return v
-
-    # 3. Fallback to static widget key
-    s = st.session_state.get("geoai_tactical_map")
-    if isinstance(s, dict) and ("last_clicked" in s or "last_active_drawing" in s or "all_drawings" in s or "last_object_clicked" in s):
-        return s
-    return None
-
 _early_map_state = _peek_incoming_map_state()
 if (
     not st.session_state.get("pending_query")
@@ -3712,12 +6699,12 @@ if (
 # 3. Sidebar Utility Controls & Intelligence Dashboard
 # ==============================================================================
 with st.sidebar:
-    st.markdown("<div class='sidebar-title'>🌍 GEO-AI COMMAND</div>", unsafe_allow_html=True)
+    st.markdown("<div class='sidebar-title'>GEO-AI COMMAND</div>", unsafe_allow_html=True)
     st.caption("Multimodal Geocoded RAG Intelligence")
     st.markdown("---")
 
     # Agent Connection Credentials & Mode HUD Indicator
-    st.subheader("🔑 Agent Connection")
+    st.subheader("Agent Connection")
     api_key_input = st.text_input(
         "OpenRouter API Key:",
         type="password",
@@ -3742,7 +6729,7 @@ with st.sidebar:
     st.markdown("---")
 
     # Utility control buttons & operations (placed above Spatial Targeting)
-    st.subheader("🛠️ Operations")
+    st.subheader("Operations")
 
     st.toggle(
         "Show citations",
@@ -3840,23 +6827,23 @@ with st.sidebar:
 
     st.markdown("---")
 
+    if georgory:
+        if render_georgory_beta_sidebar():
+            georgory.sidebar()
+
     # Session metrics
-    st.subheader("📊 Session Telemetry")
-    col_m1, col_m2 = st.columns(2)
-    with col_m1:
-        st.metric("Chat Messages", len(st.session_state.messages))
-    with col_m2:
-        st.metric("Active Layers", len(st.session_state.map_layers))
-    st.metric("RAG Query Logs", len(st.session_state.get("rag_logs", [])))
+    st.subheader("Session Telemetry")
+    st.markdown(
+        render_session_telemetry_html(
+            chat_count=count_chat_messages(st.session_state.messages),
+            layer_count=len(st.session_state.map_layers),
+        ),
+        unsafe_allow_html=True,
+    )
 
     st.markdown("---")
-    _leg_shape = st.session_state.get("pin_shape", "Diamond")
-    st.markdown("### 🧭 Layer Legend")
-    st.markdown(f"- 🔷 **Sky Blue {_leg_shape} (`#`)**: **Primary Place** (numbered & cited in the answer)")
-    st.markdown(f"- 🔴 **Signal Red {_leg_shape} (`!`)**: **Event** or Tactical Focus")
-    st.markdown(f"- 🟠 **Dashed Amber {_leg_shape} (`?`)**: **Uncertain Location** (inferred coordinates)")
-    st.markdown("- 🔹 **Compact Dot / Cyan Ring**: **Context Place** & Cluster Count")
-    st.markdown("- 🎯 **Cyan Crosshair / Corner Brackets**: **Active Target** & Bounding Box")
+    st.subheader("Layer Legend")
+    st.markdown(render_layer_legend_html(), unsafe_allow_html=True)
 
 
 # ==============================================================================
@@ -3870,66 +6857,19 @@ col_labels = [
 # Split screen using streamlit_adjustable_columns with a 1 : 1.5 ratio and fixed key
 col1, col2 = adjustable_columns([1, 1.5], labels=col_labels, key="main_workspace_cols")
 
-# Apply matching glowing cyan color and 13px font to column header labels in adjustable_columns iframe
+# Apply matching glowing cyan color and Chakra Petch display font to column header labels in adjustable_columns iframe
 st.html(
     """<script>
 (function() {
-    var HUD_CSS = `
-        html, body {
-            background: transparent !important;
-            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
-            overflow: hidden !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-        #root { min-height: 0 !important; height: 100% !important; }
-        .column-indicator {
-            background: rgba(13, 23, 38, 0.92) !important;
-            border-left: 3px solid #00e5ff !important;
-            border-top: 1px solid rgba(0, 229, 255, 0.35) !important;
-            border-right: 1px solid rgba(0, 229, 255, 0.35) !important;
-            border-bottom: 1px solid rgba(0, 229, 255, 0.35) !important;
-            border-radius: 4px !important;
-            box-shadow: 0 0 10px rgba(0, 229, 255, 0.15) !important;
-            transition: background 0.15s ease !important;
-            box-sizing: border-box !important;
-        }
-        .column-indicator:hover {
-            background: rgba(0, 229, 255, 0.18) !important;
-            border-color: #00e5ff !important;
-            box-shadow: 0 0 14px rgba(0, 229, 255, 0.45) !important;
-        }
-        .column-indicator,
-        .column-indicator > div,
-        .column-indicator div,
-        .column-indicator span {
-            color: #00e5ff !important;
-            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
-            font-size: 13px !important;
-            font-weight: 700 !important;
-            letter-spacing: 0.07em !important;
-            text-transform: uppercase !important;
-            opacity: 1 !important;
-            text-shadow: 0 0 10px rgba(0, 229, 255, 0.8) !important;
-        }
-        .column-indicator:hover > div,
-        .column-indicator:hover div {
-            color: #ffffff !important;
-            text-shadow: 0 0 14px #00e5ff !important;
-        }
-        .resize-handle {
-            background: rgba(0, 229, 255, 0.4) !important;
-            border-radius: 2px !important;
-            transition: background 0.2s ease, box-shadow 0.2s ease !important;
-        }
-        .resize-handle:hover {
-            background: #00e5ff !important;
-            box-shadow: 0 0 10px #00e5ff !important;
-        }
-    `;
+    __GEOAI_FONT_SYNC_JS__
+    var HUD_CSS = __GEOAI_RESIZER_CSS__;
+    var GEOAI_FONT_DISPLAY = __GEOAI_FONT_DISPLAY__;
 
     function applyToDoc(doc) {
         if (!doc || (!doc.head && !doc.body)) return;
+        if (window.geoaiSyncEmbeddedFonts) {
+            window.geoaiSyncEmbeddedFonts(doc);
+        }
         var s = doc.getElementById('geoai-resizer-hud-theme');
         if (!s) {
             s = doc.createElement('style');
@@ -3950,9 +6890,10 @@ st.html(
             var txt = inds[k].querySelector('div');
             if (txt) {
                 txt.style.setProperty('color', '#00e5ff', 'important');
-                txt.style.setProperty('font-size', '13px', 'important');
+                txt.style.setProperty('font-family', GEOAI_FONT_DISPLAY, 'important');
+                txt.style.setProperty('font-size', '14px', 'important');
                 txt.style.setProperty('font-weight', '700', 'important');
-                txt.style.setProperty('letter-spacing', '0.07em', 'important');
+                txt.style.setProperty('letter-spacing', '0.09em', 'important');
                 txt.style.setProperty('opacity', '1', 'important');
                 txt.style.setProperty('text-shadow', '0 0 10px rgba(0, 229, 255, 0.8)', 'important');
             }
@@ -3960,6 +6901,9 @@ st.html(
 
         if (!doc._geoaiResizerObs && window.MutationObserver) {
             doc._geoaiResizerObs = new MutationObserver(function() {
+                if (window.geoaiSyncEmbeddedFonts) {
+                    window.geoaiSyncEmbeddedFonts(doc);
+                }
                 var sCheck = doc.getElementById('geoai-resizer-hud-theme');
                 if (!sCheck) {
                     sCheck = doc.createElement('style');
@@ -3974,9 +6918,10 @@ st.html(
                     var subTxt = subInds[j].querySelector('div');
                     if (subTxt) {
                         subTxt.style.setProperty('color', '#00e5ff', 'important');
-                        subTxt.style.setProperty('font-size', '13px', 'important');
+                        subTxt.style.setProperty('font-family', GEOAI_FONT_DISPLAY, 'important');
+                        subTxt.style.setProperty('font-size', '14px', 'important');
                         subTxt.style.setProperty('font-weight', '700', 'important');
-                        subTxt.style.setProperty('letter-spacing', '0.07em', 'important');
+                        subTxt.style.setProperty('letter-spacing', '0.09em', 'important');
                         subTxt.style.setProperty('opacity', '1', 'important');
                         subTxt.style.setProperty('text-shadow', '0 0 10px rgba(0, 229, 255, 0.8)', 'important');
                     }
@@ -3990,9 +6935,13 @@ st.html(
         try {
             var iframes = document.querySelectorAll('iframe');
             for (var i = 0; i < iframes.length; i++) {
-                if ((iframes[i].title || '').indexOf('adjustable_columns') !== -1) {
+                var iTitle = (iframes[i].title || '');
+                if (iTitle.indexOf('adjustable_columns') !== -1) {
                     var doc = iframes[i].contentDocument || (iframes[i].contentWindow && iframes[i].contentWindow.document);
                     applyToDoc(doc);
+                } else if (iTitle.indexOf('agent_avatar') !== -1 && window.geoaiSyncEmbeddedFonts) {
+                    var avDoc = iframes[i].contentDocument || (iframes[i].contentWindow && iframes[i].contentWindow.document);
+                    if (avDoc) window.geoaiSyncEmbeddedFonts(avDoc);
                 }
             }
         } catch(e) {}
@@ -4021,7 +6970,10 @@ st.html(
         window.addEventListener('resize', applyAllHeaders);
     }
 })();
-</script>""",
+</script>"""
+    .replace("__GEOAI_FONT_SYNC_JS__", build_iframe_font_sync_js())
+    .replace("__GEOAI_RESIZER_CSS__", json.dumps(build_resizer_theme_css()))
+    .replace("__GEOAI_FONT_DISPLAY__", json.dumps(FONT_DISPLAY)),
     unsafe_allow_javascript=True,
 )
 
@@ -4032,1431 +6984,1521 @@ st.html(
 # eliminating the need for a secondary st.rerun() cascade (AGENTS.md Rule 1.1)
 # ------------------------------------------------------------------------------
 with col2:
-    # Center coordinates of Ukraine: latitude ~48.3794, longitude ~31.1656
-    ukraine_center = [48.3794, 31.1656]
+    @st.fragment
+    def render_tactical_map_fragment():
 
-    # Initialize the Folium Map instance without a default tile layer to prevent layer conflicts
-    m = folium.Map(
-        location=ukraine_center,
-        zoom_start=6,
-        tiles=None,
-        control_scale=True,
-        attributionControl=False
-    )
+        # Center coordinates of Ukraine: latitude ~48.3794, longitude ~31.1656
+        ukraine_center = [48.3794, 31.1656]
 
-    # Auto-Zoom to Query Bounding Box (Upgrade 3 & AGENTS.md Rule 4.2)
-    if st.session_state.get("last_map_bbox"):
-        b = st.session_state["last_map_bbox"]
-        if isinstance(b, (list, tuple)) and len(b) == 4:
-            try:
-                w, s, e, n = float(b[0]), float(b[1]), float(b[2]), float(b[3])
-                m.fit_bounds([[s, w], [n, e]], padding=(30, 30))
-            except Exception as fit_err:
-                print(f"[Auto-Zoom Warning] Could not fit bounds to {b}: {fit_err}")
-    # Inject CSS for attribution hiding, dark-mode tile filter, and environment-adaptive HUD controls
-    m.get_root().header.add_child(
-        folium.Element(
-            """<style>
-            html, body, #root, #map_div, .leaflet-container {
-                height: 100vh !important;
-                min-height: 100% !important;
-                max-height: 100vh !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                overflow: hidden !important;
-            }
-            .leaflet-control-attribution { display: none !important; }
-            .voyager-dark-tiles { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%) !important; }
-
-            /* Smooth transition when switching basemaps */
-            .leaflet-bar, .leaflet-bar a, .leaflet-control-layers, .leaflet-control-scale-line, .leaflet-draw-actions {
-                transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease !important;
-            }
-
-            /* ========================================================================== */
-            /* 1. DARK THEME (Tactical GeoAI Defense C2 - for Dark / Satellite Basemaps)   */
-            /* ========================================================================== */
-            .geoai-map-dark .leaflet-bar,
-            .leaflet-container:not(.geoai-map-light) .leaflet-bar,
-            .geoai-map-dark .leaflet-draw-toolbar,
-            .leaflet-container:not(.geoai-map-light) .leaflet-draw-toolbar {
-                background: rgba(14, 22, 32, 0.92) !important;
-                border: 1px solid rgba(0, 229, 255, 0.40) !important;
-                border-radius: 4px !important;
-                box-shadow: 0 0 10px rgba(0, 229, 255, 0.25), 0 4px 12px rgba(0, 0, 0, 0.6) !important;
-                overflow: hidden !important;
-            }
-
-            .geoai-map-dark .leaflet-bar a,
-            .leaflet-container:not(.geoai-map-light) .leaflet-bar a,
-            .geoai-map-dark .leaflet-draw-toolbar a,
-            .leaflet-container:not(.geoai-map-light) .leaflet-draw-toolbar a {
-                background-color: rgba(14, 22, 32, 0.92) !important;
-                border-bottom: 1px solid rgba(0, 229, 255, 0.22) !important;
-                color: #00e5ff !important;
-            }
-
-            .geoai-map-dark .leaflet-bar a:hover,
-            .leaflet-container:not(.geoai-map-light) .leaflet-bar a:hover,
-            .geoai-map-dark .leaflet-draw-toolbar a:hover,
-            .leaflet-container:not(.geoai-map-light) .leaflet-draw-toolbar a:hover {
-                background-color: rgba(0, 229, 255, 0.22) !important;
-                color: #ffffff !important;
-                box-shadow: inset 0 0 8px rgba(0, 229, 255, 0.5) !important;
-            }
-
-            /* Zoom In / Out Buttons */
-            .geoai-map-dark .leaflet-control-zoom a,
-            .leaflet-container:not(.geoai-map-light) .leaflet-control-zoom a {
-                font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
-                font-size: 16px !important;
-                font-weight: 700 !important;
-                line-height: 28px !important;
-                text-shadow: 0 0 6px rgba(0, 229, 255, 0.7) !important;
-            }
-
-            /* Tactical SVGs for Draw Tools (Rectangle & Trash) in Dark Theme */
-            .geoai-map-dark .leaflet-draw-draw-rectangle,
-            .leaflet-container:not(.geoai-map-light) .leaflet-draw-draw-rectangle {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2300e5ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3C/svg%3E") !important;
-                background-position: center !important;
-                background-repeat: no-repeat !important;
-                background-size: 16px 16px !important;
-            }
-
-            .geoai-map-dark .leaflet-draw-edit-remove,
-            .leaflet-container:not(.geoai-map-light) .leaflet-draw-edit-remove {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23f87171' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'%3E%3C/polyline%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'%3E%3C/path%3E%3Cline x1='10' y1='11' x2='10' y2='17'%3E%3C/line%3E%3Cline x1='14' y1='11' x2='14' y2='17'%3E%3C/line%3E%3C/svg%3E") !important;
-                background-position: center !important;
-                background-repeat: no-repeat !important;
-                background-size: 16px 16px !important;
-            }
-
-            /* Layer Control in Dark Theme */
-            .geoai-map-dark .leaflet-control-layers,
-            .leaflet-container:not(.geoai-map-light) .leaflet-control-layers {
-                background: rgba(14, 22, 32, 0.92) !important;
-                border: 1px solid rgba(0, 229, 255, 0.40) !important;
-                border-radius: 4px !important;
-                box-shadow: 0 0 10px rgba(0, 229, 255, 0.25), 0 4px 12px rgba(0, 0, 0, 0.6) !important;
-            }
-
-            .geoai-map-dark .leaflet-control-layers-toggle,
-            .leaflet-container:not(.geoai-map-light) .leaflet-control-layers-toggle {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2300e5ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 2 7 12 12 22 7 12 2'%3E%3C/polygon%3E%3Cpolyline points='2 17 12 22 22 17'%3E%3C/polyline%3E%3Cpolyline points='2 12 12 17 22 12'%3E%3C/polyline%3E%3C/svg%3E") !important;
-                background-position: center !important;
-                background-repeat: no-repeat !important;
-                background-size: 20px 20px !important;
-            }
-
-            .geoai-map-dark .leaflet-control-pin-filter-toggle,
-            .leaflet-container:not(.geoai-map-light) .leaflet-control-pin-filter-toggle {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2300e5ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z'%3E%3C/path%3E%3Ccircle cx='12' cy='10' r='3'%3E%3C/circle%3E%3C/svg%3E") !important;
-                background-position: center !important;
-                background-repeat: no-repeat !important;
-                background-size: 20px 20px !important;
-            }
-
-            .pin-filter-header {
-                color: #00e5ff !important;
-                font-family: 'JetBrains Mono', monospace !important;
-                font-size: 11px !important;
-                font-weight: 700 !important;
-                letter-spacing: 0.07em !important;
-                margin-bottom: 6px !important;
-                padding-bottom: 4px !important;
-                border-bottom: 1px solid rgba(0, 229, 255, 0.25) !important;
-                text-transform: uppercase !important;
-            }
-
-            .geoai-map-dark .leaflet-control-layers-expanded,
-            .leaflet-container:not(.geoai-map-light) .leaflet-control-layers-expanded {
-                background: rgba(14, 22, 32, 0.96) !important;
-                border: 1px solid rgba(0, 229, 255, 0.45) !important;
-                border-radius: 4px !important;
-                box-shadow: 0 0 16px rgba(0, 229, 255, 0.3), 0 8px 24px rgba(0, 0, 0, 0.7) !important;
-                color: #e2e8f0 !important;
-                font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
-                font-size: 11.5px !important;
-                padding: 8px 12px !important;
-            }
-            .geoai-map-dark .leaflet-control-layers-separator,
-            .leaflet-container:not(.geoai-map-light) .leaflet-control-layers-separator {
-                border-top: 1px solid rgba(0, 229, 255, 0.25) !important;
-            }
-            .geoai-map-dark .leaflet-control-layers-base label,
-            .leaflet-container:not(.geoai-map-light) .leaflet-control-layers-base label,
-            .geoai-map-dark .leaflet-control-layers-overlays label,
-            .leaflet-container:not(.geoai-map-light) .leaflet-control-layers-overlays label {
-                display: flex !important;
-                align-items: center !important;
-                gap: 6px !important;
-                cursor: pointer !important;
-                color: #cbd5e1 !important;
-                margin-bottom: 3px !important;
-                font-size: 11px !important;
-            }
-            .geoai-map-dark .leaflet-control-layers-base label:hover,
-            .leaflet-container:not(.geoai-map-light) .leaflet-control-layers-base label:hover {
-                color: #00e5ff !important;
-            }
-            .geoai-map-dark input[type="radio"],
-            .leaflet-container:not(.geoai-map-light) input[type="radio"],
-            .geoai-map-dark input[type="checkbox"],
-            .leaflet-container:not(.geoai-map-light) input[type="checkbox"] {
-                accent-color: #00e5ff !important;
-            }
-
-            /* Scale Line in Dark Theme */
-            .geoai-map-dark .leaflet-control-scale-line,
-            .leaflet-container:not(.geoai-map-light) .leaflet-control-scale-line {
-                background: rgba(14, 22, 32, 0.88) !important;
-                border: 2px solid #00e5ff !important;
-                border-top: none !important;
-                color: #00e5ff !important;
-                font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
-                font-size: 11px !important;
-                font-weight: 700 !important;
-                letter-spacing: 0.05em !important;
-                text-shadow: 0 0 6px rgba(0, 229, 255, 0.6) !important;
-                box-shadow: 0 0 8px rgba(0, 229, 255, 0.25) !important;
-                padding: 2px 6px !important;
-                border-radius: 0 0 2px 2px !important;
-            }
-
-            /* Draw Actions Sub-menu in Dark Theme */
-            .geoai-map-dark .leaflet-draw-actions,
-            .leaflet-container:not(.geoai-map-light) .leaflet-draw-actions {
-                background: rgba(14, 22, 32, 0.95) !important;
-                border: 1px solid rgba(0, 229, 255, 0.40) !important;
-                border-radius: 4px !important;
-                box-shadow: 0 0 10px rgba(0, 229, 255, 0.25) !important;
-            }
-            .geoai-map-dark .leaflet-draw-actions a,
-            .leaflet-container:not(.geoai-map-light) .leaflet-draw-actions a {
-                background-color: transparent !important;
-                color: #00e5ff !important;
-                font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
-                font-size: 11px !important;
-                font-weight: 600 !important;
-            }
-            .geoai-map-dark .leaflet-draw-actions a:hover,
-            .leaflet-container:not(.geoai-map-light) .leaflet-draw-actions a:hover {
-                background-color: rgba(0, 229, 255, 0.20) !important;
-                color: #ffffff !important;
-            }
-
-            /* Popups & Tooltips in Dark Theme */
-            .geoai-map-dark .leaflet-popup-content-wrapper,
-            .leaflet-container:not(.geoai-map-light) .leaflet-popup-content-wrapper {
-                background: rgba(14, 22, 32, 0.96) !important;
-                border: 1px solid rgba(0, 229, 255, 0.40) !important;
-                color: #e2e8f0 !important;
-                box-shadow: 0 0 14px rgba(0, 229, 255, 0.3) !important;
-            }
-            .geoai-map-dark .leaflet-popup-tip,
-            .leaflet-container:not(.geoai-map-light) .leaflet-popup-tip {
-                background: rgba(14, 22, 32, 0.96) !important;
-            }
-            .geoai-map-dark .leaflet-popup-close-button,
-            .leaflet-container:not(.geoai-map-light) .leaflet-popup-close-button {
-                color: #00e5ff !important;
-            }
-            .geoai-map-dark .leaflet-tooltip,
-            .leaflet-container:not(.geoai-map-light) .leaflet-tooltip {
-                background: rgba(14, 22, 32, 0.92) !important;
-                border: 1px solid rgba(0, 229, 255, 0.40) !important;
-                color: #00e5ff !important;
-                font-family: 'JetBrains Mono', monospace !important;
-                box-shadow: 0 0 8px rgba(0, 229, 255, 0.25) !important;
-            }
-
-            /* ========================================================================== */
-            /* 2. LIGHT THEME (For Light Navigation, Topographic, and OSM Basemaps)       */
-            /* ========================================================================== */
-            .geoai-map-light .leaflet-bar,
-            .geoai-map-light .leaflet-draw-toolbar {
-                background: rgba(248, 250, 252, 0.95) !important;
-                border: 1px solid rgba(15, 23, 42, 0.28) !important;
-                border-radius: 4px !important;
-                box-shadow: 0 2px 8px rgba(15, 23, 42, 0.18) !important;
-                overflow: hidden !important;
-            }
-
-            .geoai-map-light .leaflet-bar a,
-            .geoai-map-light .leaflet-draw-toolbar a {
-                background-color: rgba(248, 250, 252, 0.95) !important;
-                border-bottom: 1px solid rgba(15, 23, 42, 0.15) !important;
-                color: #0f172a !important;
-            }
-
-            .geoai-map-light .leaflet-bar a:hover,
-            .geoai-map-light .leaflet-draw-toolbar a:hover {
-                background-color: #0284c7 !important;
-                color: #ffffff !important;
-            }
-
-            .geoai-map-light .leaflet-control-zoom a {
-                font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
-                font-size: 16px !important;
-                font-weight: 700 !important;
-                line-height: 28px !important;
-                color: #0f172a !important;
-            }
-            .geoai-map-light .leaflet-control-zoom a:hover {
-                color: #ffffff !important;
-            }
-
-            /* SVGs for Draw Tools in Light Theme */
-            .geoai-map-light .leaflet-draw-draw-rectangle {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230f172a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3C/svg%3E") !important;
-                background-position: center !important;
-                background-repeat: no-repeat !important;
-                background-size: 16px 16px !important;
-            }
-
-            .geoai-map-light .leaflet-draw-edit-remove {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23dc2626' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'%3E%3C/polyline%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'%3E%3C/path%3E%3Cline x1='10' y1='11' x2='10' y2='17'%3E%3C/line%3E%3Cline x1='14' y1='11' x2='14' y2='17'%3E%3C/line%3E%3C/svg%3E") !important;
-                background-position: center !important;
-                background-repeat: no-repeat !important;
-                background-size: 16px 16px !important;
-            }
-
-            /* Layer Control in Light Theme */
-            .geoai-map-light .leaflet-control-layers {
-                background: rgba(248, 250, 252, 0.95) !important;
-                border: 1px solid rgba(15, 23, 42, 0.28) !important;
-                border-radius: 4px !important;
-                box-shadow: 0 2px 8px rgba(15, 23, 42, 0.18) !important;
-            }
-
-            .geoai-map-light .leaflet-control-layers-toggle {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%230f172a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 2 7 12 12 22 7 12 2'%3E%3C/polygon%3E%3Cpolyline points='2 17 12 22 22 17'%3E%3C/polyline%3E%3Cpolyline points='2 12 12 17 22 12'%3E%3C/polyline%3E%3C/svg%3E") !important;
-                background-position: center !important;
-                background-repeat: no-repeat !important;
-                background-size: 20px 20px !important;
-            }
-
-            .geoai-map-light .leaflet-control-pin-filter-toggle {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%230f172a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z'%3E%3C/path%3E%3Ccircle cx='12' cy='10' r='3'%3E%3C/circle%3E%3C/svg%3E") !important;
-                background-position: center !important;
-                background-repeat: no-repeat !important;
-                background-size: 20px 20px !important;
-            }
-
-            .geoai-map-light .pin-filter-header {
-                color: #0284c7 !important;
-                border-bottom: 1px solid rgba(15, 23, 42, 0.15) !important;
-            }
-
-            .geoai-map-light .leaflet-control-layers-expanded {
-                background: rgba(255, 255, 255, 0.96) !important;
-                border: 1px solid rgba(15, 23, 42, 0.25) !important;
-                border-radius: 4px !important;
-                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
-                color: #0f172a !important;
-                font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
-                font-size: 11.5px !important;
-                padding: 8px 12px !important;
-            }
-            .geoai-map-light .leaflet-control-layers-separator {
-                border-top: 1px solid rgba(15, 23, 42, 0.15) !important;
-            }
-            .geoai-map-light .leaflet-control-layers-base label,
-            .geoai-map-light .leaflet-control-layers-overlays label {
-                display: flex !important;
-                align-items: center !important;
-                gap: 6px !important;
-                cursor: pointer !important;
-                color: #1e293b !important;
-                margin-bottom: 3px !important;
-                font-size: 11px !important;
-            }
-            .geoai-map-light .leaflet-control-layers-base label:hover {
-                color: #0284c7 !important;
-            }
-            .geoai-map-light input[type="radio"],
-            .geoai-map-light input[type="checkbox"] {
-                accent-color: #0284c7 !important;
-            }
-
-            /* Scale Line in Light Theme */
-            .geoai-map-light .leaflet-control-scale-line {
-                background: rgba(255, 255, 255, 0.88) !important;
-                border: 2px solid #0f172a !important;
-                border-top: none !important;
-                color: #0f172a !important;
-                font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
-                font-size: 11px !important;
-                font-weight: 700 !important;
-                letter-spacing: 0.05em !important;
-                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
-                padding: 2px 6px !important;
-                border-radius: 0 0 2px 2px !important;
-            }
-
-            /* Draw Actions Sub-menu in Light Theme */
-            .geoai-map-light .leaflet-draw-actions {
-                background: rgba(248, 250, 252, 0.95) !important;
-                border: 1px solid rgba(15, 23, 42, 0.25) !important;
-                border-radius: 4px !important;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
-            }
-            .geoai-map-light .leaflet-draw-actions a {
-                background-color: transparent !important;
-                color: #0f172a !important;
-                font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
-                font-size: 11px !important;
-                font-weight: 600 !important;
-            }
-            .geoai-map-light .leaflet-draw-actions a:hover {
-                background-color: #0284c7 !important;
-                color: #ffffff !important;
-            }
-
-            /* Popups & Tooltips in Light Theme */
-            .geoai-map-light .leaflet-popup-content-wrapper {
-                background: rgba(255, 255, 255, 0.96) !important;
-                border: 1px solid rgba(15, 23, 42, 0.25) !important;
-                color: #0f172a !important;
-            }
-            .geoai-map-light .leaflet-popup-tip {
-                background: rgba(255, 255, 255, 0.96) !important;
-            }
-            .geoai-map-light .leaflet-popup-close-button {
-                color: #0f172a !important;
-            }
-            .geoai-map-light .leaflet-tooltip {
-                background: rgba(255, 255, 255, 0.92) !important;
-                border: 1px solid rgba(15, 23, 42, 0.25) !important;
-                color: #0f172a !important;
-                font-family: 'JetBrains Mono', monospace !important;
-            }
-
-            /* ========================================================================== */
-            /* 3. TACTICAL HUD MAP SYMBOLOGY (Pins, Reticles, Clusters, BBox, Cards)      */
-            /* ========================================================================== */
-            .leaflet-container {
-                --geoai-selection: #00e5ff;
-                --geoai-primary: #38bdf8;
-                --geoai-event: #ff4d6d;
-                --geoai-uncertain: #ffb020;
-                --geoai-context: #7dd3fc;
-                --geoai-threat: #f97316;
-                --geoai-recon: #a855f7;
-                --geoai-friendly: #22c55e;
-                --geoai-core: rgba(6, 12, 18, 0.92);
-                --geoai-halo: rgba(0, 0, 0, 0.78);
-            }
-            .geoai-map-light {
-                --geoai-selection: #0284c7;
-                --geoai-primary: #0369a1;
-                --geoai-event: #be123c;
-                --geoai-uncertain: #b45309;
-                --geoai-context: #475569;
-                --geoai-threat: #c2410c;
-                --geoai-recon: #7e22ce;
-                --geoai-friendly: #15803d;
-                --geoai-core: rgba(255, 255, 255, 0.96);
-                --geoai-halo: rgba(255, 255, 255, 0.92);
-            }
-
-            .geoai-pin {
-                background: transparent !important;
-                border: none !important;
-            }
-
-            /* Target Crosshair Reticle */
-            .geoai-reticle {
-                position: relative;
-                width: 34px;
-                height: 34px;
-                color: var(--geoai-selection);
-                filter: drop-shadow(0 0 4px rgba(0, 229, 255, 0.65));
-                pointer-events: none;
-            }
-            .geoai-reticle svg {
-                position: absolute;
-                inset: 0;
-            }
-            .geoai-reticle__pulse {
-                position: absolute;
-                inset: 7px;
-                border-radius: 50%;
-                border: 2px solid var(--geoai-selection);
-                animation: geoai-pulse 2s ease-out infinite;
-                pointer-events: none;
-            }
-            .geoai-reticle__spin {
-                display: none;
-                position: absolute;
-                inset: 2px;
-                border-radius: 50%;
-                border: 1.5px dashed var(--geoai-selection);
-                pointer-events: none;
-                animation: geoai-spin 3s linear infinite;
-            }
-            .geoai-reticle--querying .geoai-reticle__pulse {
-                animation-duration: 1s !important;
-            }
-            .geoai-reticle--querying .geoai-reticle__spin {
-                display: block;
-            }
-            @keyframes geoai-pulse {
-                0% { transform: scale(0.6); opacity: 0.9; }
-                100% { transform: scale(2.3); opacity: 0; }
-            }
-            @keyframes geoai-spin {
-                to { transform: rotate(360deg); }
-            }
-
-            /* Primary / Event / Uncertain Diamond & Teardrop Pins */
-            .geoai-diamond {
-                width: 20px;
-                height: 20px;
-                margin: 1px;
-                transform: rotate(45deg);
-                background: var(--geoai-core);
-                border: 2px solid var(--c, var(--geoai-primary));
-                border-radius: 3px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: transform 0.15s ease, border-radius 0.15s ease;
-                box-shadow: 0 0 0 1px var(--geoai-halo), 0 0 10px rgba(0, 229, 255, 0.35);
-            }
-            .geoai-diamond > span {
-                transform: rotate(-45deg);
-                font: 700 11px/1 'JetBrains Mono', 'Fira Code', monospace;
-                color: var(--c, var(--geoai-primary));
-            }
-            .geoai-pin:hover .geoai-diamond {
-                transform: rotate(45deg) scale(1.18);
-            }
-            /* Teardrop Pin Shape Variant (both initial class and 0ms container toggle) */
-            .geoai-diamond.geoai-teardrop,
-            .geoai-shape-teardrop .geoai-diamond {
-                width: 24px;
-                height: 24px;
-                margin: -1px;
-                border-radius: 50% 50% 50% 0;
-                transform: translateY(-14px) rotate(-45deg);
-            }
-            .geoai-diamond.geoai-teardrop > span,
-            .geoai-shape-teardrop .geoai-diamond > span {
-                transform: rotate(45deg);
-            }
-            .geoai-pin:hover .geoai-diamond.geoai-teardrop,
-            .geoai-shape-teardrop .geoai-pin:hover .geoai-diamond {
-                transform: translateY(-14px) rotate(-45deg) scale(1.15);
-            }
-            .geoai-diamond--uncertain {
-                border-style: dashed;
-            }
-            .geoai-badge-unc {
-                position: absolute;
-                top: -6px;
-                right: -6px;
-                width: 14px;
-                height: 14px;
-                border-radius: 50%;
-                background: var(--geoai-uncertain);
-                color: #0b0f17;
-                font: 700 10px/14px 'JetBrains Mono', monospace;
-                text-align: center;
-                font-style: normal;
-                box-shadow: 0 0 0 1.5px var(--geoai-halo);
-                transition: top 0.15s ease, right 0.15s ease;
-            }
-            .geoai-pin--teardrop .geoai-badge-unc,
-            .geoai-shape-teardrop .geoai-badge-unc {
-                top: -20px;
-                right: -7px;
-            }
-
-            /* Lightweight 8px Context Dot */
-            .geoai-dot {
-                width: 8px;
-                height: 8px;
-                margin: 1px;
-                border-radius: 50%;
-                background: var(--geoai-context);
-                opacity: 0.88;
-                box-shadow: 0 0 0 1.5px var(--geoai-halo);
-                transition: transform 0.12s ease;
-            }
-            .geoai-pin:hover .geoai-dot {
-                transform: scale(1.35);
-                opacity: 1;
-            }
-
-            /* Bounding Box L-shaped Corner Brackets (Exact Vertex Alignment) */
-            .geoai-corner {
-                position: relative;
-                width: 16px;
-                height: 16px;
-                margin: 0;
-                padding: 0;
-                display: block;
-                line-height: 0;
-                color: var(--geoai-selection);
-                filter: drop-shadow(0 0 3px var(--geoai-selection));
-            }
-            .geoai-corner svg {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 16px;
-                height: 16px;
-                display: block;
-            }
-            .geoai-corner--dim {
-                opacity: 0.40;
-                filter: none;
-            }
-
-            /* Context Cluster Bubbles */
-            .geoai-cluster-wrap {
-                background: transparent !important;
-                border: none !important;
-            }
-            .geoai-cluster {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: 50%;
-                background: var(--geoai-core);
-                border: 1.5px solid var(--geoai-selection);
-                color: var(--geoai-selection);
-                font: 700 12px/1 'JetBrains Mono', monospace;
-            }
-            .geoai-cluster--s1 {
-                width: 28px;
-                height: 28px;
-                box-shadow: 0 0 0 4px rgba(0, 229, 255, 0.14), 0 0 10px rgba(0, 229, 255, 0.30);
-            }
-            .geoai-cluster--s2 {
-                width: 36px;
-                height: 36px;
-                box-shadow: 0 0 0 5px rgba(0, 229, 255, 0.16), 0 0 12px rgba(0, 229, 255, 0.35);
-            }
-            .geoai-cluster--s3 {
-                width: 44px;
-                height: 44px;
-                box-shadow: 0 0 0 7px rgba(0, 229, 255, 0.18), 0 0 16px rgba(0, 229, 255, 0.40);
-            }
-
-            /* Instant Client-Side Pin Filter Toggles */
-            .geoai-hide-primary-pins .geoai-pin--primary,
-            .geoai-hide-primary-pins .awesome-marker-icon-blue {
-                display: none !important;
-            }
-            .geoai-hide-context-pins .geoai-pin--context,
-            .geoai-hide-context-pins .awesome-marker-icon-cadetblue,
-            .geoai-hide-context-pins .geoai-cluster-wrap {
-                display: none !important;
-            }
-            .geoai-hide-uncertain-pins .geoai-pin--uncertain,
-            .geoai-hide-uncertain-pins .awesome-marker-icon-orange {
-                display: none !important;
-            }
-
-            /* Bounding Box States (Selected Marching Ants, Querying Pulse + Scanline, Answered Ultra-Transparent) */
-            path.geoai-bbox--selected {
-                animation: geoai-ants 1s linear infinite;
-            }
-            path.geoai-bbox--querying {
-                animation: geoai-ants 0.6s linear infinite, geoai-qfill 1.6s ease-in-out infinite !important;
-            }
-            path.geoai-bbox--answered {
-                pointer-events: none !important;
-            }
-            @keyframes geoai-ants {
-                to { stroke-dashoffset: -12; }
-            }
-            @keyframes geoai-qfill {
-                0%, 100% { fill-opacity: 0.08; }
-                50% { fill-opacity: 0.20; }
-            }
-            .geoai-scan-svg {
-                pointer-events: none !important;
-                overflow: hidden;
-            }
-            .geoai-scan-line {
-                stroke: var(--geoai-selection);
-                stroke-width: 2;
-                opacity: 0.9;
-                vector-effect: non-scaling-stroke;
-                filter: drop-shadow(0 0 6px var(--geoai-selection));
-            }
-            .geoai-scan-band {
-                fill: url(#geoai-scan-grad);
-                pointer-events: none;
-            }
-
-            /* Pin Shape Segmented Control inside PinFilterControl */
-            .geoai-shape-seg {
-                display: flex;
-                gap: 4px;
-                margin-top: 2px;
-            }
-            .geoai-shape-btn {
-                flex: 1;
-                background: rgba(11, 15, 23, 0.65);
-                color: var(--geoai-selection);
-                border: 1px solid rgba(0, 229, 255, 0.28);
-                border-radius: 3px;
-                padding: 2px 6px;
-                font: 700 10px/1.3 'JetBrains Mono', 'Fira Code', monospace;
-                cursor: pointer;
-                transition: background 0.12s ease, border-color 0.12s ease;
-            }
-            .geoai-shape-btn.active {
-                background: rgba(0, 229, 255, 0.22);
-                border-color: var(--geoai-selection);
-                box-shadow: 0 0 6px rgba(0, 229, 255, 0.25);
-            }
-
-            /* Unified Tactical Popup Card */
-            .geoai-card {
-                font: 12px/1.45 'JetBrains Mono', 'Fira Code', monospace;
-                min-width: 200px;
-            }
-            .geoai-card__head {
-                padding: 2px 4px 6px 8px;
-                margin-bottom: 6px;
-                border-bottom: 1px solid rgba(0, 229, 255, 0.25);
-                border-left: 3px solid var(--c, var(--geoai-primary));
-            }
-            .geoai-card__chip {
-                font-size: 10px;
-                font-weight: 700;
-                letter-spacing: 0.08em;
-                color: var(--c, var(--geoai-primary));
-                text-transform: uppercase;
-            }
-            .geoai-card__title {
-                font-weight: 700;
-                font-size: 12.5px;
-            }
-            .geoai-card__body {
-                display: grid;
-                grid-template-columns: auto 1fr;
-                gap: 2px 10px;
-                padding: 2px 4px;
-            }
-            .geoai-card__body > span {
-                opacity: 0.78;
-                font-size: 11px;
-            }
-            .geoai-card__footer {
-                margin-top: 6px;
-                padding-top: 5px;
-                border-top: 1px dashed rgba(0, 229, 255, 0.25);
-                font-size: 11px;
-                opacity: 0.85;
-            }
-
-            /* Tactical Map HUD Control (Option 1) */
-            .geoai-map-hud-control {
-                margin-bottom: 24px !important;
-                margin-left: 12px !important;
-                pointer-events: auto !important;
-                z-index: 1000 !important;
-            }
-            .geoai-map-hud {
-                display: none;
-                align-items: center;
-                gap: 8px;
-                background: rgba(14, 22, 32, 0.92);
-                backdrop-filter: blur(8px);
-                border: 1px solid rgba(0, 229, 255, 0.45);
-                border-radius: 6px;
-                padding: 6px 10px;
-                box-shadow: 0 4px 18px rgba(0, 0, 0, 0.65), 0 0 12px rgba(0, 229, 255, 0.25);
-                font-family: 'JetBrains Mono', 'Segoe UI', monospace;
-                font-size: 11px;
-                color: #e2e8f0;
-                white-space: nowrap;
-                user-select: none;
-                transition: opacity 0.2s ease, transform 0.2s ease;
-            }
-            .geoai-map-light .geoai-map-hud {
-                background: rgba(255, 255, 255, 0.94);
-                border: 1px solid rgba(15, 23, 42, 0.25);
-                box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
-                color: #0f172a;
-            }
-            .geoai-map-hud.visible {
-                display: flex !important;
-            }
-            .geoai-map-hud-badge {
-                display: inline-flex;
-                align-items: center;
-                gap: 4px;
-                font-weight: 700;
-                font-size: 10.5px;
-                color: #00e5ff;
-                letter-spacing: 0.05em;
-            }
-            .geoai-map-light .geoai-map-hud-badge {
-                color: #0284c7;
-            }
-            .geoai-map-hud-coords {
-                color: #f1f5f9;
-                font-weight: 600;
-                font-size: 11px;
-                background: rgba(0, 229, 255, 0.08);
-                border: 1px solid rgba(0, 229, 255, 0.2);
-                padding: 2px 6px;
-                border-radius: 4px;
-            }
-            .geoai-map-light .geoai-map-hud-coords {
-                color: #0f172a;
-                background: rgba(15, 23, 42, 0.05);
-                border: 1px solid rgba(15, 23, 42, 0.15);
-            }
-            .geoai-map-hud-btn {
-                border-radius: 4px;
-                padding: 3px 8px;
-                font-size: 11px;
-                font-weight: 600;
-                font-family: inherit;
-                cursor: pointer;
-                border: none;
-                outline: none;
-                display: inline-flex;
-                align-items: center;
-                gap: 3px;
-                transition: all 0.15s ease;
-            }
-            .geoai-map-hud-clear {
-                background: rgba(239, 68, 68, 0.15);
-                color: #fca5a5;
-                border: 1px solid rgba(239, 68, 68, 0.35);
-            }
-            .geoai-map-hud-clear:hover {
-                background: rgba(239, 68, 68, 0.3);
-                color: #ffffff;
-                border-color: rgba(239, 68, 68, 0.6);
-            }
-            .geoai-map-hud-recon {
-                background: rgba(0, 229, 255, 0.2);
-                color: #00e5ff;
-                border: 1px solid rgba(0, 229, 255, 0.6);
-                box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
-            }
-            .geoai-map-hud-recon:hover {
-                background: rgba(0, 229, 255, 0.35);
-                color: #ffffff;
-                box-shadow: 0 0 12px rgba(0, 229, 255, 0.5);
-            }
-            </style>"""
+        # Initialize the Folium Map instance without a default tile layer to prevent layer conflicts
+        m = folium.Map(
+            location=ukraine_center,
+            zoom_start=6,
+            tiles=None,
+            control_scale=True,
+            attributionControl=False
         )
-    )
 
-    # CARTO API Key integration
-    CARTO_API_KEY = "cb1_3wyp_1_6945a000f4bccf031f5aec03"
-
-    # 1. Primary Default Basemap: CartoDB Voyager Dark (Detailed Navigation with dense labels & POIs in dark mode)
-    folium.TileLayer(
-        tiles=f"https://{{s}}.basemaps.cartocdn.com/rastertiles/voyager/{{z}}/{{x}}/{{y}}.png?key={CARTO_API_KEY}",
-        attr="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors &copy; <a href='https://carto.com/attributions'>CARTO</a>",
-        name="CartoDB Voyager Dark (Detailed Nav)",
-        overlay=False,
-        control=True,
-        show=True,
-        className="voyager-dark-tiles"
-    ).add_to(m)
-
-    # 2. CartoDB Dark Matter (Tactical)
-    folium.TileLayer(
-        tiles=f"https://{{s}}.basemaps.cartocdn.com/rastertiles/dark_all/{{z}}/{{x}}/{{y}}.png?key={CARTO_API_KEY}",
-        attr="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors &copy; <a href='https://carto.com/attributions'>CARTO</a>",
-        name="CartoDB Dark Matter (Tactical)",
-        overlay=False,
-        control=True,
-        show=False
-    ).add_to(m)
-
-    # 3. CartoDB Voyager (Navigation Basemap authenticated with CARTO key)
-    folium.TileLayer(
-        tiles=f"https://{{s}}.basemaps.cartocdn.com/rastertiles/voyager/{{z}}/{{x}}/{{y}}.png?key={CARTO_API_KEY}",
-        attr="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors &copy; <a href='https://carto.com/attributions'>CARTO</a>",
-        name="CartoDB Voyager (Nav)",
-        overlay=False,
-        control=True,
-        show=False
-    ).add_to(m)
-
-    # 4. Esri World Dark Gray Canvas (Official Defense C2 dark basemap, 100% free, no key required)
-    folium.TileLayer(
-        tiles="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
-        attr="Esri, HERE, Garmin, FAO, NOAA, USGS, &copy; OpenStreetMap contributors",
-        name="Esri Dark Gray Canvas",
-        overlay=False,
-        control=True,
-        show=False
-    ).add_to(m)
-
-    # 5. High-resolution Satellite Imagery
-    folium.TileLayer(
-        tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-        attr="Esri, Maxar, Earthstar Geographics, and the GIS User Community",
-        name="Esri Satellite Imagery",
-        overlay=False,
-        control=True,
-        show=False
-    ).add_to(m)
-
-    # 6. Topographic Basemap
-    folium.TileLayer(
-        tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
-        attr="Esri, HERE, Garmin, Intermap, USGS, METI, OpenStreetMap contributors, and the GIS User Community",
-        name="Esri Topographic",
-        overlay=False,
-        control=True,
-        show=False
-    ).add_to(m)
-
-    # 7. OpenStreetMap (Standard Fallback)
-    folium.TileLayer(
-        tiles="OpenStreetMap",
-        name="OpenStreetMap (Standard)",
-        overlay=False,
-        control=True,
-        show=False
-    ).add_to(m)
-
-    # 8. Interactive Area-of-Interest (AOI) Draw Suite
-    Draw(
-        export=False,
-        position="topleft",
-        draw_options={
-            "polyline": False,
-            "circle": False,
-            "circlemarker": False,
-            "polygon": False,
-            "marker": False,  # Canvas click directly selects target points
-            "rectangle": {
-                "shapeOptions": {
-                    "color": t_cfg["primary"],
-                    "fillColor": t_cfg["primary"],
-                    "fillOpacity": 0.10,
-                    "weight": 2,
-                    "dashArray": "6, 6",
-                    "className": "geoai-bbox geoai-bbox--selected"
+        # Auto-Zoom to Query Bounding Box (Upgrade 3 & AGENTS.md Rule 4.2)
+        if st.session_state.get("last_map_bbox"):
+            b = st.session_state["last_map_bbox"]
+            if isinstance(b, (list, tuple)) and len(b) == 4:
+                try:
+                    w, s, e, n = float(b[0]), float(b[1]), float(b[2]), float(b[3])
+                    m.fit_bounds([[s, w], [n, e]], padding=(30, 30))
+                except Exception as fit_err:
+                    print(f"[Auto-Zoom Warning] Could not fit bounds to {b}: {fit_err}")
+        # Inject CSS for attribution hiding, dark-mode tile filter, and environment-adaptive HUD controls
+        m.get_root().header.add_child(
+            folium.Element(
+                """<style>
+                html, body, #root, #map_div, .leaflet-container {
+                    height: 100vh !important;
+                    min-height: 100% !important;
+                    max-height: 100vh !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    overflow: hidden !important;
                 }
+                .leaflet-control-attribution { display: none !important; }
+                .voyager-dark-tiles { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%) !important; }
+
+                /* Smooth transition when switching basemaps */
+                .leaflet-bar, .leaflet-bar a, .leaflet-control-layers, .leaflet-control-scale-line, .leaflet-draw-actions {
+                    transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease !important;
+                }
+
+                /* ========================================================================== */
+                /* 1. DARK THEME (Tactical GeoAI Defense C2 - for Dark / Satellite Basemaps)   */
+                /* ========================================================================== */
+                .geoai-map-dark .leaflet-bar,
+                .leaflet-container:not(.geoai-map-light) .leaflet-bar,
+                .geoai-map-dark .leaflet-draw-toolbar,
+                .leaflet-container:not(.geoai-map-light) .leaflet-draw-toolbar {
+                    background: rgba(14, 22, 32, 0.92) !important;
+                    border: 1px solid rgba(0, 229, 255, 0.40) !important;
+                    border-radius: 4px !important;
+                    box-shadow: 0 0 10px rgba(0, 229, 255, 0.25), 0 4px 12px rgba(0, 0, 0, 0.6) !important;
+                    overflow: hidden !important;
+                }
+
+                .geoai-map-dark .leaflet-bar a,
+                .leaflet-container:not(.geoai-map-light) .leaflet-bar a,
+                .geoai-map-dark .leaflet-draw-toolbar a,
+                .leaflet-container:not(.geoai-map-light) .leaflet-draw-toolbar a {
+                    background-color: rgba(14, 22, 32, 0.92) !important;
+                    border-bottom: 1px solid rgba(0, 229, 255, 0.22) !important;
+                    color: #00e5ff !important;
+                }
+
+                .geoai-map-dark .leaflet-bar a:hover,
+                .leaflet-container:not(.geoai-map-light) .leaflet-bar a:hover,
+                .geoai-map-dark .leaflet-draw-toolbar a:hover,
+                .leaflet-container:not(.geoai-map-light) .leaflet-draw-toolbar a:hover {
+                    background-color: rgba(0, 229, 255, 0.22) !important;
+                    color: #ffffff !important;
+                    box-shadow: inset 0 0 8px rgba(0, 229, 255, 0.5) !important;
+                }
+
+                /* Zoom In / Out Buttons */
+                .geoai-map-dark .leaflet-control-zoom a,
+                .leaflet-container:not(.geoai-map-light) .leaflet-control-zoom a {
+                    font-family: __FONT_MONO__ !important;
+                    font-size: 16px !important;
+                    font-weight: 700 !important;
+                    line-height: 28px !important;
+                    text-shadow: 0 0 6px rgba(0, 229, 255, 0.7) !important;
+                }
+
+                /* Tactical SVGs for Draw Tools (Rectangle & Trash) in Dark Theme */
+                .geoai-map-dark .leaflet-draw-draw-rectangle,
+                .leaflet-container:not(.geoai-map-light) .leaflet-draw-draw-rectangle {
+                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2300e5ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3C/svg%3E") !important;
+                    background-position: center !important;
+                    background-repeat: no-repeat !important;
+                    background-size: 16px 16px !important;
+                }
+
+                .geoai-map-dark .leaflet-draw-edit-remove,
+                .leaflet-container:not(.geoai-map-light) .leaflet-draw-edit-remove {
+                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23f87171' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'%3E%3C/polyline%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'%3E%3C/path%3E%3Cline x1='10' y1='11' x2='10' y2='17'%3E%3C/line%3E%3Cline x1='14' y1='11' x2='14' y2='17'%3E%3C/line%3E%3C/svg%3E") !important;
+                    background-position: center !important;
+                    background-repeat: no-repeat !important;
+                    background-size: 16px 16px !important;
+                }
+
+                /* Layer Control in Dark Theme */
+                .geoai-map-dark .leaflet-control-layers,
+                .leaflet-container:not(.geoai-map-light) .leaflet-control-layers {
+                    background: rgba(14, 22, 32, 0.92) !important;
+                    border: 1px solid rgba(0, 229, 255, 0.40) !important;
+                    border-radius: 4px !important;
+                    box-shadow: 0 0 10px rgba(0, 229, 255, 0.25), 0 4px 12px rgba(0, 0, 0, 0.6) !important;
+                }
+
+                .geoai-map-dark .leaflet-control-layers-toggle,
+                .leaflet-container:not(.geoai-map-light) .leaflet-control-layers-toggle {
+                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2300e5ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 2 7 12 12 22 7 12 2'%3E%3C/polygon%3E%3Cpolyline points='2 17 12 22 22 17'%3E%3C/polyline%3E%3Cpolyline points='2 12 12 17 22 12'%3E%3C/polyline%3E%3C/svg%3E") !important;
+                    background-position: center !important;
+                    background-repeat: no-repeat !important;
+                    background-size: 20px 20px !important;
+                }
+
+                .geoai-map-dark .leaflet-control-pin-filter-toggle,
+                .leaflet-container:not(.geoai-map-light) .leaflet-control-pin-filter-toggle {
+                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2300e5ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z'%3E%3C/path%3E%3Ccircle cx='12' cy='10' r='3'%3E%3C/circle%3E%3C/svg%3E") !important;
+                    background-position: center !important;
+                    background-repeat: no-repeat !important;
+                    background-size: 20px 20px !important;
+                }
+
+                .pin-filter-header {
+                    color: #00e5ff !important;
+                    font-family: __FONT_MONO__ !important;
+                    font-size: 11px !important;
+                    font-weight: 700 !important;
+                    letter-spacing: 0.07em !important;
+                    margin-bottom: 6px !important;
+                    padding-bottom: 4px !important;
+                    border-bottom: 1px solid rgba(0, 229, 255, 0.25) !important;
+                    text-transform: uppercase !important;
+                }
+
+                .geoai-map-dark .leaflet-control-layers-expanded,
+                .leaflet-container:not(.geoai-map-light) .leaflet-control-layers-expanded {
+                    background: rgba(14, 22, 32, 0.96) !important;
+                    border: 1px solid rgba(0, 229, 255, 0.45) !important;
+                    border-radius: 4px !important;
+                    box-shadow: 0 0 16px rgba(0, 229, 255, 0.3), 0 8px 24px rgba(0, 0, 0, 0.7) !important;
+                    color: #e2e8f0 !important;
+                    font-family: __FONT_BODY__ !important;
+                    font-size: 11.5px !important;
+                    padding: 8px 12px !important;
+                }
+                .geoai-map-dark .leaflet-control-layers-separator,
+                .leaflet-container:not(.geoai-map-light) .leaflet-control-layers-separator {
+                    border-top: 1px solid rgba(0, 229, 255, 0.25) !important;
+                }
+                .geoai-map-dark .leaflet-control-layers-base label,
+                .leaflet-container:not(.geoai-map-light) .leaflet-control-layers-base label,
+                .geoai-map-dark .leaflet-control-layers-overlays label,
+                .leaflet-container:not(.geoai-map-light) .leaflet-control-layers-overlays label {
+                    display: flex !important;
+                    align-items: center !important;
+                    gap: 6px !important;
+                    cursor: pointer !important;
+                    color: #cbd5e1 !important;
+                    margin-bottom: 3px !important;
+                    font-size: 11px !important;
+                }
+                .geoai-map-dark .leaflet-control-layers-base label:hover,
+                .leaflet-container:not(.geoai-map-light) .leaflet-control-layers-base label:hover {
+                    color: #00e5ff !important;
+                }
+                .geoai-map-dark input[type="radio"],
+                .leaflet-container:not(.geoai-map-light) input[type="radio"],
+                .geoai-map-dark input[type="checkbox"],
+                .leaflet-container:not(.geoai-map-light) input[type="checkbox"] {
+                    accent-color: #00e5ff !important;
+                }
+
+                /* Scale Line in Dark Theme */
+                .geoai-map-dark .leaflet-control-scale-line,
+                .leaflet-container:not(.geoai-map-light) .leaflet-control-scale-line {
+                    background: rgba(14, 22, 32, 0.88) !important;
+                    border: 2px solid #00e5ff !important;
+                    border-top: none !important;
+                    color: #00e5ff !important;
+                    font-family: __FONT_MONO__ !important;
+                    font-size: 11px !important;
+                    font-weight: 700 !important;
+                    letter-spacing: 0.05em !important;
+                    text-shadow: 0 0 6px rgba(0, 229, 255, 0.6) !important;
+                    box-shadow: 0 0 8px rgba(0, 229, 255, 0.25) !important;
+                    padding: 2px 6px !important;
+                    border-radius: 0 0 2px 2px !important;
+                }
+
+                /* Draw Actions Sub-menu in Dark Theme */
+                .geoai-map-dark .leaflet-draw-actions,
+                .leaflet-container:not(.geoai-map-light) .leaflet-draw-actions {
+                    background: rgba(14, 22, 32, 0.95) !important;
+                    border: 1px solid rgba(0, 229, 255, 0.40) !important;
+                    border-radius: 4px !important;
+                    box-shadow: 0 0 10px rgba(0, 229, 255, 0.25) !important;
+                }
+                .geoai-map-dark .leaflet-draw-actions a,
+                .leaflet-container:not(.geoai-map-light) .leaflet-draw-actions a {
+                    background-color: transparent !important;
+                    color: #00e5ff !important;
+                    font-family: __FONT_MONO__ !important;
+                    font-size: 11px !important;
+                    font-weight: 600 !important;
+                }
+                .geoai-map-dark .leaflet-draw-actions a:hover,
+                .leaflet-container:not(.geoai-map-light) .leaflet-draw-actions a:hover {
+                    background-color: rgba(0, 229, 255, 0.20) !important;
+                    color: #ffffff !important;
+                }
+
+                /* Popups & Tooltips in Dark Theme */
+                .geoai-map-dark .leaflet-popup-content-wrapper,
+                .leaflet-container:not(.geoai-map-light) .leaflet-popup-content-wrapper {
+                    background: rgba(14, 22, 32, 0.96) !important;
+                    border: 1px solid rgba(0, 229, 255, 0.40) !important;
+                    color: #e2e8f0 !important;
+                    box-shadow: 0 0 14px rgba(0, 229, 255, 0.3) !important;
+                }
+                .geoai-map-dark .leaflet-popup-tip,
+                .leaflet-container:not(.geoai-map-light) .leaflet-popup-tip {
+                    background: rgba(14, 22, 32, 0.96) !important;
+                }
+                .geoai-map-dark .leaflet-popup-close-button,
+                .leaflet-container:not(.geoai-map-light) .leaflet-popup-close-button {
+                    color: #00e5ff !important;
+                }
+                .geoai-map-dark .leaflet-tooltip,
+                .leaflet-container:not(.geoai-map-light) .leaflet-tooltip {
+                    background: rgba(14, 22, 32, 0.92) !important;
+                    border: 1px solid rgba(0, 229, 255, 0.40) !important;
+                    color: #00e5ff !important;
+                    font-family: __FONT_MONO__ !important;
+                    box-shadow: 0 0 8px rgba(0, 229, 255, 0.25) !important;
+                }
+
+                /* ========================================================================== */
+                /* 2. LIGHT THEME (For Light Navigation, Topographic, and OSM Basemaps)       */
+                /* ========================================================================== */
+                .geoai-map-light .leaflet-bar,
+                .geoai-map-light .leaflet-draw-toolbar {
+                    background: rgba(248, 250, 252, 0.95) !important;
+                    border: 1px solid rgba(15, 23, 42, 0.28) !important;
+                    border-radius: 4px !important;
+                    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.18) !important;
+                    overflow: hidden !important;
+                }
+
+                .geoai-map-light .leaflet-bar a,
+                .geoai-map-light .leaflet-draw-toolbar a {
+                    background-color: rgba(248, 250, 252, 0.95) !important;
+                    border-bottom: 1px solid rgba(15, 23, 42, 0.15) !important;
+                    color: #0f172a !important;
+                }
+
+                .geoai-map-light .leaflet-bar a:hover,
+                .geoai-map-light .leaflet-draw-toolbar a:hover {
+                    background-color: #0284c7 !important;
+                    color: #ffffff !important;
+                }
+
+                .geoai-map-light .leaflet-control-zoom a {
+                    font-family: __FONT_MONO__ !important;
+                    font-size: 16px !important;
+                    font-weight: 700 !important;
+                    line-height: 28px !important;
+                    color: #0f172a !important;
+                }
+                .geoai-map-light .leaflet-control-zoom a:hover {
+                    color: #ffffff !important;
+                }
+
+                /* SVGs for Draw Tools in Light Theme */
+                .geoai-map-light .leaflet-draw-draw-rectangle {
+                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230f172a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3C/svg%3E") !important;
+                    background-position: center !important;
+                    background-repeat: no-repeat !important;
+                    background-size: 16px 16px !important;
+                }
+
+                .geoai-map-light .leaflet-draw-edit-remove {
+                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23dc2626' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'%3E%3C/polyline%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'%3E%3C/path%3E%3Cline x1='10' y1='11' x2='10' y2='17'%3E%3C/line%3E%3Cline x1='14' y1='11' x2='14' y2='17'%3E%3C/line%3E%3C/svg%3E") !important;
+                    background-position: center !important;
+                    background-repeat: no-repeat !important;
+                    background-size: 16px 16px !important;
+                }
+
+                /* Layer Control in Light Theme */
+                .geoai-map-light .leaflet-control-layers {
+                    background: rgba(248, 250, 252, 0.95) !important;
+                    border: 1px solid rgba(15, 23, 42, 0.28) !important;
+                    border-radius: 4px !important;
+                    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.18) !important;
+                }
+
+                .geoai-map-light .leaflet-control-layers-toggle {
+                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%230f172a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 2 7 12 12 22 7 12 2'%3E%3C/polygon%3E%3Cpolyline points='2 17 12 22 22 17'%3E%3C/polyline%3E%3Cpolyline points='2 12 12 17 22 12'%3E%3C/polyline%3E%3C/svg%3E") !important;
+                    background-position: center !important;
+                    background-repeat: no-repeat !important;
+                    background-size: 20px 20px !important;
+                }
+
+                .geoai-map-light .leaflet-control-pin-filter-toggle {
+                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%230f172a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z'%3E%3C/path%3E%3Ccircle cx='12' cy='10' r='3'%3E%3C/circle%3E%3C/svg%3E") !important;
+                    background-position: center !important;
+                    background-repeat: no-repeat !important;
+                    background-size: 20px 20px !important;
+                }
+
+                .geoai-map-light .pin-filter-header {
+                    color: #0284c7 !important;
+                    border-bottom: 1px solid rgba(15, 23, 42, 0.15) !important;
+                }
+
+                .geoai-map-light .leaflet-control-layers-expanded {
+                    background: rgba(255, 255, 255, 0.96) !important;
+                    border: 1px solid rgba(15, 23, 42, 0.25) !important;
+                    border-radius: 4px !important;
+                    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+                    color: #0f172a !important;
+                    font-family: __FONT_BODY__ !important;
+                    font-size: 11.5px !important;
+                    padding: 8px 12px !important;
+                }
+                .geoai-map-light .leaflet-control-layers-separator {
+                    border-top: 1px solid rgba(15, 23, 42, 0.15) !important;
+                }
+                .geoai-map-light .leaflet-control-layers-base label,
+                .geoai-map-light .leaflet-control-layers-overlays label {
+                    display: flex !important;
+                    align-items: center !important;
+                    gap: 6px !important;
+                    cursor: pointer !important;
+                    color: #1e293b !important;
+                    margin-bottom: 3px !important;
+                    font-size: 11px !important;
+                }
+                .geoai-map-light .leaflet-control-layers-base label:hover {
+                    color: #0284c7 !important;
+                }
+                .geoai-map-light input[type="radio"],
+                .geoai-map-light input[type="checkbox"] {
+                    accent-color: #0284c7 !important;
+                }
+
+                /* Scale Line in Light Theme */
+                .geoai-map-light .leaflet-control-scale-line {
+                    background: rgba(255, 255, 255, 0.88) !important;
+                    border: 2px solid #0f172a !important;
+                    border-top: none !important;
+                    color: #0f172a !important;
+                    font-family: __FONT_MONO__ !important;
+                    font-size: 11px !important;
+                    font-weight: 700 !important;
+                    letter-spacing: 0.05em !important;
+                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+                    padding: 2px 6px !important;
+                    border-radius: 0 0 2px 2px !important;
+                }
+
+                /* Draw Actions Sub-menu in Light Theme */
+                .geoai-map-light .leaflet-draw-actions {
+                    background: rgba(248, 250, 252, 0.95) !important;
+                    border: 1px solid rgba(15, 23, 42, 0.25) !important;
+                    border-radius: 4px !important;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+                }
+                .geoai-map-light .leaflet-draw-actions a {
+                    background-color: transparent !important;
+                    color: #0f172a !important;
+                    font-family: __FONT_MONO__ !important;
+                    font-size: 11px !important;
+                    font-weight: 600 !important;
+                }
+                .geoai-map-light .leaflet-draw-actions a:hover {
+                    background-color: #0284c7 !important;
+                    color: #ffffff !important;
+                }
+
+                /* Popups & Tooltips in Light Theme */
+                .geoai-map-light .leaflet-popup-content-wrapper {
+                    background: rgba(255, 255, 255, 0.96) !important;
+                    border: 1px solid rgba(15, 23, 42, 0.25) !important;
+                    color: #0f172a !important;
+                }
+                .geoai-map-light .leaflet-popup-tip {
+                    background: rgba(255, 255, 255, 0.96) !important;
+                }
+                .geoai-map-light .leaflet-popup-close-button {
+                    color: #0f172a !important;
+                }
+                .geoai-map-light .leaflet-tooltip {
+                    background: rgba(255, 255, 255, 0.92) !important;
+                    border: 1px solid rgba(15, 23, 42, 0.25) !important;
+                    color: #0f172a !important;
+                    font-family: __FONT_MONO__ !important;
+                }
+
+                /* ========================================================================== */
+                /* 3. TACTICAL HUD MAP SYMBOLOGY (Pins, Reticles, Clusters, BBox, Cards)      */
+                /* ========================================================================== */
+                .leaflet-container {
+                    --geoai-selection: #00e5ff;
+                    --geoai-primary: #38bdf8;
+                    --geoai-event: #ff4d6d;
+                    --geoai-uncertain: #ffb020;
+                    --geoai-context: #7dd3fc;
+                    --geoai-threat: #f97316;
+                    --geoai-recon: #a855f7;
+                    --geoai-friendly: #22c55e;
+                    --geoai-core: rgba(6, 12, 18, 0.92);
+                    --geoai-halo: rgba(0, 0, 0, 0.78);
+                }
+                .geoai-map-light {
+                    --geoai-selection: #0284c7;
+                    --geoai-primary: #0369a1;
+                    --geoai-event: #be123c;
+                    --geoai-uncertain: #b45309;
+                    --geoai-context: #475569;
+                    --geoai-threat: #c2410c;
+                    --geoai-recon: #7e22ce;
+                    --geoai-friendly: #15803d;
+                    --geoai-core: rgba(255, 255, 255, 0.96);
+                    --geoai-halo: rgba(255, 255, 255, 0.92);
+                }
+
+                .geoai-pin {
+                    background: transparent !important;
+                    border: none !important;
+                }
+
+                /* Target Crosshair Reticle */
+                .geoai-reticle {
+                    position: relative;
+                    width: 34px;
+                    height: 34px;
+                    color: var(--geoai-selection);
+                    filter: drop-shadow(0 0 4px rgba(0, 229, 255, 0.65));
+                    pointer-events: none;
+                }
+                .geoai-reticle svg {
+                    position: absolute;
+                    inset: 0;
+                }
+                .geoai-reticle__pulse {
+                    position: absolute;
+                    inset: 7px;
+                    border-radius: 50%;
+                    border: 2px solid var(--geoai-selection);
+                    animation: geoai-pulse 2s ease-out infinite;
+                    pointer-events: none;
+                }
+                .geoai-reticle__spin {
+                    display: none;
+                    position: absolute;
+                    inset: 2px;
+                    border-radius: 50%;
+                    border: 1.5px dashed var(--geoai-selection);
+                    pointer-events: none;
+                    animation: geoai-spin 3s linear infinite;
+                }
+                .geoai-reticle--querying .geoai-reticle__pulse {
+                    animation-duration: 1s !important;
+                }
+                .geoai-reticle--querying .geoai-reticle__spin {
+                    display: block;
+                }
+                @keyframes geoai-pulse {
+                    0% { transform: scale(0.6); opacity: 0.9; }
+                    100% { transform: scale(2.3); opacity: 0; }
+                }
+                @keyframes geoai-spin {
+                    to { transform: rotate(360deg); }
+                }
+
+                /* Primary / Event / Uncertain Diamond & Teardrop Pins */
+                .geoai-diamond {
+                    width: 20px;
+                    height: 20px;
+                    margin: 1px;
+                    transform: rotate(45deg);
+                    background: var(--geoai-core);
+                    border: 2px solid var(--c, var(--geoai-primary));
+                    border-radius: 3px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: transform 0.15s ease, border-radius 0.15s ease;
+                    box-shadow: 0 0 0 1px var(--geoai-halo), 0 0 10px rgba(0, 229, 255, 0.35);
+                }
+                .geoai-diamond > span {
+                    transform: rotate(-45deg);
+                    font: 700 11px/1 __FONT_MONO__;
+                    color: var(--c, var(--geoai-primary));
+                }
+                .geoai-pin:hover .geoai-diamond {
+                    transform: rotate(45deg) scale(1.18);
+                }
+                /* Teardrop Pin Shape Variant (both initial class and 0ms container toggle) */
+                .geoai-diamond.geoai-teardrop,
+                .geoai-shape-teardrop .geoai-diamond {
+                    width: 24px;
+                    height: 24px;
+                    margin: -1px;
+                    border-radius: 50% 50% 50% 0;
+                    transform: translateY(-14px) rotate(-45deg);
+                }
+                .geoai-diamond.geoai-teardrop > span,
+                .geoai-shape-teardrop .geoai-diamond > span {
+                    transform: rotate(45deg);
+                }
+                .geoai-pin:hover .geoai-diamond.geoai-teardrop,
+                .geoai-shape-teardrop .geoai-pin:hover .geoai-diamond {
+                    transform: translateY(-14px) rotate(-45deg) scale(1.15);
+                }
+                .geoai-diamond--uncertain {
+                    border-style: dashed;
+                }
+                .geoai-badge-unc {
+                    position: absolute;
+                    top: -6px;
+                    right: -6px;
+                    width: 14px;
+                    height: 14px;
+                    border-radius: 50%;
+                    background: var(--geoai-uncertain);
+                    color: #0b0f17;
+                    font: 700 10px/14px __FONT_MONO__;
+                    text-align: center;
+                    font-style: normal;
+                    box-shadow: 0 0 0 1.5px var(--geoai-halo);
+                    transition: top 0.15s ease, right 0.15s ease;
+                }
+                .geoai-pin--teardrop .geoai-badge-unc,
+                .geoai-shape-teardrop .geoai-badge-unc {
+                    top: -20px;
+                    right: -7px;
+                }
+
+                /* Lightweight 8px Context Dot */
+                .geoai-dot {
+                    width: 8px;
+                    height: 8px;
+                    margin: 1px;
+                    border-radius: 50%;
+                    background: var(--geoai-context);
+                    opacity: 0.88;
+                    box-shadow: 0 0 0 1.5px var(--geoai-halo);
+                    transition: transform 0.12s ease;
+                }
+                .geoai-dot-num {
+                    display: none;
+                }
+                .geoai-pin:hover .geoai-dot {
+                    transform: scale(1.35);
+                    opacity: 1;
+                }
+
+                /* Bounding Box L-shaped Corner Brackets (Exact Vertex Alignment) */
+                .geoai-corner {
+                    position: relative;
+                    width: 16px;
+                    height: 16px;
+                    margin: 0;
+                    padding: 0;
+                    display: block;
+                    line-height: 0;
+                    color: var(--geoai-selection);
+                    filter: drop-shadow(0 0 3px var(--geoai-selection));
+                }
+                .geoai-corner svg {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 16px;
+                    height: 16px;
+                    display: block;
+                }
+                .geoai-corner--dim {
+                    opacity: 0.40;
+                    filter: none;
+                }
+
+                /* Context Cluster Bubbles */
+                .geoai-cluster-wrap {
+                    background: transparent !important;
+                    border: none !important;
+                }
+                .geoai-cluster {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 50%;
+                    background: var(--geoai-core);
+                    border: 1.5px solid var(--geoai-selection);
+                    color: var(--geoai-selection);
+                    font: 700 12px/1 __FONT_MONO__;
+                }
+                .geoai-cluster--s1 {
+                    width: 28px;
+                    height: 28px;
+                    box-shadow: 0 0 0 4px rgba(0, 229, 255, 0.14), 0 0 10px rgba(0, 229, 255, 0.30);
+                }
+                .geoai-cluster--s2 {
+                    width: 36px;
+                    height: 36px;
+                    box-shadow: 0 0 0 5px rgba(0, 229, 255, 0.16), 0 0 12px rgba(0, 229, 255, 0.35);
+                }
+                .geoai-cluster--s3 {
+                    width: 44px;
+                    height: 44px;
+                    box-shadow: 0 0 0 7px rgba(0, 229, 255, 0.18), 0 0 16px rgba(0, 229, 255, 0.40);
+                }
+
+                /* Phase 2: Regional Sector Filtering & Highlighting (Never override .leaflet-marker-icon translate3d transform!) */
+                .geoai-sector--dimmed,
+                .geoai-sector--dimmed.leaflet-marker-icon,
+                .geoai-sector--dimmed.marker-cluster,
+                .geoai-sector--dimmed.geoai-cluster-wrap,
+                .geoai-sector--dimmed .geoai-diamond,
+                .geoai-sector--dimmed .geoai-teardrop,
+                .geoai-sector--dimmed .geoai-dot,
+                .geoai-sector--dimmed .geoai-cluster {
+                    opacity: 0.15 !important;
+                    filter: grayscale(90%) contrast(70%) !important;
+                    transition: opacity 0.25s ease, filter 0.25s ease !important;
+                }
+                .geoai-sector--highlighted,
+                .geoai-sector--highlighted.leaflet-marker-icon {
+                    opacity: 1.0 !important;
+                    z-index: 10000 !important;
+                    filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.95)) drop-shadow(0 0 3px rgba(56, 189, 248, 0.75)) !important;
+                    transition: filter 0.25s ease, opacity 0.25s ease !important;
+                }
+                .geoai-sector--highlighted .geoai-diamond {
+                    transform: rotate(45deg) scale(1.18) !important;
+                    border-color: #38bdf8 !important;
+                    box-shadow: 0 0 12px rgba(56, 189, 248, 0.9) !important;
+                }
+                .geoai-sector--highlighted .geoai-diamond.geoai-teardrop,
+                .geoai-shape-teardrop .geoai-sector--highlighted .geoai-diamond {
+                    transform: translateY(-14px) rotate(-45deg) scale(1.18) !important;
+                    border-color: #38bdf8 !important;
+                    box-shadow: 0 0 12px rgba(56, 189, 248, 0.9) !important;
+                }
+                .geoai-sector--highlighted .geoai-dot {
+                    width: 20px !important;
+                    height: 20px !important;
+                    margin-left: -5px !important;
+                    margin-top: -5px !important;
+                    border-radius: 50% !important;
+                    opacity: 1.0 !important;
+                    background: #0b1320 !important;
+                    border: 2px solid #38bdf8 !important;
+                    box-shadow: 0 0 10px #38bdf8, inset 0 0 4px rgba(56, 189, 248, 0.4) !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                }
+                .geoai-sector--highlighted .geoai-dot .geoai-dot-num {
+                    display: inline-block !important;
+                    font: 700 9.5px/1 __FONT_MONO__ !important;
+                    font-style: normal !important;
+                    color: #f0f9ff !important;
+                    letter-spacing: -0.03em !important;
+                }
+                .geoai-sector--highlighted.geoai-cluster-wrap .geoai-cluster {
+                    border-color: #38bdf8 !important;
+                    box-shadow: 0 0 14px rgba(56, 189, 248, 0.9) !important;
+                    color: #ffffff !important;
+                }
+
+                /* Instant Client-Side Pin Filter Toggles */
+                .geoai-hide-primary-pins .geoai-pin--primary,
+                .geoai-hide-primary-pins .awesome-marker-icon-blue {
+                    display: none !important;
+                }
+                .geoai-hide-context-pins .geoai-pin--context,
+                .geoai-hide-context-pins .awesome-marker-icon-cadetblue,
+                .geoai-hide-context-pins .geoai-cluster-wrap {
+                    display: none !important;
+                }
+                .geoai-hide-uncertain-pins .geoai-pin--uncertain,
+                .geoai-hide-uncertain-pins .awesome-marker-icon-orange {
+                    display: none !important;
+                }
+
+                /* Bounding Box States (Selected Marching Ants, Querying Pulse + Scanline, Answered Ultra-Transparent) */
+                path.geoai-bbox--selected {
+                    animation: geoai-ants 1s linear infinite;
+                }
+                path.geoai-bbox--querying {
+                    animation: geoai-ants 0.6s linear infinite, geoai-qfill 1.6s ease-in-out infinite !important;
+                }
+                path.geoai-bbox--answered {
+                    pointer-events: none !important;
+                }
+                @keyframes geoai-ants {
+                    to { stroke-dashoffset: -12; }
+                }
+                @keyframes geoai-qfill {
+                    0%, 100% { fill-opacity: 0.08; }
+                    50% { fill-opacity: 0.20; }
+                }
+                .geoai-scan-svg {
+                    pointer-events: none !important;
+                    overflow: hidden;
+                }
+                .geoai-scan-line {
+                    stroke: var(--geoai-selection);
+                    stroke-width: 2;
+                    opacity: 0.9;
+                    vector-effect: non-scaling-stroke;
+                    filter: drop-shadow(0 0 6px var(--geoai-selection));
+                }
+                .geoai-scan-band {
+                    fill: url(#geoai-scan-grad);
+                    pointer-events: none;
+                }
+
+                /* Pin Shape Segmented Control inside PinFilterControl */
+                .geoai-shape-seg {
+                    display: flex;
+                    gap: 4px;
+                    margin-top: 2px;
+                }
+                .geoai-shape-btn {
+                    flex: 1;
+                    background: rgba(11, 15, 23, 0.65);
+                    color: var(--geoai-selection);
+                    border: 1px solid rgba(0, 229, 255, 0.28);
+                    border-radius: 3px;
+                    padding: 2px 6px;
+                    font: 700 10px/1.3 __FONT_MONO__;
+                    cursor: pointer;
+                    transition: background 0.12s ease, border-color 0.12s ease;
+                }
+                .geoai-shape-btn.active {
+                    background: rgba(0, 229, 255, 0.22);
+                    border-color: var(--geoai-selection);
+                    box-shadow: 0 0 6px rgba(0, 229, 255, 0.25);
+                }
+
+                /* Unified Tactical Popup Card */
+                .geoai-card {
+                    font: 12px/1.45 __FONT_BODY__;
+                    min-width: 200px;
+                }
+                .geoai-card__head {
+                    padding: 2px 4px 6px 8px;
+                    margin-bottom: 6px;
+                    border-bottom: 1px solid rgba(0, 229, 255, 0.25);
+                    border-left: 3px solid var(--c, var(--geoai-primary));
+                }
+                .geoai-card__chip {
+                    font-family: __FONT_MONO__;
+                    font-size: 10px;
+                    font-weight: 700;
+                    letter-spacing: 0.08em;
+                    color: var(--c, var(--geoai-primary));
+                    text-transform: uppercase;
+                }
+                .geoai-card__title {
+                    font-family: __FONT_DISPLAY__;
+                    font-weight: 700;
+                    font-size: 13px;
+                    letter-spacing: 0.03em;
+                }
+                .geoai-card__body {
+                    display: grid;
+                    grid-template-columns: auto 1fr;
+                    gap: 2px 10px;
+                    padding: 2px 4px;
+                }
+                .geoai-card__body > span {
+                    opacity: 0.78;
+                    font-size: 11px;
+                }
+                .geoai-card__body > code,
+                .geoai-popup-wrap code {
+                    font-family: __FONT_MONO__;
+                }
+                .geoai-popup-wrap > b:first-of-type {
+                    font-family: __FONT_DISPLAY__;
+                    letter-spacing: 0.03em;
+                }
+                .geoai-card__footer {
+                    margin-top: 6px;
+                    padding-top: 5px;
+                    border-top: 1px dashed rgba(0, 229, 255, 0.25);
+                    font-size: 11px;
+                    opacity: 0.85;
+                }
+
+                /* Tactical Map HUD Control (Option 1) */
+                .geoai-map-hud-control {
+                    margin-bottom: 24px !important;
+                    margin-left: 12px !important;
+                    pointer-events: auto !important;
+                    z-index: 1000 !important;
+                }
+                .geoai-map-hud {
+                    display: none;
+                    align-items: center;
+                    gap: 8px;
+                    background: rgba(14, 22, 32, 0.92);
+                    backdrop-filter: blur(8px);
+                    border: 1px solid rgba(0, 229, 255, 0.45);
+                    border-radius: 6px;
+                    padding: 6px 10px;
+                    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.65), 0 0 12px rgba(0, 229, 255, 0.25);
+                    font-family: __FONT_MONO__;
+                    font-size: 11px;
+                    color: #e2e8f0;
+                    white-space: nowrap;
+                    user-select: none;
+                    transition: opacity 0.2s ease, transform 0.2s ease;
+                }
+                .geoai-map-light .geoai-map-hud {
+                    background: rgba(255, 255, 255, 0.94);
+                    border: 1px solid rgba(15, 23, 42, 0.25);
+                    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+                    color: #0f172a;
+                }
+                .geoai-map-hud.visible {
+                    display: flex !important;
+                }
+                .geoai-map-hud-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 4px;
+                    font-weight: 700;
+                    font-size: 10.5px;
+                    color: #00e5ff;
+                    letter-spacing: 0.05em;
+                }
+                .geoai-map-light .geoai-map-hud-badge {
+                    color: #0284c7;
+                }
+                .geoai-map-hud-coords {
+                    color: #f1f5f9;
+                    font-weight: 600;
+                    font-size: 11px;
+                    background: rgba(0, 229, 255, 0.08);
+                    border: 1px solid rgba(0, 229, 255, 0.2);
+                    padding: 2px 6px;
+                    border-radius: 4px;
+                }
+                .geoai-map-light .geoai-map-hud-coords {
+                    color: #0f172a;
+                    background: rgba(15, 23, 42, 0.05);
+                    border: 1px solid rgba(15, 23, 42, 0.15);
+                }
+                .geoai-map-hud-btn {
+                    border-radius: 4px;
+                    padding: 3px 8px;
+                    font-size: 11px;
+                    font-weight: 600;
+                    font-family: __FONT_DISPLAY__;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
+                    cursor: pointer;
+                    border: none;
+                    outline: none;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 3px;
+                    transition: all 0.15s ease;
+                }
+                .geoai-map-hud-clear {
+                    background: rgba(239, 68, 68, 0.15);
+                    color: #fca5a5;
+                    border: 1px solid rgba(239, 68, 68, 0.35);
+                }
+                .geoai-map-hud-clear:hover {
+                    background: rgba(239, 68, 68, 0.3);
+                    color: #ffffff;
+                    border-color: rgba(239, 68, 68, 0.6);
+                }
+                .geoai-map-hud-recon {
+                    background: rgba(0, 229, 255, 0.2);
+                    color: #00e5ff;
+                    border: 1px solid rgba(0, 229, 255, 0.6);
+                    box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
+                }
+                .geoai-map-hud-recon:hover {
+                    background: rgba(0, 229, 255, 0.35);
+                    color: #ffffff;
+                    box-shadow: 0 0 12px rgba(0, 229, 255, 0.5);
+                }
+                </style>"""
+                .replace("__FONT_DISPLAY__", FONT_DISPLAY)
+                .replace("__FONT_BODY__", FONT_BODY)
+                .replace("__FONT_MONO__", FONT_MONO)
+            )
+        )
+
+        # CARTO API Key integration
+        CARTO_API_KEY = "cb1_3wyp_1_6945a000f4bccf031f5aec03"
+
+        # 1. Primary Default Basemap: CartoDB Voyager Dark (Detailed Navigation with dense labels & POIs in dark mode)
+        folium.TileLayer(
+            tiles=f"https://{{s}}.basemaps.cartocdn.com/rastertiles/voyager/{{z}}/{{x}}/{{y}}.png?key={CARTO_API_KEY}",
+            attr="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors &copy; <a href='https://carto.com/attributions'>CARTO</a>",
+            name="CartoDB Voyager Dark (Detailed Nav)",
+            overlay=False,
+            control=True,
+            show=True,
+            className="voyager-dark-tiles"
+        ).add_to(m)
+
+        # 2. CartoDB Dark Matter (Tactical)
+        folium.TileLayer(
+            tiles=f"https://{{s}}.basemaps.cartocdn.com/rastertiles/dark_all/{{z}}/{{x}}/{{y}}.png?key={CARTO_API_KEY}",
+            attr="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors &copy; <a href='https://carto.com/attributions'>CARTO</a>",
+            name="CartoDB Dark Matter (Tactical)",
+            overlay=False,
+            control=True,
+            show=False
+        ).add_to(m)
+
+        # 3. CartoDB Voyager (Navigation Basemap authenticated with CARTO key)
+        folium.TileLayer(
+            tiles=f"https://{{s}}.basemaps.cartocdn.com/rastertiles/voyager/{{z}}/{{x}}/{{y}}.png?key={CARTO_API_KEY}",
+            attr="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors &copy; <a href='https://carto.com/attributions'>CARTO</a>",
+            name="CartoDB Voyager (Nav)",
+            overlay=False,
+            control=True,
+            show=False
+        ).add_to(m)
+
+        # 4. Esri World Dark Gray Canvas (Official Defense C2 dark basemap, 100% free, no key required)
+        folium.TileLayer(
+            tiles="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+            attr="Esri, HERE, Garmin, FAO, NOAA, USGS, &copy; OpenStreetMap contributors",
+            name="Esri Dark Gray Canvas",
+            overlay=False,
+            control=True,
+            show=False
+        ).add_to(m)
+
+        # 5. High-resolution Satellite Imagery
+        folium.TileLayer(
+            tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+            attr="Esri, Maxar, Earthstar Geographics, and the GIS User Community",
+            name="Esri Satellite Imagery",
+            overlay=False,
+            control=True,
+            show=False
+        ).add_to(m)
+
+        # 6. Topographic Basemap
+        folium.TileLayer(
+            tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+            attr="Esri, HERE, Garmin, Intermap, USGS, METI, OpenStreetMap contributors, and the GIS User Community",
+            name="Esri Topographic",
+            overlay=False,
+            control=True,
+            show=False
+        ).add_to(m)
+
+        # 7. OpenStreetMap (Standard Fallback)
+        folium.TileLayer(
+            tiles="OpenStreetMap",
+            name="OpenStreetMap (Standard)",
+            overlay=False,
+            control=True,
+            show=False
+        ).add_to(m)
+
+        # 8. Interactive Area-of-Interest (AOI) Draw Suite
+        Draw(
+            export=False,
+            position="topleft",
+            draw_options={
+                "polyline": False,
+                "circle": False,
+                "circlemarker": False,
+                "polygon": False,
+                "marker": False,  # Canvas click directly selects target points
+                "rectangle": {
+                    "shapeOptions": {
+                        "color": t_cfg["primary"],
+                        "fillColor": t_cfg["primary"],
+                        "fillOpacity": 0.10,
+                        "weight": 2,
+                        "dashArray": "6, 6",
+                        "className": "geoai-bbox geoai-bbox--selected"
+                    }
+                },
             },
-        },
-        edit_options={"edit": False, "remove": True}  # Enable map toolbar trash bin for instant removal
-    ).add_to(m)
+            edit_options={"edit": False, "remove": True}  # Enable map toolbar trash bin for instant removal
+        ).add_to(m)
 
-    # Dynamic overlays feature group: prevents map reloads / flashes on selection
-    # Dynamic overlays feature groups: separate selection from tactical overlays
-    # 1. selection_fg: active target point or bounding box AOI (mapped to window.feature_group[0])
-    # 2. tactical_layers_fg: persistent query overlays (mapped to window.feature_group[1])
-    selection_fg = folium.FeatureGroup(name="Active Selection", control=False)
-    tactical_layers_fg = folium.FeatureGroup(name="Tactical Overlays", control=False)
-    # Upgrade 2: MarkerCluster for background context places (AGENTS.md Rule 4.1)
-    cluster_icon_js = """
-    function(cluster) {
-        var count = cluster.getChildCount();
-        var tier = count < 10 ? 's1' : (count < 100 ? 's2' : 's3');
-        var px = count < 10 ? 28 : (count < 100 ? 36 : 44);
-        return L.divIcon({
-            html: "<div class='geoai-cluster geoai-cluster--" + tier + "'>" + count + "</div>",
-            className: 'marker-cluster geoai-cluster-wrap',
-            iconSize: L.point(px, px)
-        });
-    }
-    """
-    context_cluster = MarkerCluster(
-        name="Context Cluster",
-        control=False,
-        icon_create_function=cluster_icon_js
-    ).add_to(tactical_layers_fg)
+        # Dynamic overlays feature group: prevents map reloads / flashes on selection
+        # Dynamic overlays feature groups: separate selection from tactical overlays
+        # 1. selection_fg: active target point or bounding box AOI (mapped to window.feature_group[0])
+        # 2. tactical_layers_fg: persistent query overlays (mapped to window.feature_group[1])
+        selection_fg = folium.FeatureGroup(name="Active Selection", control=False)
+        tactical_layers_fg = folium.FeatureGroup(name="Tactical Overlays", control=False)
+        # Upgrade 2: MarkerCluster for background context places (AGENTS.md Rule 4.1)
+        cluster_icon_js = """
+        function(cluster) {
+            var count = cluster.getChildCount();
+            var tier = count < 10 ? 's1' : (count < 100 ? 's2' : 's3');
+            var px = count < 10 ? 28 : (count < 100 ? 36 : 44);
+            return L.divIcon({
+                html: "<div class='geoai-cluster geoai-cluster--" + tier + "'>" + count + "</div>",
+                className: 'marker-cluster geoai-cluster-wrap',
+                iconSize: L.point(px, px)
+            });
+        }
+        """
+        context_cluster = MarkerCluster(
+            name="Context Cluster",
+            control=False,
+            icon_create_function=cluster_icon_js
+        ).add_to(tactical_layers_fg)
 
-    # Render visually distinct marker(s) or bounding box for all currently selected points
-    is_querying = bool(st.session_state.get("pending_query"))
-    sync_bbox_state = "none"
-    sync_bbox_bounds = None
+        # Render visually distinct marker(s) or bounding box for all currently selected points
+        is_querying = bool(st.session_state.get("pending_query"))
+        sync_bbox_state = "none"
+        sync_bbox_bounds = None
 
-    if st.session_state.get("bounding_box"):
-        b_ll, b_ur = st.session_state.bounding_box
-        sync_bbox_bounds = [[b_ll[0], b_ll[1]], [b_ur[0], b_ur[1]]]
-        is_answered_bbox = (
-            st.session_state.get("answered_bbox") == st.session_state.bounding_box
-            or any(
+        if st.session_state.get("bounding_box"):
+            b_ll, b_ur = st.session_state.bounding_box
+            sync_bbox_bounds = [[b_ll[0], b_ll[1]], [b_ur[0], b_ur[1]]]
+            is_answered_bbox = (
+                st.session_state.get("answered_bbox") == st.session_state.bounding_box
+                or any(
+                    isinstance(l.data, dict) and l.data.get("role") == "query_bbox"
+                    for l in st.session_state.get("map_layers", [])
+                )
+            )
+            bb_state = "answered" if is_answered_bbox else ("querying" if is_querying else "selected")
+            sync_bbox_state = bb_state
+            bb_cfg = bbox_style(bb_state)
+
+            # 1. Lower-Left (SW) Corner Bracket
+            folium.Marker(
+                location=[b_ll[0], b_ll[1]],
+                tooltip=f"★ Bounding Box Lower-Left (SW): {b_ll[0]:.4f}°, {b_ll[1]:.4f}°",
+                popup=folium.Popup(
+                    _popup_card(
+                        title="★ BBOX LOWER-LEFT (SW)",
+                        rows=[("LAT", f"{b_ll[0]:.5f}°"), ("LNG", f"{b_ll[1]:.5f}°")],
+                        chip="AOI CORNER // SW",
+                        footer=f"Protocol: {t_cfg['name']}",
+                        token="selection",
+                    ),
+                    max_width=250
+                ),
+                icon=make_pin_icon(role="bbox_corner", corner="sw", dimmed=is_answered_bbox)
+            ).add_to(selection_fg)
+
+            # 2. Upper-Right (NE) Corner Bracket
+            folium.Marker(
+                location=[b_ur[0], b_ur[1]],
+                tooltip=f"★ Bounding Box Upper-Right (NE): {b_ur[0]:.4f}°, {b_ur[1]:.4f}°",
+                popup=folium.Popup(
+                    _popup_card(
+                        title="★ BBOX UPPER-RIGHT (NE)",
+                        rows=[("LAT", f"{b_ur[0]:.5f}°"), ("LNG", f"{b_ur[1]:.5f}°")],
+                        chip="AOI CORNER // NE",
+                        footer=f"Protocol: {t_cfg['name']}",
+                        token="selection",
+                    ),
+                    max_width=250
+                ),
+                icon=make_pin_icon(role="bbox_corner", corner="ne", dimmed=is_answered_bbox)
+            ).add_to(selection_fg)
+
+            # 2b. Passive NW & SE Corner Brackets to complete the 4-corner HUD frame
+            folium.Marker(
+                location=[b_ur[0], b_ll[1]],
+                icon=make_pin_icon(role="bbox_corner", corner="nw", dimmed=is_answered_bbox),
+            ).add_to(selection_fg)
+            folium.Marker(
+                location=[b_ll[0], b_ur[1]],
+                icon=make_pin_icon(role="bbox_corner", corner="se", dimmed=is_answered_bbox),
+            ).add_to(selection_fg)
+
+            # 3. Visual Tactical Bounding Box Rectangle (skip duplicate if agent query_bbox layer already renders it)
+            has_agent_query_bbox = any(
                 isinstance(l.data, dict) and l.data.get("role") == "query_bbox"
                 for l in st.session_state.get("map_layers", [])
             )
-        )
-        bb_state = "answered" if is_answered_bbox else ("querying" if is_querying else "selected")
-        sync_bbox_state = bb_state
-        bb_cfg = bbox_style(bb_state)
+            if not has_agent_query_bbox:
+                rect_kwargs = {
+                    "bounds": [[b_ll[0], b_ll[1]], [b_ur[0], b_ur[1]]],
+                    "color": bb_cfg["color"],
+                    "weight": bb_cfg["weight"],
+                    "opacity": bb_cfg["opacity"],
+                    "dash_array": bb_cfg["dash_array"],
+                    "fill": bb_cfg["fill"],
+                    "fill_color": bb_cfg["fill_color"],
+                    "fill_opacity": bb_cfg["fill_opacity"],
+                    "interactive": bb_cfg["interactive"],
+                    "className": bb_cfg["class_name"],
+                }
+                if bb_cfg["interactive"]:
+                    rect_kwargs["tooltip"] = f"★ Bounding Box: [{b_ll[0]:.4f}°, {b_ll[1]:.4f}°] to [{b_ur[0]:.4f}°, {b_ur[1]:.4f}°]"
+                    rect_kwargs["popup"] = folium.Popup(
+                        _popup_card(
+                            title="★ TWO-POINT BOUNDING BOX",
+                            rows=[
+                                ("SW", f"{b_ll[0]:.4f}°, {b_ll[1]:.4f}°"),
+                                ("NE", f"{b_ur[0]:.4f}°, {b_ur[1]:.4f}°"),
+                            ],
+                            chip="SECTOR AOI",
+                            footer="Ready for tactical query",
+                            token="selection",
+                        ),
+                        max_width=260
+                    )
+                folium.Rectangle(**rect_kwargs).add_to(selection_fg)
 
-        # 1. Lower-Left (SW) Corner Bracket
-        folium.Marker(
-            location=[b_ll[0], b_ll[1]],
-            tooltip=f"★ Bounding Box Lower-Left (SW): {b_ll[0]:.4f}°, {b_ll[1]:.4f}°",
-            popup=folium.Popup(
-                _popup_card(
-                    title="★ BBOX LOWER-LEFT (SW)",
-                    rows=[("LAT", f"{b_ll[0]:.5f}°"), ("LNG", f"{b_ll[1]:.5f}°")],
-                    chip="AOI CORNER // SW",
-                    footer=f"Protocol: {t_cfg['name']}",
-                    token="selection",
-                ),
-                max_width=250
-            ),
-            icon=make_pin_icon(role="bbox_corner", corner="sw", dimmed=is_answered_bbox)
-        ).add_to(selection_fg)
-
-        # 2. Upper-Right (NE) Corner Bracket
-        folium.Marker(
-            location=[b_ur[0], b_ur[1]],
-            tooltip=f"★ Bounding Box Upper-Right (NE): {b_ur[0]:.4f}°, {b_ur[1]:.4f}°",
-            popup=folium.Popup(
-                _popup_card(
-                    title="★ BBOX UPPER-RIGHT (NE)",
-                    rows=[("LAT", f"{b_ur[0]:.5f}°"), ("LNG", f"{b_ur[1]:.5f}°")],
-                    chip="AOI CORNER // NE",
-                    footer=f"Protocol: {t_cfg['name']}",
-                    token="selection",
-                ),
-                max_width=250
-            ),
-            icon=make_pin_icon(role="bbox_corner", corner="ne", dimmed=is_answered_bbox)
-        ).add_to(selection_fg)
-
-        # 2b. Passive NW & SE Corner Brackets to complete the 4-corner HUD frame
-        folium.Marker(
-            location=[b_ur[0], b_ll[1]],
-            icon=make_pin_icon(role="bbox_corner", corner="nw", dimmed=is_answered_bbox),
-        ).add_to(selection_fg)
-        folium.Marker(
-            location=[b_ll[0], b_ur[1]],
-            icon=make_pin_icon(role="bbox_corner", corner="se", dimmed=is_answered_bbox),
-        ).add_to(selection_fg)
-
-        # 3. Visual Tactical Bounding Box Rectangle (skip duplicate if agent query_bbox layer already renders it)
-        has_agent_query_bbox = any(
-            isinstance(l.data, dict) and l.data.get("role") == "query_bbox"
-            for l in st.session_state.get("map_layers", [])
-        )
-        if not has_agent_query_bbox:
-            rect_kwargs = {
-                "bounds": [[b_ll[0], b_ll[1]], [b_ur[0], b_ur[1]]],
-                "color": bb_cfg["color"],
-                "weight": bb_cfg["weight"],
-                "opacity": bb_cfg["opacity"],
-                "dash_array": bb_cfg["dash_array"],
-                "fill": bb_cfg["fill"],
-                "fill_color": bb_cfg["fill_color"],
-                "fill_opacity": bb_cfg["fill_opacity"],
-                "interactive": bb_cfg["interactive"],
-                "className": bb_cfg["class_name"],
-            }
-            if bb_cfg["interactive"]:
-                rect_kwargs["tooltip"] = f"★ Bounding Box: [{b_ll[0]:.4f}°, {b_ll[1]:.4f}°] to [{b_ur[0]:.4f}°, {b_ur[1]:.4f}°]"
-                rect_kwargs["popup"] = folium.Popup(
-                    _popup_card(
-                        title="★ TWO-POINT BOUNDING BOX",
-                        rows=[
-                            ("SW", f"{b_ll[0]:.4f}°, {b_ll[1]:.4f}°"),
-                            ("NE", f"{b_ur[0]:.4f}°, {b_ur[1]:.4f}°"),
-                        ],
-                        chip="SECTOR AOI",
-                        footer="Ready for tactical query",
-                        token="selection",
-                    ),
-                    max_width=260
-                )
-            folium.Rectangle(**rect_kwargs).add_to(selection_fg)
-
-    elif st.session_state.get("selected_points"):
-        s_lat, s_lng = st.session_state.selected_points[0]
-        # Existing query answer pins already display their own tactical icon and information popup.
-        # When an existing answer pin is clicked, render the glowing reticle marker WITHOUT the duplicate popup
-        # so the answer pin retains its rich metadata popup while displaying the reticle highlight.
-        is_existing_pin = any(
-            layer.layer_type == "marker"
-            and isinstance(layer.data, dict)
-            and abs(layer.data.get("lat", 0.0) - s_lat) < 0.0001
-            and abs(layer.data.get("lng", 0.0) - s_lng) < 0.0001
-            for layer in st.session_state.get("map_layers", [])
-        )
-        if is_existing_pin:
-            folium.Marker(
-                location=[s_lat, s_lng],
-                tooltip=f"★ Active Target ({s_lat:.4f}°, {s_lng:.4f}°)",
-                icon=make_pin_icon(role="target"),
-                interactive=False
-            ).add_to(selection_fg)
-        if not is_existing_pin:
-            popup_html = _popup_card(
-                title="★ TARGET POINT",
-                rows=[("LAT", f"{s_lat:.5f}°"), ("LNG", f"{s_lng:.5f}°")],
-                chip="ACTIVE TARGET",
-                footer=f"Protocol: {t_cfg['name']}",
-                token="selection",
+        elif st.session_state.get("selected_points"):
+            s_lat, s_lng = st.session_state.selected_points[0]
+            # Existing query answer pins already display their own tactical icon and information popup.
+            # When an existing answer pin is clicked, render the glowing reticle marker WITHOUT the duplicate popup
+            # so the answer pin retains its rich metadata popup while displaying the reticle highlight.
+            is_existing_pin = any(
+                layer.layer_type == "marker"
+                and isinstance(layer.data, dict)
+                and abs(layer.data.get("lat", 0.0) - s_lat) < 0.0001
+                and abs(layer.data.get("lng", 0.0) - s_lng) < 0.0001
+                for layer in st.session_state.get("map_layers", [])
             )
-            folium.Marker(
-                location=[s_lat, s_lng],
-                tooltip=f"★ Target Point ({s_lat:.4f}°, {s_lng:.4f}°)",
-                popup=folium.Popup(popup_html, max_width=250, show=True),
-                icon=make_pin_icon(role="target")
-            ).add_to(selection_fg)
-
-    # Attach SelectionSyncHook so every feature_group_to_add update purges stale client-side
-    # preview layers (corner brackets, drawnItems, instant target markers) and syncs pin shape
-    SelectionSyncHook(
-        has_selection=bool(st.session_state.get("selected_points") or st.session_state.get("bounding_box")),
-        clear_seq=st.session_state.get("selection_clear_seq", 0),
-        bbox_state=sync_bbox_state,
-        is_querying=is_querying,
-        bbox_bounds=sync_bbox_bounds,
-        active_point=None if st.session_state.get("bounding_box") else (st.session_state.get("selected_points")[0] if st.session_state.get("selected_points") else None),
-        pin_shape=st.session_state.get("pin_shape", "Diamond"),
-    ).add_to(selection_fg)
-
-    # Render all persistent MapLayer objects from session state
-    for layer in st.session_state.map_layers:
-        try:
-            l_data = layer.data if isinstance(layer.data, dict) else {}
-            l_role = l_data.get("role")
-            l_kind = l_data.get("kind", "place")
-            l_unc = l_data.get("uncertain")
-            l_num = l_data.get("number")
-            l_corner = l_data.get("corner")
-
-            if layer.layer_type == "marker":
-                is_context = (
-                    layer.color == "cadetblue"
-                    or l_role == "context"
-                    or "context" in (layer.name or "").lower()
-                ) and not l_unc
-                target_parent = context_cluster if is_context else tactical_layers_fg
-                pin_role = "context" if is_context else (l_role or "primary")
+            if is_existing_pin:
                 folium.Marker(
-                    location=[l_data["lat"], l_data["lng"]],
-                    tooltip=layer.tooltip or layer.name,
-                    popup=folium.Popup(layer.popup or layer.name, max_width=300),
-                    icon=make_pin_icon(
-                        kind=l_kind,
-                        role=pin_role,
-                        uncertain=l_unc,
-                        number=l_num,
-                        color_name=layer.color,
-                        corner=l_corner,
-                        dimmed=(pin_role == "bbox_corner"),
-                    )
-                ).add_to(target_parent)
-
-            elif layer.layer_type == "circle":
-                _, c_hex = color_token(layer.color, layer_type="circle", role=l_role, kind=l_kind)
-                is_target_buf = (l_role == "target_buffer" or layer.color == "cyan")
-                folium.Circle(
-                    location=[l_data["lat"], l_data["lng"]],
-                    radius=l_data.get("radius", 10000),
-                    color=c_hex,
-                    weight=1.0 if is_target_buf else 1.5,
-                    dash_array="4, 4" if is_target_buf else None,
-                    fill=True,
-                    fill_color=c_hex,
-                    fill_opacity=0.04 if is_target_buf else 0.08,
-                    tooltip=layer.tooltip or layer.name,
-                    popup=folium.Popup(layer.popup or layer.name, max_width=300)
-                ).add_to(tactical_layers_fg)
-
-            elif layer.layer_type == "polygon":
-                is_query_bbox = (
-                    l_role == "query_bbox"
-                    or "bbox" in (layer.name or "").lower()
-                    or "bounding box" in (layer.name or "").lower()
+                    location=[s_lat, s_lng],
+                    tooltip=f"★ Active Target ({s_lat:.4f}°, {s_lng:.4f}°)",
+                    icon=make_pin_icon(role="target"),
+                    interactive=False
+                ).add_to(selection_fg)
+            if not is_existing_pin:
+                popup_html = _popup_card(
+                    title="★ TARGET POINT",
+                    rows=[("LAT", f"{s_lat:.5f}°"), ("LNG", f"{s_lng:.5f}°")],
+                    chip="ACTIVE TARGET",
+                    footer=f"Protocol: {t_cfg['name']}",
+                    token="selection",
                 )
-                if is_query_bbox:
-                    ans_cfg = bbox_style("answered")
-                    folium.Polygon(
-                        locations=l_data.get("coordinates", []),
-                        color=ans_cfg["color"],
-                        weight=ans_cfg["weight"],
-                        opacity=ans_cfg["opacity"],
-                        dash_array=ans_cfg["dash_array"],
-                        fill=ans_cfg["fill"],
-                        fill_color=ans_cfg["fill_color"],
-                        fill_opacity=ans_cfg["fill_opacity"],
-                        interactive=ans_cfg["interactive"],
-                        className=ans_cfg["class_name"],
-                    ).add_to(tactical_layers_fg)
-                else:
-                    _, p_hex = color_token(layer.color, layer_type="polygon", role=l_role, kind=l_kind)
-                    folium.Polygon(
-                        locations=l_data.get("coordinates", []),
-                        color=p_hex,
-                        weight=1.5,
+                folium.Marker(
+                    location=[s_lat, s_lng],
+                    tooltip=f"★ Target Point ({s_lat:.4f}°, {s_lng:.4f}°)",
+                    popup=folium.Popup(popup_html, max_width=250, show=True),
+                    icon=make_pin_icon(role="target")
+                ).add_to(selection_fg)
+
+        # Attach SelectionSyncHook so every feature_group_to_add update purges stale client-side
+        # preview layers (corner brackets, drawnItems, instant target markers) and syncs pin shape
+        SelectionSyncHook(
+            has_selection=bool(st.session_state.get("selected_points") or st.session_state.get("bounding_box")),
+            clear_seq=st.session_state.get("selection_clear_seq", 0),
+            bbox_state=sync_bbox_state,
+            is_querying=is_querying,
+            bbox_bounds=sync_bbox_bounds,
+            active_point=None if st.session_state.get("bounding_box") else (st.session_state.get("selected_points")[0] if st.session_state.get("selected_points") else None),
+            pin_shape=st.session_state.get("pin_shape", "Diamond"),
+        ).add_to(selection_fg)
+
+        # Render all persistent MapLayer objects from session state
+        for layer in st.session_state.map_layers:
+            try:
+                l_data = layer.data if isinstance(layer.data, dict) else {}
+                l_role = l_data.get("role")
+                l_kind = l_data.get("kind", "place")
+                l_unc = l_data.get("uncertain")
+                l_num = l_data.get("number")
+                l_corner = l_data.get("corner")
+
+                if layer.layer_type == "marker":
+                    is_context = (
+                        layer.color == "cadetblue"
+                        or l_role == "context"
+                        or "context" in (layer.name or "").lower()
+                    ) and not l_unc
+                    target_parent = context_cluster if is_context else tactical_layers_fg
+                    pin_role = "context" if is_context else (l_role or "primary")
+                    folium.Marker(
+                        location=[l_data["lat"], l_data["lng"]],
+                        tooltip=layer.tooltip or layer.name,
+                        popup=folium.Popup(layer.popup or layer.name, max_width=300),
+                        icon=make_pin_icon(
+                            kind=l_kind,
+                            role=pin_role,
+                            uncertain=l_unc,
+                            number=l_num,
+                            color_name=layer.color,
+                            corner=l_corner,
+                            dimmed=(pin_role == "bbox_corner"),
+                        )
+                    ).add_to(target_parent)
+
+                elif layer.layer_type == "circle":
+                    _, c_hex = color_token(layer.color, layer_type="circle", role=l_role, kind=l_kind)
+                    is_target_buf = (l_role == "target_buffer" or layer.color == "cyan")
+                    folium.Circle(
+                        location=[l_data["lat"], l_data["lng"]],
+                        radius=l_data.get("radius", 10000),
+                        color=c_hex,
+                        weight=1.0 if is_target_buf else 1.5,
+                        dash_array="4, 4" if is_target_buf else None,
                         fill=True,
-                        fill_color=p_hex,
-                        fill_opacity=0.08,
+                        fill_color=c_hex,
+                        fill_opacity=0.04 if is_target_buf else 0.08,
                         tooltip=layer.tooltip or layer.name,
                         popup=folium.Popup(layer.popup or layer.name, max_width=300)
                     ).add_to(tactical_layers_fg)
 
-            elif layer.layer_type in ["rectangle", "box"]:
-                is_query_bbox = (
-                    l_role == "query_bbox"
-                    or "bbox" in (layer.name or "").lower()
-                    or "bounding box" in (layer.name or "").lower()
-                )
-                if is_query_bbox:
-                    ans_cfg = bbox_style("answered")
-                    folium.Rectangle(
-                        bounds=l_data.get("bounds", l_data.get("coordinates", [])),
-                        color=ans_cfg["color"],
-                        weight=ans_cfg["weight"],
-                        opacity=ans_cfg["opacity"],
-                        dash_array=ans_cfg["dash_array"],
-                        fill=ans_cfg["fill"],
-                        fill_color=ans_cfg["fill_color"],
-                        fill_opacity=l_data.get("fill_opacity", ans_cfg["fill_opacity"]),
-                        interactive=ans_cfg["interactive"],
-                        className=ans_cfg["class_name"],
-                    ).add_to(tactical_layers_fg)
-                else:
-                    _, r_hex = color_token(layer.color, layer_type="rectangle", role=l_role, kind=l_kind)
-                    folium.Rectangle(
-                        bounds=l_data.get("bounds", l_data.get("coordinates", [])),
-                        color=r_hex,
-                        weight=1.5,
-                        fill=True,
-                        fill_color=r_hex,
-                        fill_opacity=l_data.get("fill_opacity", 0.08),
-                        tooltip=layer.tooltip or layer.name,
-                        popup=folium.Popup(layer.popup or layer.name, max_width=300)
-                    ).add_to(tactical_layers_fg)
-
-            elif layer.layer_type == "geojson":
-                # Upgrade 1: GeoJSON administrative boundary outline rendering
-                is_ctx_geo = (layer.color == "cadetblue" or l_role == "context")
-                _, geo_color = color_token(
-                    "cadetblue" if is_ctx_geo else "blue",
-                    layer_type="geojson",
-                    role="context" if is_ctx_geo else "primary",
-                )
-                folium.GeoJson(
-                    layer.data,
-                    name=layer.name,
-                    style_function=lambda feature, c=geo_color, ctx=is_ctx_geo: {
-                        "fillColor": c,
-                        "color": c,
-                        "weight": 1.0 if ctx else 1.5,
-                        "fillOpacity": 0.02 if ctx else 0.08,
-                        "dashArray": "1, 4" if ctx else None,
-                    },
-                    tooltip=layer.tooltip or layer.name,
-                    popup=folium.Popup(layer.popup or layer.name, max_width=300) if layer.popup else None
-                ).add_to(tactical_layers_fg)
-
-        except Exception as render_err:
-            # Prevent map crash if individual layer data is malformed
-            print(f"[Map Render Warning] Could not render layer '{layer.name}': {render_err}")
-
-    # Add layer switcher control
-    folium.LayerControl(position="topright").add_to(m)
-
-    # Attach trash bin hook to integrate Leaflet Draw's trash icon with GeoAI selection removal
-    MapTrashBinHook().add_to(m)
-
-    # Render the interactive map component inside Streamlit
-    # Uses returned_objects to ensure 0ms client-side pans and zooms with zero reruns (AGENTS.md Rule 1.1)
-    map_data = st_folium(
-        m,
-        feature_group_to_add=[selection_fg, tactical_layers_fg],
-        returned_objects=["last_clicked", "last_active_drawing", "all_drawings"],
-        key="geoai_tactical_map",
-        height=520,
-        use_container_width=True,
-        return_on_hover=False
-    )
-
-    # --------------------------------------------------------------------------
-    # 1. Interactive Drawing & Deletion Interception (Leaflet Draw Tool & Trash Bin)
-    # --------------------------------------------------------------------------
-    active_drawing = map_data.get("last_active_drawing") if map_data else None
-    all_drawings = map_data.get("all_drawings") if map_data else None
-    clicked_data = map_data.get("last_clicked") if map_data else None
-
-    # Handle recon scan action or deletion events (trash bin icon clicked on map tools or shape deleted)
-    if not st.session_state.get("pending_query") and active_drawing:
-        props = active_drawing.get("properties") or {}
-        geom = active_drawing.get("geometry")
-        if props.get("action") == "recon" and active_drawing != st.session_state.get("ignored_drawing"):
-            st.session_state.ignored_drawing = active_drawing
-            target_type = props.get("targetType")
-            if target_type == "point":
-                lat = props.get("lat")
-                lng = props.get("lng")
-                if lat is not None and lng is not None:
-                    pt = (round(float(lat), 5), round(float(lng), 5))
-                elif st.session_state.get("selected_points"):
-                    pt = st.session_state.selected_points[0]
-                else:
-                    pt = st.session_state.get("active_point")
-
-                st.session_state.selection_mode = "Point Selection"
-                st.session_state.selected_points = [pt] if pt else []
-                st.session_state.bounding_box = None
-                st.session_state.answered_bbox = None
-                st.session_state.active_point = pt
-                st.session_state.pending_query = {
-                    "text_prompt": None,
-                    "selected_point": pt,
-                    "bounding_box": None,
-                    "is_recon": True,
-                }
-            elif target_type == "bbox":
-                sw = props.get("sw")
-                ne = props.get("ne")
-                if sw is not None and ne is not None:
-                    bbox = (
-                        (round(float(sw[0]), 5), round(float(sw[1]), 5)),
-                        (round(float(ne[0]), 5), round(float(ne[1]), 5)),
+                elif layer.layer_type == "polygon":
+                    is_query_bbox = (
+                        l_role == "query_bbox"
+                        or "bbox" in (layer.name or "").lower()
+                        or "bounding box" in (layer.name or "").lower()
                     )
-                else:
-                    bbox = st.session_state.get("bounding_box")
+                    if is_query_bbox:
+                        ans_cfg = bbox_style("answered")
+                        folium.Polygon(
+                            locations=l_data.get("coordinates", []),
+                            color=ans_cfg["color"],
+                            weight=ans_cfg["weight"],
+                            opacity=ans_cfg["opacity"],
+                            dash_array=ans_cfg["dash_array"],
+                            fill=ans_cfg["fill"],
+                            fill_color=ans_cfg["fill_color"],
+                            fill_opacity=ans_cfg["fill_opacity"],
+                            interactive=ans_cfg["interactive"],
+                            className=ans_cfg["class_name"],
+                        ).add_to(tactical_layers_fg)
+                    else:
+                        _, p_hex = color_token(layer.color, layer_type="polygon", role=l_role, kind=l_kind)
+                        folium.Polygon(
+                            locations=l_data.get("coordinates", []),
+                            color=p_hex,
+                            weight=1.5,
+                            fill=True,
+                            fill_color=p_hex,
+                            fill_opacity=0.08,
+                            tooltip=layer.tooltip or layer.name,
+                            popup=folium.Popup(layer.popup or layer.name, max_width=300)
+                        ).add_to(tactical_layers_fg)
 
-                st.session_state.selection_mode = "Bounding Box"
-                if bbox:
-                    st.session_state.selected_points = [bbox[0], bbox[1]]
-                    st.session_state.bounding_box = bbox
+                elif layer.layer_type in ["rectangle", "box"]:
+                    is_query_bbox = (
+                        l_role == "query_bbox"
+                        or "bbox" in (layer.name or "").lower()
+                        or "bounding box" in (layer.name or "").lower()
+                    )
+                    if is_query_bbox:
+                        ans_cfg = bbox_style("answered")
+                        folium.Rectangle(
+                            bounds=l_data.get("bounds", l_data.get("coordinates", [])),
+                            color=ans_cfg["color"],
+                            weight=ans_cfg["weight"],
+                            opacity=ans_cfg["opacity"],
+                            dash_array=ans_cfg["dash_array"],
+                            fill=ans_cfg["fill"],
+                            fill_color=ans_cfg["fill_color"],
+                            fill_opacity=l_data.get("fill_opacity", ans_cfg["fill_opacity"]),
+                            interactive=ans_cfg["interactive"],
+                            className=ans_cfg["class_name"],
+                        ).add_to(tactical_layers_fg)
+                    else:
+                        _, r_hex = color_token(layer.color, layer_type="rectangle", role=l_role, kind=l_kind)
+                        folium.Rectangle(
+                            bounds=l_data.get("bounds", l_data.get("coordinates", [])),
+                            color=r_hex,
+                            weight=1.5,
+                            fill=True,
+                            fill_color=r_hex,
+                            fill_opacity=l_data.get("fill_opacity", 0.08),
+                            tooltip=layer.tooltip or layer.name,
+                            popup=folium.Popup(layer.popup or layer.name, max_width=300)
+                        ).add_to(tactical_layers_fg)
+
+                elif layer.layer_type == "geojson":
+                    # Upgrade 1: GeoJSON administrative boundary outline rendering
+                    is_ctx_geo = (layer.color == "cadetblue" or l_role == "context")
+                    _, geo_color = color_token(
+                        "cadetblue" if is_ctx_geo else "blue",
+                        layer_type="geojson",
+                        role="context" if is_ctx_geo else "primary",
+                    )
+                    folium.GeoJson(
+                        layer.data,
+                        name=layer.name,
+                        style_function=lambda feature, c=geo_color, ctx=is_ctx_geo: {
+                            "fillColor": c,
+                            "color": c,
+                            "weight": 1.0 if ctx else 1.5,
+                            "fillOpacity": 0.02 if ctx else 0.08,
+                            "dashArray": "1, 4" if ctx else None,
+                        },
+                        tooltip=layer.tooltip or layer.name,
+                        popup=folium.Popup(layer.popup or layer.name, max_width=300) if layer.popup else None
+                    ).add_to(tactical_layers_fg)
+
+            except Exception as render_err:
+                # Prevent map crash if individual layer data is malformed
+                print(f"[Map Render Warning] Could not render layer '{layer.name}': {render_err}")
+
+        # Add layer switcher control
+        folium.LayerControl(position="topright").add_to(m)
+
+        # Attach trash bin hook to integrate Leaflet Draw's trash icon with GeoAI selection removal
+        MapTrashBinHook().add_to(m)
+
+        # Agent Geo-rgory (BETA): hidden/omitted until BETA switch is ON; when ON, stands beside map or over its left edge
+        if georgory:
+            if is_georgory_beta_enabled():
+                georgory.render(st.session_state.messages, busy=bool(st.session_state.get("pending_query")))
+
+        # Render the interactive map component inside Streamlit
+        # Uses returned_objects to ensure 0ms client-side pans and zooms with zero reruns (AGENTS.md Rule 1.1)
+        map_data = st_folium(
+            m,
+            feature_group_to_add=[selection_fg, tactical_layers_fg],
+            returned_objects=["last_clicked", "last_active_drawing", "all_drawings"],
+            key="geoai_tactical_map",
+            height=520,
+            use_container_width=True,
+            return_on_hover=False
+        )
+        if not map_data:
+            map_data = _peek_incoming_map_state() or {}
+
+        # --------------------------------------------------------------------------
+        # 1. Interactive Drawing & Deletion Interception (Leaflet Draw Tool & Trash Bin)
+        # --------------------------------------------------------------------------
+        active_drawing = map_data.get("last_active_drawing") if map_data else None
+        all_drawings = map_data.get("all_drawings") if map_data else None
+        clicked_data = map_data.get("last_clicked") if map_data else None
+
+        # Handle recon scan action or deletion events (trash bin icon clicked on map tools or shape deleted)
+        if not st.session_state.get("pending_query") and active_drawing:
+            props = active_drawing.get("properties") or {}
+            geom = active_drawing.get("geometry")
+            if props.get("action") == "recon" and active_drawing != st.session_state.get("ignored_drawing"):
+                st.session_state.ignored_drawing = active_drawing
+                target_type = props.get("targetType")
+                if target_type == "point":
+                    lat = props.get("lat")
+                    lng = props.get("lng")
+                    if lat is not None and lng is not None:
+                        pt = (round(float(lat), 5), round(float(lng), 5))
+                    elif st.session_state.get("selected_points"):
+                        pt = st.session_state.selected_points[0]
+                    else:
+                        pt = st.session_state.get("active_point")
+
+                    st.session_state.selection_mode = "Point Selection"
+                    st.session_state.selected_points = [pt] if pt else []
+                    st.session_state.bounding_box = None
                     st.session_state.answered_bbox = None
-                    st.session_state.active_point = bbox[1]
-                st.session_state.pending_query = {
-                    "text_prompt": None,
-                    "selected_point": None,
-                    "bounding_box": bbox,
-                    "is_recon": True,
-                }
-            else:
-                is_bbox = st.session_state.get("bounding_box") is not None
-                active_pt = None if is_bbox else (st.session_state.selected_points[0] if st.session_state.get("selected_points") else None)
-                active_bbox = st.session_state.get("bounding_box") if is_bbox else None
-                st.session_state.pending_query = {
-                    "text_prompt": None,
-                    "selected_point": active_pt,
-                    "bounding_box": active_bbox,
-                    "is_recon": True,
-                }
-        elif (
-            (props.get("action") == "delete" or (not geom and props.get("action") != "recon"))
-            and active_drawing != st.session_state.get("ignored_drawing")
+                    st.session_state.active_point = pt
+                    st.session_state.pending_query = {
+                        "text_prompt": None,
+                        "selected_point": pt,
+                        "bounding_box": None,
+                        "is_recon": True,
+                    }
+                elif target_type == "bbox":
+                    sw = props.get("sw")
+                    ne = props.get("ne")
+                    if sw is not None and ne is not None:
+                        bbox = (
+                            (round(float(sw[0]), 5), round(float(sw[1]), 5)),
+                            (round(float(ne[0]), 5), round(float(ne[1]), 5)),
+                        )
+                    else:
+                        bbox = st.session_state.get("bounding_box")
+
+                    st.session_state.selection_mode = "Bounding Box"
+                    if bbox:
+                        st.session_state.selected_points = [bbox[0], bbox[1]]
+                        st.session_state.bounding_box = bbox
+                        st.session_state.answered_bbox = None
+                        st.session_state.active_point = bbox[1]
+                    st.session_state.pending_query = {
+                        "text_prompt": None,
+                        "selected_point": None,
+                        "bounding_box": bbox,
+                        "is_recon": True,
+                    }
+                else:
+                    is_bbox = st.session_state.get("bounding_box") is not None
+                    active_pt = None if is_bbox else (st.session_state.selected_points[0] if st.session_state.get("selected_points") else None)
+                    active_bbox = st.session_state.get("bounding_box") if is_bbox else None
+                    st.session_state.pending_query = {
+                        "text_prompt": None,
+                        "selected_point": active_pt,
+                        "bounding_box": active_bbox,
+                        "is_recon": True,
+                    }
+                st.rerun()
+            elif (
+                (props.get("action") == "delete" or (not geom and props.get("action") != "recon"))
+                and active_drawing != st.session_state.get("ignored_drawing")
+            ):
+                st.session_state.ignored_drawing = active_drawing
+                has_selection = bool(st.session_state.get("selected_points") or st.session_state.get("bounding_box"))
+                clear_spatial_selection()
+                if not has_selection and st.session_state.get("map_layers"):
+                    st.session_state.map_layers = []
+                st.session_state.last_drawing_time = time.time()
+
+        # Also detect when all_drawings becomes empty while a bounding box was drawn
+        if (
+            not st.session_state.get("pending_query")
+            and not clicked_data
+            and all_drawings == []
+            and st.session_state.get("selection_mode") == "Bounding Box"
+            and st.session_state.get("bounding_box")
+            and not active_drawing
         ):
-            st.session_state.ignored_drawing = active_drawing
             has_selection = bool(st.session_state.get("selected_points") or st.session_state.get("bounding_box"))
             clear_spatial_selection()
             if not has_selection and st.session_state.get("map_layers"):
                 st.session_state.map_layers = []
             st.session_state.last_drawing_time = time.time()
 
-    # Also detect when all_drawings becomes empty while a bounding box was drawn
-    if (
-        not st.session_state.get("pending_query")
-        and not clicked_data
-        and all_drawings == []
-        and st.session_state.get("selection_mode") == "Bounding Box"
-        and st.session_state.get("bounding_box")
-        and not active_drawing
-    ):
-        has_selection = bool(st.session_state.get("selected_points") or st.session_state.get("bounding_box"))
-        clear_spatial_selection()
-        if not has_selection and st.session_state.get("map_layers"):
-            st.session_state.map_layers = []
-        st.session_state.last_drawing_time = time.time()
+        # Process newly drawn shape (Rectangle or Marker) only when no chat query is in flight
+        if (
+            not st.session_state.get("pending_query")
+            and active_drawing
+            and active_drawing != st.session_state.get("last_processed_drawing")
+            and active_drawing != st.session_state.get("ignored_drawing")
+        ):
+            geom = active_drawing.get("geometry") or {}
+            gtype = geom.get("type")
+            coords = geom.get("coordinates")
 
-    # Process newly drawn shape (Rectangle or Marker) only when no chat query is in flight
-    if (
-        not st.session_state.get("pending_query")
-        and active_drawing
-        and active_drawing != st.session_state.get("last_processed_drawing")
-        and active_drawing != st.session_state.get("ignored_drawing")
-    ):
-        geom = active_drawing.get("geometry") or {}
-        gtype = geom.get("type")
-        coords = geom.get("coordinates")
+            if gtype == "Polygon" and coords and len(coords[0]) >= 3:
+                st.session_state.last_processed_drawing = active_drawing
+                st.session_state.ignored_drawing = None
 
-        if gtype == "Polygon" and coords and len(coords[0]) >= 3:
-            st.session_state.last_processed_drawing = active_drawing
-            st.session_state.ignored_drawing = None
+                # Drawn Rectangle -> Extract bounding envelope
+                ring = coords[0]
+                lats = [float(pt[1]) for pt in ring]
+                lngs = [float(pt[0]) for pt in ring]
+                lower_left, upper_right = to_bounding_box(
+                    (min(lats), min(lngs)),
+                    (max(lats), max(lngs))
+                )
+                needs_rerun = (
+                    st.session_state.get("selection_mode") != "Bounding Box"
+                    or st.session_state.get("bounding_box") != (lower_left, upper_right)
+                )
+                st.session_state.selection_mode = "Bounding Box"
+                st.session_state.selected_points = [lower_left, upper_right]
+                st.session_state.bounding_box = (lower_left, upper_right)
+                st.session_state.answered_bbox = None
+                st.session_state.active_point = upper_right
+                st.session_state.active_tactical_scan = None
+                # Mark drawing timestamp to absorb immediate mouseup canvas click
+                st.session_state.last_drawing_time = time.time()
+                if map_data and map_data.get("last_clicked"):
+                    cd = map_data["last_clicked"]
+                    st.session_state.last_clicked = (round(cd["lat"], 5), round(cd["lng"], 5))
 
-            # Drawn Rectangle -> Extract bounding envelope
-            ring = coords[0]
-            lats = [float(pt[1]) for pt in ring]
-            lngs = [float(pt[0]) for pt in ring]
-            lower_left, upper_right = to_bounding_box(
-                (min(lats), min(lngs)),
-                (max(lats), max(lngs))
-            )
-            needs_rerun = (
-                st.session_state.get("selection_mode") != "Bounding Box"
-                or st.session_state.get("bounding_box") != (lower_left, upper_right)
-            )
-            st.session_state.selection_mode = "Bounding Box"
-            st.session_state.selected_points = [lower_left, upper_right]
-            st.session_state.bounding_box = (lower_left, upper_right)
-            st.session_state.answered_bbox = None
-            st.session_state.active_point = upper_right
-            st.session_state.active_tactical_scan = None
-            # Mark drawing timestamp to absorb immediate mouseup canvas click
-            st.session_state.last_drawing_time = time.time()
-            if map_data and map_data.get("last_clicked"):
-                cd = map_data["last_clicked"]
-                st.session_state.last_clicked = (round(cd["lat"], 5), round(cd["lng"], 5))
+            elif gtype == "Point" and coords and len(coords) >= 2:
+                st.session_state.last_processed_drawing = active_drawing
+                st.session_state.ignored_drawing = None
 
-        elif gtype == "Point" and coords and len(coords) >= 2:
-            st.session_state.last_processed_drawing = active_drawing
-            st.session_state.ignored_drawing = None
-
-            lat = round(float(coords[1]), 5)
-            lng = round(float(coords[0]), 5)
-            pt = (lat, lng)
-            needs_rerun = st.session_state.selected_points != [pt] or st.session_state.get("bounding_box") is not None
-            st.session_state.selection_mode = "Point Selection"
-            st.session_state.selected_points = [pt]
-            st.session_state.bounding_box = None
-            st.session_state.answered_bbox = None
-            st.session_state.active_point = pt
-            st.session_state.active_tactical_scan = None
-            st.session_state.last_drawing_time = time.time()
-            st.session_state.last_clicked = pt
-            if needs_rerun:
-                st.rerun()
-
-    # --------------------------------------------------------------------------
-    # 2. Click Interception (Selection ONLY - NO immediate backend call)
-    # --------------------------------------------------------------------------
-    clicked_data = map_data.get("last_clicked") if map_data else None
-
-    if not st.session_state.get("pending_query") and clicked_data and "lat" in clicked_data and "lng" in clicked_data:
-        # Round coordinates to 5 decimal places (~1.1 meter precision)
-        clicked_coord = (round(clicked_data["lat"], 5), round(clicked_data["lng"], 5))
-        is_corner = _is_drawing_corner_release(clicked_coord, st.session_state.get("bounding_box"))
-
-        # If click is on a corner of the active BBox, sync last_clicked so the release click is suppressed
-        if is_corner:
-            st.session_state.last_clicked = clicked_coord
-        elif clicked_coord != st.session_state.last_clicked:
-            st.session_state.last_clicked = clicked_coord
-
-            # Direct map click selects/replaces target point only if changed or transitioning from BBox
-            if st.session_state.selected_points != [clicked_coord] or st.session_state.get("bounding_box") is not None:
+                lat = round(float(coords[1]), 5)
+                lng = round(float(coords[0]), 5)
+                pt = (lat, lng)
+                needs_rerun = st.session_state.selected_points != [pt] or st.session_state.get("bounding_box") is not None
                 st.session_state.selection_mode = "Point Selection"
-                st.session_state.selected_points = [clicked_coord]
+                st.session_state.selected_points = [pt]
                 st.session_state.bounding_box = None
                 st.session_state.answered_bbox = None
-                st.session_state.active_point = clicked_coord
+                st.session_state.active_point = pt
                 st.session_state.active_tactical_scan = None
-                st.rerun()
+                st.session_state.last_drawing_time = time.time()
+                st.session_state.last_clicked = pt
+                # Fragment updates state locally without full page rerun
+
+        # --------------------------------------------------------------------------
+        # 2. Click Interception (Selection ONLY - NO immediate backend call)
+        # --------------------------------------------------------------------------
+        clicked_data = map_data.get("last_clicked") if map_data else None
+
+        if not st.session_state.get("pending_query") and clicked_data and "lat" in clicked_data and "lng" in clicked_data:
+            # Round coordinates to 5 decimal places (~1.1 meter precision)
+            clicked_coord = (round(clicked_data["lat"], 5), round(clicked_data["lng"], 5))
+            is_corner = _is_drawing_corner_release(clicked_coord, st.session_state.get("bounding_box"))
+
+            # If click is on a corner of the active BBox, sync last_clicked so the release click is suppressed
+            if is_corner:
+                st.session_state.last_clicked = clicked_coord
+            elif clicked_coord != st.session_state.last_clicked:
+                st.session_state.last_clicked = clicked_coord
+
+                # Direct map click selects/replaces target point only if changed or transitioning from BBox
+                if st.session_state.selected_points != [clicked_coord] or st.session_state.get("bounding_box") is not None:
+                    st.session_state.selection_mode = "Point Selection"
+                    st.session_state.selected_points = [clicked_coord]
+                    st.session_state.bounding_box = None
+                    st.session_state.answered_bbox = None
+                    st.session_state.active_point = clicked_coord
+                    st.session_state.active_tactical_scan = None
+                    # Fragment updates state locally without full page rerun
+
+
+    render_tactical_map_fragment()
 
 
 # ------------------------------------------------------------------------------
@@ -5484,7 +8526,9 @@ with col1:
             avatar = t_cfg["user_avatar"] if is_user else t_cfg["ai_avatar"]
             role_tag = t_cfg["operator_tag"] if is_user else t_cfg["ai_tag"]
             if role == "assistant":
-                if msg.get("is_live"):
+                if msg.get("is_error"):
+                    role_tag += " • [ERROR]"
+                elif msg.get("is_live"):
                     role_tag += " • [LIVE RAG]"
                     if msg.get("grounded") is False:
                         role_tag += " • [LLM ONLY]"
@@ -5505,12 +8549,55 @@ with col1:
                 st.markdown(f"<div class='chat-role-tag {role_class}'><span class='{marker_class}'></span>{role_tag}</div>", unsafe_allow_html=True)
                 if role == "assistant" and not st.session_state.get("show_citations", True):
                     st.markdown(msg.get("content_plain") or msg["content"])
+                elif role == "assistant":
+                    locs = msg.get("geo_locations")
+                    if not locs and msg.get("layers"):
+                        locs = [
+                            l.data for l in msg["layers"]
+                            if hasattr(l, "data") and isinstance(l.data, dict) and l.data.get("number") is not None
+                        ]
+                    formatted_content = format_tactical_citations(
+                        msg["content"],
+                        citations=msg.get("citations"),
+                        geo_locations=locs,
+                    )
+                    st.markdown(formatted_content, unsafe_allow_html=True)
                 else:
                     st.markdown(msg["content"])
-                if role == "assistant" and not msg.get("is_live"):
+                if role == "assistant" and not msg.get("is_live") and not msg.get("is_error"):
                     st.caption("⚠️ *Example answer: no OpenRouter key set (Deterministic Mock Engine)*")
                 if role == "assistant" and int(msg.get("map_not_shown", 0) or 0) > 0:
                     st.caption(f"📍 *{msg['map_not_shown']} additional context places found in the knowledge graph (showing discussed places on map).*")
+                if role == "assistant" and msg.get("status") == "no_data" and m_idx == len(st.session_state.messages) - 1:
+                    content_lower = str(msg.get("content", "")).lower()
+                    if "select one on the map" in content_lower or "name an area" in content_lower or "no area" in content_lower:
+                        st.markdown(
+                            "<div style='margin-top: 8px; margin-bottom: 8px; padding: 10px 12px; border-radius: 6px; background: rgba(14, 165, 233, 0.08); border-left: 3px solid #0ea5e9; font-size: 0.85rem; color: #cbd5e1;'>"
+                            "🧭 <b>Tactical Guidance:</b> This inquiry requires an operational boundary. "
+                            "Use the <b>Draw a rectangle (⬚)</b> tool on the tactical map toolbar to frame your sector, or select a localized operational scenario below:"
+                            "</div>",
+                            unsafe_allow_html=True
+                        )
+                        area_suggestions = [
+                            "Drone attacks in Kharkiv",
+                            "Drone attacks in Kyiv",
+                            "Battles in Donbas",
+                        ]
+                        as_cols = st.columns(3)
+                        for as_idx, as_q in enumerate(area_suggestions):
+                            with as_cols[as_idx]:
+                                if st.button(f"🎯 {as_q}", key=f"btn_area_sugg_{m_idx}_{as_idx}", use_container_width=True):
+                                    st.session_state.pending_query = {
+                                        "text_prompt": as_q,
+                                        "selected_point": None,
+                                        "bounding_box": None,
+                                    }
+                                    st.session_state.messages.append({
+                                        "role": "user",
+                                        "content": as_q
+                                    })
+                                    st.rerun()
+
 
                 # Source Evidence Inspection Drawer
                 msg_sources = msg.get("sources", [])
@@ -5527,27 +8614,36 @@ with col1:
                             cit_id = cit_meta.get("id")
                             cit_article = cit_meta.get("article")
                             cit_section = cit_meta.get("section")
-                            cached_meta = st.session_state.get(f"src_meta_{m_idx}_{s_idx}", {})
+                            if "source_metadata_cache" not in st.session_state:
+                                st.session_state.source_metadata_cache = {}
+                            meta_cache = st.session_state.source_metadata_cache
+                            cached_meta = meta_cache.get(src_doc) or st.session_state.get(f"src_meta_{m_idx}_{s_idx}", {})
                             disp_article = _clean_doc_title(cit_article or cached_meta.get("document"))
                             disp_section = _clean_doc_title(cit_section or cached_meta.get("section"))
 
                             # Resolve document title and text from local graph if available
                             passage = cached_meta or get_source_text(src_doc)
                             if passage and isinstance(passage, dict):
-                                st.session_state[f"src_meta_{m_idx}_{s_idx}"] = passage
+                                meta_cache[src_doc] = passage
                                 if not disp_article:
                                     disp_article = _clean_doc_title(passage.get("document"))
                                 if not disp_section:
                                     disp_section = _clean_doc_title(passage.get("section"))
                             else:
-                                st.session_state[f"src_meta_{m_idx}_{s_idx}"] = {"document": "", "section": ""}
+                                meta_cache[src_doc] = {"document": "", "section": ""}
+
+                            place_suffix = ""
+                            if cit_meta.get("place_label"):
+                                p_num = cit_meta.get("place_number")
+                                p_num_str = f"#{p_num} " if p_num is not None else ""
+                                place_suffix = f" · 📍 Pin {p_num_str}{cit_meta['place_label']}"
 
                             if cit_id and disp_article:
-                                title_str = f"[{cit_id}] {disp_article}"
+                                title_str = f"[{cit_id}] {disp_article}{place_suffix}"
                             elif disp_article and disp_article != src_doc:
-                                title_str = disp_article
+                                title_str = f"{disp_article}{place_suffix}"
                             else:
-                                title_str = f"Source Document #{s_idx + 1}"
+                                title_str = f"Source Document #{s_idx + 1}{place_suffix}"
 
                             sec_str = f" — <i>{disp_section}</i>" if disp_section else ""
 
@@ -5560,6 +8656,10 @@ with col1:
                                     header_parts.append(f"Section: <i>{sec_name}</i>")
                                 if para_num is not None:
                                     header_parts.append(f"Paragraph #{para_num + 1}")
+                                if cit_meta.get("place_label"):
+                                    p_num = cit_meta.get("place_number")
+                                    p_num_str = f"#{p_num} " if p_num is not None else ""
+                                    header_parts.append(f"Associated Pin: <i>{p_num_str}{cit_meta['place_label']}</i>")
                                 header_str = " | ".join(header_parts)
                                 raw_text = passage["text"]
                                 spans = cit_meta.get("text_spans") or cit_meta.get("char_offsets") or passage.get("text_spans") or []
@@ -5578,8 +8678,10 @@ with col1:
                                     f"</div>"
                                 )
 
+                            cit_id_attr = f" data-cit-id='{cit_id}'" if cit_id else f" data-cit-id='S{s_idx + 1}'"
+                            ptr_attr = f" data-source-ptr='{src_doc}'" if src_doc else ""
                             source_items_html.append(
-                                f"<details class='geoai-source-detail'>"
+                                f"<details class='geoai-source-detail'{cit_id_attr}{ptr_attr}>"
                                 f"<summary class='geoai-source-summary'>"
                                 f"<span class='geoai-source-title'>📄 <b>{title_str}</b>{sec_str}</span>"
                                 f"<span class='geoai-source-badge'>Inspect ▾</span>"
@@ -5590,41 +8692,66 @@ with col1:
 
                         st.markdown("".join(source_items_html), unsafe_allow_html=True)
 
-                # Upgrade 5: Regional Distribution Breakdown
+                # Answer Knowledge Subgraph Popup Trigger (Option A: @st.dialog + Option 1: Interactive Subgraph Canvas)
+                if role == "assistant":
+                    msg_subgraph = msg.get("subgraph")
+                    if not isinstance(msg_subgraph, dict) or not msg_subgraph.get("nodes"):
+                        msg_subgraph = extract_answer_subgraph(msg)
+                        msg["subgraph"] = msg_subgraph
+                    sg_nodes = msg_subgraph.get("nodes", []) if isinstance(msg_subgraph, dict) else []
+                    sg_edges = msg_subgraph.get("edges", []) if isinstance(msg_subgraph, dict) else []
+                    node_stat_str = f" ({len(sg_nodes)} nodes · {len(sg_edges)} relations)" if sg_nodes else ""
+                    if st.button(
+                        f"View Answer Knowledge Subgraph{node_stat_str}",
+                        key=f"btn_subgraph_{m_idx}",
+                        help="Open interactive popup showing only the knowledge graph nodes and connections used for this answer",
+                        use_container_width=True,
+                    ):
+                        show_answer_subgraph_dialog(m_idx)
+
+                # Upgrade 5: Regional Distribution Breakdown (Phase 2 Interactive Regional Tree)
                 msg_regions = msg.get("regions")
                 if role == "assistant" and msg_regions:
-                    if isinstance(msg_regions, dict):
-                        with st.expander(f"🌍 Regional Distribution ({len(msg_regions)} regions)", expanded=False):
-                            for reg_name, count in sorted(msg_regions.items(), key=lambda x: str(x[0])):
-                                st.markdown(f"- **{reg_name}**: `{count}` places/events")
-                    elif isinstance(msg_regions, list):
-                        with st.expander(f"🌍 Regional Distribution ({len(msg_regions)} regions)", expanded=False):
-                            reg_lines = []
-                            for r_node in msg_regions:
-                                if not isinstance(r_node, dict):
-                                    continue
-                                r_id = r_node.get("id", "Unknown")
-                                r_cnt = r_node.get("count", 0)
-                                r_places = r_node.get("places") or []
-                                r_pins_str = (
-                                    f" *(pins: {', '.join(f'#{p}' for p in r_places[:8])}{'...' if len(r_places) > 8 else ''})*"
-                                    if r_places
-                                    else ""
-                                )
-                                reg_lines.append(f"- **{r_id}**: `{r_cnt}` places{r_pins_str}")
-                                for child in r_node.get("children") or []:
-                                    if isinstance(child, dict):
-                                        c_id = child.get("id", "Unknown")
-                                        c_cnt = child.get("count", 0)
-                                        c_places = child.get("places") or []
-                                        c_pins_str = (
-                                            f" *(pins: {', '.join(f'#{p}' for p in c_places[:6])}{'...' if len(c_places) > 6 else ''})*"
-                                            if c_places
-                                            else ""
-                                        )
-                                        reg_lines.append(f"  - **{c_id}**: `{c_cnt}` places{c_pins_str}")
-                            if reg_lines:
-                                st.markdown("\n".join(reg_lines))
+                    reg_pin_labels: Dict[int, str] = {}
+                    reg_pin_coords: Dict[int, Tuple[float, float]] = {}
+                    for loc in (msg.get("geo_locations") or []):
+                        if isinstance(loc, dict) and loc.get("number") is not None:
+                            try:
+                                n = int(loc["number"])
+                                lbl = loc.get("label") or loc.get("name") or loc.get("id")
+                                if lbl:
+                                    reg_pin_labels[n] = str(lbl)
+                                geom = loc.get("geometry")
+                                coords = geom.get("coordinates") if isinstance(geom, dict) else None
+                                if isinstance(coords, (list, tuple)) and len(coords) >= 2:
+                                    reg_pin_coords[n] = (float(coords[1]), float(coords[0]))
+                                elif "lat" in loc and "lng" in loc:
+                                    reg_pin_coords[n] = (float(loc["lat"]), float(loc["lng"]))
+                            except (ValueError, TypeError):
+                                pass
+                    for lyr in (msg.get("layers") or []):
+                        l_data = getattr(lyr, "data", None) or (lyr.get("data") if isinstance(lyr, dict) else {})
+                        if isinstance(l_data, dict) and l_data.get("number") is not None:
+                            try:
+                                n = int(l_data["number"])
+                                if n not in reg_pin_coords and "lat" in l_data and "lng" in l_data:
+                                    reg_pin_coords[n] = (float(l_data["lat"]), float(l_data["lng"]))
+                                if n not in reg_pin_labels:
+                                    lyr_name = getattr(lyr, "name", None) or (lyr.get("name") if isinstance(lyr, dict) else "")
+                                    if lyr_name:
+                                        reg_pin_labels[n] = str(lyr_name)
+                            except (ValueError, TypeError):
+                                pass
+
+                    num_regions = len(msg_regions) if hasattr(msg_regions, "__len__") else 1
+                    with st.expander(f"🌍 Regional Distribution ({num_regions} regions)", expanded=False):
+                        reg_html = format_regional_distribution_html(
+                            regions=msg_regions,
+                            pin_coords=reg_pin_coords,
+                            pin_labels=reg_pin_labels,
+                        )
+                        if reg_html:
+                            st.markdown(reg_html, unsafe_allow_html=True)
 
                 # Upgrade 4: Follow-up Suggestions & Did-You-Mean
                 raw_dym = msg.get("did_you_mean")
@@ -5707,6 +8834,11 @@ with col1:
             }
             st.rerun()
 
+    # Agent Geo-rgory's button sits inside the chat box, right of the send arrow (only when BETA switch is ON)
+    if georgory:
+        if is_georgory_beta_enabled():
+            georgory.chat_button()
+
     # Chat input box for user queries
     user_prompt = st.chat_input("Type a question (e.g. 'What units are stationed here?')...", key="geoai_chat_input")
 
@@ -5785,6 +8917,14 @@ if st.session_state.get("pending_query"):
             clear_spatial_selection()
 
         # Refresh application state to immediately display updates
+        st.rerun()
+    else:
+        # Tactical Error Fallback: Append assistant alert to preserve conversational turn parity
+        last_error_log = st.session_state.get("rag_logs", [])[-1] if st.session_state.get("rag_logs") else None
+        err_details = last_error_log.get("error_details") if last_error_log else None
+        err_msg = (err_details.get("message") if isinstance(err_details, dict) else str(err_details)) if err_details else "Unable to establish tactical data link with intelligence agent."
+        st.session_state.messages.append(_build_error_assistant_message(err_msg))
+        st.session_state.scroll_to_answer = True
         st.rerun()
 
 

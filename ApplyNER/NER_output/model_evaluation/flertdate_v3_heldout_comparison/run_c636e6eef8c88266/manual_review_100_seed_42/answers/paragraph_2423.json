@@ -1,0 +1,1348 @@
+{
+  "comparison_row_id": 2423,
+  "Source": "Luhansk People's Republic",
+  "Index": 36,
+  "Text": "Plotnitsky was stated to become the separatist's representative to the Minsk process. Plotnitsky himself did not issue a public statement on 24 November 2017. Russian media reported that Plotnitsky had fled the unrecognised republic on 23 November 2017, first travelling from Luhansk to Rostov-on-Don by car and then flying to Moscow's Sheremetyevo airport. On 25 November the 38-member separatist republic's People's Council unanimously approved Plotnitsky's resignation. Pasechnik declared his adherence to the Minsk accords, claiming \"The republic will be consistently executing the obligations taken under these agreements.\"",
+  "reviewed_at_utc": "2026-11-04T07:03:39.957500+00:00",
+  "original_predictions": [
+    {
+      "entity": "Plotnitsky",
+      "label": "PER",
+      "start": 0,
+      "end": 10
+    },
+    {
+      "entity": "Minsk",
+      "label": "LOC",
+      "start": 71,
+      "end": 76
+    },
+    {
+      "entity": "Plotnitsky",
+      "label": "PER",
+      "start": 86,
+      "end": 96
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 159,
+      "end": 166
+    },
+    {
+      "entity": "Plotnitsky",
+      "label": "PER",
+      "start": 187,
+      "end": 197
+    },
+    {
+      "entity": "Luhansk",
+      "label": "LOC",
+      "start": 276,
+      "end": 283
+    },
+    {
+      "entity": "Rostov-on-Don",
+      "label": "LOC",
+      "start": 287,
+      "end": 300
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 327,
+      "end": 333
+    },
+    {
+      "entity": "Sheremetyevo",
+      "label": "LOC",
+      "start": 336,
+      "end": 348
+    },
+    {
+      "entity": "People's Council",
+      "label": "ORG",
+      "start": 409,
+      "end": 425
+    },
+    {
+      "entity": "Plotnitsky",
+      "label": "PER",
+      "start": 447,
+      "end": 457
+    },
+    {
+      "entity": "Pasechnik",
+      "label": "PER",
+      "start": 473,
+      "end": 482
+    },
+    {
+      "entity": "Minsk",
+      "label": "LOC",
+      "start": 513,
+      "end": 518
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Plotnitsky",
+      "label": "PER",
+      "start": 0,
+      "end": 10
+    },
+    {
+      "entity": "Minsk",
+      "label": "LOC",
+      "start": 71,
+      "end": 76
+    },
+    {
+      "entity": "Plotnitsky",
+      "label": "PER",
+      "start": 86,
+      "end": 96
+    },
+    {
+      "entity": "24 November 2017",
+      "label": "DATE",
+      "start": 141,
+      "end": 157
+    },
+    {
+      "entity": "Plotnitsky",
+      "label": "PER",
+      "start": 187,
+      "end": 197
+    },
+    {
+      "entity": "23 November 2017",
+      "label": "DATE",
+      "start": 236,
+      "end": 252
+    },
+    {
+      "entity": "Luhansk",
+      "label": "LOC",
+      "start": 276,
+      "end": 283
+    },
+    {
+      "entity": "Rostov-on-Don",
+      "label": "LOC",
+      "start": 287,
+      "end": 300
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 327,
+      "end": 333
+    },
+    {
+      "entity": "Sheremetyevo",
+      "label": "LOC",
+      "start": 336,
+      "end": 348
+    },
+    {
+      "entity": "25 November",
+      "label": "DATE",
+      "start": 361,
+      "end": 372
+    },
+    {
+      "entity": "People's Council",
+      "label": "ORG",
+      "start": 409,
+      "end": 425
+    },
+    {
+      "entity": "Plotnitsky",
+      "label": "PER",
+      "start": 447,
+      "end": 457
+    },
+    {
+      "entity": "Pasechnik",
+      "label": "PER",
+      "start": 473,
+      "end": 482
+    },
+    {
+      "entity": "Minsk",
+      "label": "LOC",
+      "start": 513,
+      "end": 518
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Plotnitsky",
+      "label": "PER",
+      "start": 0,
+      "end": 10
+    },
+    {
+      "entity": "Minsk",
+      "label": "LOC",
+      "start": 71,
+      "end": 76
+    },
+    {
+      "entity": "Plotnitsky",
+      "label": "PER",
+      "start": 86,
+      "end": 96
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 159,
+      "end": 166
+    },
+    {
+      "entity": "Plotnitsky",
+      "label": "PER",
+      "start": 187,
+      "end": 197
+    },
+    {
+      "entity": "Luhansk",
+      "label": "LOC",
+      "start": 276,
+      "end": 283
+    },
+    {
+      "entity": "Rostov-on-Don",
+      "label": "LOC",
+      "start": 287,
+      "end": 300
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 327,
+      "end": 333
+    },
+    {
+      "entity": "Sheremetyevo airport",
+      "label": "LOC",
+      "start": 336,
+      "end": 356
+    },
+    {
+      "entity": "People's Council",
+      "label": "ORG",
+      "start": 409,
+      "end": 425
+    },
+    {
+      "entity": "Plotnitsky",
+      "label": "PER",
+      "start": 447,
+      "end": 457
+    },
+    {
+      "entity": "Pasechnik",
+      "label": "PER",
+      "start": 473,
+      "end": 482
+    },
+    {
+      "entity": "Minsk",
+      "label": "LOC",
+      "start": 513,
+      "end": 518
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Plotnitsky",
+      "label": "PER",
+      "start": 0,
+      "end": 10
+    },
+    {
+      "entity": "Minsk",
+      "label": "LOC",
+      "start": 71,
+      "end": 76
+    },
+    {
+      "entity": "Plotnitsky",
+      "label": "PER",
+      "start": 86,
+      "end": 96
+    },
+    {
+      "entity": "24 November 2017",
+      "label": "DATE",
+      "start": 141,
+      "end": 157
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 159,
+      "end": 166
+    },
+    {
+      "entity": "Plotnitsky",
+      "label": "PER",
+      "start": 187,
+      "end": 197
+    },
+    {
+      "entity": "23 November 2017",
+      "label": "DATE",
+      "start": 236,
+      "end": 252
+    },
+    {
+      "entity": "Luhansk",
+      "label": "LOC",
+      "start": 276,
+      "end": 283
+    },
+    {
+      "entity": "Rostov-on-Don",
+      "label": "LOC",
+      "start": 287,
+      "end": 300
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 327,
+      "end": 333
+    },
+    {
+      "entity": "Sheremetyevo airport",
+      "label": "LOC",
+      "start": 336,
+      "end": 356
+    },
+    {
+      "entity": "25 November",
+      "label": "DATE",
+      "start": 361,
+      "end": 372
+    },
+    {
+      "entity": "People's Council",
+      "label": "ORG",
+      "start": 409,
+      "end": 425
+    },
+    {
+      "entity": "Plotnitsky",
+      "label": "PER",
+      "start": 447,
+      "end": 457
+    },
+    {
+      "entity": "Pasechnik",
+      "label": "PER",
+      "start": 473,
+      "end": 482
+    },
+    {
+      "entity": "Minsk",
+      "label": "LOC",
+      "start": 513,
+      "end": 518
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Plotnitsky",
+      "label": "PER",
+      "start": 0,
+      "end": 10
+    },
+    {
+      "entity": "Minsk",
+      "label": "LOC",
+      "start": 71,
+      "end": 76
+    },
+    {
+      "entity": "Plotnitsky",
+      "label": "PER",
+      "start": 86,
+      "end": 96
+    },
+    {
+      "entity": "24 November 2017",
+      "label": "DATE",
+      "start": 141,
+      "end": 157
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 159,
+      "end": 166
+    },
+    {
+      "entity": "Plotnitsky",
+      "label": "PER",
+      "start": 187,
+      "end": 197
+    },
+    {
+      "entity": "23 November 2017",
+      "label": "DATE",
+      "start": 236,
+      "end": 252
+    },
+    {
+      "entity": "Luhansk",
+      "label": "LOC",
+      "start": 276,
+      "end": 283
+    },
+    {
+      "entity": "Rostov-on-Don",
+      "label": "LOC",
+      "start": 287,
+      "end": 300
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 327,
+      "end": 333
+    },
+    {
+      "entity": "Sheremetyevo airport",
+      "label": "LOC",
+      "start": 336,
+      "end": 356
+    },
+    {
+      "entity": "25 November",
+      "label": "DATE",
+      "start": 361,
+      "end": 372
+    },
+    {
+      "entity": "People's Council",
+      "label": "ORG",
+      "start": 409,
+      "end": 425
+    },
+    {
+      "entity": "Plotnitsky",
+      "label": "PER",
+      "start": 447,
+      "end": 457
+    },
+    {
+      "entity": "Pasechnik",
+      "label": "PER",
+      "start": 473,
+      "end": 482
+    },
+    {
+      "entity": "Minsk",
+      "label": "LOC",
+      "start": 513,
+      "end": 518
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "span 2 | Minsk process | 1",
+      "before": [
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Minsk",
+          "label": "LOC",
+          "start": 71,
+          "end": 76
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 86,
+          "end": 96
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 159,
+          "end": 166
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 187,
+          "end": 197
+        },
+        {
+          "entity": "Luhansk",
+          "label": "LOC",
+          "start": 276,
+          "end": 283
+        },
+        {
+          "entity": "Rostov-on-Don",
+          "label": "LOC",
+          "start": 287,
+          "end": 300
+        },
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 327,
+          "end": 333
+        },
+        {
+          "entity": "Sheremetyevo",
+          "label": "LOC",
+          "start": 336,
+          "end": 348
+        },
+        {
+          "entity": "People's Council",
+          "label": "ORG",
+          "start": 409,
+          "end": 425
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 447,
+          "end": 457
+        },
+        {
+          "entity": "Pasechnik",
+          "label": "PER",
+          "start": 473,
+          "end": 482
+        },
+        {
+          "entity": "Minsk",
+          "label": "LOC",
+          "start": 513,
+          "end": 518
+        }
+      ],
+      "after": [
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Minsk process",
+          "label": "LOC",
+          "start": 71,
+          "end": 84
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 86,
+          "end": 96
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 159,
+          "end": 166
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 187,
+          "end": 197
+        },
+        {
+          "entity": "Luhansk",
+          "label": "LOC",
+          "start": 276,
+          "end": 283
+        },
+        {
+          "entity": "Rostov-on-Don",
+          "label": "LOC",
+          "start": 287,
+          "end": 300
+        },
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 327,
+          "end": 333
+        },
+        {
+          "entity": "Sheremetyevo",
+          "label": "LOC",
+          "start": 336,
+          "end": 348
+        },
+        {
+          "entity": "People's Council",
+          "label": "ORG",
+          "start": 409,
+          "end": 425
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 447,
+          "end": 457
+        },
+        {
+          "entity": "Pasechnik",
+          "label": "PER",
+          "start": 473,
+          "end": 482
+        },
+        {
+          "entity": "Minsk",
+          "label": "LOC",
+          "start": 513,
+          "end": 518
+        }
+      ],
+      "at_utc": "2026-11-04T07:01:15.003160+00:00"
+    },
+    {
+      "model": "original",
+      "command": "span 2 | Minsk | 1",
+      "before": [
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Minsk process",
+          "label": "LOC",
+          "start": 71,
+          "end": 84
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 86,
+          "end": 96
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 159,
+          "end": 166
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 187,
+          "end": 197
+        },
+        {
+          "entity": "Luhansk",
+          "label": "LOC",
+          "start": 276,
+          "end": 283
+        },
+        {
+          "entity": "Rostov-on-Don",
+          "label": "LOC",
+          "start": 287,
+          "end": 300
+        },
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 327,
+          "end": 333
+        },
+        {
+          "entity": "Sheremetyevo",
+          "label": "LOC",
+          "start": 336,
+          "end": 348
+        },
+        {
+          "entity": "People's Council",
+          "label": "ORG",
+          "start": 409,
+          "end": 425
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 447,
+          "end": 457
+        },
+        {
+          "entity": "Pasechnik",
+          "label": "PER",
+          "start": 473,
+          "end": 482
+        },
+        {
+          "entity": "Minsk",
+          "label": "LOC",
+          "start": 513,
+          "end": 518
+        }
+      ],
+      "after": [
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Minsk",
+          "label": "LOC",
+          "start": 71,
+          "end": 76
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 86,
+          "end": 96
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 159,
+          "end": 166
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 187,
+          "end": 197
+        },
+        {
+          "entity": "Luhansk",
+          "label": "LOC",
+          "start": 276,
+          "end": 283
+        },
+        {
+          "entity": "Rostov-on-Don",
+          "label": "LOC",
+          "start": 287,
+          "end": 300
+        },
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 327,
+          "end": 333
+        },
+        {
+          "entity": "Sheremetyevo",
+          "label": "LOC",
+          "start": 336,
+          "end": 348
+        },
+        {
+          "entity": "People's Council",
+          "label": "ORG",
+          "start": 409,
+          "end": 425
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 447,
+          "end": 457
+        },
+        {
+          "entity": "Pasechnik",
+          "label": "PER",
+          "start": 473,
+          "end": 482
+        },
+        {
+          "entity": "Minsk",
+          "label": "LOC",
+          "start": 513,
+          "end": 518
+        }
+      ],
+      "at_utc": "2026-11-04T07:02:34.971772+00:00"
+    },
+    {
+      "model": "original",
+      "command": "span 9 | Sheremetyevo airport | 1",
+      "before": [
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Minsk",
+          "label": "LOC",
+          "start": 71,
+          "end": 76
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 86,
+          "end": 96
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 159,
+          "end": 166
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 187,
+          "end": 197
+        },
+        {
+          "entity": "Luhansk",
+          "label": "LOC",
+          "start": 276,
+          "end": 283
+        },
+        {
+          "entity": "Rostov-on-Don",
+          "label": "LOC",
+          "start": 287,
+          "end": 300
+        },
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 327,
+          "end": 333
+        },
+        {
+          "entity": "Sheremetyevo",
+          "label": "LOC",
+          "start": 336,
+          "end": 348
+        },
+        {
+          "entity": "People's Council",
+          "label": "ORG",
+          "start": 409,
+          "end": 425
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 447,
+          "end": 457
+        },
+        {
+          "entity": "Pasechnik",
+          "label": "PER",
+          "start": 473,
+          "end": 482
+        },
+        {
+          "entity": "Minsk",
+          "label": "LOC",
+          "start": 513,
+          "end": 518
+        }
+      ],
+      "after": [
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Minsk",
+          "label": "LOC",
+          "start": 71,
+          "end": 76
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 86,
+          "end": 96
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 159,
+          "end": 166
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 187,
+          "end": 197
+        },
+        {
+          "entity": "Luhansk",
+          "label": "LOC",
+          "start": 276,
+          "end": 283
+        },
+        {
+          "entity": "Rostov-on-Don",
+          "label": "LOC",
+          "start": 287,
+          "end": 300
+        },
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 327,
+          "end": 333
+        },
+        {
+          "entity": "Sheremetyevo airport",
+          "label": "LOC",
+          "start": 336,
+          "end": 356
+        },
+        {
+          "entity": "People's Council",
+          "label": "ORG",
+          "start": 409,
+          "end": 425
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 447,
+          "end": 457
+        },
+        {
+          "entity": "Pasechnik",
+          "label": "PER",
+          "start": 473,
+          "end": 482
+        },
+        {
+          "entity": "Minsk",
+          "label": "LOC",
+          "start": 513,
+          "end": 518
+        }
+      ],
+      "at_utc": "2026-11-04T07:02:49.654764+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add MISC | Russian | 1",
+      "before": [
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Minsk",
+          "label": "LOC",
+          "start": 71,
+          "end": 76
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 86,
+          "end": 96
+        },
+        {
+          "entity": "24 November 2017",
+          "label": "DATE",
+          "start": 141,
+          "end": 157
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 187,
+          "end": 197
+        },
+        {
+          "entity": "23 November 2017",
+          "label": "DATE",
+          "start": 236,
+          "end": 252
+        },
+        {
+          "entity": "Luhansk",
+          "label": "LOC",
+          "start": 276,
+          "end": 283
+        },
+        {
+          "entity": "Rostov-on-Don",
+          "label": "LOC",
+          "start": 287,
+          "end": 300
+        },
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 327,
+          "end": 333
+        },
+        {
+          "entity": "Sheremetyevo",
+          "label": "LOC",
+          "start": 336,
+          "end": 348
+        },
+        {
+          "entity": "25 November",
+          "label": "DATE",
+          "start": 361,
+          "end": 372
+        },
+        {
+          "entity": "People's Council",
+          "label": "ORG",
+          "start": 409,
+          "end": 425
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 447,
+          "end": 457
+        },
+        {
+          "entity": "Pasechnik",
+          "label": "PER",
+          "start": 473,
+          "end": 482
+        },
+        {
+          "entity": "Minsk",
+          "label": "LOC",
+          "start": 513,
+          "end": 518
+        }
+      ],
+      "after": [
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Minsk",
+          "label": "LOC",
+          "start": 71,
+          "end": 76
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 86,
+          "end": 96
+        },
+        {
+          "entity": "24 November 2017",
+          "label": "DATE",
+          "start": 141,
+          "end": 157
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 159,
+          "end": 166
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 187,
+          "end": 197
+        },
+        {
+          "entity": "23 November 2017",
+          "label": "DATE",
+          "start": 236,
+          "end": 252
+        },
+        {
+          "entity": "Luhansk",
+          "label": "LOC",
+          "start": 276,
+          "end": 283
+        },
+        {
+          "entity": "Rostov-on-Don",
+          "label": "LOC",
+          "start": 287,
+          "end": 300
+        },
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 327,
+          "end": 333
+        },
+        {
+          "entity": "Sheremetyevo",
+          "label": "LOC",
+          "start": 336,
+          "end": 348
+        },
+        {
+          "entity": "25 November",
+          "label": "DATE",
+          "start": 361,
+          "end": 372
+        },
+        {
+          "entity": "People's Council",
+          "label": "ORG",
+          "start": 409,
+          "end": 425
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 447,
+          "end": 457
+        },
+        {
+          "entity": "Pasechnik",
+          "label": "PER",
+          "start": 473,
+          "end": 482
+        },
+        {
+          "entity": "Minsk",
+          "label": "LOC",
+          "start": 513,
+          "end": 518
+        }
+      ],
+      "at_utc": "2026-11-04T07:02:56.896094+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "span 11 | Sheremetyevo airport | 1",
+      "before": [
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Minsk",
+          "label": "LOC",
+          "start": 71,
+          "end": 76
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 86,
+          "end": 96
+        },
+        {
+          "entity": "24 November 2017",
+          "label": "DATE",
+          "start": 141,
+          "end": 157
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 159,
+          "end": 166
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 187,
+          "end": 197
+        },
+        {
+          "entity": "23 November 2017",
+          "label": "DATE",
+          "start": 236,
+          "end": 252
+        },
+        {
+          "entity": "Luhansk",
+          "label": "LOC",
+          "start": 276,
+          "end": 283
+        },
+        {
+          "entity": "Rostov-on-Don",
+          "label": "LOC",
+          "start": 287,
+          "end": 300
+        },
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 327,
+          "end": 333
+        },
+        {
+          "entity": "Sheremetyevo",
+          "label": "LOC",
+          "start": 336,
+          "end": 348
+        },
+        {
+          "entity": "25 November",
+          "label": "DATE",
+          "start": 361,
+          "end": 372
+        },
+        {
+          "entity": "People's Council",
+          "label": "ORG",
+          "start": 409,
+          "end": 425
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 447,
+          "end": 457
+        },
+        {
+          "entity": "Pasechnik",
+          "label": "PER",
+          "start": 473,
+          "end": 482
+        },
+        {
+          "entity": "Minsk",
+          "label": "LOC",
+          "start": 513,
+          "end": 518
+        }
+      ],
+      "after": [
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Minsk",
+          "label": "LOC",
+          "start": 71,
+          "end": 76
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 86,
+          "end": 96
+        },
+        {
+          "entity": "24 November 2017",
+          "label": "DATE",
+          "start": 141,
+          "end": 157
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 159,
+          "end": 166
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 187,
+          "end": 197
+        },
+        {
+          "entity": "23 November 2017",
+          "label": "DATE",
+          "start": 236,
+          "end": 252
+        },
+        {
+          "entity": "Luhansk",
+          "label": "LOC",
+          "start": 276,
+          "end": 283
+        },
+        {
+          "entity": "Rostov-on-Don",
+          "label": "LOC",
+          "start": 287,
+          "end": 300
+        },
+        {
+          "entity": "Moscow",
+          "label": "LOC",
+          "start": 327,
+          "end": 333
+        },
+        {
+          "entity": "Sheremetyevo airport",
+          "label": "LOC",
+          "start": 336,
+          "end": 356
+        },
+        {
+          "entity": "25 November",
+          "label": "DATE",
+          "start": 361,
+          "end": 372
+        },
+        {
+          "entity": "People's Council",
+          "label": "ORG",
+          "start": 409,
+          "end": 425
+        },
+        {
+          "entity": "Plotnitsky",
+          "label": "PER",
+          "start": 447,
+          "end": 457
+        },
+        {
+          "entity": "Pasechnik",
+          "label": "PER",
+          "start": 473,
+          "end": 482
+        },
+        {
+          "entity": "Minsk",
+          "label": "LOC",
+          "start": 513,
+          "end": 518
+        }
+      ],
+      "at_utc": "2026-11-04T07:03:32.935835+00:00"
+    }
+  ]
+}

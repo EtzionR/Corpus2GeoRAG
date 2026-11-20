@@ -1,0 +1,3922 @@
+{
+  "comparison_row_id": 2640,
+  "Source": "Malaysia Airlines Flight 17",
+  "Index": 106,
+  "Text": "Australian Prime Minister Tony Abbott said in an address to parliament that the aircraft was downed by a missile which seemed to have been launched by Russian-backed rebels. Julie Bishop, the Australian Minister for Foreign Affairs, said in an interview on Australian television that it was \"extraordinary\" that her Russian counterparts had refused to discuss the downing of MH17 when the Russian ambassador was summoned to meet her. The Russian government was critical of Abbott's response; Abbott was one of the first world leaders to publicly connect the shoot-down to Russia. Abbott later criticised the recovery efforts as \"shambolic\", and \"more like a garden clean-up than a forensic investigation\"; Bishop publicly warned separatist forces against treating the victims' bodies as hostages. Abbott also said in an interview on 13 October 2014, in anticipation of Russia's President Vladimir Putin's attendance at the 2014 G20 summit, scheduled for mid-November 2014 in Brisbane, Australia: \"Australians were murdered. They were murdered by Russian-backed rebels using Russian-supplied equipment. We are very unhappy about this.\" In 2024, the documentary television series Nemesis revealed that Abbott considered deploying Australian troops to the crash site.",
+  "reviewed_at_utc": "2026-11-04T07:49:46.178045+00:00",
+  "original_predictions": [
+    {
+      "entity": "Australian",
+      "label": "MISC",
+      "start": 0,
+      "end": 10
+    },
+    {
+      "entity": "Tony Abbott",
+      "label": "PER",
+      "start": 26,
+      "end": 37
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 151,
+      "end": 158
+    },
+    {
+      "entity": "Julie Bishop",
+      "label": "PER",
+      "start": 174,
+      "end": 186
+    },
+    {
+      "entity": "Australian",
+      "label": "MISC",
+      "start": 192,
+      "end": 202
+    },
+    {
+      "entity": "Australian",
+      "label": "MISC",
+      "start": 257,
+      "end": 267
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 316,
+      "end": 323
+    },
+    {
+      "entity": "MH17",
+      "label": "MISC",
+      "start": 375,
+      "end": 379
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 389,
+      "end": 396
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 438,
+      "end": 445
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 473,
+      "end": 479
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 492,
+      "end": 498
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 572,
+      "end": 578
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 580,
+      "end": 586
+    },
+    {
+      "entity": "Bishop",
+      "label": "PER",
+      "start": 706,
+      "end": 712
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 797,
+      "end": 803
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 869,
+      "end": 875
+    },
+    {
+      "entity": "Vladimir Putin",
+      "label": "PER",
+      "start": 888,
+      "end": 902
+    },
+    {
+      "entity": "G20",
+      "label": "MISC",
+      "start": 928,
+      "end": 931
+    },
+    {
+      "entity": "Brisbane",
+      "label": "LOC",
+      "start": 975,
+      "end": 983
+    },
+    {
+      "entity": "Australia",
+      "label": "LOC",
+      "start": 985,
+      "end": 994
+    },
+    {
+      "entity": "Australians",
+      "label": "MISC",
+      "start": 997,
+      "end": 1008
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 1046,
+      "end": 1053
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 1074,
+      "end": 1081
+    },
+    {
+      "entity": "Nemesis",
+      "label": "MISC",
+      "start": 1178,
+      "end": 1185
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 1200,
+      "end": 1206
+    },
+    {
+      "entity": "Australian",
+      "label": "MISC",
+      "start": 1228,
+      "end": 1238
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Australian",
+      "label": "MISC",
+      "start": 0,
+      "end": 10
+    },
+    {
+      "entity": "Tony Abbott",
+      "label": "PER",
+      "start": 26,
+      "end": 37
+    },
+    {
+      "entity": "Julie Bishop",
+      "label": "PER",
+      "start": 174,
+      "end": 186
+    },
+    {
+      "entity": "Australian",
+      "label": "MISC",
+      "start": 192,
+      "end": 202
+    },
+    {
+      "entity": "Australian",
+      "label": "MISC",
+      "start": 257,
+      "end": 267
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 316,
+      "end": 323
+    },
+    {
+      "entity": "MH17",
+      "label": "MISC",
+      "start": 375,
+      "end": 379
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 389,
+      "end": 396
+    },
+    {
+      "entity": "Russian government",
+      "label": "ORG",
+      "start": 438,
+      "end": 456
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 492,
+      "end": 498
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 572,
+      "end": 578
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 580,
+      "end": 586
+    },
+    {
+      "entity": "Bishop",
+      "label": "PER",
+      "start": 706,
+      "end": 712
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 797,
+      "end": 803
+    },
+    {
+      "entity": "13 October 2014",
+      "label": "DATE",
+      "start": 833,
+      "end": 848
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 869,
+      "end": 875
+    },
+    {
+      "entity": "Vladimir Putin",
+      "label": "PER",
+      "start": 888,
+      "end": 902
+    },
+    {
+      "entity": "2014",
+      "label": "DATE",
+      "start": 923,
+      "end": 927
+    },
+    {
+      "entity": "G20",
+      "label": "ORG",
+      "start": 928,
+      "end": 931
+    },
+    {
+      "entity": "November",
+      "label": "DATE",
+      "start": 958,
+      "end": 966
+    },
+    {
+      "entity": "Brisbane",
+      "label": "LOC",
+      "start": 975,
+      "end": 983
+    },
+    {
+      "entity": "Australia",
+      "label": "LOC",
+      "start": 985,
+      "end": 994
+    },
+    {
+      "entity": "Australians",
+      "label": "MISC",
+      "start": 997,
+      "end": 1008
+    },
+    {
+      "entity": "Nemesis",
+      "label": "MISC",
+      "start": 1178,
+      "end": 1185
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 1200,
+      "end": 1206
+    },
+    {
+      "entity": "Australian",
+      "label": "MISC",
+      "start": 1228,
+      "end": 1238
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Australian",
+      "label": "MISC",
+      "start": 0,
+      "end": 10
+    },
+    {
+      "entity": "Tony Abbott",
+      "label": "PER",
+      "start": 26,
+      "end": 37
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 151,
+      "end": 158
+    },
+    {
+      "entity": "Julie Bishop",
+      "label": "PER",
+      "start": 174,
+      "end": 186
+    },
+    {
+      "entity": "Australian",
+      "label": "MISC",
+      "start": 192,
+      "end": 202
+    },
+    {
+      "entity": "Australian",
+      "label": "MISC",
+      "start": 257,
+      "end": 267
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 316,
+      "end": 323
+    },
+    {
+      "entity": "MH17",
+      "label": "MISC",
+      "start": 375,
+      "end": 379
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 389,
+      "end": 396
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 438,
+      "end": 445
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 473,
+      "end": 479
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 492,
+      "end": 498
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 572,
+      "end": 578
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 580,
+      "end": 586
+    },
+    {
+      "entity": "Bishop",
+      "label": "PER",
+      "start": 706,
+      "end": 712
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 797,
+      "end": 803
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 869,
+      "end": 875
+    },
+    {
+      "entity": "Vladimir Putin",
+      "label": "PER",
+      "start": 888,
+      "end": 902
+    },
+    {
+      "entity": "G20",
+      "label": "ORG",
+      "start": 928,
+      "end": 931
+    },
+    {
+      "entity": "Brisbane",
+      "label": "LOC",
+      "start": 975,
+      "end": 983
+    },
+    {
+      "entity": "Australia",
+      "label": "LOC",
+      "start": 985,
+      "end": 994
+    },
+    {
+      "entity": "Australians",
+      "label": "MISC",
+      "start": 997,
+      "end": 1008
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 1046,
+      "end": 1053
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 1074,
+      "end": 1081
+    },
+    {
+      "entity": "Nemesis",
+      "label": "MISC",
+      "start": 1178,
+      "end": 1185
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 1200,
+      "end": 1206
+    },
+    {
+      "entity": "Australian",
+      "label": "MISC",
+      "start": 1228,
+      "end": 1238
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Australian",
+      "label": "MISC",
+      "start": 0,
+      "end": 10
+    },
+    {
+      "entity": "Tony Abbott",
+      "label": "PER",
+      "start": 26,
+      "end": 37
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 151,
+      "end": 158
+    },
+    {
+      "entity": "Julie Bishop",
+      "label": "PER",
+      "start": 174,
+      "end": 186
+    },
+    {
+      "entity": "Australian",
+      "label": "MISC",
+      "start": 192,
+      "end": 202
+    },
+    {
+      "entity": "Australian",
+      "label": "MISC",
+      "start": 257,
+      "end": 267
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 316,
+      "end": 323
+    },
+    {
+      "entity": "MH17",
+      "label": "MISC",
+      "start": 375,
+      "end": 379
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 389,
+      "end": 396
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 438,
+      "end": 445
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 473,
+      "end": 479
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 492,
+      "end": 498
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 572,
+      "end": 578
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 580,
+      "end": 586
+    },
+    {
+      "entity": "Bishop",
+      "label": "PER",
+      "start": 706,
+      "end": 712
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 797,
+      "end": 803
+    },
+    {
+      "entity": "13 October 2014",
+      "label": "DATE",
+      "start": 833,
+      "end": 848
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 869,
+      "end": 875
+    },
+    {
+      "entity": "Vladimir Putin",
+      "label": "PER",
+      "start": 888,
+      "end": 902
+    },
+    {
+      "entity": "2014",
+      "label": "DATE",
+      "start": 923,
+      "end": 927
+    },
+    {
+      "entity": "G20",
+      "label": "ORG",
+      "start": 928,
+      "end": 931
+    },
+    {
+      "entity": "mid-November 2014",
+      "label": "DATE",
+      "start": 954,
+      "end": 971
+    },
+    {
+      "entity": "Brisbane",
+      "label": "LOC",
+      "start": 975,
+      "end": 983
+    },
+    {
+      "entity": "Australia",
+      "label": "LOC",
+      "start": 985,
+      "end": 994
+    },
+    {
+      "entity": "Australians",
+      "label": "MISC",
+      "start": 997,
+      "end": 1008
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 1046,
+      "end": 1053
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 1074,
+      "end": 1081
+    },
+    {
+      "entity": "2024",
+      "label": "DATE",
+      "start": 1138,
+      "end": 1142
+    },
+    {
+      "entity": "Nemesis",
+      "label": "MISC",
+      "start": 1178,
+      "end": 1185
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 1200,
+      "end": 1206
+    },
+    {
+      "entity": "Australian",
+      "label": "MISC",
+      "start": 1228,
+      "end": 1238
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Australian",
+      "label": "MISC",
+      "start": 0,
+      "end": 10
+    },
+    {
+      "entity": "Tony Abbott",
+      "label": "PER",
+      "start": 26,
+      "end": 37
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 151,
+      "end": 158
+    },
+    {
+      "entity": "Julie Bishop",
+      "label": "PER",
+      "start": 174,
+      "end": 186
+    },
+    {
+      "entity": "Australian",
+      "label": "MISC",
+      "start": 192,
+      "end": 202
+    },
+    {
+      "entity": "Australian",
+      "label": "MISC",
+      "start": 257,
+      "end": 267
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 316,
+      "end": 323
+    },
+    {
+      "entity": "MH17",
+      "label": "MISC",
+      "start": 375,
+      "end": 379
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 389,
+      "end": 396
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 438,
+      "end": 445
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 473,
+      "end": 479
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 492,
+      "end": 498
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 572,
+      "end": 578
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 580,
+      "end": 586
+    },
+    {
+      "entity": "Bishop",
+      "label": "PER",
+      "start": 706,
+      "end": 712
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 797,
+      "end": 803
+    },
+    {
+      "entity": "13 October 2014",
+      "label": "DATE",
+      "start": 833,
+      "end": 848
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 869,
+      "end": 875
+    },
+    {
+      "entity": "Vladimir Putin",
+      "label": "PER",
+      "start": 888,
+      "end": 902
+    },
+    {
+      "entity": "2014",
+      "label": "DATE",
+      "start": 923,
+      "end": 927
+    },
+    {
+      "entity": "G20",
+      "label": "ORG",
+      "start": 928,
+      "end": 931
+    },
+    {
+      "entity": "mid-November 2014",
+      "label": "DATE",
+      "start": 954,
+      "end": 971
+    },
+    {
+      "entity": "Brisbane",
+      "label": "LOC",
+      "start": 975,
+      "end": 983
+    },
+    {
+      "entity": "Australia",
+      "label": "LOC",
+      "start": 985,
+      "end": 994
+    },
+    {
+      "entity": "Australians",
+      "label": "MISC",
+      "start": 997,
+      "end": 1008
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 1046,
+      "end": 1053
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 1074,
+      "end": 1081
+    },
+    {
+      "entity": "2024",
+      "label": "DATE",
+      "start": 1138,
+      "end": 1142
+    },
+    {
+      "entity": "Nemesis",
+      "label": "MISC",
+      "start": 1178,
+      "end": 1185
+    },
+    {
+      "entity": "Abbott",
+      "label": "PER",
+      "start": 1200,
+      "end": 1206
+    },
+    {
+      "entity": "Australian",
+      "label": "MISC",
+      "start": 1228,
+      "end": 1238
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "label 19 ORG",
+      "before": [
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Tony Abbott",
+          "label": "PER",
+          "start": 26,
+          "end": 37
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 151,
+          "end": 158
+        },
+        {
+          "entity": "Julie Bishop",
+          "label": "PER",
+          "start": 174,
+          "end": 186
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 192,
+          "end": 202
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 257,
+          "end": 267
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 316,
+          "end": 323
+        },
+        {
+          "entity": "MH17",
+          "label": "MISC",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 389,
+          "end": 396
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 438,
+          "end": 445
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 473,
+          "end": 479
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 492,
+          "end": 498
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 572,
+          "end": 578
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 580,
+          "end": 586
+        },
+        {
+          "entity": "Bishop",
+          "label": "PER",
+          "start": 706,
+          "end": 712
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 797,
+          "end": 803
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 869,
+          "end": 875
+        },
+        {
+          "entity": "Vladimir Putin",
+          "label": "PER",
+          "start": 888,
+          "end": 902
+        },
+        {
+          "entity": "G20",
+          "label": "MISC",
+          "start": 928,
+          "end": 931
+        },
+        {
+          "entity": "Brisbane",
+          "label": "LOC",
+          "start": 975,
+          "end": 983
+        },
+        {
+          "entity": "Australia",
+          "label": "LOC",
+          "start": 985,
+          "end": 994
+        },
+        {
+          "entity": "Australians",
+          "label": "MISC",
+          "start": 997,
+          "end": 1008
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 1046,
+          "end": 1053
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 1074,
+          "end": 1081
+        },
+        {
+          "entity": "Nemesis",
+          "label": "MISC",
+          "start": 1178,
+          "end": 1185
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 1200,
+          "end": 1206
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 1228,
+          "end": 1238
+        }
+      ],
+      "after": [
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Tony Abbott",
+          "label": "PER",
+          "start": 26,
+          "end": 37
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 151,
+          "end": 158
+        },
+        {
+          "entity": "Julie Bishop",
+          "label": "PER",
+          "start": 174,
+          "end": 186
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 192,
+          "end": 202
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 257,
+          "end": 267
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 316,
+          "end": 323
+        },
+        {
+          "entity": "MH17",
+          "label": "MISC",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 389,
+          "end": 396
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 438,
+          "end": 445
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 473,
+          "end": 479
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 492,
+          "end": 498
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 572,
+          "end": 578
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 580,
+          "end": 586
+        },
+        {
+          "entity": "Bishop",
+          "label": "PER",
+          "start": 706,
+          "end": 712
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 797,
+          "end": 803
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 869,
+          "end": 875
+        },
+        {
+          "entity": "Vladimir Putin",
+          "label": "PER",
+          "start": 888,
+          "end": 902
+        },
+        {
+          "entity": "G20",
+          "label": "ORG",
+          "start": 928,
+          "end": 931
+        },
+        {
+          "entity": "Brisbane",
+          "label": "LOC",
+          "start": 975,
+          "end": 983
+        },
+        {
+          "entity": "Australia",
+          "label": "LOC",
+          "start": 985,
+          "end": 994
+        },
+        {
+          "entity": "Australians",
+          "label": "MISC",
+          "start": 997,
+          "end": 1008
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 1046,
+          "end": 1053
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 1074,
+          "end": 1081
+        },
+        {
+          "entity": "Nemesis",
+          "label": "MISC",
+          "start": 1178,
+          "end": 1185
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 1200,
+          "end": 1206
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 1228,
+          "end": 1238
+        }
+      ],
+      "at_utc": "2026-11-04T07:48:56.041573+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "span 9 | Russian | 4",
+      "before": [
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Tony Abbott",
+          "label": "PER",
+          "start": 26,
+          "end": 37
+        },
+        {
+          "entity": "Julie Bishop",
+          "label": "PER",
+          "start": 174,
+          "end": 186
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 192,
+          "end": 202
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 257,
+          "end": 267
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 316,
+          "end": 323
+        },
+        {
+          "entity": "MH17",
+          "label": "MISC",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 389,
+          "end": 396
+        },
+        {
+          "entity": "Russian government",
+          "label": "ORG",
+          "start": 438,
+          "end": 456
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 492,
+          "end": 498
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 572,
+          "end": 578
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 580,
+          "end": 586
+        },
+        {
+          "entity": "Bishop",
+          "label": "PER",
+          "start": 706,
+          "end": 712
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 797,
+          "end": 803
+        },
+        {
+          "entity": "13 October 2014",
+          "label": "DATE",
+          "start": 833,
+          "end": 848
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 869,
+          "end": 875
+        },
+        {
+          "entity": "Vladimir Putin",
+          "label": "PER",
+          "start": 888,
+          "end": 902
+        },
+        {
+          "entity": "2014",
+          "label": "DATE",
+          "start": 923,
+          "end": 927
+        },
+        {
+          "entity": "G20",
+          "label": "ORG",
+          "start": 928,
+          "end": 931
+        },
+        {
+          "entity": "November",
+          "label": "DATE",
+          "start": 958,
+          "end": 966
+        },
+        {
+          "entity": "Brisbane",
+          "label": "LOC",
+          "start": 975,
+          "end": 983
+        },
+        {
+          "entity": "Australia",
+          "label": "LOC",
+          "start": 985,
+          "end": 994
+        },
+        {
+          "entity": "Australians",
+          "label": "MISC",
+          "start": 997,
+          "end": 1008
+        },
+        {
+          "entity": "Nemesis",
+          "label": "MISC",
+          "start": 1178,
+          "end": 1185
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 1200,
+          "end": 1206
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 1228,
+          "end": 1238
+        }
+      ],
+      "after": [
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Tony Abbott",
+          "label": "PER",
+          "start": 26,
+          "end": 37
+        },
+        {
+          "entity": "Julie Bishop",
+          "label": "PER",
+          "start": 174,
+          "end": 186
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 192,
+          "end": 202
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 257,
+          "end": 267
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 316,
+          "end": 323
+        },
+        {
+          "entity": "MH17",
+          "label": "MISC",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 389,
+          "end": 396
+        },
+        {
+          "entity": "Russian",
+          "label": "ORG",
+          "start": 438,
+          "end": 445
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 492,
+          "end": 498
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 572,
+          "end": 578
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 580,
+          "end": 586
+        },
+        {
+          "entity": "Bishop",
+          "label": "PER",
+          "start": 706,
+          "end": 712
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 797,
+          "end": 803
+        },
+        {
+          "entity": "13 October 2014",
+          "label": "DATE",
+          "start": 833,
+          "end": 848
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 869,
+          "end": 875
+        },
+        {
+          "entity": "Vladimir Putin",
+          "label": "PER",
+          "start": 888,
+          "end": 902
+        },
+        {
+          "entity": "2014",
+          "label": "DATE",
+          "start": 923,
+          "end": 927
+        },
+        {
+          "entity": "G20",
+          "label": "ORG",
+          "start": 928,
+          "end": 931
+        },
+        {
+          "entity": "November",
+          "label": "DATE",
+          "start": 958,
+          "end": 966
+        },
+        {
+          "entity": "Brisbane",
+          "label": "LOC",
+          "start": 975,
+          "end": 983
+        },
+        {
+          "entity": "Australia",
+          "label": "LOC",
+          "start": 985,
+          "end": 994
+        },
+        {
+          "entity": "Australians",
+          "label": "MISC",
+          "start": 997,
+          "end": 1008
+        },
+        {
+          "entity": "Nemesis",
+          "label": "MISC",
+          "start": 1178,
+          "end": 1185
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 1200,
+          "end": 1206
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 1228,
+          "end": 1238
+        }
+      ],
+      "at_utc": "2026-11-04T07:49:05.702744+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "span 20 | mid-November 2014 | 1",
+      "before": [
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Tony Abbott",
+          "label": "PER",
+          "start": 26,
+          "end": 37
+        },
+        {
+          "entity": "Julie Bishop",
+          "label": "PER",
+          "start": 174,
+          "end": 186
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 192,
+          "end": 202
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 257,
+          "end": 267
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 316,
+          "end": 323
+        },
+        {
+          "entity": "MH17",
+          "label": "MISC",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 389,
+          "end": 396
+        },
+        {
+          "entity": "Russian",
+          "label": "ORG",
+          "start": 438,
+          "end": 445
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 492,
+          "end": 498
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 572,
+          "end": 578
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 580,
+          "end": 586
+        },
+        {
+          "entity": "Bishop",
+          "label": "PER",
+          "start": 706,
+          "end": 712
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 797,
+          "end": 803
+        },
+        {
+          "entity": "13 October 2014",
+          "label": "DATE",
+          "start": 833,
+          "end": 848
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 869,
+          "end": 875
+        },
+        {
+          "entity": "Vladimir Putin",
+          "label": "PER",
+          "start": 888,
+          "end": 902
+        },
+        {
+          "entity": "2014",
+          "label": "DATE",
+          "start": 923,
+          "end": 927
+        },
+        {
+          "entity": "G20",
+          "label": "ORG",
+          "start": 928,
+          "end": 931
+        },
+        {
+          "entity": "November",
+          "label": "DATE",
+          "start": 958,
+          "end": 966
+        },
+        {
+          "entity": "Brisbane",
+          "label": "LOC",
+          "start": 975,
+          "end": 983
+        },
+        {
+          "entity": "Australia",
+          "label": "LOC",
+          "start": 985,
+          "end": 994
+        },
+        {
+          "entity": "Australians",
+          "label": "MISC",
+          "start": 997,
+          "end": 1008
+        },
+        {
+          "entity": "Nemesis",
+          "label": "MISC",
+          "start": 1178,
+          "end": 1185
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 1200,
+          "end": 1206
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 1228,
+          "end": 1238
+        }
+      ],
+      "after": [
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Tony Abbott",
+          "label": "PER",
+          "start": 26,
+          "end": 37
+        },
+        {
+          "entity": "Julie Bishop",
+          "label": "PER",
+          "start": 174,
+          "end": 186
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 192,
+          "end": 202
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 257,
+          "end": 267
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 316,
+          "end": 323
+        },
+        {
+          "entity": "MH17",
+          "label": "MISC",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 389,
+          "end": 396
+        },
+        {
+          "entity": "Russian",
+          "label": "ORG",
+          "start": 438,
+          "end": 445
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 492,
+          "end": 498
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 572,
+          "end": 578
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 580,
+          "end": 586
+        },
+        {
+          "entity": "Bishop",
+          "label": "PER",
+          "start": 706,
+          "end": 712
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 797,
+          "end": 803
+        },
+        {
+          "entity": "13 October 2014",
+          "label": "DATE",
+          "start": 833,
+          "end": 848
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 869,
+          "end": 875
+        },
+        {
+          "entity": "Vladimir Putin",
+          "label": "PER",
+          "start": 888,
+          "end": 902
+        },
+        {
+          "entity": "2014",
+          "label": "DATE",
+          "start": 923,
+          "end": 927
+        },
+        {
+          "entity": "G20",
+          "label": "ORG",
+          "start": 928,
+          "end": 931
+        },
+        {
+          "entity": "mid-November 2014",
+          "label": "DATE",
+          "start": 954,
+          "end": 971
+        },
+        {
+          "entity": "Brisbane",
+          "label": "LOC",
+          "start": 975,
+          "end": 983
+        },
+        {
+          "entity": "Australia",
+          "label": "LOC",
+          "start": 985,
+          "end": 994
+        },
+        {
+          "entity": "Australians",
+          "label": "MISC",
+          "start": 997,
+          "end": 1008
+        },
+        {
+          "entity": "Nemesis",
+          "label": "MISC",
+          "start": 1178,
+          "end": 1185
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 1200,
+          "end": 1206
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 1228,
+          "end": 1238
+        }
+      ],
+      "at_utc": "2026-11-04T07:49:15.455490+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "label 9 MISC",
+      "before": [
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Tony Abbott",
+          "label": "PER",
+          "start": 26,
+          "end": 37
+        },
+        {
+          "entity": "Julie Bishop",
+          "label": "PER",
+          "start": 174,
+          "end": 186
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 192,
+          "end": 202
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 257,
+          "end": 267
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 316,
+          "end": 323
+        },
+        {
+          "entity": "MH17",
+          "label": "MISC",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 389,
+          "end": 396
+        },
+        {
+          "entity": "Russian",
+          "label": "ORG",
+          "start": 438,
+          "end": 445
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 492,
+          "end": 498
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 572,
+          "end": 578
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 580,
+          "end": 586
+        },
+        {
+          "entity": "Bishop",
+          "label": "PER",
+          "start": 706,
+          "end": 712
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 797,
+          "end": 803
+        },
+        {
+          "entity": "13 October 2014",
+          "label": "DATE",
+          "start": 833,
+          "end": 848
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 869,
+          "end": 875
+        },
+        {
+          "entity": "Vladimir Putin",
+          "label": "PER",
+          "start": 888,
+          "end": 902
+        },
+        {
+          "entity": "2014",
+          "label": "DATE",
+          "start": 923,
+          "end": 927
+        },
+        {
+          "entity": "G20",
+          "label": "ORG",
+          "start": 928,
+          "end": 931
+        },
+        {
+          "entity": "mid-November 2014",
+          "label": "DATE",
+          "start": 954,
+          "end": 971
+        },
+        {
+          "entity": "Brisbane",
+          "label": "LOC",
+          "start": 975,
+          "end": 983
+        },
+        {
+          "entity": "Australia",
+          "label": "LOC",
+          "start": 985,
+          "end": 994
+        },
+        {
+          "entity": "Australians",
+          "label": "MISC",
+          "start": 997,
+          "end": 1008
+        },
+        {
+          "entity": "Nemesis",
+          "label": "MISC",
+          "start": 1178,
+          "end": 1185
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 1200,
+          "end": 1206
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 1228,
+          "end": 1238
+        }
+      ],
+      "after": [
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Tony Abbott",
+          "label": "PER",
+          "start": 26,
+          "end": 37
+        },
+        {
+          "entity": "Julie Bishop",
+          "label": "PER",
+          "start": 174,
+          "end": 186
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 192,
+          "end": 202
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 257,
+          "end": 267
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 316,
+          "end": 323
+        },
+        {
+          "entity": "MH17",
+          "label": "MISC",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 389,
+          "end": 396
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 438,
+          "end": 445
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 492,
+          "end": 498
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 572,
+          "end": 578
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 580,
+          "end": 586
+        },
+        {
+          "entity": "Bishop",
+          "label": "PER",
+          "start": 706,
+          "end": 712
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 797,
+          "end": 803
+        },
+        {
+          "entity": "13 October 2014",
+          "label": "DATE",
+          "start": 833,
+          "end": 848
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 869,
+          "end": 875
+        },
+        {
+          "entity": "Vladimir Putin",
+          "label": "PER",
+          "start": 888,
+          "end": 902
+        },
+        {
+          "entity": "2014",
+          "label": "DATE",
+          "start": 923,
+          "end": 927
+        },
+        {
+          "entity": "G20",
+          "label": "ORG",
+          "start": 928,
+          "end": 931
+        },
+        {
+          "entity": "mid-November 2014",
+          "label": "DATE",
+          "start": 954,
+          "end": 971
+        },
+        {
+          "entity": "Brisbane",
+          "label": "LOC",
+          "start": 975,
+          "end": 983
+        },
+        {
+          "entity": "Australia",
+          "label": "LOC",
+          "start": 985,
+          "end": 994
+        },
+        {
+          "entity": "Australians",
+          "label": "MISC",
+          "start": 997,
+          "end": 1008
+        },
+        {
+          "entity": "Nemesis",
+          "label": "MISC",
+          "start": 1178,
+          "end": 1185
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 1200,
+          "end": 1206
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 1228,
+          "end": 1238
+        }
+      ],
+      "at_utc": "2026-11-04T07:49:19.716274+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add MISC | Russian | 1",
+      "before": [
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Tony Abbott",
+          "label": "PER",
+          "start": 26,
+          "end": 37
+        },
+        {
+          "entity": "Julie Bishop",
+          "label": "PER",
+          "start": 174,
+          "end": 186
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 192,
+          "end": 202
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 257,
+          "end": 267
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 316,
+          "end": 323
+        },
+        {
+          "entity": "MH17",
+          "label": "MISC",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 389,
+          "end": 396
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 438,
+          "end": 445
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 492,
+          "end": 498
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 572,
+          "end": 578
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 580,
+          "end": 586
+        },
+        {
+          "entity": "Bishop",
+          "label": "PER",
+          "start": 706,
+          "end": 712
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 797,
+          "end": 803
+        },
+        {
+          "entity": "13 October 2014",
+          "label": "DATE",
+          "start": 833,
+          "end": 848
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 869,
+          "end": 875
+        },
+        {
+          "entity": "Vladimir Putin",
+          "label": "PER",
+          "start": 888,
+          "end": 902
+        },
+        {
+          "entity": "2014",
+          "label": "DATE",
+          "start": 923,
+          "end": 927
+        },
+        {
+          "entity": "G20",
+          "label": "ORG",
+          "start": 928,
+          "end": 931
+        },
+        {
+          "entity": "mid-November 2014",
+          "label": "DATE",
+          "start": 954,
+          "end": 971
+        },
+        {
+          "entity": "Brisbane",
+          "label": "LOC",
+          "start": 975,
+          "end": 983
+        },
+        {
+          "entity": "Australia",
+          "label": "LOC",
+          "start": 985,
+          "end": 994
+        },
+        {
+          "entity": "Australians",
+          "label": "MISC",
+          "start": 997,
+          "end": 1008
+        },
+        {
+          "entity": "Nemesis",
+          "label": "MISC",
+          "start": 1178,
+          "end": 1185
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 1200,
+          "end": 1206
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 1228,
+          "end": 1238
+        }
+      ],
+      "after": [
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Tony Abbott",
+          "label": "PER",
+          "start": 26,
+          "end": 37
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 151,
+          "end": 158
+        },
+        {
+          "entity": "Julie Bishop",
+          "label": "PER",
+          "start": 174,
+          "end": 186
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 192,
+          "end": 202
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 257,
+          "end": 267
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 316,
+          "end": 323
+        },
+        {
+          "entity": "MH17",
+          "label": "MISC",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 389,
+          "end": 396
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 438,
+          "end": 445
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 492,
+          "end": 498
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 572,
+          "end": 578
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 580,
+          "end": 586
+        },
+        {
+          "entity": "Bishop",
+          "label": "PER",
+          "start": 706,
+          "end": 712
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 797,
+          "end": 803
+        },
+        {
+          "entity": "13 October 2014",
+          "label": "DATE",
+          "start": 833,
+          "end": 848
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 869,
+          "end": 875
+        },
+        {
+          "entity": "Vladimir Putin",
+          "label": "PER",
+          "start": 888,
+          "end": 902
+        },
+        {
+          "entity": "2014",
+          "label": "DATE",
+          "start": 923,
+          "end": 927
+        },
+        {
+          "entity": "G20",
+          "label": "ORG",
+          "start": 928,
+          "end": 931
+        },
+        {
+          "entity": "mid-November 2014",
+          "label": "DATE",
+          "start": 954,
+          "end": 971
+        },
+        {
+          "entity": "Brisbane",
+          "label": "LOC",
+          "start": 975,
+          "end": 983
+        },
+        {
+          "entity": "Australia",
+          "label": "LOC",
+          "start": 985,
+          "end": 994
+        },
+        {
+          "entity": "Australians",
+          "label": "MISC",
+          "start": 997,
+          "end": 1008
+        },
+        {
+          "entity": "Nemesis",
+          "label": "MISC",
+          "start": 1178,
+          "end": 1185
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 1200,
+          "end": 1206
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 1228,
+          "end": 1238
+        }
+      ],
+      "at_utc": "2026-11-04T07:49:24.051131+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add MISC | Russian | 5",
+      "before": [
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Tony Abbott",
+          "label": "PER",
+          "start": 26,
+          "end": 37
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 151,
+          "end": 158
+        },
+        {
+          "entity": "Julie Bishop",
+          "label": "PER",
+          "start": 174,
+          "end": 186
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 192,
+          "end": 202
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 257,
+          "end": 267
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 316,
+          "end": 323
+        },
+        {
+          "entity": "MH17",
+          "label": "MISC",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 389,
+          "end": 396
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 438,
+          "end": 445
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 492,
+          "end": 498
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 572,
+          "end": 578
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 580,
+          "end": 586
+        },
+        {
+          "entity": "Bishop",
+          "label": "PER",
+          "start": 706,
+          "end": 712
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 797,
+          "end": 803
+        },
+        {
+          "entity": "13 October 2014",
+          "label": "DATE",
+          "start": 833,
+          "end": 848
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 869,
+          "end": 875
+        },
+        {
+          "entity": "Vladimir Putin",
+          "label": "PER",
+          "start": 888,
+          "end": 902
+        },
+        {
+          "entity": "2014",
+          "label": "DATE",
+          "start": 923,
+          "end": 927
+        },
+        {
+          "entity": "G20",
+          "label": "ORG",
+          "start": 928,
+          "end": 931
+        },
+        {
+          "entity": "mid-November 2014",
+          "label": "DATE",
+          "start": 954,
+          "end": 971
+        },
+        {
+          "entity": "Brisbane",
+          "label": "LOC",
+          "start": 975,
+          "end": 983
+        },
+        {
+          "entity": "Australia",
+          "label": "LOC",
+          "start": 985,
+          "end": 994
+        },
+        {
+          "entity": "Australians",
+          "label": "MISC",
+          "start": 997,
+          "end": 1008
+        },
+        {
+          "entity": "Nemesis",
+          "label": "MISC",
+          "start": 1178,
+          "end": 1185
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 1200,
+          "end": 1206
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 1228,
+          "end": 1238
+        }
+      ],
+      "after": [
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Tony Abbott",
+          "label": "PER",
+          "start": 26,
+          "end": 37
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 151,
+          "end": 158
+        },
+        {
+          "entity": "Julie Bishop",
+          "label": "PER",
+          "start": 174,
+          "end": 186
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 192,
+          "end": 202
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 257,
+          "end": 267
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 316,
+          "end": 323
+        },
+        {
+          "entity": "MH17",
+          "label": "MISC",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 389,
+          "end": 396
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 438,
+          "end": 445
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 492,
+          "end": 498
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 572,
+          "end": 578
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 580,
+          "end": 586
+        },
+        {
+          "entity": "Bishop",
+          "label": "PER",
+          "start": 706,
+          "end": 712
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 797,
+          "end": 803
+        },
+        {
+          "entity": "13 October 2014",
+          "label": "DATE",
+          "start": 833,
+          "end": 848
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 869,
+          "end": 875
+        },
+        {
+          "entity": "Vladimir Putin",
+          "label": "PER",
+          "start": 888,
+          "end": 902
+        },
+        {
+          "entity": "2014",
+          "label": "DATE",
+          "start": 923,
+          "end": 927
+        },
+        {
+          "entity": "G20",
+          "label": "ORG",
+          "start": 928,
+          "end": 931
+        },
+        {
+          "entity": "mid-November 2014",
+          "label": "DATE",
+          "start": 954,
+          "end": 971
+        },
+        {
+          "entity": "Brisbane",
+          "label": "LOC",
+          "start": 975,
+          "end": 983
+        },
+        {
+          "entity": "Australia",
+          "label": "LOC",
+          "start": 985,
+          "end": 994
+        },
+        {
+          "entity": "Australians",
+          "label": "MISC",
+          "start": 997,
+          "end": 1008
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 1046,
+          "end": 1053
+        },
+        {
+          "entity": "Nemesis",
+          "label": "MISC",
+          "start": 1178,
+          "end": 1185
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 1200,
+          "end": 1206
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 1228,
+          "end": 1238
+        }
+      ],
+      "at_utc": "2026-11-04T07:49:29.617901+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add MISC | Russian | 6",
+      "before": [
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Tony Abbott",
+          "label": "PER",
+          "start": 26,
+          "end": 37
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 151,
+          "end": 158
+        },
+        {
+          "entity": "Julie Bishop",
+          "label": "PER",
+          "start": 174,
+          "end": 186
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 192,
+          "end": 202
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 257,
+          "end": 267
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 316,
+          "end": 323
+        },
+        {
+          "entity": "MH17",
+          "label": "MISC",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 389,
+          "end": 396
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 438,
+          "end": 445
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 492,
+          "end": 498
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 572,
+          "end": 578
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 580,
+          "end": 586
+        },
+        {
+          "entity": "Bishop",
+          "label": "PER",
+          "start": 706,
+          "end": 712
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 797,
+          "end": 803
+        },
+        {
+          "entity": "13 October 2014",
+          "label": "DATE",
+          "start": 833,
+          "end": 848
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 869,
+          "end": 875
+        },
+        {
+          "entity": "Vladimir Putin",
+          "label": "PER",
+          "start": 888,
+          "end": 902
+        },
+        {
+          "entity": "2014",
+          "label": "DATE",
+          "start": 923,
+          "end": 927
+        },
+        {
+          "entity": "G20",
+          "label": "ORG",
+          "start": 928,
+          "end": 931
+        },
+        {
+          "entity": "mid-November 2014",
+          "label": "DATE",
+          "start": 954,
+          "end": 971
+        },
+        {
+          "entity": "Brisbane",
+          "label": "LOC",
+          "start": 975,
+          "end": 983
+        },
+        {
+          "entity": "Australia",
+          "label": "LOC",
+          "start": 985,
+          "end": 994
+        },
+        {
+          "entity": "Australians",
+          "label": "MISC",
+          "start": 997,
+          "end": 1008
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 1046,
+          "end": 1053
+        },
+        {
+          "entity": "Nemesis",
+          "label": "MISC",
+          "start": 1178,
+          "end": 1185
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 1200,
+          "end": 1206
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 1228,
+          "end": 1238
+        }
+      ],
+      "after": [
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Tony Abbott",
+          "label": "PER",
+          "start": 26,
+          "end": 37
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 151,
+          "end": 158
+        },
+        {
+          "entity": "Julie Bishop",
+          "label": "PER",
+          "start": 174,
+          "end": 186
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 192,
+          "end": 202
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 257,
+          "end": 267
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 316,
+          "end": 323
+        },
+        {
+          "entity": "MH17",
+          "label": "MISC",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 389,
+          "end": 396
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 438,
+          "end": 445
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 492,
+          "end": 498
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 572,
+          "end": 578
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 580,
+          "end": 586
+        },
+        {
+          "entity": "Bishop",
+          "label": "PER",
+          "start": 706,
+          "end": 712
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 797,
+          "end": 803
+        },
+        {
+          "entity": "13 October 2014",
+          "label": "DATE",
+          "start": 833,
+          "end": 848
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 869,
+          "end": 875
+        },
+        {
+          "entity": "Vladimir Putin",
+          "label": "PER",
+          "start": 888,
+          "end": 902
+        },
+        {
+          "entity": "2014",
+          "label": "DATE",
+          "start": 923,
+          "end": 927
+        },
+        {
+          "entity": "G20",
+          "label": "ORG",
+          "start": 928,
+          "end": 931
+        },
+        {
+          "entity": "mid-November 2014",
+          "label": "DATE",
+          "start": 954,
+          "end": 971
+        },
+        {
+          "entity": "Brisbane",
+          "label": "LOC",
+          "start": 975,
+          "end": 983
+        },
+        {
+          "entity": "Australia",
+          "label": "LOC",
+          "start": 985,
+          "end": 994
+        },
+        {
+          "entity": "Australians",
+          "label": "MISC",
+          "start": 997,
+          "end": 1008
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 1046,
+          "end": 1053
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 1074,
+          "end": 1081
+        },
+        {
+          "entity": "Nemesis",
+          "label": "MISC",
+          "start": 1178,
+          "end": 1185
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 1200,
+          "end": 1206
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 1228,
+          "end": 1238
+        }
+      ],
+      "at_utc": "2026-11-04T07:49:34.502090+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add PER | Abbott | 2",
+      "before": [
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Tony Abbott",
+          "label": "PER",
+          "start": 26,
+          "end": 37
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 151,
+          "end": 158
+        },
+        {
+          "entity": "Julie Bishop",
+          "label": "PER",
+          "start": 174,
+          "end": 186
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 192,
+          "end": 202
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 257,
+          "end": 267
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 316,
+          "end": 323
+        },
+        {
+          "entity": "MH17",
+          "label": "MISC",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 389,
+          "end": 396
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 438,
+          "end": 445
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 492,
+          "end": 498
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 572,
+          "end": 578
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 580,
+          "end": 586
+        },
+        {
+          "entity": "Bishop",
+          "label": "PER",
+          "start": 706,
+          "end": 712
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 797,
+          "end": 803
+        },
+        {
+          "entity": "13 October 2014",
+          "label": "DATE",
+          "start": 833,
+          "end": 848
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 869,
+          "end": 875
+        },
+        {
+          "entity": "Vladimir Putin",
+          "label": "PER",
+          "start": 888,
+          "end": 902
+        },
+        {
+          "entity": "2014",
+          "label": "DATE",
+          "start": 923,
+          "end": 927
+        },
+        {
+          "entity": "G20",
+          "label": "ORG",
+          "start": 928,
+          "end": 931
+        },
+        {
+          "entity": "mid-November 2014",
+          "label": "DATE",
+          "start": 954,
+          "end": 971
+        },
+        {
+          "entity": "Brisbane",
+          "label": "LOC",
+          "start": 975,
+          "end": 983
+        },
+        {
+          "entity": "Australia",
+          "label": "LOC",
+          "start": 985,
+          "end": 994
+        },
+        {
+          "entity": "Australians",
+          "label": "MISC",
+          "start": 997,
+          "end": 1008
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 1046,
+          "end": 1053
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 1074,
+          "end": 1081
+        },
+        {
+          "entity": "Nemesis",
+          "label": "MISC",
+          "start": 1178,
+          "end": 1185
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 1200,
+          "end": 1206
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 1228,
+          "end": 1238
+        }
+      ],
+      "after": [
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Tony Abbott",
+          "label": "PER",
+          "start": 26,
+          "end": 37
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 151,
+          "end": 158
+        },
+        {
+          "entity": "Julie Bishop",
+          "label": "PER",
+          "start": 174,
+          "end": 186
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 192,
+          "end": 202
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 257,
+          "end": 267
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 316,
+          "end": 323
+        },
+        {
+          "entity": "MH17",
+          "label": "MISC",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 389,
+          "end": 396
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 438,
+          "end": 445
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 473,
+          "end": 479
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 492,
+          "end": 498
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 572,
+          "end": 578
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 580,
+          "end": 586
+        },
+        {
+          "entity": "Bishop",
+          "label": "PER",
+          "start": 706,
+          "end": 712
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 797,
+          "end": 803
+        },
+        {
+          "entity": "13 October 2014",
+          "label": "DATE",
+          "start": 833,
+          "end": 848
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 869,
+          "end": 875
+        },
+        {
+          "entity": "Vladimir Putin",
+          "label": "PER",
+          "start": 888,
+          "end": 902
+        },
+        {
+          "entity": "2014",
+          "label": "DATE",
+          "start": 923,
+          "end": 927
+        },
+        {
+          "entity": "G20",
+          "label": "ORG",
+          "start": 928,
+          "end": 931
+        },
+        {
+          "entity": "mid-November 2014",
+          "label": "DATE",
+          "start": 954,
+          "end": 971
+        },
+        {
+          "entity": "Brisbane",
+          "label": "LOC",
+          "start": 975,
+          "end": 983
+        },
+        {
+          "entity": "Australia",
+          "label": "LOC",
+          "start": 985,
+          "end": 994
+        },
+        {
+          "entity": "Australians",
+          "label": "MISC",
+          "start": 997,
+          "end": 1008
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 1046,
+          "end": 1053
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 1074,
+          "end": 1081
+        },
+        {
+          "entity": "Nemesis",
+          "label": "MISC",
+          "start": 1178,
+          "end": 1185
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 1200,
+          "end": 1206
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 1228,
+          "end": 1238
+        }
+      ],
+      "at_utc": "2026-11-04T07:49:38.859325+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add DATE | 2024 | 1",
+      "before": [
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Tony Abbott",
+          "label": "PER",
+          "start": 26,
+          "end": 37
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 151,
+          "end": 158
+        },
+        {
+          "entity": "Julie Bishop",
+          "label": "PER",
+          "start": 174,
+          "end": 186
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 192,
+          "end": 202
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 257,
+          "end": 267
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 316,
+          "end": 323
+        },
+        {
+          "entity": "MH17",
+          "label": "MISC",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 389,
+          "end": 396
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 438,
+          "end": 445
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 473,
+          "end": 479
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 492,
+          "end": 498
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 572,
+          "end": 578
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 580,
+          "end": 586
+        },
+        {
+          "entity": "Bishop",
+          "label": "PER",
+          "start": 706,
+          "end": 712
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 797,
+          "end": 803
+        },
+        {
+          "entity": "13 October 2014",
+          "label": "DATE",
+          "start": 833,
+          "end": 848
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 869,
+          "end": 875
+        },
+        {
+          "entity": "Vladimir Putin",
+          "label": "PER",
+          "start": 888,
+          "end": 902
+        },
+        {
+          "entity": "2014",
+          "label": "DATE",
+          "start": 923,
+          "end": 927
+        },
+        {
+          "entity": "G20",
+          "label": "ORG",
+          "start": 928,
+          "end": 931
+        },
+        {
+          "entity": "mid-November 2014",
+          "label": "DATE",
+          "start": 954,
+          "end": 971
+        },
+        {
+          "entity": "Brisbane",
+          "label": "LOC",
+          "start": 975,
+          "end": 983
+        },
+        {
+          "entity": "Australia",
+          "label": "LOC",
+          "start": 985,
+          "end": 994
+        },
+        {
+          "entity": "Australians",
+          "label": "MISC",
+          "start": 997,
+          "end": 1008
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 1046,
+          "end": 1053
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 1074,
+          "end": 1081
+        },
+        {
+          "entity": "Nemesis",
+          "label": "MISC",
+          "start": 1178,
+          "end": 1185
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 1200,
+          "end": 1206
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 1228,
+          "end": 1238
+        }
+      ],
+      "after": [
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "entity": "Tony Abbott",
+          "label": "PER",
+          "start": 26,
+          "end": 37
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 151,
+          "end": 158
+        },
+        {
+          "entity": "Julie Bishop",
+          "label": "PER",
+          "start": 174,
+          "end": 186
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 192,
+          "end": 202
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 257,
+          "end": 267
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 316,
+          "end": 323
+        },
+        {
+          "entity": "MH17",
+          "label": "MISC",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 389,
+          "end": 396
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 438,
+          "end": 445
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 473,
+          "end": 479
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 492,
+          "end": 498
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 572,
+          "end": 578
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 580,
+          "end": 586
+        },
+        {
+          "entity": "Bishop",
+          "label": "PER",
+          "start": 706,
+          "end": 712
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 797,
+          "end": 803
+        },
+        {
+          "entity": "13 October 2014",
+          "label": "DATE",
+          "start": 833,
+          "end": 848
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 869,
+          "end": 875
+        },
+        {
+          "entity": "Vladimir Putin",
+          "label": "PER",
+          "start": 888,
+          "end": 902
+        },
+        {
+          "entity": "2014",
+          "label": "DATE",
+          "start": 923,
+          "end": 927
+        },
+        {
+          "entity": "G20",
+          "label": "ORG",
+          "start": 928,
+          "end": 931
+        },
+        {
+          "entity": "mid-November 2014",
+          "label": "DATE",
+          "start": 954,
+          "end": 971
+        },
+        {
+          "entity": "Brisbane",
+          "label": "LOC",
+          "start": 975,
+          "end": 983
+        },
+        {
+          "entity": "Australia",
+          "label": "LOC",
+          "start": 985,
+          "end": 994
+        },
+        {
+          "entity": "Australians",
+          "label": "MISC",
+          "start": 997,
+          "end": 1008
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 1046,
+          "end": 1053
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 1074,
+          "end": 1081
+        },
+        {
+          "entity": "2024",
+          "label": "DATE",
+          "start": 1138,
+          "end": 1142
+        },
+        {
+          "entity": "Nemesis",
+          "label": "MISC",
+          "start": 1178,
+          "end": 1185
+        },
+        {
+          "entity": "Abbott",
+          "label": "PER",
+          "start": 1200,
+          "end": 1206
+        },
+        {
+          "entity": "Australian",
+          "label": "MISC",
+          "start": 1228,
+          "end": 1238
+        }
+      ],
+      "at_utc": "2026-11-04T07:49:43.146082+00:00"
+    }
+  ]
+}

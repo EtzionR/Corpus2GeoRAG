@@ -129,12 +129,15 @@ relation is `CO_OCCURS_WITH` with `confidence: null`. A classification below 0.4
 4. **Patterns von missed:** `Place, Region` inside our polygons becomes `PART_OF`, `mayor of X, Name` becomes `LEADS`,
    `Long Name (LN)` or the same name in another script becomes `SAME_AS`, `was born / was killed in` becomes `BORN_IN` /
    `DIED_IN`, `Unit (Place)` becomes `BASED_IN`.
-5. **Second model:** a text-checking model ([DeBERTa-v3-large-mnli-fever-anli-ling-wanli](https://huggingface.co/MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli))
-   reads each remaining relation with its sentence. A relation it scores below 0.5 becomes `CO_OCCURS_WITH`.
+5. **Second model (NLI):** an NLI model ([DeBERTa-v3-large-mnli-fever-anli-ling-wanli](https://huggingface.co/MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli))
+   checks whether the sentence states each remaining relation. Below 0.5 the relation becomes `CO_OCCURS_WITH`.
 
 Every record a fix changes gets `confidence: 0.77`; records that pass keep von's score. von's own scores can also be 0.77, so
 `relation_fixes.parquet` is what tells them apart: it lists each change with the name of the fix, and keeps the second model's
 scores, so later runs only score new relations (same logic as `von_results.parquet`).
+
+In total the fixes removed 638 names and changed 42,914 records (27,255 by the second model, 15,659 by the rules). Typed
+relations went from 132,386 to 101,674.
 
 ### 3.2 Entity → text — `IN_THE_TEXT`
 
@@ -256,9 +259,20 @@ inside_area = [n for n, d in G.nodes(data=True)
 * **Relation accuracy:** text relations other than `CO_OCCURS_WITH` are right about 72 % of the time (±6), and all records
   from a sentence, `CO_OCCURS_WITH` included, about 77 % (±4). Before the fixes these were 51 % and 63 %. Measured on 600
   new cases checked one by one by Claude, not yet by a person. Use the positions to show or check the source sentence.
-* **Filtering by `confidence`:** von's score says little about whether a relation is right. Estimates for all relations at
-  `confidence` ≥ 0.4: about 100,000 at 72 %; ≥ 0.6: about 53,000 at 80 %; ≥ 0.7: about 38,000 at 80 %. Above 0.77 the fixed
-  records drop out and accuracy falls (≥ 0.8: about 23,000 at 72 %).
+* **Filtering by `confidence`:** for the RAG we suggest treating a record as its relation at `confidence` ≥ 0.5 rather than 0.7.
+  This keeps almost twice as many relations, and the drop in accuracy is within the margin of error. Below 0.5 accuracy
+  falls further.
+
+  | `confidence` ≥ | relations | accuracy |
+  |---|---|---|
+  | 0.4 (all) | 101,674 | 72 % ±6 |
+  | **0.5 (suggested)** | **75,154** | **77 % ±7** |
+  | 0.6 | 55,238 | 80 % ±7 |
+  | 0.7 | 40,987 | 80 % ±9 |
+  | 0.8 | 22,269 | 72 % ±15 |
+
+  Records changed by a fix have `confidence` 0.77, so they pass 0.5 and 0.7 but not 0.8, which is why accuracy falls above
+  0.77. Relation counts are from the graph; accuracy is estimated on the same 600 cases.
 * **Same entity, several names:** spellings are not unified yet (`Kyiv`, `Kiyev`, `Kiev` are separate nodes). A colleague
   is working on entity unification; until then, `SAME_AS` relations and identical coordinates hint at duplicates.
 * **NER noise:** some entity names are fragments (`'s Republic`, `92`, ` HR`); they have few connections and low weights.

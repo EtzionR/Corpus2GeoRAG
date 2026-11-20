@@ -1,0 +1,202 @@
+{
+  "comparison_row_id": 4220,
+  "Source": "Timeline of the Russo-Ukrainian war (12 November 2022 – 7 June 2023)",
+  "Index": 15,
+  "Text": "Ukrainian Presidential Advisor Mykhailo Podolyak claimed that 10–13,000 Ukrainian soldiers have been killed since 24 February, the figure last given in August was 9,000.",
+  "reviewed_at_utc": "2026-11-04T07:13:17.233620+00:00",
+  "original_predictions": [
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 0,
+      "end": 9
+    },
+    {
+      "entity": "Mykhailo Podolyak",
+      "label": "PER",
+      "start": 31,
+      "end": 48
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 72,
+      "end": 81
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 0,
+      "end": 9
+    },
+    {
+      "entity": "Mykhailo Podolyak",
+      "label": "PER",
+      "start": 31,
+      "end": 48
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 72,
+      "end": 81
+    },
+    {
+      "entity": "24 February",
+      "label": "DATE",
+      "start": 114,
+      "end": 125
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 0,
+      "end": 9
+    },
+    {
+      "entity": "Mykhailo Podolyak",
+      "label": "PER",
+      "start": 31,
+      "end": 48
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 72,
+      "end": 81
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 0,
+      "end": 9
+    },
+    {
+      "entity": "Mykhailo Podolyak",
+      "label": "PER",
+      "start": 31,
+      "end": 48
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 72,
+      "end": 81
+    },
+    {
+      "entity": "24 February",
+      "label": "DATE",
+      "start": 114,
+      "end": 125
+    },
+    {
+      "entity": "August",
+      "label": "DATE",
+      "start": 152,
+      "end": 158
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 0,
+      "end": 9
+    },
+    {
+      "entity": "Mykhailo Podolyak",
+      "label": "PER",
+      "start": 31,
+      "end": 48
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 72,
+      "end": 81
+    },
+    {
+      "entity": "24 February",
+      "label": "DATE",
+      "start": 114,
+      "end": 125
+    },
+    {
+      "entity": "August",
+      "label": "DATE",
+      "start": 152,
+      "end": 158
+    }
+  ],
+  "history": [
+    {
+      "model": "v3",
+      "command": "add DATE | August | 1",
+      "before": [
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 0,
+          "end": 9
+        },
+        {
+          "entity": "Mykhailo Podolyak",
+          "label": "PER",
+          "start": 31,
+          "end": 48
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 72,
+          "end": 81
+        },
+        {
+          "entity": "24 February",
+          "label": "DATE",
+          "start": 114,
+          "end": 125
+        }
+      ],
+      "after": [
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 0,
+          "end": 9
+        },
+        {
+          "entity": "Mykhailo Podolyak",
+          "label": "PER",
+          "start": 31,
+          "end": 48
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 72,
+          "end": 81
+        },
+        {
+          "entity": "24 February",
+          "label": "DATE",
+          "start": 114,
+          "end": 125
+        },
+        {
+          "entity": "August",
+          "label": "DATE",
+          "start": 152,
+          "end": 158
+        }
+      ],
+      "at_utc": "2026-11-04T07:13:15.061954+00:00"
+    }
+  ]
+}

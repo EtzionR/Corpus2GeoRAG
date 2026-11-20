@@ -1,0 +1,175 @@
+{
+  "comparison_row_id": 3109,
+  "Source": "Russian Action Committee",
+  "Index": 4,
+  "Text": "In late 2023, the Russian Action Committee was designated as \"undesirable\" in Russia.",
+  "reviewed_at_utc": "2026-11-04T07:57:03.729683+00:00",
+  "original_predictions": [
+    {
+      "entity": "Russian Action Committee",
+      "label": "ORG",
+      "start": 18,
+      "end": 42
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 78,
+      "end": 84
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": ",",
+      "label": "ORG",
+      "start": 12,
+      "end": 13
+    },
+    {
+      "entity": "Russian Action Committee",
+      "label": "ORG",
+      "start": 18,
+      "end": 42
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 78,
+      "end": 84
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Russian Action Committee",
+      "label": "ORG",
+      "start": 18,
+      "end": 42
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 78,
+      "end": 84
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "late 2023",
+      "label": "DATE",
+      "start": 3,
+      "end": 12
+    },
+    {
+      "entity": "Russian Action Committee",
+      "label": "ORG",
+      "start": 18,
+      "end": 42
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 78,
+      "end": 84
+    }
+  ],
+  "gold": [
+    {
+      "entity": "late 2023",
+      "label": "DATE",
+      "start": 3,
+      "end": 12
+    },
+    {
+      "entity": "Russian Action Committee",
+      "label": "ORG",
+      "start": 18,
+      "end": 42
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 78,
+      "end": 84
+    }
+  ],
+  "history": [
+    {
+      "model": "v3",
+      "command": "del 1",
+      "before": [
+        {
+          "entity": ",",
+          "label": "ORG",
+          "start": 12,
+          "end": 13
+        },
+        {
+          "entity": "Russian Action Committee",
+          "label": "ORG",
+          "start": 18,
+          "end": 42
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 78,
+          "end": 84
+        }
+      ],
+      "after": [
+        {
+          "entity": "Russian Action Committee",
+          "label": "ORG",
+          "start": 18,
+          "end": 42
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 78,
+          "end": 84
+        }
+      ],
+      "at_utc": "2026-11-04T07:55:58.801213+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add DATE | late 2023 | 1",
+      "before": [
+        {
+          "entity": "Russian Action Committee",
+          "label": "ORG",
+          "start": 18,
+          "end": 42
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 78,
+          "end": 84
+        }
+      ],
+      "after": [
+        {
+          "entity": "late 2023",
+          "label": "DATE",
+          "start": 3,
+          "end": 12
+        },
+        {
+          "entity": "Russian Action Committee",
+          "label": "ORG",
+          "start": 18,
+          "end": 42
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 78,
+          "end": 84
+        }
+      ],
+      "at_utc": "2026-11-04T07:57:00.413825+00:00"
+    }
+  ]
+}

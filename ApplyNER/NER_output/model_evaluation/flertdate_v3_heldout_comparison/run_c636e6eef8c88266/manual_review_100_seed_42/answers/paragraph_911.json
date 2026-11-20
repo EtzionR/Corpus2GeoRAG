@@ -1,0 +1,664 @@
+{
+  "comparison_row_id": 911,
+  "Source": "Battle of Antonov Airport",
+  "Index": 16,
+  "Text": "The Ukrainian Ministry of Internal Affairs initially denied that the airport had been fully captured by the Russian forces, stating that it had been \"changing hands\" and that the battle was ongoing. The Ministry of Internal Affairs also insisted that the Russian claim of massive Ukrainian casualties was \"an absolute lie\", while the Ukrainian Ministry of Defence declared that the airfield was too badly damaged to be used by Russian troops. Later in the day, Ukraine confirmed that Russian forces were in control of the airport.",
+  "reviewed_at_utc": "2026-11-04T07:42:37.619187+00:00",
+  "original_predictions": [
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 4,
+      "end": 13
+    },
+    {
+      "entity": "Ministry of Internal Affairs",
+      "label": "ORG",
+      "start": 14,
+      "end": 42
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 108,
+      "end": 115
+    },
+    {
+      "entity": "Ministry of Internal Affairs",
+      "label": "ORG",
+      "start": 203,
+      "end": 231
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 255,
+      "end": 262
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 280,
+      "end": 289
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 334,
+      "end": 343
+    },
+    {
+      "entity": "Ministry of Defence",
+      "label": "ORG",
+      "start": 344,
+      "end": 363
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 427,
+      "end": 434
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 461,
+      "end": 468
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 484,
+      "end": 491
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Ukrainian Ministry of Internal Affairs",
+      "label": "ORG",
+      "start": 4,
+      "end": 42
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 108,
+      "end": 115
+    },
+    {
+      "entity": "Ministry of Internal Affairs",
+      "label": "ORG",
+      "start": 203,
+      "end": 231
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 255,
+      "end": 262
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 280,
+      "end": 289
+    },
+    {
+      "entity": "Ukrainian Ministry of Defence",
+      "label": "ORG",
+      "start": 334,
+      "end": 363
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 427,
+      "end": 434
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 461,
+      "end": 468
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 484,
+      "end": 491
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Ukrainian Ministry of Internal Affairs",
+      "label": "ORG",
+      "start": 4,
+      "end": 42
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 108,
+      "end": 115
+    },
+    {
+      "entity": "Ministry of Internal Affairs",
+      "label": "ORG",
+      "start": 203,
+      "end": 231
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 255,
+      "end": 262
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 280,
+      "end": 289
+    },
+    {
+      "entity": "Ukrainian Ministry of Defence",
+      "label": "ORG",
+      "start": 334,
+      "end": 363
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 427,
+      "end": 434
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 461,
+      "end": 468
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 484,
+      "end": 491
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Ukrainian Ministry of Internal Affairs",
+      "label": "ORG",
+      "start": 4,
+      "end": 42
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 108,
+      "end": 115
+    },
+    {
+      "entity": "Ministry of Internal Affairs",
+      "label": "ORG",
+      "start": 203,
+      "end": 231
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 255,
+      "end": 262
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 280,
+      "end": 289
+    },
+    {
+      "entity": "Ukrainian Ministry of Defence",
+      "label": "ORG",
+      "start": 334,
+      "end": 363
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 427,
+      "end": 434
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 461,
+      "end": 468
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 484,
+      "end": 491
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Ukrainian Ministry of Internal Affairs",
+      "label": "ORG",
+      "start": 4,
+      "end": 42
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 108,
+      "end": 115
+    },
+    {
+      "entity": "Ministry of Internal Affairs",
+      "label": "ORG",
+      "start": 203,
+      "end": 231
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 255,
+      "end": 262
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 280,
+      "end": 289
+    },
+    {
+      "entity": "Ukrainian Ministry of Defence",
+      "label": "ORG",
+      "start": 334,
+      "end": 363
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 427,
+      "end": 434
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 461,
+      "end": 468
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 484,
+      "end": 491
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "del 1,7",
+      "before": [
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 4,
+          "end": 13
+        },
+        {
+          "entity": "Ministry of Internal Affairs",
+          "label": "ORG",
+          "start": 14,
+          "end": 42
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 108,
+          "end": 115
+        },
+        {
+          "entity": "Ministry of Internal Affairs",
+          "label": "ORG",
+          "start": 203,
+          "end": 231
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 255,
+          "end": 262
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 280,
+          "end": 289
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 334,
+          "end": 343
+        },
+        {
+          "entity": "Ministry of Defence",
+          "label": "ORG",
+          "start": 344,
+          "end": 363
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 427,
+          "end": 434
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 461,
+          "end": 468
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 484,
+          "end": 491
+        }
+      ],
+      "after": [
+        {
+          "entity": "Ministry of Internal Affairs",
+          "label": "ORG",
+          "start": 14,
+          "end": 42
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 108,
+          "end": 115
+        },
+        {
+          "entity": "Ministry of Internal Affairs",
+          "label": "ORG",
+          "start": 203,
+          "end": 231
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 255,
+          "end": 262
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 280,
+          "end": 289
+        },
+        {
+          "entity": "Ministry of Defence",
+          "label": "ORG",
+          "start": 344,
+          "end": 363
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 427,
+          "end": 434
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 461,
+          "end": 468
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 484,
+          "end": 491
+        }
+      ],
+      "at_utc": "2026-11-04T07:42:20.841031+00:00"
+    },
+    {
+      "model": "original",
+      "command": "span 1 | Ukrainian Ministry of Internal Affairs | 1",
+      "before": [
+        {
+          "entity": "Ministry of Internal Affairs",
+          "label": "ORG",
+          "start": 14,
+          "end": 42
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 108,
+          "end": 115
+        },
+        {
+          "entity": "Ministry of Internal Affairs",
+          "label": "ORG",
+          "start": 203,
+          "end": 231
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 255,
+          "end": 262
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 280,
+          "end": 289
+        },
+        {
+          "entity": "Ministry of Defence",
+          "label": "ORG",
+          "start": 344,
+          "end": 363
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 427,
+          "end": 434
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 461,
+          "end": 468
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 484,
+          "end": 491
+        }
+      ],
+      "after": [
+        {
+          "entity": "Ukrainian Ministry of Internal Affairs",
+          "label": "ORG",
+          "start": 4,
+          "end": 42
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 108,
+          "end": 115
+        },
+        {
+          "entity": "Ministry of Internal Affairs",
+          "label": "ORG",
+          "start": 203,
+          "end": 231
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 255,
+          "end": 262
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 280,
+          "end": 289
+        },
+        {
+          "entity": "Ministry of Defence",
+          "label": "ORG",
+          "start": 344,
+          "end": 363
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 427,
+          "end": 434
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 461,
+          "end": 468
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 484,
+          "end": 491
+        }
+      ],
+      "at_utc": "2026-11-04T07:42:25.106140+00:00"
+    },
+    {
+      "model": "original",
+      "command": "span 6 | Ukrainian Ministry of Defence | 1",
+      "before": [
+        {
+          "entity": "Ukrainian Ministry of Internal Affairs",
+          "label": "ORG",
+          "start": 4,
+          "end": 42
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 108,
+          "end": 115
+        },
+        {
+          "entity": "Ministry of Internal Affairs",
+          "label": "ORG",
+          "start": 203,
+          "end": 231
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 255,
+          "end": 262
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 280,
+          "end": 289
+        },
+        {
+          "entity": "Ministry of Defence",
+          "label": "ORG",
+          "start": 344,
+          "end": 363
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 427,
+          "end": 434
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 461,
+          "end": 468
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 484,
+          "end": 491
+        }
+      ],
+      "after": [
+        {
+          "entity": "Ukrainian Ministry of Internal Affairs",
+          "label": "ORG",
+          "start": 4,
+          "end": 42
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 108,
+          "end": 115
+        },
+        {
+          "entity": "Ministry of Internal Affairs",
+          "label": "ORG",
+          "start": 203,
+          "end": 231
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 255,
+          "end": 262
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 280,
+          "end": 289
+        },
+        {
+          "entity": "Ukrainian Ministry of Defence",
+          "label": "ORG",
+          "start": 334,
+          "end": 363
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 427,
+          "end": 434
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 461,
+          "end": 468
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 484,
+          "end": 491
+        }
+      ],
+      "at_utc": "2026-11-04T07:42:29.509527+00:00"
+    }
+  ]
+}

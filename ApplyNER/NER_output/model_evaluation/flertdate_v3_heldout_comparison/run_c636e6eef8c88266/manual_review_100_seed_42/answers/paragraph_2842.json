@@ -1,0 +1,1642 @@
+{
+  "comparison_row_id": 2842,
+  "Source": "Minsk agreements",
+  "Index": 82,
+  "Text": "American Defense Department official Michael Carpenter said on 2 March 2016 that at least 430 Ukrainian soldiers had died since the signing of Minsk II, that Russia maintained \"command-and-control links\" over the DPR and LPR, and that Russia was \"pouring heavy weapons\" into the Donbas. Deputy head of the OSCE mission in Ukraine Alexander Hug said on 25 March 2016 that the OSCE had observed \"armed people with Russian insignia\" fighting in Donbas from the beginning of the conflict, that they had talked to prisoners who said they were Russian soldiers, and that they had seen \"tire tracks, not the vehicles themselves, but the tracks of vehicles crossing the [Russo-Ukrainian] border\".",
+  "reviewed_at_utc": "2026-11-04T07:07:21.657358+00:00",
+  "original_predictions": [
+    {
+      "entity": "American Defense Department",
+      "label": "ORG",
+      "start": 0,
+      "end": 27
+    },
+    {
+      "entity": "Michael Carpenter",
+      "label": "PER",
+      "start": 37,
+      "end": 54
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 94,
+      "end": 103
+    },
+    {
+      "entity": "Minsk II",
+      "label": "MISC",
+      "start": 143,
+      "end": 151
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 158,
+      "end": 164
+    },
+    {
+      "entity": "DPR",
+      "label": "ORG",
+      "start": 213,
+      "end": 216
+    },
+    {
+      "entity": "LPR",
+      "label": "ORG",
+      "start": 221,
+      "end": 224
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 235,
+      "end": 241
+    },
+    {
+      "entity": "Donbas",
+      "label": "LOC",
+      "start": 279,
+      "end": 285
+    },
+    {
+      "entity": "OSCE",
+      "label": "ORG",
+      "start": 306,
+      "end": 310
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 322,
+      "end": 329
+    },
+    {
+      "entity": "Alexander Hug",
+      "label": "PER",
+      "start": 330,
+      "end": 343
+    },
+    {
+      "entity": "OSCE",
+      "label": "ORG",
+      "start": 375,
+      "end": 379
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 412,
+      "end": 419
+    },
+    {
+      "entity": "Donbas",
+      "label": "LOC",
+      "start": 442,
+      "end": 448
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 538,
+      "end": 545
+    },
+    {
+      "entity": "Russo",
+      "label": "MISC",
+      "start": 663,
+      "end": 668
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 669,
+      "end": 678
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "American Defense Department",
+      "label": "ORG",
+      "start": 0,
+      "end": 27
+    },
+    {
+      "entity": "Michael Carpenter",
+      "label": "PER",
+      "start": 37,
+      "end": 54
+    },
+    {
+      "entity": "2 March 2016",
+      "label": "DATE",
+      "start": 63,
+      "end": 75
+    },
+    {
+      "entity": "Minsk II",
+      "label": "MISC",
+      "start": 143,
+      "end": 151
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 158,
+      "end": 164
+    },
+    {
+      "entity": "DPR",
+      "label": "ORG",
+      "start": 213,
+      "end": 216
+    },
+    {
+      "entity": "LPR",
+      "label": "ORG",
+      "start": 221,
+      "end": 224
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 235,
+      "end": 241
+    },
+    {
+      "entity": "Donbas",
+      "label": "LOC",
+      "start": 279,
+      "end": 285
+    },
+    {
+      "entity": "OSCE",
+      "label": "ORG",
+      "start": 306,
+      "end": 310
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 322,
+      "end": 329
+    },
+    {
+      "entity": "Alexander Hug",
+      "label": "PER",
+      "start": 330,
+      "end": 343
+    },
+    {
+      "entity": "25 March 2016",
+      "label": "DATE",
+      "start": 352,
+      "end": 365
+    },
+    {
+      "entity": "OSCE",
+      "label": "ORG",
+      "start": 375,
+      "end": 379
+    },
+    {
+      "entity": "Donbas",
+      "label": "LOC",
+      "start": 442,
+      "end": 448
+    },
+    {
+      "entity": "Russo-Ukrainian",
+      "label": "MISC",
+      "start": 663,
+      "end": 678
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "American Defense Department",
+      "label": "ORG",
+      "start": 0,
+      "end": 27
+    },
+    {
+      "entity": "Michael Carpenter",
+      "label": "PER",
+      "start": 37,
+      "end": 54
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 94,
+      "end": 103
+    },
+    {
+      "entity": "Minsk II",
+      "label": "MISC",
+      "start": 143,
+      "end": 151
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 158,
+      "end": 164
+    },
+    {
+      "entity": "DPR",
+      "label": "ORG",
+      "start": 213,
+      "end": 216
+    },
+    {
+      "entity": "LPR",
+      "label": "ORG",
+      "start": 221,
+      "end": 224
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 235,
+      "end": 241
+    },
+    {
+      "entity": "Donbas",
+      "label": "LOC",
+      "start": 279,
+      "end": 285
+    },
+    {
+      "entity": "OSCE",
+      "label": "ORG",
+      "start": 306,
+      "end": 310
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 322,
+      "end": 329
+    },
+    {
+      "entity": "Alexander Hug",
+      "label": "PER",
+      "start": 330,
+      "end": 343
+    },
+    {
+      "entity": "OSCE",
+      "label": "ORG",
+      "start": 375,
+      "end": 379
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 412,
+      "end": 419
+    },
+    {
+      "entity": "Donbas",
+      "label": "LOC",
+      "start": 442,
+      "end": 448
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 538,
+      "end": 545
+    },
+    {
+      "entity": "Russo-Ukrainian",
+      "label": "MISC",
+      "start": 663,
+      "end": 678
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "American Defense Department",
+      "label": "ORG",
+      "start": 0,
+      "end": 27
+    },
+    {
+      "entity": "Michael Carpenter",
+      "label": "PER",
+      "start": 37,
+      "end": 54
+    },
+    {
+      "entity": "2 March 2016",
+      "label": "DATE",
+      "start": 63,
+      "end": 75
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 94,
+      "end": 103
+    },
+    {
+      "entity": "Minsk II",
+      "label": "MISC",
+      "start": 143,
+      "end": 151
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 158,
+      "end": 164
+    },
+    {
+      "entity": "DPR",
+      "label": "ORG",
+      "start": 213,
+      "end": 216
+    },
+    {
+      "entity": "LPR",
+      "label": "ORG",
+      "start": 221,
+      "end": 224
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 235,
+      "end": 241
+    },
+    {
+      "entity": "Donbas",
+      "label": "LOC",
+      "start": 279,
+      "end": 285
+    },
+    {
+      "entity": "OSCE",
+      "label": "ORG",
+      "start": 306,
+      "end": 310
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 322,
+      "end": 329
+    },
+    {
+      "entity": "Alexander Hug",
+      "label": "PER",
+      "start": 330,
+      "end": 343
+    },
+    {
+      "entity": "25 March 2016",
+      "label": "DATE",
+      "start": 352,
+      "end": 365
+    },
+    {
+      "entity": "OSCE",
+      "label": "ORG",
+      "start": 375,
+      "end": 379
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 412,
+      "end": 419
+    },
+    {
+      "entity": "Donbas",
+      "label": "LOC",
+      "start": 442,
+      "end": 448
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 538,
+      "end": 545
+    },
+    {
+      "entity": "Russo-Ukrainian",
+      "label": "MISC",
+      "start": 663,
+      "end": 678
+    }
+  ],
+  "gold": [
+    {
+      "entity": "American Defense Department",
+      "label": "ORG",
+      "start": 0,
+      "end": 27
+    },
+    {
+      "entity": "Michael Carpenter",
+      "label": "PER",
+      "start": 37,
+      "end": 54
+    },
+    {
+      "entity": "2 March 2016",
+      "label": "DATE",
+      "start": 63,
+      "end": 75
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 94,
+      "end": 103
+    },
+    {
+      "entity": "Minsk II",
+      "label": "MISC",
+      "start": 143,
+      "end": 151
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 158,
+      "end": 164
+    },
+    {
+      "entity": "DPR",
+      "label": "ORG",
+      "start": 213,
+      "end": 216
+    },
+    {
+      "entity": "LPR",
+      "label": "ORG",
+      "start": 221,
+      "end": 224
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 235,
+      "end": 241
+    },
+    {
+      "entity": "Donbas",
+      "label": "LOC",
+      "start": 279,
+      "end": 285
+    },
+    {
+      "entity": "OSCE",
+      "label": "ORG",
+      "start": 306,
+      "end": 310
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 322,
+      "end": 329
+    },
+    {
+      "entity": "Alexander Hug",
+      "label": "PER",
+      "start": 330,
+      "end": 343
+    },
+    {
+      "entity": "25 March 2016",
+      "label": "DATE",
+      "start": 352,
+      "end": 365
+    },
+    {
+      "entity": "OSCE",
+      "label": "ORG",
+      "start": 375,
+      "end": 379
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 412,
+      "end": 419
+    },
+    {
+      "entity": "Donbas",
+      "label": "LOC",
+      "start": 442,
+      "end": 448
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 538,
+      "end": 545
+    },
+    {
+      "entity": "Russo-Ukrainian",
+      "label": "MISC",
+      "start": 663,
+      "end": 678
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "del 18",
+      "before": [
+        {
+          "entity": "American Defense Department",
+          "label": "ORG",
+          "start": 0,
+          "end": 27
+        },
+        {
+          "entity": "Michael Carpenter",
+          "label": "PER",
+          "start": 37,
+          "end": 54
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 94,
+          "end": 103
+        },
+        {
+          "entity": "Minsk II",
+          "label": "MISC",
+          "start": 143,
+          "end": 151
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 158,
+          "end": 164
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 213,
+          "end": 216
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 221,
+          "end": 224
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 235,
+          "end": 241
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 279,
+          "end": 285
+        },
+        {
+          "entity": "OSCE",
+          "label": "ORG",
+          "start": 306,
+          "end": 310
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 322,
+          "end": 329
+        },
+        {
+          "entity": "Alexander Hug",
+          "label": "PER",
+          "start": 330,
+          "end": 343
+        },
+        {
+          "entity": "OSCE",
+          "label": "ORG",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 412,
+          "end": 419
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 442,
+          "end": 448
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 538,
+          "end": 545
+        },
+        {
+          "entity": "Russo",
+          "label": "MISC",
+          "start": 663,
+          "end": 668
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 669,
+          "end": 678
+        }
+      ],
+      "after": [
+        {
+          "entity": "American Defense Department",
+          "label": "ORG",
+          "start": 0,
+          "end": 27
+        },
+        {
+          "entity": "Michael Carpenter",
+          "label": "PER",
+          "start": 37,
+          "end": 54
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 94,
+          "end": 103
+        },
+        {
+          "entity": "Minsk II",
+          "label": "MISC",
+          "start": 143,
+          "end": 151
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 158,
+          "end": 164
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 213,
+          "end": 216
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 221,
+          "end": 224
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 235,
+          "end": 241
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 279,
+          "end": 285
+        },
+        {
+          "entity": "OSCE",
+          "label": "ORG",
+          "start": 306,
+          "end": 310
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 322,
+          "end": 329
+        },
+        {
+          "entity": "Alexander Hug",
+          "label": "PER",
+          "start": 330,
+          "end": 343
+        },
+        {
+          "entity": "OSCE",
+          "label": "ORG",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 412,
+          "end": 419
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 442,
+          "end": 448
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 538,
+          "end": 545
+        },
+        {
+          "entity": "Russo",
+          "label": "MISC",
+          "start": 663,
+          "end": 668
+        }
+      ],
+      "at_utc": "2026-11-04T07:06:55.228789+00:00"
+    },
+    {
+      "model": "original",
+      "command": "span 17 | Russo-Ukrainian | 1",
+      "before": [
+        {
+          "entity": "American Defense Department",
+          "label": "ORG",
+          "start": 0,
+          "end": 27
+        },
+        {
+          "entity": "Michael Carpenter",
+          "label": "PER",
+          "start": 37,
+          "end": 54
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 94,
+          "end": 103
+        },
+        {
+          "entity": "Minsk II",
+          "label": "MISC",
+          "start": 143,
+          "end": 151
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 158,
+          "end": 164
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 213,
+          "end": 216
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 221,
+          "end": 224
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 235,
+          "end": 241
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 279,
+          "end": 285
+        },
+        {
+          "entity": "OSCE",
+          "label": "ORG",
+          "start": 306,
+          "end": 310
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 322,
+          "end": 329
+        },
+        {
+          "entity": "Alexander Hug",
+          "label": "PER",
+          "start": 330,
+          "end": 343
+        },
+        {
+          "entity": "OSCE",
+          "label": "ORG",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 412,
+          "end": 419
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 442,
+          "end": 448
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 538,
+          "end": 545
+        },
+        {
+          "entity": "Russo",
+          "label": "MISC",
+          "start": 663,
+          "end": 668
+        }
+      ],
+      "after": [
+        {
+          "entity": "American Defense Department",
+          "label": "ORG",
+          "start": 0,
+          "end": 27
+        },
+        {
+          "entity": "Michael Carpenter",
+          "label": "PER",
+          "start": 37,
+          "end": 54
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 94,
+          "end": 103
+        },
+        {
+          "entity": "Minsk II",
+          "label": "MISC",
+          "start": 143,
+          "end": 151
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 158,
+          "end": 164
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 213,
+          "end": 216
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 221,
+          "end": 224
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 235,
+          "end": 241
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 279,
+          "end": 285
+        },
+        {
+          "entity": "OSCE",
+          "label": "ORG",
+          "start": 306,
+          "end": 310
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 322,
+          "end": 329
+        },
+        {
+          "entity": "Alexander Hug",
+          "label": "PER",
+          "start": 330,
+          "end": 343
+        },
+        {
+          "entity": "OSCE",
+          "label": "ORG",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 412,
+          "end": 419
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 442,
+          "end": 448
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 538,
+          "end": 545
+        },
+        {
+          "entity": "Russo-Ukrainian",
+          "label": "MISC",
+          "start": 663,
+          "end": 678
+        }
+      ],
+      "at_utc": "2026-11-04T07:06:59.918998+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add MISC | Ukrainian | 1",
+      "before": [
+        {
+          "entity": "American Defense Department",
+          "label": "ORG",
+          "start": 0,
+          "end": 27
+        },
+        {
+          "entity": "Michael Carpenter",
+          "label": "PER",
+          "start": 37,
+          "end": 54
+        },
+        {
+          "entity": "2 March 2016",
+          "label": "DATE",
+          "start": 63,
+          "end": 75
+        },
+        {
+          "entity": "Minsk II",
+          "label": "MISC",
+          "start": 143,
+          "end": 151
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 158,
+          "end": 164
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 213,
+          "end": 216
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 221,
+          "end": 224
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 235,
+          "end": 241
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 279,
+          "end": 285
+        },
+        {
+          "entity": "OSCE",
+          "label": "ORG",
+          "start": 306,
+          "end": 310
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 322,
+          "end": 329
+        },
+        {
+          "entity": "Alexander Hug",
+          "label": "PER",
+          "start": 330,
+          "end": 343
+        },
+        {
+          "entity": "25 March 2016",
+          "label": "DATE",
+          "start": 352,
+          "end": 365
+        },
+        {
+          "entity": "OSCE",
+          "label": "ORG",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 442,
+          "end": 448
+        },
+        {
+          "entity": "Russo-Ukrainian",
+          "label": "MISC",
+          "start": 663,
+          "end": 678
+        }
+      ],
+      "after": [
+        {
+          "entity": "American Defense Department",
+          "label": "ORG",
+          "start": 0,
+          "end": 27
+        },
+        {
+          "entity": "Michael Carpenter",
+          "label": "PER",
+          "start": 37,
+          "end": 54
+        },
+        {
+          "entity": "2 March 2016",
+          "label": "DATE",
+          "start": 63,
+          "end": 75
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 94,
+          "end": 103
+        },
+        {
+          "entity": "Minsk II",
+          "label": "MISC",
+          "start": 143,
+          "end": 151
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 158,
+          "end": 164
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 213,
+          "end": 216
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 221,
+          "end": 224
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 235,
+          "end": 241
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 279,
+          "end": 285
+        },
+        {
+          "entity": "OSCE",
+          "label": "ORG",
+          "start": 306,
+          "end": 310
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 322,
+          "end": 329
+        },
+        {
+          "entity": "Alexander Hug",
+          "label": "PER",
+          "start": 330,
+          "end": 343
+        },
+        {
+          "entity": "25 March 2016",
+          "label": "DATE",
+          "start": 352,
+          "end": 365
+        },
+        {
+          "entity": "OSCE",
+          "label": "ORG",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 442,
+          "end": 448
+        },
+        {
+          "entity": "Russo-Ukrainian",
+          "label": "MISC",
+          "start": 663,
+          "end": 678
+        }
+      ],
+      "at_utc": "2026-11-04T07:07:07.916233+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add MISC | Russian | 1",
+      "before": [
+        {
+          "entity": "American Defense Department",
+          "label": "ORG",
+          "start": 0,
+          "end": 27
+        },
+        {
+          "entity": "Michael Carpenter",
+          "label": "PER",
+          "start": 37,
+          "end": 54
+        },
+        {
+          "entity": "2 March 2016",
+          "label": "DATE",
+          "start": 63,
+          "end": 75
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 94,
+          "end": 103
+        },
+        {
+          "entity": "Minsk II",
+          "label": "MISC",
+          "start": 143,
+          "end": 151
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 158,
+          "end": 164
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 213,
+          "end": 216
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 221,
+          "end": 224
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 235,
+          "end": 241
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 279,
+          "end": 285
+        },
+        {
+          "entity": "OSCE",
+          "label": "ORG",
+          "start": 306,
+          "end": 310
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 322,
+          "end": 329
+        },
+        {
+          "entity": "Alexander Hug",
+          "label": "PER",
+          "start": 330,
+          "end": 343
+        },
+        {
+          "entity": "25 March 2016",
+          "label": "DATE",
+          "start": 352,
+          "end": 365
+        },
+        {
+          "entity": "OSCE",
+          "label": "ORG",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 442,
+          "end": 448
+        },
+        {
+          "entity": "Russo-Ukrainian",
+          "label": "MISC",
+          "start": 663,
+          "end": 678
+        }
+      ],
+      "after": [
+        {
+          "entity": "American Defense Department",
+          "label": "ORG",
+          "start": 0,
+          "end": 27
+        },
+        {
+          "entity": "Michael Carpenter",
+          "label": "PER",
+          "start": 37,
+          "end": 54
+        },
+        {
+          "entity": "2 March 2016",
+          "label": "DATE",
+          "start": 63,
+          "end": 75
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 94,
+          "end": 103
+        },
+        {
+          "entity": "Minsk II",
+          "label": "MISC",
+          "start": 143,
+          "end": 151
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 158,
+          "end": 164
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 213,
+          "end": 216
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 221,
+          "end": 224
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 235,
+          "end": 241
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 279,
+          "end": 285
+        },
+        {
+          "entity": "OSCE",
+          "label": "ORG",
+          "start": 306,
+          "end": 310
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 322,
+          "end": 329
+        },
+        {
+          "entity": "Alexander Hug",
+          "label": "PER",
+          "start": 330,
+          "end": 343
+        },
+        {
+          "entity": "25 March 2016",
+          "label": "DATE",
+          "start": 352,
+          "end": 365
+        },
+        {
+          "entity": "OSCE",
+          "label": "ORG",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 412,
+          "end": 419
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 442,
+          "end": 448
+        },
+        {
+          "entity": "Russo-Ukrainian",
+          "label": "MISC",
+          "start": 663,
+          "end": 678
+        }
+      ],
+      "at_utc": "2026-11-04T07:07:12.479793+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add MISC | Russian | 2",
+      "before": [
+        {
+          "entity": "American Defense Department",
+          "label": "ORG",
+          "start": 0,
+          "end": 27
+        },
+        {
+          "entity": "Michael Carpenter",
+          "label": "PER",
+          "start": 37,
+          "end": 54
+        },
+        {
+          "entity": "2 March 2016",
+          "label": "DATE",
+          "start": 63,
+          "end": 75
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 94,
+          "end": 103
+        },
+        {
+          "entity": "Minsk II",
+          "label": "MISC",
+          "start": 143,
+          "end": 151
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 158,
+          "end": 164
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 213,
+          "end": 216
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 221,
+          "end": 224
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 235,
+          "end": 241
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 279,
+          "end": 285
+        },
+        {
+          "entity": "OSCE",
+          "label": "ORG",
+          "start": 306,
+          "end": 310
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 322,
+          "end": 329
+        },
+        {
+          "entity": "Alexander Hug",
+          "label": "PER",
+          "start": 330,
+          "end": 343
+        },
+        {
+          "entity": "25 March 2016",
+          "label": "DATE",
+          "start": 352,
+          "end": 365
+        },
+        {
+          "entity": "OSCE",
+          "label": "ORG",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 412,
+          "end": 419
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 442,
+          "end": 448
+        },
+        {
+          "entity": "Russo-Ukrainian",
+          "label": "MISC",
+          "start": 663,
+          "end": 678
+        }
+      ],
+      "after": [
+        {
+          "entity": "American Defense Department",
+          "label": "ORG",
+          "start": 0,
+          "end": 27
+        },
+        {
+          "entity": "Michael Carpenter",
+          "label": "PER",
+          "start": 37,
+          "end": 54
+        },
+        {
+          "entity": "2 March 2016",
+          "label": "DATE",
+          "start": 63,
+          "end": 75
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 94,
+          "end": 103
+        },
+        {
+          "entity": "Minsk II",
+          "label": "MISC",
+          "start": 143,
+          "end": 151
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 158,
+          "end": 164
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 213,
+          "end": 216
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 221,
+          "end": 224
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 235,
+          "end": 241
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 279,
+          "end": 285
+        },
+        {
+          "entity": "OSCE",
+          "label": "ORG",
+          "start": 306,
+          "end": 310
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 322,
+          "end": 329
+        },
+        {
+          "entity": "Alexander Hug",
+          "label": "PER",
+          "start": 330,
+          "end": 343
+        },
+        {
+          "entity": "25 March 2016",
+          "label": "DATE",
+          "start": 352,
+          "end": 365
+        },
+        {
+          "entity": "OSCE",
+          "label": "ORG",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 412,
+          "end": 419
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 442,
+          "end": 448
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 538,
+          "end": 545
+        },
+        {
+          "entity": "Russo-Ukrainian",
+          "label": "MISC",
+          "start": 663,
+          "end": 678
+        }
+      ],
+      "at_utc": "2026-11-04T07:07:17.737772+00:00"
+    }
+  ]
+}

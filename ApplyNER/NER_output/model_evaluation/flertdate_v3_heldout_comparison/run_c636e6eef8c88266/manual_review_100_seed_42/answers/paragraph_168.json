@@ -1,0 +1,517 @@
+{
+  "comparison_row_id": 168,
+  "Source": "1st Center of the Unmanned Systems Forces",
+  "Index": 3,
+  "Text": "The origins of the 14th Regiment lie in August 2022, when commander “Fidel” proposed to Valerii Zaluzhnyi (Commander-in-Chief of the Armed Forces of Ukraine) a plan to create a deep-strike battalion. By September, the 14th Regiment had been formed, with “Fidel” in charge. The unit became operational in October 2022, at first as a combat unit of the 190th Training Center.",
+  "reviewed_at_utc": "2026-11-04T06:59:08.726714+00:00",
+  "original_predictions": [
+    {
+      "entity": "14th Regiment",
+      "label": "ORG",
+      "start": 19,
+      "end": 32
+    },
+    {
+      "entity": "Fidel",
+      "label": "PER",
+      "start": 69,
+      "end": 74
+    },
+    {
+      "entity": "Valerii Zaluzhnyi",
+      "label": "PER",
+      "start": 88,
+      "end": 105
+    },
+    {
+      "entity": "Armed Forces of Ukraine",
+      "label": "ORG",
+      "start": 133,
+      "end": 156
+    },
+    {
+      "entity": "14th Regiment",
+      "label": "ORG",
+      "start": 218,
+      "end": 231
+    },
+    {
+      "entity": "Fidel",
+      "label": "PER",
+      "start": 255,
+      "end": 260
+    },
+    {
+      "entity": "190th Training Center",
+      "label": "ORG",
+      "start": 351,
+      "end": 372
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "14th Regiment",
+      "label": "ORG",
+      "start": 19,
+      "end": 32
+    },
+    {
+      "entity": "August 2022",
+      "label": "DATE",
+      "start": 40,
+      "end": 51
+    },
+    {
+      "entity": "“Fidel”",
+      "label": "PER",
+      "start": 68,
+      "end": 75
+    },
+    {
+      "entity": "Valerii Zaluzhnyi",
+      "label": "PER",
+      "start": 88,
+      "end": 105
+    },
+    {
+      "entity": "Armed Forces of Ukraine",
+      "label": "ORG",
+      "start": 133,
+      "end": 156
+    },
+    {
+      "entity": "14th Regiment",
+      "label": "ORG",
+      "start": 218,
+      "end": 231
+    },
+    {
+      "entity": "Fidel",
+      "label": "PER",
+      "start": 255,
+      "end": 260
+    },
+    {
+      "entity": "October 2022",
+      "label": "DATE",
+      "start": 304,
+      "end": 316
+    },
+    {
+      "entity": "190th Training Center",
+      "label": "ORG",
+      "start": 351,
+      "end": 372
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "14th Regiment",
+      "label": "ORG",
+      "start": 19,
+      "end": 32
+    },
+    {
+      "entity": "Fidel",
+      "label": "PER",
+      "start": 69,
+      "end": 74
+    },
+    {
+      "entity": "Valerii Zaluzhnyi",
+      "label": "PER",
+      "start": 88,
+      "end": 105
+    },
+    {
+      "entity": "Armed Forces of Ukraine",
+      "label": "ORG",
+      "start": 133,
+      "end": 156
+    },
+    {
+      "entity": "14th Regiment",
+      "label": "ORG",
+      "start": 218,
+      "end": 231
+    },
+    {
+      "entity": "Fidel",
+      "label": "PER",
+      "start": 255,
+      "end": 260
+    },
+    {
+      "entity": "190th Training Center",
+      "label": "ORG",
+      "start": 351,
+      "end": 372
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "14th Regiment",
+      "label": "ORG",
+      "start": 19,
+      "end": 32
+    },
+    {
+      "entity": "August 2022",
+      "label": "DATE",
+      "start": 40,
+      "end": 51
+    },
+    {
+      "entity": "Fidel",
+      "label": "PER",
+      "start": 69,
+      "end": 74
+    },
+    {
+      "entity": "Valerii Zaluzhnyi",
+      "label": "PER",
+      "start": 88,
+      "end": 105
+    },
+    {
+      "entity": "Armed Forces of Ukraine",
+      "label": "ORG",
+      "start": 133,
+      "end": 156
+    },
+    {
+      "entity": "September",
+      "label": "DATE",
+      "start": 203,
+      "end": 212
+    },
+    {
+      "entity": "14th Regiment",
+      "label": "ORG",
+      "start": 218,
+      "end": 231
+    },
+    {
+      "entity": "Fidel",
+      "label": "PER",
+      "start": 255,
+      "end": 260
+    },
+    {
+      "entity": "October 2022",
+      "label": "DATE",
+      "start": 304,
+      "end": 316
+    },
+    {
+      "entity": "190th Training Center",
+      "label": "ORG",
+      "start": 351,
+      "end": 372
+    }
+  ],
+  "gold": [
+    {
+      "entity": "14th Regiment",
+      "label": "ORG",
+      "start": 19,
+      "end": 32
+    },
+    {
+      "entity": "August 2022",
+      "label": "DATE",
+      "start": 40,
+      "end": 51
+    },
+    {
+      "entity": "Fidel",
+      "label": "PER",
+      "start": 69,
+      "end": 74
+    },
+    {
+      "entity": "Valerii Zaluzhnyi",
+      "label": "PER",
+      "start": 88,
+      "end": 105
+    },
+    {
+      "entity": "Armed Forces of Ukraine",
+      "label": "ORG",
+      "start": 133,
+      "end": 156
+    },
+    {
+      "entity": "September",
+      "label": "DATE",
+      "start": 203,
+      "end": 212
+    },
+    {
+      "entity": "14th Regiment",
+      "label": "ORG",
+      "start": 218,
+      "end": 231
+    },
+    {
+      "entity": "Fidel",
+      "label": "PER",
+      "start": 255,
+      "end": 260
+    },
+    {
+      "entity": "October 2022",
+      "label": "DATE",
+      "start": 304,
+      "end": 316
+    },
+    {
+      "entity": "190th Training Center",
+      "label": "ORG",
+      "start": 351,
+      "end": 372
+    }
+  ],
+  "history": [
+    {
+      "model": "v3",
+      "command": "span 3 | Fidel | 1",
+      "before": [
+        {
+          "entity": "14th Regiment",
+          "label": "ORG",
+          "start": 19,
+          "end": 32
+        },
+        {
+          "entity": "August 2022",
+          "label": "DATE",
+          "start": 40,
+          "end": 51
+        },
+        {
+          "entity": "“Fidel”",
+          "label": "PER",
+          "start": 68,
+          "end": 75
+        },
+        {
+          "entity": "Valerii Zaluzhnyi",
+          "label": "PER",
+          "start": 88,
+          "end": 105
+        },
+        {
+          "entity": "Armed Forces of Ukraine",
+          "label": "ORG",
+          "start": 133,
+          "end": 156
+        },
+        {
+          "entity": "14th Regiment",
+          "label": "ORG",
+          "start": 218,
+          "end": 231
+        },
+        {
+          "entity": "Fidel",
+          "label": "PER",
+          "start": 255,
+          "end": 260
+        },
+        {
+          "entity": "October 2022",
+          "label": "DATE",
+          "start": 304,
+          "end": 316
+        },
+        {
+          "entity": "190th Training Center",
+          "label": "ORG",
+          "start": 351,
+          "end": 372
+        }
+      ],
+      "after": [
+        {
+          "entity": "14th Regiment",
+          "label": "ORG",
+          "start": 19,
+          "end": 32
+        },
+        {
+          "entity": "August 2022",
+          "label": "DATE",
+          "start": 40,
+          "end": 51
+        },
+        {
+          "entity": "Fidel",
+          "label": "PER",
+          "start": 69,
+          "end": 74
+        },
+        {
+          "entity": "Valerii Zaluzhnyi",
+          "label": "PER",
+          "start": 88,
+          "end": 105
+        },
+        {
+          "entity": "Armed Forces of Ukraine",
+          "label": "ORG",
+          "start": 133,
+          "end": 156
+        },
+        {
+          "entity": "14th Regiment",
+          "label": "ORG",
+          "start": 218,
+          "end": 231
+        },
+        {
+          "entity": "Fidel",
+          "label": "PER",
+          "start": 255,
+          "end": 260
+        },
+        {
+          "entity": "October 2022",
+          "label": "DATE",
+          "start": 304,
+          "end": 316
+        },
+        {
+          "entity": "190th Training Center",
+          "label": "ORG",
+          "start": 351,
+          "end": 372
+        }
+      ],
+      "at_utc": "2026-11-04T06:58:54.031514+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add DATE | September | 1",
+      "before": [
+        {
+          "entity": "14th Regiment",
+          "label": "ORG",
+          "start": 19,
+          "end": 32
+        },
+        {
+          "entity": "August 2022",
+          "label": "DATE",
+          "start": 40,
+          "end": 51
+        },
+        {
+          "entity": "Fidel",
+          "label": "PER",
+          "start": 69,
+          "end": 74
+        },
+        {
+          "entity": "Valerii Zaluzhnyi",
+          "label": "PER",
+          "start": 88,
+          "end": 105
+        },
+        {
+          "entity": "Armed Forces of Ukraine",
+          "label": "ORG",
+          "start": 133,
+          "end": 156
+        },
+        {
+          "entity": "14th Regiment",
+          "label": "ORG",
+          "start": 218,
+          "end": 231
+        },
+        {
+          "entity": "Fidel",
+          "label": "PER",
+          "start": 255,
+          "end": 260
+        },
+        {
+          "entity": "October 2022",
+          "label": "DATE",
+          "start": 304,
+          "end": 316
+        },
+        {
+          "entity": "190th Training Center",
+          "label": "ORG",
+          "start": 351,
+          "end": 372
+        }
+      ],
+      "after": [
+        {
+          "entity": "14th Regiment",
+          "label": "ORG",
+          "start": 19,
+          "end": 32
+        },
+        {
+          "entity": "August 2022",
+          "label": "DATE",
+          "start": 40,
+          "end": 51
+        },
+        {
+          "entity": "Fidel",
+          "label": "PER",
+          "start": 69,
+          "end": 74
+        },
+        {
+          "entity": "Valerii Zaluzhnyi",
+          "label": "PER",
+          "start": 88,
+          "end": 105
+        },
+        {
+          "entity": "Armed Forces of Ukraine",
+          "label": "ORG",
+          "start": 133,
+          "end": 156
+        },
+        {
+          "entity": "September",
+          "label": "DATE",
+          "start": 203,
+          "end": 212
+        },
+        {
+          "entity": "14th Regiment",
+          "label": "ORG",
+          "start": 218,
+          "end": 231
+        },
+        {
+          "entity": "Fidel",
+          "label": "PER",
+          "start": 255,
+          "end": 260
+        },
+        {
+          "entity": "October 2022",
+          "label": "DATE",
+          "start": 304,
+          "end": 316
+        },
+        {
+          "entity": "190th Training Center",
+          "label": "ORG",
+          "start": 351,
+          "end": 372
+        }
+      ],
+      "at_utc": "2026-11-04T06:59:00.016576+00:00"
+    }
+  ]
+}

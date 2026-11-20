@@ -1,0 +1,235 @@
+{
+  "comparison_row_id": 3523,
+  "Source": "Special Operations Forces (Russia)",
+  "Index": 149,
+  "Text": "Spetsnaz GRU of the General Staff of the Russian Armed Forces",
+  "reviewed_at_utc": "2026-11-04T07:52:14.210092+00:00",
+  "original_predictions": [
+    {
+      "entity": "Spetsnaz GRU",
+      "label": "ORG",
+      "start": 0,
+      "end": 12
+    },
+    {
+      "entity": "General Staff",
+      "label": "ORG",
+      "start": 20,
+      "end": 33
+    },
+    {
+      "entity": "Russian Armed Forces",
+      "label": "ORG",
+      "start": 41,
+      "end": 61
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Spetsnaz GRU",
+      "label": "ORG",
+      "start": 0,
+      "end": 12
+    },
+    {
+      "entity": "General Staff",
+      "label": "ORG",
+      "start": 20,
+      "end": 33
+    },
+    {
+      "entity": "Russian Armed Forces",
+      "label": "ORG",
+      "start": 41,
+      "end": 61
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Spetsnaz GRU",
+      "label": "ORG",
+      "start": 0,
+      "end": 12
+    },
+    {
+      "entity": "General Staff of the Russian Armed Forces",
+      "label": "ORG",
+      "start": 20,
+      "end": 61
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Spetsnaz GRU",
+      "label": "ORG",
+      "start": 0,
+      "end": 12
+    },
+    {
+      "entity": "General Staff of the Russian Armed Forces",
+      "label": "ORG",
+      "start": 20,
+      "end": 61
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Spetsnaz GRU",
+      "label": "ORG",
+      "start": 0,
+      "end": 12
+    },
+    {
+      "entity": "General Staff of the Russian Armed Forces",
+      "label": "ORG",
+      "start": 20,
+      "end": 61
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "del 3",
+      "before": [
+        {
+          "entity": "Spetsnaz GRU",
+          "label": "ORG",
+          "start": 0,
+          "end": 12
+        },
+        {
+          "entity": "General Staff",
+          "label": "ORG",
+          "start": 20,
+          "end": 33
+        },
+        {
+          "entity": "Russian Armed Forces",
+          "label": "ORG",
+          "start": 41,
+          "end": 61
+        }
+      ],
+      "after": [
+        {
+          "entity": "Spetsnaz GRU",
+          "label": "ORG",
+          "start": 0,
+          "end": 12
+        },
+        {
+          "entity": "General Staff",
+          "label": "ORG",
+          "start": 20,
+          "end": 33
+        }
+      ],
+      "at_utc": "2026-11-04T07:51:55.791221+00:00"
+    },
+    {
+      "model": "original",
+      "command": "span 2 | General Staff of the Russian Armed Forces | 1",
+      "before": [
+        {
+          "entity": "Spetsnaz GRU",
+          "label": "ORG",
+          "start": 0,
+          "end": 12
+        },
+        {
+          "entity": "General Staff",
+          "label": "ORG",
+          "start": 20,
+          "end": 33
+        }
+      ],
+      "after": [
+        {
+          "entity": "Spetsnaz GRU",
+          "label": "ORG",
+          "start": 0,
+          "end": 12
+        },
+        {
+          "entity": "General Staff of the Russian Armed Forces",
+          "label": "ORG",
+          "start": 20,
+          "end": 61
+        }
+      ],
+      "at_utc": "2026-11-04T07:52:00.597829+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "del 3",
+      "before": [
+        {
+          "entity": "Spetsnaz GRU",
+          "label": "ORG",
+          "start": 0,
+          "end": 12
+        },
+        {
+          "entity": "General Staff",
+          "label": "ORG",
+          "start": 20,
+          "end": 33
+        },
+        {
+          "entity": "Russian Armed Forces",
+          "label": "ORG",
+          "start": 41,
+          "end": 61
+        }
+      ],
+      "after": [
+        {
+          "entity": "Spetsnaz GRU",
+          "label": "ORG",
+          "start": 0,
+          "end": 12
+        },
+        {
+          "entity": "General Staff",
+          "label": "ORG",
+          "start": 20,
+          "end": 33
+        }
+      ],
+      "at_utc": "2026-11-04T07:52:05.975349+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "span 2 | General Staff of the Russian Armed Forces | 1",
+      "before": [
+        {
+          "entity": "Spetsnaz GRU",
+          "label": "ORG",
+          "start": 0,
+          "end": 12
+        },
+        {
+          "entity": "General Staff",
+          "label": "ORG",
+          "start": 20,
+          "end": 33
+        }
+      ],
+      "after": [
+        {
+          "entity": "Spetsnaz GRU",
+          "label": "ORG",
+          "start": 0,
+          "end": 12
+        },
+        {
+          "entity": "General Staff of the Russian Armed Forces",
+          "label": "ORG",
+          "start": 20,
+          "end": 61
+        }
+      ],
+      "at_utc": "2026-11-04T07:52:09.126435+00:00"
+    }
+  ]
+}

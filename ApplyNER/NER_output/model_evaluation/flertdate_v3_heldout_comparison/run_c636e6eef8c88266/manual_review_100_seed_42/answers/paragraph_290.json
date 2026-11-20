@@ -1,0 +1,1234 @@
+{
+  "comparison_row_id": 290,
+  "Source": "2023 Belgorod Oblast incursions",
+  "Index": 30,
+  "Text": "On 17 December 2023, pro-Ukrainian partisans launched another raid into Belgorod. According to a Russian official and other Russian as well as Ukrainian sources, the insurgents targeted the Morozovsk airbase with \"mass drone strikes\", while clashing with security forces at the village of Terebreno. The Ukrainian Ministry of Defence subsequently claimed that a Russian \"platoon stronghold\" at Terebreno had been destroyed by the rebels. The Freedom of Russia Legion claimed responsibility for the raid, and stated that it had withdrawn from Russian territory after mining the eliminated \"stronghold\" at Terebreno.",
+  "reviewed_at_utc": "2026-11-04T07:20:18.434837+00:00",
+  "original_predictions": [
+    {
+      "entity": "pro-",
+      "label": "MISC",
+      "start": 21,
+      "end": 25
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 25,
+      "end": 34
+    },
+    {
+      "entity": "Belgorod",
+      "label": "LOC",
+      "start": 72,
+      "end": 80
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 97,
+      "end": 104
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 124,
+      "end": 131
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 143,
+      "end": 152
+    },
+    {
+      "entity": "Morozovsk",
+      "label": "LOC",
+      "start": 190,
+      "end": 199
+    },
+    {
+      "entity": "Terebreno",
+      "label": "LOC",
+      "start": 289,
+      "end": 298
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 304,
+      "end": 313
+    },
+    {
+      "entity": "Ministry of Defence",
+      "label": "ORG",
+      "start": 314,
+      "end": 333
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 362,
+      "end": 369
+    },
+    {
+      "entity": "Terebreno",
+      "label": "LOC",
+      "start": 394,
+      "end": 403
+    },
+    {
+      "entity": "Freedom of Russia Legion",
+      "label": "ORG",
+      "start": 442,
+      "end": 466
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 542,
+      "end": 549
+    },
+    {
+      "entity": "Terebreno",
+      "label": "LOC",
+      "start": 604,
+      "end": 613
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "17 December 2023",
+      "label": "DATE",
+      "start": 3,
+      "end": 19
+    },
+    {
+      "entity": "Belgorod",
+      "label": "LOC",
+      "start": 72,
+      "end": 80
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 97,
+      "end": 104
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 124,
+      "end": 131
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 143,
+      "end": 152
+    },
+    {
+      "entity": "Morozovsk airbase",
+      "label": "LOC",
+      "start": 190,
+      "end": 207
+    },
+    {
+      "entity": "Terebreno",
+      "label": "LOC",
+      "start": 289,
+      "end": 298
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 304,
+      "end": 313
+    },
+    {
+      "entity": "Ministry of Defence",
+      "label": "ORG",
+      "start": 314,
+      "end": 333
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 362,
+      "end": 369
+    },
+    {
+      "entity": "Terebreno",
+      "label": "LOC",
+      "start": 394,
+      "end": 403
+    },
+    {
+      "entity": "Freedom of Russia Legion",
+      "label": "ORG",
+      "start": 442,
+      "end": 466
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 542,
+      "end": 549
+    },
+    {
+      "entity": "Terebreno",
+      "label": "LOC",
+      "start": 604,
+      "end": 613
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Belgorod",
+      "label": "LOC",
+      "start": 72,
+      "end": 80
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 97,
+      "end": 104
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 124,
+      "end": 131
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 143,
+      "end": 152
+    },
+    {
+      "entity": "Morozovsk airbase",
+      "label": "LOC",
+      "start": 190,
+      "end": 207
+    },
+    {
+      "entity": "Terebreno",
+      "label": "LOC",
+      "start": 289,
+      "end": 298
+    },
+    {
+      "entity": "Ukrainian Ministry of Defence",
+      "label": "ORG",
+      "start": 304,
+      "end": 333
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 362,
+      "end": 369
+    },
+    {
+      "entity": "Terebreno",
+      "label": "LOC",
+      "start": 394,
+      "end": 403
+    },
+    {
+      "entity": "Freedom of Russia Legion",
+      "label": "ORG",
+      "start": 442,
+      "end": 466
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 542,
+      "end": 549
+    },
+    {
+      "entity": "Terebreno",
+      "label": "LOC",
+      "start": 604,
+      "end": 613
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "17 December 2023",
+      "label": "DATE",
+      "start": 3,
+      "end": 19
+    },
+    {
+      "entity": "Belgorod",
+      "label": "LOC",
+      "start": 72,
+      "end": 80
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 97,
+      "end": 104
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 124,
+      "end": 131
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 143,
+      "end": 152
+    },
+    {
+      "entity": "Morozovsk airbase",
+      "label": "LOC",
+      "start": 190,
+      "end": 207
+    },
+    {
+      "entity": "Terebreno",
+      "label": "LOC",
+      "start": 289,
+      "end": 298
+    },
+    {
+      "entity": "Ukrainian Ministry of Defence",
+      "label": "ORG",
+      "start": 304,
+      "end": 333
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 362,
+      "end": 369
+    },
+    {
+      "entity": "Terebreno",
+      "label": "LOC",
+      "start": 394,
+      "end": 403
+    },
+    {
+      "entity": "Freedom of Russia Legion",
+      "label": "ORG",
+      "start": 442,
+      "end": 466
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 542,
+      "end": 549
+    },
+    {
+      "entity": "Terebreno",
+      "label": "LOC",
+      "start": 604,
+      "end": 613
+    }
+  ],
+  "gold": [
+    {
+      "entity": "17 December 2023",
+      "label": "DATE",
+      "start": 3,
+      "end": 19
+    },
+    {
+      "entity": "Belgorod",
+      "label": "LOC",
+      "start": 72,
+      "end": 80
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 97,
+      "end": 104
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 124,
+      "end": 131
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 143,
+      "end": 152
+    },
+    {
+      "entity": "Morozovsk airbase",
+      "label": "LOC",
+      "start": 190,
+      "end": 207
+    },
+    {
+      "entity": "Terebreno",
+      "label": "LOC",
+      "start": 289,
+      "end": 298
+    },
+    {
+      "entity": "Ukrainian Ministry of Defence",
+      "label": "ORG",
+      "start": 304,
+      "end": 333
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 362,
+      "end": 369
+    },
+    {
+      "entity": "Terebreno",
+      "label": "LOC",
+      "start": 394,
+      "end": 403
+    },
+    {
+      "entity": "Freedom of Russia Legion",
+      "label": "ORG",
+      "start": 442,
+      "end": 466
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 542,
+      "end": 549
+    },
+    {
+      "entity": "Terebreno",
+      "label": "LOC",
+      "start": 604,
+      "end": 613
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "del 1,2,9",
+      "before": [
+        {
+          "entity": "pro-",
+          "label": "MISC",
+          "start": 21,
+          "end": 25
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 25,
+          "end": 34
+        },
+        {
+          "entity": "Belgorod",
+          "label": "LOC",
+          "start": 72,
+          "end": 80
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 97,
+          "end": 104
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 124,
+          "end": 131
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 143,
+          "end": 152
+        },
+        {
+          "entity": "Morozovsk",
+          "label": "LOC",
+          "start": 190,
+          "end": 199
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 289,
+          "end": 298
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 304,
+          "end": 313
+        },
+        {
+          "entity": "Ministry of Defence",
+          "label": "ORG",
+          "start": 314,
+          "end": 333
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 362,
+          "end": 369
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 394,
+          "end": 403
+        },
+        {
+          "entity": "Freedom of Russia Legion",
+          "label": "ORG",
+          "start": 442,
+          "end": 466
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 542,
+          "end": 549
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 604,
+          "end": 613
+        }
+      ],
+      "after": [
+        {
+          "entity": "Belgorod",
+          "label": "LOC",
+          "start": 72,
+          "end": 80
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 97,
+          "end": 104
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 124,
+          "end": 131
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 143,
+          "end": 152
+        },
+        {
+          "entity": "Morozovsk",
+          "label": "LOC",
+          "start": 190,
+          "end": 199
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 289,
+          "end": 298
+        },
+        {
+          "entity": "Ministry of Defence",
+          "label": "ORG",
+          "start": 314,
+          "end": 333
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 362,
+          "end": 369
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 394,
+          "end": 403
+        },
+        {
+          "entity": "Freedom of Russia Legion",
+          "label": "ORG",
+          "start": 442,
+          "end": 466
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 542,
+          "end": 549
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 604,
+          "end": 613
+        }
+      ],
+      "at_utc": "2026-11-04T07:19:52.513455+00:00"
+    },
+    {
+      "model": "original",
+      "command": "span 5 | Morozovsk airbase | 1",
+      "before": [
+        {
+          "entity": "Belgorod",
+          "label": "LOC",
+          "start": 72,
+          "end": 80
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 97,
+          "end": 104
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 124,
+          "end": 131
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 143,
+          "end": 152
+        },
+        {
+          "entity": "Morozovsk",
+          "label": "LOC",
+          "start": 190,
+          "end": 199
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 289,
+          "end": 298
+        },
+        {
+          "entity": "Ministry of Defence",
+          "label": "ORG",
+          "start": 314,
+          "end": 333
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 362,
+          "end": 369
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 394,
+          "end": 403
+        },
+        {
+          "entity": "Freedom of Russia Legion",
+          "label": "ORG",
+          "start": 442,
+          "end": 466
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 542,
+          "end": 549
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 604,
+          "end": 613
+        }
+      ],
+      "after": [
+        {
+          "entity": "Belgorod",
+          "label": "LOC",
+          "start": 72,
+          "end": 80
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 97,
+          "end": 104
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 124,
+          "end": 131
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 143,
+          "end": 152
+        },
+        {
+          "entity": "Morozovsk airbase",
+          "label": "LOC",
+          "start": 190,
+          "end": 207
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 289,
+          "end": 298
+        },
+        {
+          "entity": "Ministry of Defence",
+          "label": "ORG",
+          "start": 314,
+          "end": 333
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 362,
+          "end": 369
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 394,
+          "end": 403
+        },
+        {
+          "entity": "Freedom of Russia Legion",
+          "label": "ORG",
+          "start": 442,
+          "end": 466
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 542,
+          "end": 549
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 604,
+          "end": 613
+        }
+      ],
+      "at_utc": "2026-11-04T07:19:57.672767+00:00"
+    },
+    {
+      "model": "original",
+      "command": "span 7 | Ukrainian Ministry of Defence | 1",
+      "before": [
+        {
+          "entity": "Belgorod",
+          "label": "LOC",
+          "start": 72,
+          "end": 80
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 97,
+          "end": 104
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 124,
+          "end": 131
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 143,
+          "end": 152
+        },
+        {
+          "entity": "Morozovsk airbase",
+          "label": "LOC",
+          "start": 190,
+          "end": 207
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 289,
+          "end": 298
+        },
+        {
+          "entity": "Ministry of Defence",
+          "label": "ORG",
+          "start": 314,
+          "end": 333
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 362,
+          "end": 369
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 394,
+          "end": 403
+        },
+        {
+          "entity": "Freedom of Russia Legion",
+          "label": "ORG",
+          "start": 442,
+          "end": 466
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 542,
+          "end": 549
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 604,
+          "end": 613
+        }
+      ],
+      "after": [
+        {
+          "entity": "Belgorod",
+          "label": "LOC",
+          "start": 72,
+          "end": 80
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 97,
+          "end": 104
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 124,
+          "end": 131
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 143,
+          "end": 152
+        },
+        {
+          "entity": "Morozovsk airbase",
+          "label": "LOC",
+          "start": 190,
+          "end": 207
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 289,
+          "end": 298
+        },
+        {
+          "entity": "Ukrainian Ministry of Defence",
+          "label": "ORG",
+          "start": 304,
+          "end": 333
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 362,
+          "end": 369
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 394,
+          "end": 403
+        },
+        {
+          "entity": "Freedom of Russia Legion",
+          "label": "ORG",
+          "start": 442,
+          "end": 466
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 542,
+          "end": 549
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 604,
+          "end": 613
+        }
+      ],
+      "at_utc": "2026-11-04T07:20:02.487071+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "del 8",
+      "before": [
+        {
+          "entity": "17 December 2023",
+          "label": "DATE",
+          "start": 3,
+          "end": 19
+        },
+        {
+          "entity": "Belgorod",
+          "label": "LOC",
+          "start": 72,
+          "end": 80
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 97,
+          "end": 104
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 124,
+          "end": 131
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 143,
+          "end": 152
+        },
+        {
+          "entity": "Morozovsk airbase",
+          "label": "LOC",
+          "start": 190,
+          "end": 207
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 289,
+          "end": 298
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 304,
+          "end": 313
+        },
+        {
+          "entity": "Ministry of Defence",
+          "label": "ORG",
+          "start": 314,
+          "end": 333
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 362,
+          "end": 369
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 394,
+          "end": 403
+        },
+        {
+          "entity": "Freedom of Russia Legion",
+          "label": "ORG",
+          "start": 442,
+          "end": 466
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 542,
+          "end": 549
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 604,
+          "end": 613
+        }
+      ],
+      "after": [
+        {
+          "entity": "17 December 2023",
+          "label": "DATE",
+          "start": 3,
+          "end": 19
+        },
+        {
+          "entity": "Belgorod",
+          "label": "LOC",
+          "start": 72,
+          "end": 80
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 97,
+          "end": 104
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 124,
+          "end": 131
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 143,
+          "end": 152
+        },
+        {
+          "entity": "Morozovsk airbase",
+          "label": "LOC",
+          "start": 190,
+          "end": 207
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 289,
+          "end": 298
+        },
+        {
+          "entity": "Ministry of Defence",
+          "label": "ORG",
+          "start": 314,
+          "end": 333
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 362,
+          "end": 369
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 394,
+          "end": 403
+        },
+        {
+          "entity": "Freedom of Russia Legion",
+          "label": "ORG",
+          "start": 442,
+          "end": 466
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 542,
+          "end": 549
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 604,
+          "end": 613
+        }
+      ],
+      "at_utc": "2026-11-04T07:20:09.466882+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "span 8 | Ukrainian Ministry of Defence | 1",
+      "before": [
+        {
+          "entity": "17 December 2023",
+          "label": "DATE",
+          "start": 3,
+          "end": 19
+        },
+        {
+          "entity": "Belgorod",
+          "label": "LOC",
+          "start": 72,
+          "end": 80
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 97,
+          "end": 104
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 124,
+          "end": 131
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 143,
+          "end": 152
+        },
+        {
+          "entity": "Morozovsk airbase",
+          "label": "LOC",
+          "start": 190,
+          "end": 207
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 289,
+          "end": 298
+        },
+        {
+          "entity": "Ministry of Defence",
+          "label": "ORG",
+          "start": 314,
+          "end": 333
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 362,
+          "end": 369
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 394,
+          "end": 403
+        },
+        {
+          "entity": "Freedom of Russia Legion",
+          "label": "ORG",
+          "start": 442,
+          "end": 466
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 542,
+          "end": 549
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 604,
+          "end": 613
+        }
+      ],
+      "after": [
+        {
+          "entity": "17 December 2023",
+          "label": "DATE",
+          "start": 3,
+          "end": 19
+        },
+        {
+          "entity": "Belgorod",
+          "label": "LOC",
+          "start": 72,
+          "end": 80
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 97,
+          "end": 104
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 124,
+          "end": 131
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 143,
+          "end": 152
+        },
+        {
+          "entity": "Morozovsk airbase",
+          "label": "LOC",
+          "start": 190,
+          "end": 207
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 289,
+          "end": 298
+        },
+        {
+          "entity": "Ukrainian Ministry of Defence",
+          "label": "ORG",
+          "start": 304,
+          "end": 333
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 362,
+          "end": 369
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 394,
+          "end": 403
+        },
+        {
+          "entity": "Freedom of Russia Legion",
+          "label": "ORG",
+          "start": 442,
+          "end": 466
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 542,
+          "end": 549
+        },
+        {
+          "entity": "Terebreno",
+          "label": "LOC",
+          "start": 604,
+          "end": 613
+        }
+      ],
+      "at_utc": "2026-11-04T07:20:14.626097+00:00"
+    }
+  ]
+}

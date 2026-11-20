@@ -1,0 +1,14 @@
+{
+  "version": "v3_heldout_comparison_1",
+  "sample_sha256": "fdefbfe4411e1a7d9205fafc678cfe14faedb84117bdc7a0a478e3eb67322e84",
+  "train_sha256": "29cdbd7d9577412d8c4de5537e0b5546452d46a4a22bab707f8e1031974f04d1",
+  "validation_sha256": "1d069679c9807f7e00d5ac05e9718348afd0eb0ce84cb2b0bbf1795543f3ac9a",
+  "flertdate_checkpoint": "C:\\Users\\idosc\\Corpus2GeoRAG\\ApplyNER\\NER_output\\model_evaluation\\fine_tuning\\flert_5label\\FlertDate_v3\\final-model.pt",
+  "flertdate_size": 2256900265,
+  "flertdate_modified_ns": 1793729180152754700,
+  "original_model": "flair/ner-english-large",
+  "batch_size": 16,
+  "prediction_batch_size": 4,
+  "exclude_identical_text": true,
+  "heldout_paragraphs": 5228
+}

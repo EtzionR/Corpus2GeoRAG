@@ -1,0 +1,172 @@
+{
+  "comparison_row_id": 4969,
+  "Source": "Volyn Oblast",
+  "Index": 14,
+  "Text": "On 20 December 2018, a moratorium on the public use of Russian-language cultural products was imposed in Volyn Oblast by a decision of the Volyn Oblast Council.",
+  "reviewed_at_utc": "2026-11-04T07:47:27.587932+00:00",
+  "original_predictions": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 55,
+      "end": 62
+    },
+    {
+      "entity": "Volyn Oblast",
+      "label": "LOC",
+      "start": 105,
+      "end": 117
+    },
+    {
+      "entity": "Volyn Oblast Council",
+      "label": "ORG",
+      "start": 139,
+      "end": 159
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "20 December 2018",
+      "label": "DATE",
+      "start": 3,
+      "end": 19
+    },
+    {
+      "entity": "Volyn Oblast",
+      "label": "LOC",
+      "start": 105,
+      "end": 117
+    },
+    {
+      "entity": "Volyn Oblast Council",
+      "label": "ORG",
+      "start": 139,
+      "end": 159
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 55,
+      "end": 62
+    },
+    {
+      "entity": "Volyn Oblast",
+      "label": "LOC",
+      "start": 105,
+      "end": 117
+    },
+    {
+      "entity": "Volyn Oblast Council",
+      "label": "ORG",
+      "start": 139,
+      "end": 159
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "20 December 2018",
+      "label": "DATE",
+      "start": 3,
+      "end": 19
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 55,
+      "end": 62
+    },
+    {
+      "entity": "Volyn Oblast",
+      "label": "LOC",
+      "start": 105,
+      "end": 117
+    },
+    {
+      "entity": "Volyn Oblast Council",
+      "label": "ORG",
+      "start": 139,
+      "end": 159
+    }
+  ],
+  "gold": [
+    {
+      "entity": "20 December 2018",
+      "label": "DATE",
+      "start": 3,
+      "end": 19
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 55,
+      "end": 62
+    },
+    {
+      "entity": "Volyn Oblast",
+      "label": "LOC",
+      "start": 105,
+      "end": 117
+    },
+    {
+      "entity": "Volyn Oblast Council",
+      "label": "ORG",
+      "start": 139,
+      "end": 159
+    }
+  ],
+  "history": [
+    {
+      "model": "v3",
+      "command": "add MISC | Russian | 1",
+      "before": [
+        {
+          "entity": "20 December 2018",
+          "label": "DATE",
+          "start": 3,
+          "end": 19
+        },
+        {
+          "entity": "Volyn Oblast",
+          "label": "LOC",
+          "start": 105,
+          "end": 117
+        },
+        {
+          "entity": "Volyn Oblast Council",
+          "label": "ORG",
+          "start": 139,
+          "end": 159
+        }
+      ],
+      "after": [
+        {
+          "entity": "20 December 2018",
+          "label": "DATE",
+          "start": 3,
+          "end": 19
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 55,
+          "end": 62
+        },
+        {
+          "entity": "Volyn Oblast",
+          "label": "LOC",
+          "start": 105,
+          "end": 117
+        },
+        {
+          "entity": "Volyn Oblast Council",
+          "label": "ORG",
+          "start": 139,
+          "end": 159
+        }
+      ],
+      "at_utc": "2026-11-04T07:47:24.809202+00:00"
+    }
+  ]
+}

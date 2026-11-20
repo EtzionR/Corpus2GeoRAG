@@ -1,0 +1,78 @@
+{
+  "comparison_row_id": 79,
+  "Source": "127th Motor Rifle Division (Russia)",
+  "Index": 19,
+  "Text": "127th Motorized Rifle Division's T-72B &",
+  "reviewed_at_utc": "2026-11-04T07:18:31.114658+00:00",
+  "original_predictions": [
+    {
+      "entity": "127th Motorized Rifle Division",
+      "label": "ORG",
+      "start": 0,
+      "end": 30
+    },
+    {
+      "entity": "T-72B",
+      "label": "MISC",
+      "start": 33,
+      "end": 38
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "127th Motorized Rifle Division",
+      "label": "ORG",
+      "start": 0,
+      "end": 30
+    },
+    {
+      "entity": "T-72B",
+      "label": "MISC",
+      "start": 33,
+      "end": 38
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "127th Motorized Rifle Division",
+      "label": "ORG",
+      "start": 0,
+      "end": 30
+    },
+    {
+      "entity": "T-72B",
+      "label": "MISC",
+      "start": 33,
+      "end": 38
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "127th Motorized Rifle Division",
+      "label": "ORG",
+      "start": 0,
+      "end": 30
+    },
+    {
+      "entity": "T-72B",
+      "label": "MISC",
+      "start": 33,
+      "end": 38
+    }
+  ],
+  "gold": [
+    {
+      "entity": "127th Motorized Rifle Division",
+      "label": "ORG",
+      "start": 0,
+      "end": 30
+    },
+    {
+      "entity": "T-72B",
+      "label": "MISC",
+      "start": 33,
+      "end": 38
+    }
+  ],
+  "history": []
+}

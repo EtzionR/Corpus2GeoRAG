@@ -1,0 +1,307 @@
+{
+  "comparison_row_id": 3684,
+  "Source": "Timeline of the Russo-Ukrainian war (1 August – 31 December 2024)",
+  "Index": 102,
+  "Text": "A Russian missile attack struck the Hotel Sapphire hosting foreign journalists in Kramatorsk. Six people, including three Reuters journalists were injured while a safety adviser from the UK was killed.",
+  "reviewed_at_utc": "2026-11-04T06:58:07.001536+00:00",
+  "original_predictions": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 2,
+      "end": 9
+    },
+    {
+      "entity": "Hotel Sapphire",
+      "label": "ORG",
+      "start": 36,
+      "end": 50
+    },
+    {
+      "entity": "Kramatorsk",
+      "label": "LOC",
+      "start": 82,
+      "end": 92
+    },
+    {
+      "entity": "Reuters",
+      "label": "ORG",
+      "start": 122,
+      "end": 129
+    },
+    {
+      "entity": "UK",
+      "label": "LOC",
+      "start": 187,
+      "end": 189
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 2,
+      "end": 9
+    },
+    {
+      "entity": "Hotel Sapphire",
+      "label": "ORG",
+      "start": 36,
+      "end": 50
+    },
+    {
+      "entity": "Kramatorsk",
+      "label": "LOC",
+      "start": 82,
+      "end": 92
+    },
+    {
+      "entity": "Reuters",
+      "label": "ORG",
+      "start": 122,
+      "end": 129
+    },
+    {
+      "entity": "UK",
+      "label": "LOC",
+      "start": 187,
+      "end": 189
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 2,
+      "end": 9
+    },
+    {
+      "entity": "Hotel Sapphire",
+      "label": "LOC",
+      "start": 36,
+      "end": 50
+    },
+    {
+      "entity": "Kramatorsk",
+      "label": "LOC",
+      "start": 82,
+      "end": 92
+    },
+    {
+      "entity": "Reuters",
+      "label": "ORG",
+      "start": 122,
+      "end": 129
+    },
+    {
+      "entity": "UK",
+      "label": "LOC",
+      "start": 187,
+      "end": 189
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 2,
+      "end": 9
+    },
+    {
+      "entity": "Hotel Sapphire",
+      "label": "LOC",
+      "start": 36,
+      "end": 50
+    },
+    {
+      "entity": "Kramatorsk",
+      "label": "LOC",
+      "start": 82,
+      "end": 92
+    },
+    {
+      "entity": "Reuters",
+      "label": "ORG",
+      "start": 122,
+      "end": 129
+    },
+    {
+      "entity": "UK",
+      "label": "LOC",
+      "start": 187,
+      "end": 189
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 2,
+      "end": 9
+    },
+    {
+      "entity": "Hotel Sapphire",
+      "label": "LOC",
+      "start": 36,
+      "end": 50
+    },
+    {
+      "entity": "Kramatorsk",
+      "label": "LOC",
+      "start": 82,
+      "end": 92
+    },
+    {
+      "entity": "Reuters",
+      "label": "ORG",
+      "start": 122,
+      "end": 129
+    },
+    {
+      "entity": "UK",
+      "label": "LOC",
+      "start": 187,
+      "end": 189
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "label 2 LOC",
+      "before": [
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 2,
+          "end": 9
+        },
+        {
+          "entity": "Hotel Sapphire",
+          "label": "ORG",
+          "start": 36,
+          "end": 50
+        },
+        {
+          "entity": "Kramatorsk",
+          "label": "LOC",
+          "start": 82,
+          "end": 92
+        },
+        {
+          "entity": "Reuters",
+          "label": "ORG",
+          "start": 122,
+          "end": 129
+        },
+        {
+          "entity": "UK",
+          "label": "LOC",
+          "start": 187,
+          "end": 189
+        }
+      ],
+      "after": [
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 2,
+          "end": 9
+        },
+        {
+          "entity": "Hotel Sapphire",
+          "label": "LOC",
+          "start": 36,
+          "end": 50
+        },
+        {
+          "entity": "Kramatorsk",
+          "label": "LOC",
+          "start": 82,
+          "end": 92
+        },
+        {
+          "entity": "Reuters",
+          "label": "ORG",
+          "start": 122,
+          "end": 129
+        },
+        {
+          "entity": "UK",
+          "label": "LOC",
+          "start": 187,
+          "end": 189
+        }
+      ],
+      "at_utc": "2026-11-04T06:57:56.148768+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "label 2 LOC",
+      "before": [
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 2,
+          "end": 9
+        },
+        {
+          "entity": "Hotel Sapphire",
+          "label": "ORG",
+          "start": 36,
+          "end": 50
+        },
+        {
+          "entity": "Kramatorsk",
+          "label": "LOC",
+          "start": 82,
+          "end": 92
+        },
+        {
+          "entity": "Reuters",
+          "label": "ORG",
+          "start": 122,
+          "end": 129
+        },
+        {
+          "entity": "UK",
+          "label": "LOC",
+          "start": 187,
+          "end": 189
+        }
+      ],
+      "after": [
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 2,
+          "end": 9
+        },
+        {
+          "entity": "Hotel Sapphire",
+          "label": "LOC",
+          "start": 36,
+          "end": 50
+        },
+        {
+          "entity": "Kramatorsk",
+          "label": "LOC",
+          "start": 82,
+          "end": 92
+        },
+        {
+          "entity": "Reuters",
+          "label": "ORG",
+          "start": 122,
+          "end": 129
+        },
+        {
+          "entity": "UK",
+          "label": "LOC",
+          "start": 187,
+          "end": 189
+        }
+      ],
+      "at_utc": "2026-11-04T06:58:00.864915+00:00"
+    }
+  ]
+}

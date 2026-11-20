@@ -1,0 +1,168 @@
+{
+  "comparison_row_id": 4088,
+  "Source": "Timeline of the Russo-Ukrainian war (1 August – 31 December 2024)",
+  "Index": 510,
+  "Text": "Atesh claimed to have cut a railway line between Moscow and Kursk, near the village of Chekhov, Moscow Oblast, by destroying a relay cabinet.",
+  "reviewed_at_utc": "2026-11-04T06:36:51.525225+00:00",
+  "original_predictions": [
+    {
+      "entity": "Atesh",
+      "label": "ORG",
+      "start": 0,
+      "end": 5
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 49,
+      "end": 55
+    },
+    {
+      "entity": "Kursk",
+      "label": "LOC",
+      "start": 60,
+      "end": 65
+    },
+    {
+      "entity": "Chekhov",
+      "label": "LOC",
+      "start": 87,
+      "end": 94
+    },
+    {
+      "entity": "Moscow Oblast",
+      "label": "LOC",
+      "start": 96,
+      "end": 109
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Atesh",
+      "label": "ORG",
+      "start": 0,
+      "end": 5
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 49,
+      "end": 55
+    },
+    {
+      "entity": "Kursk",
+      "label": "LOC",
+      "start": 60,
+      "end": 65
+    },
+    {
+      "entity": "Chekhov",
+      "label": "LOC",
+      "start": 87,
+      "end": 94
+    },
+    {
+      "entity": "Moscow Oblast",
+      "label": "LOC",
+      "start": 96,
+      "end": 109
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Atesh",
+      "label": "ORG",
+      "start": 0,
+      "end": 5
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 49,
+      "end": 55
+    },
+    {
+      "entity": "Kursk",
+      "label": "LOC",
+      "start": 60,
+      "end": 65
+    },
+    {
+      "entity": "Chekhov",
+      "label": "LOC",
+      "start": 87,
+      "end": 94
+    },
+    {
+      "entity": "Moscow Oblast",
+      "label": "LOC",
+      "start": 96,
+      "end": 109
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Atesh",
+      "label": "ORG",
+      "start": 0,
+      "end": 5
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 49,
+      "end": 55
+    },
+    {
+      "entity": "Kursk",
+      "label": "LOC",
+      "start": 60,
+      "end": 65
+    },
+    {
+      "entity": "Chekhov",
+      "label": "LOC",
+      "start": 87,
+      "end": 94
+    },
+    {
+      "entity": "Moscow Oblast",
+      "label": "LOC",
+      "start": 96,
+      "end": 109
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Atesh",
+      "label": "ORG",
+      "start": 0,
+      "end": 5
+    },
+    {
+      "entity": "Moscow",
+      "label": "LOC",
+      "start": 49,
+      "end": 55
+    },
+    {
+      "entity": "Kursk",
+      "label": "LOC",
+      "start": 60,
+      "end": 65
+    },
+    {
+      "entity": "Chekhov",
+      "label": "LOC",
+      "start": 87,
+      "end": 94
+    },
+    {
+      "entity": "Moscow Oblast",
+      "label": "LOC",
+      "start": 96,
+      "end": 109
+    }
+  ],
+  "history": []
+}

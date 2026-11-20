@@ -1,0 +1,574 @@
+{
+  "comparison_row_id": 4411,
+  "Source": "Timeline of the Russo-Ukrainian war (12 November 2022 – 7 June 2023)",
+  "Index": 207,
+  "Text": "Fu Cong, China's Ambassador to the European Union, explained in interviews that the recently declared \"friendship with no limits\" between Russia and China is actually \"nothing but rhetoric\" and that China will continue to not recognize Crimea as a part of Russia. In another interview, he denied China having any plans to provide Russia with weapons. This was something that U.S. officials have accused China of preparing. He is also reported to have stated that what is most urgent for China is \"to stop the fighting to save lives\".",
+  "reviewed_at_utc": "2026-11-04T07:34:45.642608+00:00",
+  "original_predictions": [
+    {
+      "entity": "Fu Cong",
+      "label": "PER",
+      "start": 0,
+      "end": 7
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 9,
+      "end": 14
+    },
+    {
+      "entity": "European Union",
+      "label": "ORG",
+      "start": 35,
+      "end": 49
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 138,
+      "end": 144
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 149,
+      "end": 154
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 199,
+      "end": 204
+    },
+    {
+      "entity": "Crimea",
+      "label": "LOC",
+      "start": 236,
+      "end": 242
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 256,
+      "end": 262
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 296,
+      "end": 301
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 330,
+      "end": 336
+    },
+    {
+      "entity": "U.S",
+      "label": "LOC",
+      "start": 375,
+      "end": 378
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 403,
+      "end": 408
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 487,
+      "end": 492
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Fu Cong",
+      "label": "PER",
+      "start": 0,
+      "end": 7
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 9,
+      "end": 14
+    },
+    {
+      "entity": "European Union",
+      "label": "ORG",
+      "start": 35,
+      "end": 49
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 138,
+      "end": 144
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 149,
+      "end": 154
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 199,
+      "end": 204
+    },
+    {
+      "entity": "Crimea",
+      "label": "LOC",
+      "start": 236,
+      "end": 242
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 256,
+      "end": 262
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 296,
+      "end": 301
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 330,
+      "end": 336
+    },
+    {
+      "entity": "U.S.",
+      "label": "LOC",
+      "start": 375,
+      "end": 379
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 403,
+      "end": 408
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 487,
+      "end": 492
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Fu Cong",
+      "label": "PER",
+      "start": 0,
+      "end": 7
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 9,
+      "end": 14
+    },
+    {
+      "entity": "European Union",
+      "label": "ORG",
+      "start": 35,
+      "end": 49
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 138,
+      "end": 144
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 149,
+      "end": 154
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 199,
+      "end": 204
+    },
+    {
+      "entity": "Crimea",
+      "label": "LOC",
+      "start": 236,
+      "end": 242
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 256,
+      "end": 262
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 296,
+      "end": 301
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 330,
+      "end": 336
+    },
+    {
+      "entity": "U.S.",
+      "label": "LOC",
+      "start": 375,
+      "end": 379
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 403,
+      "end": 408
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 487,
+      "end": 492
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Fu Cong",
+      "label": "PER",
+      "start": 0,
+      "end": 7
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 9,
+      "end": 14
+    },
+    {
+      "entity": "European Union",
+      "label": "ORG",
+      "start": 35,
+      "end": 49
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 138,
+      "end": 144
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 149,
+      "end": 154
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 199,
+      "end": 204
+    },
+    {
+      "entity": "Crimea",
+      "label": "LOC",
+      "start": 236,
+      "end": 242
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 256,
+      "end": 262
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 296,
+      "end": 301
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 330,
+      "end": 336
+    },
+    {
+      "entity": "U.S.",
+      "label": "LOC",
+      "start": 375,
+      "end": 379
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 403,
+      "end": 408
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 487,
+      "end": 492
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Fu Cong",
+      "label": "PER",
+      "start": 0,
+      "end": 7
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 9,
+      "end": 14
+    },
+    {
+      "entity": "European Union",
+      "label": "ORG",
+      "start": 35,
+      "end": 49
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 138,
+      "end": 144
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 149,
+      "end": 154
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 199,
+      "end": 204
+    },
+    {
+      "entity": "Crimea",
+      "label": "LOC",
+      "start": 236,
+      "end": 242
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 256,
+      "end": 262
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 296,
+      "end": 301
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 330,
+      "end": 336
+    },
+    {
+      "entity": "U.S.",
+      "label": "LOC",
+      "start": 375,
+      "end": 379
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 403,
+      "end": 408
+    },
+    {
+      "entity": "China",
+      "label": "LOC",
+      "start": 487,
+      "end": 492
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "span 11 | U.S. | 1",
+      "before": [
+        {
+          "entity": "Fu Cong",
+          "label": "PER",
+          "start": 0,
+          "end": 7
+        },
+        {
+          "entity": "China",
+          "label": "LOC",
+          "start": 9,
+          "end": 14
+        },
+        {
+          "entity": "European Union",
+          "label": "ORG",
+          "start": 35,
+          "end": 49
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 138,
+          "end": 144
+        },
+        {
+          "entity": "China",
+          "label": "LOC",
+          "start": 149,
+          "end": 154
+        },
+        {
+          "entity": "China",
+          "label": "LOC",
+          "start": 199,
+          "end": 204
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 236,
+          "end": 242
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 256,
+          "end": 262
+        },
+        {
+          "entity": "China",
+          "label": "LOC",
+          "start": 296,
+          "end": 301
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 330,
+          "end": 336
+        },
+        {
+          "entity": "U.S",
+          "label": "LOC",
+          "start": 375,
+          "end": 378
+        },
+        {
+          "entity": "China",
+          "label": "LOC",
+          "start": 403,
+          "end": 408
+        },
+        {
+          "entity": "China",
+          "label": "LOC",
+          "start": 487,
+          "end": 492
+        }
+      ],
+      "after": [
+        {
+          "entity": "Fu Cong",
+          "label": "PER",
+          "start": 0,
+          "end": 7
+        },
+        {
+          "entity": "China",
+          "label": "LOC",
+          "start": 9,
+          "end": 14
+        },
+        {
+          "entity": "European Union",
+          "label": "ORG",
+          "start": 35,
+          "end": 49
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 138,
+          "end": 144
+        },
+        {
+          "entity": "China",
+          "label": "LOC",
+          "start": 149,
+          "end": 154
+        },
+        {
+          "entity": "China",
+          "label": "LOC",
+          "start": 199,
+          "end": 204
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 236,
+          "end": 242
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 256,
+          "end": 262
+        },
+        {
+          "entity": "China",
+          "label": "LOC",
+          "start": 296,
+          "end": 301
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 330,
+          "end": 336
+        },
+        {
+          "entity": "U.S.",
+          "label": "LOC",
+          "start": 375,
+          "end": 379
+        },
+        {
+          "entity": "China",
+          "label": "LOC",
+          "start": 403,
+          "end": 408
+        },
+        {
+          "entity": "China",
+          "label": "LOC",
+          "start": 487,
+          "end": 492
+        }
+      ],
+      "at_utc": "2026-11-04T07:34:41.536919+00:00"
+    }
+  ]
+}

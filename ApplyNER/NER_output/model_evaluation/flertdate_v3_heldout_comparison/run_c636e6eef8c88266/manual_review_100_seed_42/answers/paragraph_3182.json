@@ -1,0 +1,538 @@
+{
+  "comparison_row_id": 3182,
+  "Source": "Russian military commissariats attacks",
+  "Index": 2,
+  "Text": "In the Telegram channel \"Oderint, Dum Metuant\", the authors of which opposed the invasion of Ukraine and position themselves as a cell of the revived National Socialism / White Power, there were videos of some actions - on some unknown people set fire to cars with the letter Z, on others fires are visible in some buildings — the channel claims that supporters of the movement set fire to the warehouse of the \"military facility\", the police department and the military commissariats. The channel administrators even arranged a \"quest\", promising 15,000 rubles to anyone who sets fire to a car with the Z symbol, or 30,000 for setting fire to a police car. They planned to pay money in cryptocurrency. According to the security officials, the movement's associates could be involved in several arsons in central Russia.",
+  "reviewed_at_utc": "2026-11-04T07:37:16.391051+00:00",
+  "original_predictions": [
+    {
+      "entity": "Telegram",
+      "label": "MISC",
+      "start": 7,
+      "end": 15
+    },
+    {
+      "entity": "Oderint, Dum Metuant",
+      "label": "ORG",
+      "start": 25,
+      "end": 45
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 93,
+      "end": 100
+    },
+    {
+      "entity": "National Socialism",
+      "label": "ORG",
+      "start": 150,
+      "end": 168
+    },
+    {
+      "entity": "White Power",
+      "label": "ORG",
+      "start": 171,
+      "end": 182
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 813,
+      "end": 819
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Telegram",
+      "label": "ORG",
+      "start": 7,
+      "end": 15
+    },
+    {
+      "entity": "Oderint, Dum Metuant",
+      "label": "ORG",
+      "start": 25,
+      "end": 45
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 93,
+      "end": 100
+    },
+    {
+      "entity": "National Socialism",
+      "label": "ORG",
+      "start": 150,
+      "end": 168
+    },
+    {
+      "entity": "White Power",
+      "label": "ORG",
+      "start": 171,
+      "end": 182
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 813,
+      "end": 819
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Telegram",
+      "label": "ORG",
+      "start": 7,
+      "end": 15
+    },
+    {
+      "entity": "Oderint, Dum Metuant",
+      "label": "ORG",
+      "start": 25,
+      "end": 45
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 93,
+      "end": 100
+    },
+    {
+      "entity": "National Socialism / White Power",
+      "label": "ORG",
+      "start": 150,
+      "end": 182
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 813,
+      "end": 819
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Telegram",
+      "label": "ORG",
+      "start": 7,
+      "end": 15
+    },
+    {
+      "entity": "Oderint, Dum Metuant",
+      "label": "ORG",
+      "start": 25,
+      "end": 45
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 93,
+      "end": 100
+    },
+    {
+      "entity": "National Socialism / White Power",
+      "label": "ORG",
+      "start": 150,
+      "end": 182
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 813,
+      "end": 819
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Telegram",
+      "label": "ORG",
+      "start": 7,
+      "end": 15
+    },
+    {
+      "entity": "Oderint, Dum Metuant",
+      "label": "ORG",
+      "start": 25,
+      "end": 45
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 93,
+      "end": 100
+    },
+    {
+      "entity": "National Socialism / White Power",
+      "label": "ORG",
+      "start": 150,
+      "end": 182
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 813,
+      "end": 819
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "del 5",
+      "before": [
+        {
+          "entity": "Telegram",
+          "label": "MISC",
+          "start": 7,
+          "end": 15
+        },
+        {
+          "entity": "Oderint, Dum Metuant",
+          "label": "ORG",
+          "start": 25,
+          "end": 45
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 93,
+          "end": 100
+        },
+        {
+          "entity": "National Socialism",
+          "label": "ORG",
+          "start": 150,
+          "end": 168
+        },
+        {
+          "entity": "White Power",
+          "label": "ORG",
+          "start": 171,
+          "end": 182
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 813,
+          "end": 819
+        }
+      ],
+      "after": [
+        {
+          "entity": "Telegram",
+          "label": "MISC",
+          "start": 7,
+          "end": 15
+        },
+        {
+          "entity": "Oderint, Dum Metuant",
+          "label": "ORG",
+          "start": 25,
+          "end": 45
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 93,
+          "end": 100
+        },
+        {
+          "entity": "National Socialism",
+          "label": "ORG",
+          "start": 150,
+          "end": 168
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 813,
+          "end": 819
+        }
+      ],
+      "at_utc": "2026-11-04T07:35:52.741992+00:00"
+    },
+    {
+      "model": "original",
+      "command": "span 4 | National Socialism / White Power | 1",
+      "before": [
+        {
+          "entity": "Telegram",
+          "label": "MISC",
+          "start": 7,
+          "end": 15
+        },
+        {
+          "entity": "Oderint, Dum Metuant",
+          "label": "ORG",
+          "start": 25,
+          "end": 45
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 93,
+          "end": 100
+        },
+        {
+          "entity": "National Socialism",
+          "label": "ORG",
+          "start": 150,
+          "end": 168
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 813,
+          "end": 819
+        }
+      ],
+      "after": [
+        {
+          "entity": "Telegram",
+          "label": "MISC",
+          "start": 7,
+          "end": 15
+        },
+        {
+          "entity": "Oderint, Dum Metuant",
+          "label": "ORG",
+          "start": 25,
+          "end": 45
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 93,
+          "end": 100
+        },
+        {
+          "entity": "National Socialism / White Power",
+          "label": "ORG",
+          "start": 150,
+          "end": 182
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 813,
+          "end": 819
+        }
+      ],
+      "at_utc": "2026-11-04T07:35:58.761021+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "del 5",
+      "before": [
+        {
+          "entity": "Telegram",
+          "label": "ORG",
+          "start": 7,
+          "end": 15
+        },
+        {
+          "entity": "Oderint, Dum Metuant",
+          "label": "ORG",
+          "start": 25,
+          "end": 45
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 93,
+          "end": 100
+        },
+        {
+          "entity": "National Socialism",
+          "label": "ORG",
+          "start": 150,
+          "end": 168
+        },
+        {
+          "entity": "White Power",
+          "label": "ORG",
+          "start": 171,
+          "end": 182
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 813,
+          "end": 819
+        }
+      ],
+      "after": [
+        {
+          "entity": "Telegram",
+          "label": "ORG",
+          "start": 7,
+          "end": 15
+        },
+        {
+          "entity": "Oderint, Dum Metuant",
+          "label": "ORG",
+          "start": 25,
+          "end": 45
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 93,
+          "end": 100
+        },
+        {
+          "entity": "National Socialism",
+          "label": "ORG",
+          "start": 150,
+          "end": 168
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 813,
+          "end": 819
+        }
+      ],
+      "at_utc": "2026-11-04T07:36:30.132307+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "span 4 | National Socialism / White Power | 1",
+      "before": [
+        {
+          "entity": "Telegram",
+          "label": "ORG",
+          "start": 7,
+          "end": 15
+        },
+        {
+          "entity": "Oderint, Dum Metuant",
+          "label": "ORG",
+          "start": 25,
+          "end": 45
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 93,
+          "end": 100
+        },
+        {
+          "entity": "National Socialism",
+          "label": "ORG",
+          "start": 150,
+          "end": 168
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 813,
+          "end": 819
+        }
+      ],
+      "after": [
+        {
+          "entity": "Telegram",
+          "label": "ORG",
+          "start": 7,
+          "end": 15
+        },
+        {
+          "entity": "Oderint, Dum Metuant",
+          "label": "ORG",
+          "start": 25,
+          "end": 45
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 93,
+          "end": 100
+        },
+        {
+          "entity": "National Socialism / White Power",
+          "label": "ORG",
+          "start": 150,
+          "end": 182
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 813,
+          "end": 819
+        }
+      ],
+      "at_utc": "2026-11-04T07:36:38.012205+00:00"
+    },
+    {
+      "model": "original",
+      "command": "label 1 ORG",
+      "before": [
+        {
+          "entity": "Telegram",
+          "label": "MISC",
+          "start": 7,
+          "end": 15
+        },
+        {
+          "entity": "Oderint, Dum Metuant",
+          "label": "ORG",
+          "start": 25,
+          "end": 45
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 93,
+          "end": 100
+        },
+        {
+          "entity": "National Socialism / White Power",
+          "label": "ORG",
+          "start": 150,
+          "end": 182
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 813,
+          "end": 819
+        }
+      ],
+      "after": [
+        {
+          "entity": "Telegram",
+          "label": "ORG",
+          "start": 7,
+          "end": 15
+        },
+        {
+          "entity": "Oderint, Dum Metuant",
+          "label": "ORG",
+          "start": 25,
+          "end": 45
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 93,
+          "end": 100
+        },
+        {
+          "entity": "National Socialism / White Power",
+          "label": "ORG",
+          "start": 150,
+          "end": 182
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 813,
+          "end": 819
+        }
+      ],
+      "at_utc": "2026-11-04T07:37:14.009812+00:00"
+    }
+  ]
+}

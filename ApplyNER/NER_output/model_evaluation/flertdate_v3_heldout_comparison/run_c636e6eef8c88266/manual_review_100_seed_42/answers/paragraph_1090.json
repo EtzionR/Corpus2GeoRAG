@@ -1,0 +1,451 @@
+{
+  "comparison_row_id": 1090,
+  "Source": "Bridge over Saint Volodymyr Descent",
+  "Index": 2,
+  "Text": "In the independent Ukraine, the plan of building the bridge was brought back up in 2006. At the meeting of Kyiv Architecture Department on 6 September Heorhiy Dukhovnychyi presented the project of a shopping mall with offices and apartments at Saint Volodymyr Descent. The building featured a bridge over the descent, making it similar to Kyiv's central shopping mall Globus that was built in 2002 and had a similar bridge connecting its roof with a park. The project was approved for further development, but it had never ended up anything more than a concept.",
+  "reviewed_at_utc": "2026-11-04T06:35:26.160774+00:00",
+  "original_predictions": [
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 19,
+      "end": 26
+    },
+    {
+      "entity": "Kyiv Architecture Department",
+      "label": "ORG",
+      "start": 107,
+      "end": 135
+    },
+    {
+      "entity": "Heorhiy Dukhovnychyi",
+      "label": "PER",
+      "start": 151,
+      "end": 171
+    },
+    {
+      "entity": "Saint Volodymyr Descent",
+      "label": "LOC",
+      "start": 244,
+      "end": 267
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 339,
+      "end": 343
+    },
+    {
+      "entity": "Globus",
+      "label": "ORG",
+      "start": 368,
+      "end": 374
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 19,
+      "end": 26
+    },
+    {
+      "entity": "2006",
+      "label": "DATE",
+      "start": 83,
+      "end": 87
+    },
+    {
+      "entity": "Kyiv Architecture Department",
+      "label": "ORG",
+      "start": 107,
+      "end": 135
+    },
+    {
+      "entity": "6 September",
+      "label": "DATE",
+      "start": 139,
+      "end": 150
+    },
+    {
+      "entity": "Heorhiy Dukhovnychyi",
+      "label": "PER",
+      "start": 151,
+      "end": 171
+    },
+    {
+      "entity": "Saint Volodymyr Descent",
+      "label": "LOC",
+      "start": 244,
+      "end": 267
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 339,
+      "end": 343
+    },
+    {
+      "entity": "Globus",
+      "label": "ORG",
+      "start": 368,
+      "end": 374
+    },
+    {
+      "entity": "2002",
+      "label": "DATE",
+      "start": 393,
+      "end": 397
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 19,
+      "end": 26
+    },
+    {
+      "entity": "Kyiv Architecture Department",
+      "label": "ORG",
+      "start": 107,
+      "end": 135
+    },
+    {
+      "entity": "Heorhiy Dukhovnychyi",
+      "label": "PER",
+      "start": 151,
+      "end": 171
+    },
+    {
+      "entity": "Saint Volodymyr Descent",
+      "label": "LOC",
+      "start": 244,
+      "end": 267
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 339,
+      "end": 343
+    },
+    {
+      "entity": "Globus",
+      "label": "LOC",
+      "start": 368,
+      "end": 374
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 19,
+      "end": 26
+    },
+    {
+      "entity": "2006",
+      "label": "DATE",
+      "start": 83,
+      "end": 87
+    },
+    {
+      "entity": "Kyiv Architecture Department",
+      "label": "ORG",
+      "start": 107,
+      "end": 135
+    },
+    {
+      "entity": "6 September",
+      "label": "DATE",
+      "start": 139,
+      "end": 150
+    },
+    {
+      "entity": "Heorhiy Dukhovnychyi",
+      "label": "PER",
+      "start": 151,
+      "end": 171
+    },
+    {
+      "entity": "Saint Volodymyr Descent",
+      "label": "LOC",
+      "start": 244,
+      "end": 267
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 339,
+      "end": 343
+    },
+    {
+      "entity": "Globus",
+      "label": "LOC",
+      "start": 368,
+      "end": 374
+    },
+    {
+      "entity": "2002",
+      "label": "DATE",
+      "start": 393,
+      "end": 397
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 19,
+      "end": 26
+    },
+    {
+      "entity": "2006",
+      "label": "DATE",
+      "start": 83,
+      "end": 87
+    },
+    {
+      "entity": "Kyiv Architecture Department",
+      "label": "ORG",
+      "start": 107,
+      "end": 135
+    },
+    {
+      "entity": "6 September",
+      "label": "DATE",
+      "start": 139,
+      "end": 150
+    },
+    {
+      "entity": "Heorhiy Dukhovnychyi",
+      "label": "PER",
+      "start": 151,
+      "end": 171
+    },
+    {
+      "entity": "Saint Volodymyr Descent",
+      "label": "LOC",
+      "start": 244,
+      "end": 267
+    },
+    {
+      "entity": "Kyiv",
+      "label": "LOC",
+      "start": 339,
+      "end": 343
+    },
+    {
+      "entity": "Globus",
+      "label": "LOC",
+      "start": 368,
+      "end": 374
+    },
+    {
+      "entity": "2002",
+      "label": "DATE",
+      "start": 393,
+      "end": 397
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "label 6 LOC",
+      "before": [
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 19,
+          "end": 26
+        },
+        {
+          "entity": "Kyiv Architecture Department",
+          "label": "ORG",
+          "start": 107,
+          "end": 135
+        },
+        {
+          "entity": "Heorhiy Dukhovnychyi",
+          "label": "PER",
+          "start": 151,
+          "end": 171
+        },
+        {
+          "entity": "Saint Volodymyr Descent",
+          "label": "LOC",
+          "start": 244,
+          "end": 267
+        },
+        {
+          "entity": "Kyiv",
+          "label": "LOC",
+          "start": 339,
+          "end": 343
+        },
+        {
+          "entity": "Globus",
+          "label": "ORG",
+          "start": 368,
+          "end": 374
+        }
+      ],
+      "after": [
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 19,
+          "end": 26
+        },
+        {
+          "entity": "Kyiv Architecture Department",
+          "label": "ORG",
+          "start": 107,
+          "end": 135
+        },
+        {
+          "entity": "Heorhiy Dukhovnychyi",
+          "label": "PER",
+          "start": 151,
+          "end": 171
+        },
+        {
+          "entity": "Saint Volodymyr Descent",
+          "label": "LOC",
+          "start": 244,
+          "end": 267
+        },
+        {
+          "entity": "Kyiv",
+          "label": "LOC",
+          "start": 339,
+          "end": 343
+        },
+        {
+          "entity": "Globus",
+          "label": "LOC",
+          "start": 368,
+          "end": 374
+        }
+      ],
+      "at_utc": "2026-11-04T06:35:12.882428+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "label 8 LOC",
+      "before": [
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 19,
+          "end": 26
+        },
+        {
+          "entity": "2006",
+          "label": "DATE",
+          "start": 83,
+          "end": 87
+        },
+        {
+          "entity": "Kyiv Architecture Department",
+          "label": "ORG",
+          "start": 107,
+          "end": 135
+        },
+        {
+          "entity": "6 September",
+          "label": "DATE",
+          "start": 139,
+          "end": 150
+        },
+        {
+          "entity": "Heorhiy Dukhovnychyi",
+          "label": "PER",
+          "start": 151,
+          "end": 171
+        },
+        {
+          "entity": "Saint Volodymyr Descent",
+          "label": "LOC",
+          "start": 244,
+          "end": 267
+        },
+        {
+          "entity": "Kyiv",
+          "label": "LOC",
+          "start": 339,
+          "end": 343
+        },
+        {
+          "entity": "Globus",
+          "label": "ORG",
+          "start": 368,
+          "end": 374
+        },
+        {
+          "entity": "2002",
+          "label": "DATE",
+          "start": 393,
+          "end": 397
+        }
+      ],
+      "after": [
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 19,
+          "end": 26
+        },
+        {
+          "entity": "2006",
+          "label": "DATE",
+          "start": 83,
+          "end": 87
+        },
+        {
+          "entity": "Kyiv Architecture Department",
+          "label": "ORG",
+          "start": 107,
+          "end": 135
+        },
+        {
+          "entity": "6 September",
+          "label": "DATE",
+          "start": 139,
+          "end": 150
+        },
+        {
+          "entity": "Heorhiy Dukhovnychyi",
+          "label": "PER",
+          "start": 151,
+          "end": 171
+        },
+        {
+          "entity": "Saint Volodymyr Descent",
+          "label": "LOC",
+          "start": 244,
+          "end": 267
+        },
+        {
+          "entity": "Kyiv",
+          "label": "LOC",
+          "start": 339,
+          "end": 343
+        },
+        {
+          "entity": "Globus",
+          "label": "LOC",
+          "start": 368,
+          "end": 374
+        },
+        {
+          "entity": "2002",
+          "label": "DATE",
+          "start": 393,
+          "end": 397
+        }
+      ],
+      "at_utc": "2026-11-04T06:35:22.317550+00:00"
+    }
+  ]
+}

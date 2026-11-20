@@ -1,0 +1,181 @@
+{
+  "comparison_row_id": 333,
+  "Source": "2025 MT Orinda fire",
+  "Index": 12,
+  "Text": "The Ukrainian Navy played a crucial role in extinguishing the fire. A large-capacity vessel was brought to the scene to pump water onto the burning tanks. Navy spokesman Dmytro Pletenchuk stated that their waterborne firefighting capabilities exceeded those of other agencies and were decisive in bringing the blaze under control. The Navy also conducted subsequent operations to secure the vessel and prevent it from sinking.",
+  "reviewed_at_utc": "2026-11-04T07:34:17.232164+00:00",
+  "original_predictions": [
+    {
+      "entity": "Ukrainian Navy",
+      "label": "ORG",
+      "start": 4,
+      "end": 18
+    },
+    {
+      "entity": "Navy",
+      "label": "ORG",
+      "start": 155,
+      "end": 159
+    },
+    {
+      "entity": "Dmytro Pletenchuk",
+      "label": "PER",
+      "start": 170,
+      "end": 187
+    },
+    {
+      "entity": "Navy",
+      "label": "ORG",
+      "start": 335,
+      "end": 339
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Ukrainian Navy",
+      "label": "ORG",
+      "start": 4,
+      "end": 18
+    },
+    {
+      "entity": "Dmytro Pletenchuk",
+      "label": "PER",
+      "start": 170,
+      "end": 187
+    },
+    {
+      "entity": "Navy",
+      "label": "ORG",
+      "start": 335,
+      "end": 339
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Ukrainian Navy",
+      "label": "ORG",
+      "start": 4,
+      "end": 18
+    },
+    {
+      "entity": "Dmytro Pletenchuk",
+      "label": "PER",
+      "start": 170,
+      "end": 187
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Ukrainian Navy",
+      "label": "ORG",
+      "start": 4,
+      "end": 18
+    },
+    {
+      "entity": "Dmytro Pletenchuk",
+      "label": "PER",
+      "start": 170,
+      "end": 187
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Ukrainian Navy",
+      "label": "ORG",
+      "start": 4,
+      "end": 18
+    },
+    {
+      "entity": "Dmytro Pletenchuk",
+      "label": "PER",
+      "start": 170,
+      "end": 187
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "del 2,4",
+      "before": [
+        {
+          "entity": "Ukrainian Navy",
+          "label": "ORG",
+          "start": 4,
+          "end": 18
+        },
+        {
+          "entity": "Navy",
+          "label": "ORG",
+          "start": 155,
+          "end": 159
+        },
+        {
+          "entity": "Dmytro Pletenchuk",
+          "label": "PER",
+          "start": 170,
+          "end": 187
+        },
+        {
+          "entity": "Navy",
+          "label": "ORG",
+          "start": 335,
+          "end": 339
+        }
+      ],
+      "after": [
+        {
+          "entity": "Ukrainian Navy",
+          "label": "ORG",
+          "start": 4,
+          "end": 18
+        },
+        {
+          "entity": "Dmytro Pletenchuk",
+          "label": "PER",
+          "start": 170,
+          "end": 187
+        }
+      ],
+      "at_utc": "2026-11-04T07:34:02.114638+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "del 3",
+      "before": [
+        {
+          "entity": "Ukrainian Navy",
+          "label": "ORG",
+          "start": 4,
+          "end": 18
+        },
+        {
+          "entity": "Dmytro Pletenchuk",
+          "label": "PER",
+          "start": 170,
+          "end": 187
+        },
+        {
+          "entity": "Navy",
+          "label": "ORG",
+          "start": 335,
+          "end": 339
+        }
+      ],
+      "after": [
+        {
+          "entity": "Ukrainian Navy",
+          "label": "ORG",
+          "start": 4,
+          "end": 18
+        },
+        {
+          "entity": "Dmytro Pletenchuk",
+          "label": "PER",
+          "start": 170,
+          "end": 187
+        }
+      ],
+      "at_utc": "2026-11-04T07:34:12.578404+00:00"
+    }
+  ]
+}

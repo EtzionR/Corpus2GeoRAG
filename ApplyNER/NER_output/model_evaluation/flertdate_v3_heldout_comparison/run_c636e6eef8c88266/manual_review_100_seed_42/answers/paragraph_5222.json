@@ -1,0 +1,138 @@
+{
+  "comparison_row_id": 5222,
+  "Source": "Yurii Lubkovych",
+  "Index": 3,
+  "Text": "Lubkovych also attended special training courses for public managers at the Secretariat of the Government of Canada and Nanyang Technological University in Singapore.",
+  "reviewed_at_utc": "2026-11-04T07:28:39.729243+00:00",
+  "original_predictions": [
+    {
+      "entity": "Lubkovych",
+      "label": "PER",
+      "start": 0,
+      "end": 9
+    },
+    {
+      "entity": "Secretariat of the Government of Canada",
+      "label": "ORG",
+      "start": 76,
+      "end": 115
+    },
+    {
+      "entity": "Nanyang Technological University",
+      "label": "ORG",
+      "start": 120,
+      "end": 152
+    },
+    {
+      "entity": "Singapore",
+      "label": "LOC",
+      "start": 156,
+      "end": 165
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Lubkovych",
+      "label": "PER",
+      "start": 0,
+      "end": 9
+    },
+    {
+      "entity": "Secretariat of the Government of Canada",
+      "label": "ORG",
+      "start": 76,
+      "end": 115
+    },
+    {
+      "entity": "Nanyang Technological University",
+      "label": "ORG",
+      "start": 120,
+      "end": 152
+    },
+    {
+      "entity": "Singapore",
+      "label": "LOC",
+      "start": 156,
+      "end": 165
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Lubkovych",
+      "label": "PER",
+      "start": 0,
+      "end": 9
+    },
+    {
+      "entity": "Secretariat of the Government of Canada",
+      "label": "ORG",
+      "start": 76,
+      "end": 115
+    },
+    {
+      "entity": "Nanyang Technological University",
+      "label": "ORG",
+      "start": 120,
+      "end": 152
+    },
+    {
+      "entity": "Singapore",
+      "label": "LOC",
+      "start": 156,
+      "end": 165
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Lubkovych",
+      "label": "PER",
+      "start": 0,
+      "end": 9
+    },
+    {
+      "entity": "Secretariat of the Government of Canada",
+      "label": "ORG",
+      "start": 76,
+      "end": 115
+    },
+    {
+      "entity": "Nanyang Technological University",
+      "label": "ORG",
+      "start": 120,
+      "end": 152
+    },
+    {
+      "entity": "Singapore",
+      "label": "LOC",
+      "start": 156,
+      "end": 165
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Lubkovych",
+      "label": "PER",
+      "start": 0,
+      "end": 9
+    },
+    {
+      "entity": "Secretariat of the Government of Canada",
+      "label": "ORG",
+      "start": 76,
+      "end": 115
+    },
+    {
+      "entity": "Nanyang Technological University",
+      "label": "ORG",
+      "start": 120,
+      "end": 152
+    },
+    {
+      "entity": "Singapore",
+      "label": "LOC",
+      "start": 156,
+      "end": 165
+    }
+  ],
+  "history": []
+}

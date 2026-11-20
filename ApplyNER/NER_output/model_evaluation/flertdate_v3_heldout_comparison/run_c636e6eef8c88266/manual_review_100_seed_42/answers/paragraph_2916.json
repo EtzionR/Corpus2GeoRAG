@@ -1,0 +1,229 @@
+{
+  "comparison_row_id": 2916,
+  "Source": "Moldovan protests (2022–2023)",
+  "Index": 32,
+  "Text": "On 27 April, the Moldovan Parliament voted to strip Ilan Shor of his membership of the Parliament. He was succeeded by Vladimir Vitiuc.",
+  "reviewed_at_utc": "2026-11-04T07:41:20.750580+00:00",
+  "original_predictions": [
+    {
+      "entity": "Moldovan",
+      "label": "MISC",
+      "start": 17,
+      "end": 25
+    },
+    {
+      "entity": "Parliament",
+      "label": "ORG",
+      "start": 26,
+      "end": 36
+    },
+    {
+      "entity": "Ilan Shor",
+      "label": "PER",
+      "start": 52,
+      "end": 61
+    },
+    {
+      "entity": "Parliament",
+      "label": "ORG",
+      "start": 87,
+      "end": 97
+    },
+    {
+      "entity": "Vladimir Vitiuc",
+      "label": "PER",
+      "start": 119,
+      "end": 134
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "27 April",
+      "label": "DATE",
+      "start": 3,
+      "end": 11
+    },
+    {
+      "entity": "Moldovan Parliament",
+      "label": "ORG",
+      "start": 17,
+      "end": 36
+    },
+    {
+      "entity": "Ilan Shor",
+      "label": "PER",
+      "start": 52,
+      "end": 61
+    },
+    {
+      "entity": "Vladimir Vitiuc",
+      "label": "PER",
+      "start": 119,
+      "end": 134
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Moldovan Parliament",
+      "label": "ORG",
+      "start": 17,
+      "end": 36
+    },
+    {
+      "entity": "Ilan Shor",
+      "label": "PER",
+      "start": 52,
+      "end": 61
+    },
+    {
+      "entity": "Vladimir Vitiuc",
+      "label": "PER",
+      "start": 119,
+      "end": 134
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "27 April",
+      "label": "DATE",
+      "start": 3,
+      "end": 11
+    },
+    {
+      "entity": "Moldovan Parliament",
+      "label": "ORG",
+      "start": 17,
+      "end": 36
+    },
+    {
+      "entity": "Ilan Shor",
+      "label": "PER",
+      "start": 52,
+      "end": 61
+    },
+    {
+      "entity": "Vladimir Vitiuc",
+      "label": "PER",
+      "start": 119,
+      "end": 134
+    }
+  ],
+  "gold": [
+    {
+      "entity": "27 April",
+      "label": "DATE",
+      "start": 3,
+      "end": 11
+    },
+    {
+      "entity": "Moldovan Parliament",
+      "label": "ORG",
+      "start": 17,
+      "end": 36
+    },
+    {
+      "entity": "Ilan Shor",
+      "label": "PER",
+      "start": 52,
+      "end": 61
+    },
+    {
+      "entity": "Vladimir Vitiuc",
+      "label": "PER",
+      "start": 119,
+      "end": 134
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "del 1,2,4",
+      "before": [
+        {
+          "entity": "Moldovan",
+          "label": "MISC",
+          "start": 17,
+          "end": 25
+        },
+        {
+          "entity": "Parliament",
+          "label": "ORG",
+          "start": 26,
+          "end": 36
+        },
+        {
+          "entity": "Ilan Shor",
+          "label": "PER",
+          "start": 52,
+          "end": 61
+        },
+        {
+          "entity": "Parliament",
+          "label": "ORG",
+          "start": 87,
+          "end": 97
+        },
+        {
+          "entity": "Vladimir Vitiuc",
+          "label": "PER",
+          "start": 119,
+          "end": 134
+        }
+      ],
+      "after": [
+        {
+          "entity": "Ilan Shor",
+          "label": "PER",
+          "start": 52,
+          "end": 61
+        },
+        {
+          "entity": "Vladimir Vitiuc",
+          "label": "PER",
+          "start": 119,
+          "end": 134
+        }
+      ],
+      "at_utc": "2026-11-04T07:41:11.215740+00:00"
+    },
+    {
+      "model": "original",
+      "command": "add ORG | Moldovan Parliament | 1",
+      "before": [
+        {
+          "entity": "Ilan Shor",
+          "label": "PER",
+          "start": 52,
+          "end": 61
+        },
+        {
+          "entity": "Vladimir Vitiuc",
+          "label": "PER",
+          "start": 119,
+          "end": 134
+        }
+      ],
+      "after": [
+        {
+          "entity": "Moldovan Parliament",
+          "label": "ORG",
+          "start": 17,
+          "end": 36
+        },
+        {
+          "entity": "Ilan Shor",
+          "label": "PER",
+          "start": 52,
+          "end": 61
+        },
+        {
+          "entity": "Vladimir Vitiuc",
+          "label": "PER",
+          "start": 119,
+          "end": 134
+        }
+      ],
+      "at_utc": "2026-11-04T07:41:16.475446+00:00"
+    }
+  ]
+}

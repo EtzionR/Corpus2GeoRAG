@@ -1,0 +1,258 @@
+{
+  "comparison_row_id": 4581,
+  "Source": "Timeline of the Russo-Ukrainian war (12 November 2022 – 7 June 2023)",
+  "Index": 379,
+  "Text": "Air raid alerts were activated in 12 oblasts, from Volyn in the north-west to Dnipropetrovsk in the south-east. There were also reports of explosions in Zhytomyr, where at least 26 residential buildings were damaged as well as schools and medical units. Shelling was also reported in Sumy Oblast, which borders Russia, and in Nikopol, across the Dnipro River from the Zaporizhzhia Nuclear Power Plant.",
+  "reviewed_at_utc": "2026-11-04T07:28:14.718589+00:00",
+  "original_predictions": [
+    {
+      "entity": "Volyn",
+      "label": "LOC",
+      "start": 51,
+      "end": 56
+    },
+    {
+      "entity": "Dnipropetrovsk",
+      "label": "LOC",
+      "start": 78,
+      "end": 92
+    },
+    {
+      "entity": "Zhytomyr",
+      "label": "LOC",
+      "start": 153,
+      "end": 161
+    },
+    {
+      "entity": "Sumy Oblast",
+      "label": "LOC",
+      "start": 284,
+      "end": 295
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 311,
+      "end": 317
+    },
+    {
+      "entity": "Nikopol",
+      "label": "LOC",
+      "start": 326,
+      "end": 333
+    },
+    {
+      "entity": "Dnipro River",
+      "label": "LOC",
+      "start": 346,
+      "end": 358
+    },
+    {
+      "entity": "Zaporizhzhia Nuclear Power Plant",
+      "label": "LOC",
+      "start": 368,
+      "end": 400
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Volyn",
+      "label": "LOC",
+      "start": 51,
+      "end": 56
+    },
+    {
+      "entity": "Dnipropetrovsk",
+      "label": "LOC",
+      "start": 78,
+      "end": 92
+    },
+    {
+      "entity": "Zhytomyr",
+      "label": "LOC",
+      "start": 153,
+      "end": 161
+    },
+    {
+      "entity": "Sumy Oblast",
+      "label": "LOC",
+      "start": 284,
+      "end": 295
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 311,
+      "end": 317
+    },
+    {
+      "entity": "Nikopol",
+      "label": "LOC",
+      "start": 326,
+      "end": 333
+    },
+    {
+      "entity": "Dnipro River",
+      "label": "LOC",
+      "start": 346,
+      "end": 358
+    },
+    {
+      "entity": "Zaporizhzhia Nuclear Power Plant",
+      "label": "LOC",
+      "start": 368,
+      "end": 400
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Volyn",
+      "label": "LOC",
+      "start": 51,
+      "end": 56
+    },
+    {
+      "entity": "Dnipropetrovsk",
+      "label": "LOC",
+      "start": 78,
+      "end": 92
+    },
+    {
+      "entity": "Zhytomyr",
+      "label": "LOC",
+      "start": 153,
+      "end": 161
+    },
+    {
+      "entity": "Sumy Oblast",
+      "label": "LOC",
+      "start": 284,
+      "end": 295
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 311,
+      "end": 317
+    },
+    {
+      "entity": "Nikopol",
+      "label": "LOC",
+      "start": 326,
+      "end": 333
+    },
+    {
+      "entity": "Dnipro River",
+      "label": "LOC",
+      "start": 346,
+      "end": 358
+    },
+    {
+      "entity": "Zaporizhzhia Nuclear Power Plant",
+      "label": "LOC",
+      "start": 368,
+      "end": 400
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Volyn",
+      "label": "LOC",
+      "start": 51,
+      "end": 56
+    },
+    {
+      "entity": "Dnipropetrovsk",
+      "label": "LOC",
+      "start": 78,
+      "end": 92
+    },
+    {
+      "entity": "Zhytomyr",
+      "label": "LOC",
+      "start": 153,
+      "end": 161
+    },
+    {
+      "entity": "Sumy Oblast",
+      "label": "LOC",
+      "start": 284,
+      "end": 295
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 311,
+      "end": 317
+    },
+    {
+      "entity": "Nikopol",
+      "label": "LOC",
+      "start": 326,
+      "end": 333
+    },
+    {
+      "entity": "Dnipro River",
+      "label": "LOC",
+      "start": 346,
+      "end": 358
+    },
+    {
+      "entity": "Zaporizhzhia Nuclear Power Plant",
+      "label": "LOC",
+      "start": 368,
+      "end": 400
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Volyn",
+      "label": "LOC",
+      "start": 51,
+      "end": 56
+    },
+    {
+      "entity": "Dnipropetrovsk",
+      "label": "LOC",
+      "start": 78,
+      "end": 92
+    },
+    {
+      "entity": "Zhytomyr",
+      "label": "LOC",
+      "start": 153,
+      "end": 161
+    },
+    {
+      "entity": "Sumy Oblast",
+      "label": "LOC",
+      "start": 284,
+      "end": 295
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 311,
+      "end": 317
+    },
+    {
+      "entity": "Nikopol",
+      "label": "LOC",
+      "start": 326,
+      "end": 333
+    },
+    {
+      "entity": "Dnipro River",
+      "label": "LOC",
+      "start": 346,
+      "end": 358
+    },
+    {
+      "entity": "Zaporizhzhia Nuclear Power Plant",
+      "label": "LOC",
+      "start": 368,
+      "end": 400
+    }
+  ],
+  "history": []
+}

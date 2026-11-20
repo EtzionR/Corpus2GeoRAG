@@ -1,0 +1,70 @@
+{
+  "comparison_row_id": 3443,
+  "Source": "Special Operations Forces (Russia)",
+  "Index": 68,
+  "Text": "VSS Vintorez",
+  "reviewed_at_utc": "2026-11-04T07:44:50.153263+00:00",
+  "original_predictions": [
+    {
+      "entity": "VSS Vintorez",
+      "label": "ORG",
+      "start": 0,
+      "end": 12
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "VSS Vintorez",
+      "label": "MISC",
+      "start": 0,
+      "end": 12
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "VSS Vintorez",
+      "label": "MISC",
+      "start": 0,
+      "end": 12
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "VSS Vintorez",
+      "label": "MISC",
+      "start": 0,
+      "end": 12
+    }
+  ],
+  "gold": [
+    {
+      "entity": "VSS Vintorez",
+      "label": "MISC",
+      "start": 0,
+      "end": 12
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "label 1 MISC",
+      "before": [
+        {
+          "entity": "VSS Vintorez",
+          "label": "ORG",
+          "start": 0,
+          "end": 12
+        }
+      ],
+      "after": [
+        {
+          "entity": "VSS Vintorez",
+          "label": "MISC",
+          "start": 0,
+          "end": 12
+        }
+      ],
+      "at_utc": "2026-11-04T07:44:39.923526+00:00"
+    }
+  ]
+}

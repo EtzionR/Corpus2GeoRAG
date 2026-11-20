@@ -1,0 +1,82 @@
+{
+  "comparison_row_id": 893,
+  "Source": "Anti-Russian sentiment",
+  "Index": 177,
+  "Text": " Media related to Anti-Russian sentiment at Wikimedia Commons",
+  "reviewed_at_utc": "2026-11-04T06:32:17.244522+00:00",
+  "original_predictions": [
+    {
+      "entity": "Anti-Russian",
+      "label": "MISC",
+      "start": 18,
+      "end": 30
+    },
+    {
+      "entity": "Wikimedia Commons",
+      "label": "ORG",
+      "start": 44,
+      "end": 61
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Wikimedia Commons",
+      "label": "ORG",
+      "start": 44,
+      "end": 61
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Wikimedia Commons",
+      "label": "ORG",
+      "start": 44,
+      "end": 61
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Wikimedia Commons",
+      "label": "ORG",
+      "start": 44,
+      "end": 61
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Wikimedia Commons",
+      "label": "ORG",
+      "start": 44,
+      "end": 61
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "del 1",
+      "before": [
+        {
+          "entity": "Anti-Russian",
+          "label": "MISC",
+          "start": 18,
+          "end": 30
+        },
+        {
+          "entity": "Wikimedia Commons",
+          "label": "ORG",
+          "start": 44,
+          "end": 61
+        }
+      ],
+      "after": [
+        {
+          "entity": "Wikimedia Commons",
+          "label": "ORG",
+          "start": 44,
+          "end": 61
+        }
+      ],
+      "at_utc": "2026-11-04T06:31:55.320267+00:00"
+    }
+  ]
+}

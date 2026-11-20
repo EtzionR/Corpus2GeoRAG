@@ -1,0 +1,103 @@
+{
+  "comparison_row_id": 3153,
+  "Source": "Russian armoured train Amur",
+  "Index": 12,
+  "Text": "Russo-Ukrainian War",
+  "reviewed_at_utc": "2026-11-04T07:27:34.976439+00:00",
+  "original_predictions": [
+    {
+      "entity": "Russo",
+      "label": "MISC",
+      "start": 0,
+      "end": 5
+    },
+    {
+      "entity": "Ukrainian War",
+      "label": "MISC",
+      "start": 6,
+      "end": 19
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Russo-Ukrainian War",
+      "label": "MISC",
+      "start": 0,
+      "end": 19
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Russo-Ukrainian War",
+      "label": "MISC",
+      "start": 0,
+      "end": 19
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Russo-Ukrainian War",
+      "label": "MISC",
+      "start": 0,
+      "end": 19
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Russo-Ukrainian War",
+      "label": "MISC",
+      "start": 0,
+      "end": 19
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "del 2",
+      "before": [
+        {
+          "entity": "Russo",
+          "label": "MISC",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "entity": "Ukrainian War",
+          "label": "MISC",
+          "start": 6,
+          "end": 19
+        }
+      ],
+      "after": [
+        {
+          "entity": "Russo",
+          "label": "MISC",
+          "start": 0,
+          "end": 5
+        }
+      ],
+      "at_utc": "2026-11-04T07:27:25.997650+00:00"
+    },
+    {
+      "model": "original",
+      "command": "span 1 | Russo-Ukrainian War | 1",
+      "before": [
+        {
+          "entity": "Russo",
+          "label": "MISC",
+          "start": 0,
+          "end": 5
+        }
+      ],
+      "after": [
+        {
+          "entity": "Russo-Ukrainian War",
+          "label": "MISC",
+          "start": 0,
+          "end": 19
+        }
+      ],
+      "at_utc": "2026-11-04T07:27:31.152741+00:00"
+    }
+  ]
+}

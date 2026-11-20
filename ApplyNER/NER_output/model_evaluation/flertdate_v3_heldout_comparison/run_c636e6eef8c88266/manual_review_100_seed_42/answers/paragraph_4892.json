@@ -1,0 +1,1441 @@
+{
+  "comparison_row_id": 4892,
+  "Source": "Vladimir Putin speech on invading Ukraine",
+  "Index": 8,
+  "Text": "Putin announced the start of a \"special military operation\" in the Donbas region, citing Article 51 of the UN Charter (on the right to self-defence), the decision of the Federation Council on the use of Russian troops in Ukraine and agreements with the Donetsk People's Republic (DPR) and Luhansk People's Republic (LPR). He said:",
+  "reviewed_at_utc": "2026-11-04T07:26:29.889218+00:00",
+  "original_predictions": [
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 0,
+      "end": 5
+    },
+    {
+      "entity": "Donbas",
+      "label": "LOC",
+      "start": 67,
+      "end": 73
+    },
+    {
+      "entity": "Article",
+      "label": "MISC",
+      "start": 89,
+      "end": 96
+    },
+    {
+      "entity": "UN Charter",
+      "label": "MISC",
+      "start": 107,
+      "end": 117
+    },
+    {
+      "entity": "Federation Council",
+      "label": "ORG",
+      "start": 170,
+      "end": 188
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 203,
+      "end": 210
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 221,
+      "end": 228
+    },
+    {
+      "entity": "Donetsk People's Republic",
+      "label": "LOC",
+      "start": 253,
+      "end": 278
+    },
+    {
+      "entity": "DPR",
+      "label": "ORG",
+      "start": 280,
+      "end": 283
+    },
+    {
+      "entity": "Luhansk People's Republic",
+      "label": "LOC",
+      "start": 289,
+      "end": 314
+    },
+    {
+      "entity": "LPR",
+      "label": "ORG",
+      "start": 316,
+      "end": 319
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 0,
+      "end": 5
+    },
+    {
+      "entity": "Donbas",
+      "label": "LOC",
+      "start": 67,
+      "end": 73
+    },
+    {
+      "entity": "UN Charter",
+      "label": "MISC",
+      "start": 107,
+      "end": 117
+    },
+    {
+      "entity": "Federation Council",
+      "label": "ORG",
+      "start": 170,
+      "end": 188
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 221,
+      "end": 228
+    },
+    {
+      "entity": "Donetsk People's Republic",
+      "label": "LOC",
+      "start": 253,
+      "end": 278
+    },
+    {
+      "entity": "DPR",
+      "label": "ORG",
+      "start": 280,
+      "end": 283
+    },
+    {
+      "entity": "Luhansk People's Republic",
+      "label": "LOC",
+      "start": 289,
+      "end": 314
+    },
+    {
+      "entity": "LPR",
+      "label": "ORG",
+      "start": 316,
+      "end": 319
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 0,
+      "end": 5
+    },
+    {
+      "entity": "Donbas",
+      "label": "LOC",
+      "start": 67,
+      "end": 73
+    },
+    {
+      "entity": "Article 51",
+      "label": "MISC",
+      "start": 89,
+      "end": 99
+    },
+    {
+      "entity": "UN Charter",
+      "label": "MISC",
+      "start": 107,
+      "end": 117
+    },
+    {
+      "entity": "Federation Council",
+      "label": "ORG",
+      "start": 170,
+      "end": 188
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 203,
+      "end": 210
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 221,
+      "end": 228
+    },
+    {
+      "entity": "Donetsk People's Republic",
+      "label": "LOC",
+      "start": 253,
+      "end": 278
+    },
+    {
+      "entity": "DPR",
+      "label": "LOC",
+      "start": 280,
+      "end": 283
+    },
+    {
+      "entity": "Luhansk People's Republic",
+      "label": "LOC",
+      "start": 289,
+      "end": 314
+    },
+    {
+      "entity": "LPR",
+      "label": "LOC",
+      "start": 316,
+      "end": 319
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 0,
+      "end": 5
+    },
+    {
+      "entity": "Donbas",
+      "label": "LOC",
+      "start": 67,
+      "end": 73
+    },
+    {
+      "entity": "Article 51",
+      "label": "MISC",
+      "start": 89,
+      "end": 99
+    },
+    {
+      "entity": "UN Charter",
+      "label": "MISC",
+      "start": 107,
+      "end": 117
+    },
+    {
+      "entity": "Federation Council",
+      "label": "ORG",
+      "start": 170,
+      "end": 188
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 203,
+      "end": 210
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 221,
+      "end": 228
+    },
+    {
+      "entity": "Donetsk People's Republic",
+      "label": "LOC",
+      "start": 253,
+      "end": 278
+    },
+    {
+      "entity": "DPR",
+      "label": "LOC",
+      "start": 280,
+      "end": 283
+    },
+    {
+      "entity": "Luhansk People's Republic",
+      "label": "LOC",
+      "start": 289,
+      "end": 314
+    },
+    {
+      "entity": "LPR",
+      "label": "LOC",
+      "start": 316,
+      "end": 319
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Putin",
+      "label": "PER",
+      "start": 0,
+      "end": 5
+    },
+    {
+      "entity": "Donbas",
+      "label": "LOC",
+      "start": 67,
+      "end": 73
+    },
+    {
+      "entity": "Article 51",
+      "label": "MISC",
+      "start": 89,
+      "end": 99
+    },
+    {
+      "entity": "UN Charter",
+      "label": "MISC",
+      "start": 107,
+      "end": 117
+    },
+    {
+      "entity": "Federation Council",
+      "label": "ORG",
+      "start": 170,
+      "end": 188
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 203,
+      "end": 210
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 221,
+      "end": 228
+    },
+    {
+      "entity": "Donetsk People's Republic",
+      "label": "LOC",
+      "start": 253,
+      "end": 278
+    },
+    {
+      "entity": "DPR",
+      "label": "LOC",
+      "start": 280,
+      "end": 283
+    },
+    {
+      "entity": "Luhansk People's Republic",
+      "label": "LOC",
+      "start": 289,
+      "end": 314
+    },
+    {
+      "entity": "LPR",
+      "label": "LOC",
+      "start": 316,
+      "end": 319
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "span 3 | Article 51 | 1",
+      "before": [
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 67,
+          "end": 73
+        },
+        {
+          "entity": "Article",
+          "label": "MISC",
+          "start": 89,
+          "end": 96
+        },
+        {
+          "entity": "UN Charter",
+          "label": "MISC",
+          "start": 107,
+          "end": 117
+        },
+        {
+          "entity": "Federation Council",
+          "label": "ORG",
+          "start": 170,
+          "end": 188
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 203,
+          "end": 210
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 221,
+          "end": 228
+        },
+        {
+          "entity": "Donetsk People's Republic",
+          "label": "LOC",
+          "start": 253,
+          "end": 278
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 280,
+          "end": 283
+        },
+        {
+          "entity": "Luhansk People's Republic",
+          "label": "LOC",
+          "start": 289,
+          "end": 314
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 316,
+          "end": 319
+        }
+      ],
+      "after": [
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 67,
+          "end": 73
+        },
+        {
+          "entity": "Article 51",
+          "label": "MISC",
+          "start": 89,
+          "end": 99
+        },
+        {
+          "entity": "UN Charter",
+          "label": "MISC",
+          "start": 107,
+          "end": 117
+        },
+        {
+          "entity": "Federation Council",
+          "label": "ORG",
+          "start": 170,
+          "end": 188
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 203,
+          "end": 210
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 221,
+          "end": 228
+        },
+        {
+          "entity": "Donetsk People's Republic",
+          "label": "LOC",
+          "start": 253,
+          "end": 278
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 280,
+          "end": 283
+        },
+        {
+          "entity": "Luhansk People's Republic",
+          "label": "LOC",
+          "start": 289,
+          "end": 314
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 316,
+          "end": 319
+        }
+      ],
+      "at_utc": "2026-11-04T07:25:18.115879+00:00"
+    },
+    {
+      "model": "original",
+      "command": "label 9 LOC",
+      "before": [
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 67,
+          "end": 73
+        },
+        {
+          "entity": "Article 51",
+          "label": "MISC",
+          "start": 89,
+          "end": 99
+        },
+        {
+          "entity": "UN Charter",
+          "label": "MISC",
+          "start": 107,
+          "end": 117
+        },
+        {
+          "entity": "Federation Council",
+          "label": "ORG",
+          "start": 170,
+          "end": 188
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 203,
+          "end": 210
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 221,
+          "end": 228
+        },
+        {
+          "entity": "Donetsk People's Republic",
+          "label": "LOC",
+          "start": 253,
+          "end": 278
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 280,
+          "end": 283
+        },
+        {
+          "entity": "Luhansk People's Republic",
+          "label": "LOC",
+          "start": 289,
+          "end": 314
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 316,
+          "end": 319
+        }
+      ],
+      "after": [
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 67,
+          "end": 73
+        },
+        {
+          "entity": "Article 51",
+          "label": "MISC",
+          "start": 89,
+          "end": 99
+        },
+        {
+          "entity": "UN Charter",
+          "label": "MISC",
+          "start": 107,
+          "end": 117
+        },
+        {
+          "entity": "Federation Council",
+          "label": "ORG",
+          "start": 170,
+          "end": 188
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 203,
+          "end": 210
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 221,
+          "end": 228
+        },
+        {
+          "entity": "Donetsk People's Republic",
+          "label": "LOC",
+          "start": 253,
+          "end": 278
+        },
+        {
+          "entity": "DPR",
+          "label": "LOC",
+          "start": 280,
+          "end": 283
+        },
+        {
+          "entity": "Luhansk People's Republic",
+          "label": "LOC",
+          "start": 289,
+          "end": 314
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 316,
+          "end": 319
+        }
+      ],
+      "at_utc": "2026-11-04T07:25:23.042926+00:00"
+    },
+    {
+      "model": "original",
+      "command": "label 11 LOC",
+      "before": [
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 67,
+          "end": 73
+        },
+        {
+          "entity": "Article 51",
+          "label": "MISC",
+          "start": 89,
+          "end": 99
+        },
+        {
+          "entity": "UN Charter",
+          "label": "MISC",
+          "start": 107,
+          "end": 117
+        },
+        {
+          "entity": "Federation Council",
+          "label": "ORG",
+          "start": 170,
+          "end": 188
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 203,
+          "end": 210
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 221,
+          "end": 228
+        },
+        {
+          "entity": "Donetsk People's Republic",
+          "label": "LOC",
+          "start": 253,
+          "end": 278
+        },
+        {
+          "entity": "DPR",
+          "label": "LOC",
+          "start": 280,
+          "end": 283
+        },
+        {
+          "entity": "Luhansk People's Republic",
+          "label": "LOC",
+          "start": 289,
+          "end": 314
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 316,
+          "end": 319
+        }
+      ],
+      "after": [
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 67,
+          "end": 73
+        },
+        {
+          "entity": "Article 51",
+          "label": "MISC",
+          "start": 89,
+          "end": 99
+        },
+        {
+          "entity": "UN Charter",
+          "label": "MISC",
+          "start": 107,
+          "end": 117
+        },
+        {
+          "entity": "Federation Council",
+          "label": "ORG",
+          "start": 170,
+          "end": 188
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 203,
+          "end": 210
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 221,
+          "end": 228
+        },
+        {
+          "entity": "Donetsk People's Republic",
+          "label": "LOC",
+          "start": 253,
+          "end": 278
+        },
+        {
+          "entity": "DPR",
+          "label": "LOC",
+          "start": 280,
+          "end": 283
+        },
+        {
+          "entity": "Luhansk People's Republic",
+          "label": "LOC",
+          "start": 289,
+          "end": 314
+        },
+        {
+          "entity": "LPR",
+          "label": "LOC",
+          "start": 316,
+          "end": 319
+        }
+      ],
+      "at_utc": "2026-11-04T07:25:27.668189+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add MISC | Article 51 | 1",
+      "before": [
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 67,
+          "end": 73
+        },
+        {
+          "entity": "UN Charter",
+          "label": "MISC",
+          "start": 107,
+          "end": 117
+        },
+        {
+          "entity": "Federation Council",
+          "label": "ORG",
+          "start": 170,
+          "end": 188
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 221,
+          "end": 228
+        },
+        {
+          "entity": "Donetsk People's Republic",
+          "label": "LOC",
+          "start": 253,
+          "end": 278
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 280,
+          "end": 283
+        },
+        {
+          "entity": "Luhansk People's Republic",
+          "label": "LOC",
+          "start": 289,
+          "end": 314
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 316,
+          "end": 319
+        }
+      ],
+      "after": [
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 67,
+          "end": 73
+        },
+        {
+          "entity": "Article 51",
+          "label": "MISC",
+          "start": 89,
+          "end": 99
+        },
+        {
+          "entity": "UN Charter",
+          "label": "MISC",
+          "start": 107,
+          "end": 117
+        },
+        {
+          "entity": "Federation Council",
+          "label": "ORG",
+          "start": 170,
+          "end": 188
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 221,
+          "end": 228
+        },
+        {
+          "entity": "Donetsk People's Republic",
+          "label": "LOC",
+          "start": 253,
+          "end": 278
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 280,
+          "end": 283
+        },
+        {
+          "entity": "Luhansk People's Republic",
+          "label": "LOC",
+          "start": 289,
+          "end": 314
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 316,
+          "end": 319
+        }
+      ],
+      "at_utc": "2026-11-04T07:25:33.114451+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add MISC | Russian | 1",
+      "before": [
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 67,
+          "end": 73
+        },
+        {
+          "entity": "Article 51",
+          "label": "MISC",
+          "start": 89,
+          "end": 99
+        },
+        {
+          "entity": "UN Charter",
+          "label": "MISC",
+          "start": 107,
+          "end": 117
+        },
+        {
+          "entity": "Federation Council",
+          "label": "ORG",
+          "start": 170,
+          "end": 188
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 221,
+          "end": 228
+        },
+        {
+          "entity": "Donetsk People's Republic",
+          "label": "LOC",
+          "start": 253,
+          "end": 278
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 280,
+          "end": 283
+        },
+        {
+          "entity": "Luhansk People's Republic",
+          "label": "LOC",
+          "start": 289,
+          "end": 314
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 316,
+          "end": 319
+        }
+      ],
+      "after": [
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 67,
+          "end": 73
+        },
+        {
+          "entity": "Article 51",
+          "label": "MISC",
+          "start": 89,
+          "end": 99
+        },
+        {
+          "entity": "UN Charter",
+          "label": "MISC",
+          "start": 107,
+          "end": 117
+        },
+        {
+          "entity": "Federation Council",
+          "label": "ORG",
+          "start": 170,
+          "end": 188
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 203,
+          "end": 210
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 221,
+          "end": 228
+        },
+        {
+          "entity": "Donetsk People's Republic",
+          "label": "LOC",
+          "start": 253,
+          "end": 278
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 280,
+          "end": 283
+        },
+        {
+          "entity": "Luhansk People's Republic",
+          "label": "LOC",
+          "start": 289,
+          "end": 314
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 316,
+          "end": 319
+        }
+      ],
+      "at_utc": "2026-11-04T07:25:37.151486+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "label 7 LOC",
+      "before": [
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 67,
+          "end": 73
+        },
+        {
+          "entity": "Article 51",
+          "label": "MISC",
+          "start": 89,
+          "end": 99
+        },
+        {
+          "entity": "UN Charter",
+          "label": "MISC",
+          "start": 107,
+          "end": 117
+        },
+        {
+          "entity": "Federation Council",
+          "label": "ORG",
+          "start": 170,
+          "end": 188
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 203,
+          "end": 210
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 221,
+          "end": 228
+        },
+        {
+          "entity": "Donetsk People's Republic",
+          "label": "LOC",
+          "start": 253,
+          "end": 278
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 280,
+          "end": 283
+        },
+        {
+          "entity": "Luhansk People's Republic",
+          "label": "LOC",
+          "start": 289,
+          "end": 314
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 316,
+          "end": 319
+        }
+      ],
+      "after": [
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 67,
+          "end": 73
+        },
+        {
+          "entity": "Article 51",
+          "label": "MISC",
+          "start": 89,
+          "end": 99
+        },
+        {
+          "entity": "UN Charter",
+          "label": "MISC",
+          "start": 107,
+          "end": 117
+        },
+        {
+          "entity": "Federation Council",
+          "label": "ORG",
+          "start": 170,
+          "end": 188
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 203,
+          "end": 210
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 221,
+          "end": 228
+        },
+        {
+          "entity": "Donetsk People's Republic",
+          "label": "LOC",
+          "start": 253,
+          "end": 278
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 280,
+          "end": 283
+        },
+        {
+          "entity": "Luhansk People's Republic",
+          "label": "LOC",
+          "start": 289,
+          "end": 314
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 316,
+          "end": 319
+        }
+      ],
+      "at_utc": "2026-11-04T07:25:43.534155+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "label 9 LOC",
+      "before": [
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 67,
+          "end": 73
+        },
+        {
+          "entity": "Article 51",
+          "label": "MISC",
+          "start": 89,
+          "end": 99
+        },
+        {
+          "entity": "UN Charter",
+          "label": "MISC",
+          "start": 107,
+          "end": 117
+        },
+        {
+          "entity": "Federation Council",
+          "label": "ORG",
+          "start": 170,
+          "end": 188
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 203,
+          "end": 210
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 221,
+          "end": 228
+        },
+        {
+          "entity": "Donetsk People's Republic",
+          "label": "LOC",
+          "start": 253,
+          "end": 278
+        },
+        {
+          "entity": "DPR",
+          "label": "ORG",
+          "start": 280,
+          "end": 283
+        },
+        {
+          "entity": "Luhansk People's Republic",
+          "label": "LOC",
+          "start": 289,
+          "end": 314
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 316,
+          "end": 319
+        }
+      ],
+      "after": [
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 67,
+          "end": 73
+        },
+        {
+          "entity": "Article 51",
+          "label": "MISC",
+          "start": 89,
+          "end": 99
+        },
+        {
+          "entity": "UN Charter",
+          "label": "MISC",
+          "start": 107,
+          "end": 117
+        },
+        {
+          "entity": "Federation Council",
+          "label": "ORG",
+          "start": 170,
+          "end": 188
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 203,
+          "end": 210
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 221,
+          "end": 228
+        },
+        {
+          "entity": "Donetsk People's Republic",
+          "label": "LOC",
+          "start": 253,
+          "end": 278
+        },
+        {
+          "entity": "DPR",
+          "label": "LOC",
+          "start": 280,
+          "end": 283
+        },
+        {
+          "entity": "Luhansk People's Republic",
+          "label": "LOC",
+          "start": 289,
+          "end": 314
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 316,
+          "end": 319
+        }
+      ],
+      "at_utc": "2026-11-04T07:25:47.562738+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "label 11 LOC",
+      "before": [
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 67,
+          "end": 73
+        },
+        {
+          "entity": "Article 51",
+          "label": "MISC",
+          "start": 89,
+          "end": 99
+        },
+        {
+          "entity": "UN Charter",
+          "label": "MISC",
+          "start": 107,
+          "end": 117
+        },
+        {
+          "entity": "Federation Council",
+          "label": "ORG",
+          "start": 170,
+          "end": 188
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 203,
+          "end": 210
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 221,
+          "end": 228
+        },
+        {
+          "entity": "Donetsk People's Republic",
+          "label": "LOC",
+          "start": 253,
+          "end": 278
+        },
+        {
+          "entity": "DPR",
+          "label": "LOC",
+          "start": 280,
+          "end": 283
+        },
+        {
+          "entity": "Luhansk People's Republic",
+          "label": "LOC",
+          "start": 289,
+          "end": 314
+        },
+        {
+          "entity": "LPR",
+          "label": "ORG",
+          "start": 316,
+          "end": 319
+        }
+      ],
+      "after": [
+        {
+          "entity": "Putin",
+          "label": "PER",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 67,
+          "end": 73
+        },
+        {
+          "entity": "Article 51",
+          "label": "MISC",
+          "start": 89,
+          "end": 99
+        },
+        {
+          "entity": "UN Charter",
+          "label": "MISC",
+          "start": 107,
+          "end": 117
+        },
+        {
+          "entity": "Federation Council",
+          "label": "ORG",
+          "start": 170,
+          "end": 188
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 203,
+          "end": 210
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 221,
+          "end": 228
+        },
+        {
+          "entity": "Donetsk People's Republic",
+          "label": "LOC",
+          "start": 253,
+          "end": 278
+        },
+        {
+          "entity": "DPR",
+          "label": "LOC",
+          "start": 280,
+          "end": 283
+        },
+        {
+          "entity": "Luhansk People's Republic",
+          "label": "LOC",
+          "start": 289,
+          "end": 314
+        },
+        {
+          "entity": "LPR",
+          "label": "LOC",
+          "start": 316,
+          "end": 319
+        }
+      ],
+      "at_utc": "2026-11-04T07:26:27.309563+00:00"
+    }
+  ]
+}

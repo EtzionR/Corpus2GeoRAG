@@ -1,0 +1,468 @@
+{
+  "comparison_row_id": 915,
+  "Source": "Battle of Antonov Airport",
+  "Index": 21,
+  "Text": "Journalist Andreas Rüesch also argued that the Battle of Antonov Airport, alongside other battles during the invasion, disproved the myth of the extreme capabilities and near-invincibility of the Russian Airborne Forces, claims which had been extensively fostered by propaganda in Russia. In reference to the first day of fighting, Pleyer described the battle as the worst defeat inflicted on the Russian Airborne Forces in recent history. Citing Ukrainian sources and a captured Russian paratrooper, The Moscow Times later reported that at least 60 soldiers from the 31st Guards Air Assault Brigade were killed during the battle for the airport. The New York Times reported that, according to \"senior American and Ukrainian officials and the captured Russian logbook\", about 300 Russian paratroopers were killed in the battle overall.",
+  "reviewed_at_utc": "2026-11-04T07:43:04.602227+00:00",
+  "original_predictions": [
+    {
+      "entity": "Andreas Rüesch",
+      "label": "PER",
+      "start": 11,
+      "end": 25
+    },
+    {
+      "entity": "Battle of Antonov Airport",
+      "label": "MISC",
+      "start": 47,
+      "end": 72
+    },
+    {
+      "entity": "Russian Airborne Forces",
+      "label": "ORG",
+      "start": 196,
+      "end": 219
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 281,
+      "end": 287
+    },
+    {
+      "entity": "Pleyer",
+      "label": "PER",
+      "start": 332,
+      "end": 338
+    },
+    {
+      "entity": "Russian Airborne Forces",
+      "label": "ORG",
+      "start": 397,
+      "end": 420
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 447,
+      "end": 456
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 480,
+      "end": 487
+    },
+    {
+      "entity": "The Moscow Times",
+      "label": "ORG",
+      "start": 501,
+      "end": 517
+    },
+    {
+      "entity": "31st Guards Air Assault Brigade",
+      "label": "ORG",
+      "start": 568,
+      "end": 599
+    },
+    {
+      "entity": "The New York Times",
+      "label": "ORG",
+      "start": 647,
+      "end": 665
+    },
+    {
+      "entity": "American",
+      "label": "MISC",
+      "start": 702,
+      "end": 710
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 715,
+      "end": 724
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 752,
+      "end": 759
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 780,
+      "end": 787
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Andreas Rüesch",
+      "label": "PER",
+      "start": 11,
+      "end": 25
+    },
+    {
+      "entity": "Battle of Antonov Airport",
+      "label": "MISC",
+      "start": 47,
+      "end": 72
+    },
+    {
+      "entity": "Russian Airborne Forces",
+      "label": "ORG",
+      "start": 196,
+      "end": 219
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 281,
+      "end": 287
+    },
+    {
+      "entity": "Pleyer",
+      "label": "PER",
+      "start": 332,
+      "end": 338
+    },
+    {
+      "entity": "Russian Airborne Forces",
+      "label": "ORG",
+      "start": 397,
+      "end": 420
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 447,
+      "end": 456
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 480,
+      "end": 487
+    },
+    {
+      "entity": "The Moscow Times",
+      "label": "ORG",
+      "start": 501,
+      "end": 517
+    },
+    {
+      "entity": "31st Guards Air Assault Brigade",
+      "label": "ORG",
+      "start": 568,
+      "end": 599
+    },
+    {
+      "entity": "The New York Times",
+      "label": "ORG",
+      "start": 647,
+      "end": 665
+    },
+    {
+      "entity": "American",
+      "label": "MISC",
+      "start": 702,
+      "end": 710
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 715,
+      "end": 724
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 752,
+      "end": 759
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 780,
+      "end": 787
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Andreas Rüesch",
+      "label": "PER",
+      "start": 11,
+      "end": 25
+    },
+    {
+      "entity": "Battle of Antonov Airport",
+      "label": "MISC",
+      "start": 47,
+      "end": 72
+    },
+    {
+      "entity": "Russian Airborne Forces",
+      "label": "ORG",
+      "start": 196,
+      "end": 219
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 281,
+      "end": 287
+    },
+    {
+      "entity": "Pleyer",
+      "label": "PER",
+      "start": 332,
+      "end": 338
+    },
+    {
+      "entity": "Russian Airborne Forces",
+      "label": "ORG",
+      "start": 397,
+      "end": 420
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 447,
+      "end": 456
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 480,
+      "end": 487
+    },
+    {
+      "entity": "The Moscow Times",
+      "label": "ORG",
+      "start": 501,
+      "end": 517
+    },
+    {
+      "entity": "31st Guards Air Assault Brigade",
+      "label": "ORG",
+      "start": 568,
+      "end": 599
+    },
+    {
+      "entity": "The New York Times",
+      "label": "ORG",
+      "start": 647,
+      "end": 665
+    },
+    {
+      "entity": "American",
+      "label": "MISC",
+      "start": 702,
+      "end": 710
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 715,
+      "end": 724
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 752,
+      "end": 759
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 780,
+      "end": 787
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Andreas Rüesch",
+      "label": "PER",
+      "start": 11,
+      "end": 25
+    },
+    {
+      "entity": "Battle of Antonov Airport",
+      "label": "MISC",
+      "start": 47,
+      "end": 72
+    },
+    {
+      "entity": "Russian Airborne Forces",
+      "label": "ORG",
+      "start": 196,
+      "end": 219
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 281,
+      "end": 287
+    },
+    {
+      "entity": "Pleyer",
+      "label": "PER",
+      "start": 332,
+      "end": 338
+    },
+    {
+      "entity": "Russian Airborne Forces",
+      "label": "ORG",
+      "start": 397,
+      "end": 420
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 447,
+      "end": 456
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 480,
+      "end": 487
+    },
+    {
+      "entity": "The Moscow Times",
+      "label": "ORG",
+      "start": 501,
+      "end": 517
+    },
+    {
+      "entity": "31st Guards Air Assault Brigade",
+      "label": "ORG",
+      "start": 568,
+      "end": 599
+    },
+    {
+      "entity": "The New York Times",
+      "label": "ORG",
+      "start": 647,
+      "end": 665
+    },
+    {
+      "entity": "American",
+      "label": "MISC",
+      "start": 702,
+      "end": 710
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 715,
+      "end": 724
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 752,
+      "end": 759
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 780,
+      "end": 787
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Andreas Rüesch",
+      "label": "PER",
+      "start": 11,
+      "end": 25
+    },
+    {
+      "entity": "Battle of Antonov Airport",
+      "label": "MISC",
+      "start": 47,
+      "end": 72
+    },
+    {
+      "entity": "Russian Airborne Forces",
+      "label": "ORG",
+      "start": 196,
+      "end": 219
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 281,
+      "end": 287
+    },
+    {
+      "entity": "Pleyer",
+      "label": "PER",
+      "start": 332,
+      "end": 338
+    },
+    {
+      "entity": "Russian Airborne Forces",
+      "label": "ORG",
+      "start": 397,
+      "end": 420
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 447,
+      "end": 456
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 480,
+      "end": 487
+    },
+    {
+      "entity": "The Moscow Times",
+      "label": "ORG",
+      "start": 501,
+      "end": 517
+    },
+    {
+      "entity": "31st Guards Air Assault Brigade",
+      "label": "ORG",
+      "start": 568,
+      "end": 599
+    },
+    {
+      "entity": "The New York Times",
+      "label": "ORG",
+      "start": 647,
+      "end": 665
+    },
+    {
+      "entity": "American",
+      "label": "MISC",
+      "start": 702,
+      "end": 710
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 715,
+      "end": 724
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 752,
+      "end": 759
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 780,
+      "end": 787
+    }
+  ],
+  "history": []
+}

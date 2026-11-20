@@ -1,0 +1,259 @@
+{
+  "comparison_row_id": 23,
+  "Source": "118th Mechanized Brigade (Ukraine)",
+  "Index": 0,
+  "Text": "The 118th Mechanized Brigade (Ukrainian: 118-та окрема механізована бригада) is a brigade of the Ukrainian Ground Forces formed in 2023.",
+  "reviewed_at_utc": "2026-11-04T06:44:36.043470+00:00",
+  "original_predictions": [
+    {
+      "entity": "118th Mechanized Brigade",
+      "label": "ORG",
+      "start": 4,
+      "end": 28
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 30,
+      "end": 39
+    },
+    {
+      "entity": "Ukrainian Ground Forces",
+      "label": "ORG",
+      "start": 97,
+      "end": 120
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "118th Mechanized Brigade",
+      "label": "ORG",
+      "start": 4,
+      "end": 28
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 30,
+      "end": 39
+    },
+    {
+      "entity": "Ukrainian Ground Forces",
+      "label": "ORG",
+      "start": 97,
+      "end": 120
+    },
+    {
+      "entity": "2023",
+      "label": "DATE",
+      "start": 131,
+      "end": 135
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "118th Mechanized Brigade",
+      "label": "ORG",
+      "start": 4,
+      "end": 28
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 30,
+      "end": 39
+    },
+    {
+      "entity": "118-та окрема механізована бригада",
+      "label": "ORG",
+      "start": 41,
+      "end": 75
+    },
+    {
+      "entity": "Ukrainian Ground Forces",
+      "label": "ORG",
+      "start": 97,
+      "end": 120
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "118th Mechanized Brigade",
+      "label": "ORG",
+      "start": 4,
+      "end": 28
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 30,
+      "end": 39
+    },
+    {
+      "entity": "118-та окрема механізована бригада",
+      "label": "ORG",
+      "start": 41,
+      "end": 75
+    },
+    {
+      "entity": "Ukrainian Ground Forces",
+      "label": "ORG",
+      "start": 97,
+      "end": 120
+    },
+    {
+      "entity": "2023",
+      "label": "DATE",
+      "start": 131,
+      "end": 135
+    }
+  ],
+  "gold": [
+    {
+      "entity": "118th Mechanized Brigade",
+      "label": "ORG",
+      "start": 4,
+      "end": 28
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 30,
+      "end": 39
+    },
+    {
+      "entity": "118-та окрема механізована бригада",
+      "label": "ORG",
+      "start": 41,
+      "end": 75
+    },
+    {
+      "entity": "Ukrainian Ground Forces",
+      "label": "ORG",
+      "start": 97,
+      "end": 120
+    },
+    {
+      "entity": "2023",
+      "label": "DATE",
+      "start": 131,
+      "end": 135
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "add ORG | 118-та окрема механізована бригада | 1",
+      "before": [
+        {
+          "entity": "118th Mechanized Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 28
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 30,
+          "end": 39
+        },
+        {
+          "entity": "Ukrainian Ground Forces",
+          "label": "ORG",
+          "start": 97,
+          "end": 120
+        }
+      ],
+      "after": [
+        {
+          "entity": "118th Mechanized Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 28
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 30,
+          "end": 39
+        },
+        {
+          "entity": "118-та окрема механізована бригада",
+          "label": "ORG",
+          "start": 41,
+          "end": 75
+        },
+        {
+          "entity": "Ukrainian Ground Forces",
+          "label": "ORG",
+          "start": 97,
+          "end": 120
+        }
+      ],
+      "at_utc": "2026-11-04T06:44:24.687642+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add ORG | 118-та окрема механізована бригада | 1",
+      "before": [
+        {
+          "entity": "118th Mechanized Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 28
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 30,
+          "end": 39
+        },
+        {
+          "entity": "Ukrainian Ground Forces",
+          "label": "ORG",
+          "start": 97,
+          "end": 120
+        },
+        {
+          "entity": "2023",
+          "label": "DATE",
+          "start": 131,
+          "end": 135
+        }
+      ],
+      "after": [
+        {
+          "entity": "118th Mechanized Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 28
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 30,
+          "end": 39
+        },
+        {
+          "entity": "118-та окрема механізована бригада",
+          "label": "ORG",
+          "start": 41,
+          "end": 75
+        },
+        {
+          "entity": "Ukrainian Ground Forces",
+          "label": "ORG",
+          "start": 97,
+          "end": 120
+        },
+        {
+          "entity": "2023",
+          "label": "DATE",
+          "start": 131,
+          "end": 135
+        }
+      ],
+      "at_utc": "2026-11-04T06:44:33.738105+00:00"
+    }
+  ]
+}

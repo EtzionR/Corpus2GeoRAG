@@ -1,0 +1,56 @@
+{
+  "comparison_row_id": 3458,
+  "Source": "Special Operations Forces (Russia)",
+  "Index": 83,
+  "Text": "RPO PDM-A",
+  "reviewed_at_utc": "2026-11-04T06:45:09.230789+00:00",
+  "original_predictions": [],
+  "v3_predictions": [
+    {
+      "entity": "RPO PDM-A",
+      "label": "MISC",
+      "start": 0,
+      "end": 9
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "RPO PDM-A",
+      "label": "MISC",
+      "start": 0,
+      "end": 9
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "RPO PDM-A",
+      "label": "MISC",
+      "start": 0,
+      "end": 9
+    }
+  ],
+  "gold": [
+    {
+      "entity": "RPO PDM-A",
+      "label": "MISC",
+      "start": 0,
+      "end": 9
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "add MISC | RPO PDM-A | 1",
+      "before": [],
+      "after": [
+        {
+          "entity": "RPO PDM-A",
+          "label": "MISC",
+          "start": 0,
+          "end": 9
+        }
+      ],
+      "at_utc": "2026-11-04T06:45:01.499778+00:00"
+    }
+  ]
+}

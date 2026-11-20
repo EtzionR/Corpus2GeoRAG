@@ -1,0 +1,63 @@
+{
+  "comparison_row_id": 3482,
+  "Source": "Special Operations Forces (Russia)",
+  "Index": 108,
+  "Text": "6Sh117 LBV",
+  "reviewed_at_utc": "2026-11-04T07:10:42.246809+00:00",
+  "original_predictions": [],
+  "v3_predictions": [],
+  "corrected_original": [
+    {
+      "entity": "6Sh117 LBV",
+      "label": "MISC",
+      "start": 0,
+      "end": 10
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "6Sh117 LBV",
+      "label": "MISC",
+      "start": 0,
+      "end": 10
+    }
+  ],
+  "gold": [
+    {
+      "entity": "6Sh117 LBV",
+      "label": "MISC",
+      "start": 0,
+      "end": 10
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "add MISC | 6Sh117 LBV | 1",
+      "before": [],
+      "after": [
+        {
+          "entity": "6Sh117 LBV",
+          "label": "MISC",
+          "start": 0,
+          "end": 10
+        }
+      ],
+      "at_utc": "2026-11-04T07:10:34.165078+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add MISC | 6Sh117 LBV | 1",
+      "before": [],
+      "after": [
+        {
+          "entity": "6Sh117 LBV",
+          "label": "MISC",
+          "start": 0,
+          "end": 10
+        }
+      ],
+      "at_utc": "2026-11-04T07:10:36.702869+00:00"
+    }
+  ]
+}

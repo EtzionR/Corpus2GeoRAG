@@ -1,0 +1,1771 @@
+{
+  "comparison_row_id": 2351,
+  "Source": "Liut Brigade",
+  "Index": 0,
+  "Text": "The Liut Brigade (Ukrainian: бригади Лють, lit. 'Fury Brigade', also spelled Lyut; formally the Special Purpose Police Department \"United Assault Brigade of the National Police of Ukraine 'Liut'\"; Департамент поліції особливого призначення «Об'єднана штурмова бригада Національної поліції України „Лють“», abbr. ОШБ НПУ «Лють») is an assault brigade of the National Police of Ukraine formed on January 13, 2023, as a merger of three Special Purpose units from the War in Donbas.",
+  "reviewed_at_utc": "2026-11-04T07:55:01.896701+00:00",
+  "original_predictions": [
+    {
+      "entity": "Liut Brigade",
+      "label": "ORG",
+      "start": 4,
+      "end": 16
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 18,
+      "end": 27
+    },
+    {
+      "entity": "Fury Brigade",
+      "label": "ORG",
+      "start": 49,
+      "end": 61
+    },
+    {
+      "entity": "Lyut",
+      "label": "ORG",
+      "start": 77,
+      "end": 81
+    },
+    {
+      "entity": "Special Purpose Police Department",
+      "label": "ORG",
+      "start": 96,
+      "end": 129
+    },
+    {
+      "entity": "United Assault Brigade",
+      "label": "ORG",
+      "start": 131,
+      "end": 153
+    },
+    {
+      "entity": "National Police of Ukraine",
+      "label": "ORG",
+      "start": 161,
+      "end": 187
+    },
+    {
+      "entity": "Liut",
+      "label": "ORG",
+      "start": 189,
+      "end": 193
+    },
+    {
+      "entity": "Національної поліції України",
+      "label": "ORG",
+      "start": 268,
+      "end": 296
+    },
+    {
+      "entity": "Лють",
+      "label": "ORG",
+      "start": 298,
+      "end": 302
+    },
+    {
+      "entity": "Лють",
+      "label": "ORG",
+      "start": 321,
+      "end": 325
+    },
+    {
+      "entity": "National Police of Ukraine",
+      "label": "ORG",
+      "start": 357,
+      "end": 383
+    },
+    {
+      "entity": "Donbas",
+      "label": "LOC",
+      "start": 471,
+      "end": 477
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Liut Brigade",
+      "label": "ORG",
+      "start": 4,
+      "end": 16
+    },
+    {
+      "entity": "Lyut",
+      "label": "ORG",
+      "start": 77,
+      "end": 81
+    },
+    {
+      "entity": "Special Purpose Police Department",
+      "label": "ORG",
+      "start": 96,
+      "end": 129
+    },
+    {
+      "entity": "United Assault Brigade of the National Police of Ukraine",
+      "label": "ORG",
+      "start": 131,
+      "end": 187
+    },
+    {
+      "entity": "Liut",
+      "label": "ORG",
+      "start": 189,
+      "end": 193
+    },
+    {
+      "entity": "Об'єднана штурмова бригада Національної поліції України",
+      "label": "ORG",
+      "start": 241,
+      "end": 296
+    },
+    {
+      "entity": "Лють",
+      "label": "ORG",
+      "start": 298,
+      "end": 302
+    },
+    {
+      "entity": ",",
+      "label": "DATE",
+      "start": 304,
+      "end": 305
+    },
+    {
+      "entity": "Лють",
+      "label": "ORG",
+      "start": 321,
+      "end": 325
+    },
+    {
+      "entity": "National Police of Ukraine",
+      "label": "ORG",
+      "start": 357,
+      "end": 383
+    },
+    {
+      "entity": "January 13, 2023",
+      "label": "DATE",
+      "start": 394,
+      "end": 410
+    },
+    {
+      "entity": "War in Donbas",
+      "label": "MISC",
+      "start": 464,
+      "end": 477
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Liut Brigade",
+      "label": "ORG",
+      "start": 4,
+      "end": 16
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 18,
+      "end": 27
+    },
+    {
+      "entity": "бригади Лють",
+      "label": "ORG",
+      "start": 29,
+      "end": 41
+    },
+    {
+      "entity": "Fury Brigade",
+      "label": "ORG",
+      "start": 49,
+      "end": 61
+    },
+    {
+      "entity": "Lyut",
+      "label": "ORG",
+      "start": 77,
+      "end": 81
+    },
+    {
+      "entity": "Special Purpose Police Department \"United Assault Brigade of the National Police of Ukraine 'Liut'\"",
+      "label": "ORG",
+      "start": 96,
+      "end": 195
+    },
+    {
+      "entity": "Департамент поліції особливого призначення «Об'єднана штурмова бригада Національної поліції України „Лють“»",
+      "label": "ORG",
+      "start": 197,
+      "end": 304
+    },
+    {
+      "entity": "ОШБ НПУ «Лють»",
+      "label": "ORG",
+      "start": 312,
+      "end": 326
+    },
+    {
+      "entity": "National Police of Ukraine",
+      "label": "ORG",
+      "start": 357,
+      "end": 383
+    },
+    {
+      "entity": "War in Donbas",
+      "label": "MISC",
+      "start": 464,
+      "end": 477
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Liut Brigade",
+      "label": "ORG",
+      "start": 4,
+      "end": 16
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 18,
+      "end": 27
+    },
+    {
+      "entity": "бригади Лють",
+      "label": "ORG",
+      "start": 29,
+      "end": 41
+    },
+    {
+      "entity": "Fury Brigade",
+      "label": "ORG",
+      "start": 49,
+      "end": 61
+    },
+    {
+      "entity": "Lyut",
+      "label": "ORG",
+      "start": 77,
+      "end": 81
+    },
+    {
+      "entity": "Special Purpose Police Department \"United Assault Brigade of the National Police of Ukraine 'Liut'\"",
+      "label": "ORG",
+      "start": 96,
+      "end": 195
+    },
+    {
+      "entity": "Департамент поліції особливого призначення «Об'єднана штурмова бригада Національної поліції України „Лють“»",
+      "label": "ORG",
+      "start": 197,
+      "end": 304
+    },
+    {
+      "entity": "ОШБ НПУ «Лють»",
+      "label": "ORG",
+      "start": 312,
+      "end": 326
+    },
+    {
+      "entity": "National Police of Ukraine",
+      "label": "ORG",
+      "start": 357,
+      "end": 383
+    },
+    {
+      "entity": "January 13, 2023",
+      "label": "DATE",
+      "start": 394,
+      "end": 410
+    },
+    {
+      "entity": "War in Donbas",
+      "label": "MISC",
+      "start": 464,
+      "end": 477
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Liut Brigade",
+      "label": "ORG",
+      "start": 4,
+      "end": 16
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 18,
+      "end": 27
+    },
+    {
+      "entity": "бригади Лють",
+      "label": "ORG",
+      "start": 29,
+      "end": 41
+    },
+    {
+      "entity": "Fury Brigade",
+      "label": "ORG",
+      "start": 49,
+      "end": 61
+    },
+    {
+      "entity": "Lyut",
+      "label": "ORG",
+      "start": 77,
+      "end": 81
+    },
+    {
+      "entity": "Special Purpose Police Department \"United Assault Brigade of the National Police of Ukraine 'Liut'\"",
+      "label": "ORG",
+      "start": 96,
+      "end": 195
+    },
+    {
+      "entity": "Департамент поліції особливого призначення «Об'єднана штурмова бригада Національної поліції України „Лють“»",
+      "label": "ORG",
+      "start": 197,
+      "end": 304
+    },
+    {
+      "entity": "ОШБ НПУ «Лють»",
+      "label": "ORG",
+      "start": 312,
+      "end": 326
+    },
+    {
+      "entity": "National Police of Ukraine",
+      "label": "ORG",
+      "start": 357,
+      "end": 383
+    },
+    {
+      "entity": "January 13, 2023",
+      "label": "DATE",
+      "start": 394,
+      "end": 410
+    },
+    {
+      "entity": "War in Donbas",
+      "label": "MISC",
+      "start": 464,
+      "end": 477
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "del 5,6,7,8,9,10,11,13",
+      "before": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "Fury Brigade",
+          "label": "ORG",
+          "start": 49,
+          "end": 61
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "Special Purpose Police Department",
+          "label": "ORG",
+          "start": 96,
+          "end": 129
+        },
+        {
+          "entity": "United Assault Brigade",
+          "label": "ORG",
+          "start": 131,
+          "end": 153
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 161,
+          "end": 187
+        },
+        {
+          "entity": "Liut",
+          "label": "ORG",
+          "start": 189,
+          "end": 193
+        },
+        {
+          "entity": "Національної поліції України",
+          "label": "ORG",
+          "start": 268,
+          "end": 296
+        },
+        {
+          "entity": "Лють",
+          "label": "ORG",
+          "start": 298,
+          "end": 302
+        },
+        {
+          "entity": "Лють",
+          "label": "ORG",
+          "start": 321,
+          "end": 325
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        },
+        {
+          "entity": "Donbas",
+          "label": "LOC",
+          "start": 471,
+          "end": 477
+        }
+      ],
+      "after": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "Fury Brigade",
+          "label": "ORG",
+          "start": 49,
+          "end": 61
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        }
+      ],
+      "at_utc": "2026-11-04T07:53:42.216629+00:00"
+    },
+    {
+      "model": "original",
+      "command": "add ORG | бригади Лють | 1",
+      "before": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "Fury Brigade",
+          "label": "ORG",
+          "start": 49,
+          "end": 61
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        }
+      ],
+      "after": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "бригади Лють",
+          "label": "ORG",
+          "start": 29,
+          "end": 41
+        },
+        {
+          "entity": "Fury Brigade",
+          "label": "ORG",
+          "start": 49,
+          "end": 61
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        }
+      ],
+      "at_utc": "2026-11-04T07:53:46.387840+00:00"
+    },
+    {
+      "model": "original",
+      "command": "add ORG | Special Purpose Police Department \"United Assault Brigade of the National Police of Ukraine 'Liut'\" | 1",
+      "before": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "бригади Лють",
+          "label": "ORG",
+          "start": 29,
+          "end": 41
+        },
+        {
+          "entity": "Fury Brigade",
+          "label": "ORG",
+          "start": 49,
+          "end": 61
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        }
+      ],
+      "after": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "бригади Лють",
+          "label": "ORG",
+          "start": 29,
+          "end": 41
+        },
+        {
+          "entity": "Fury Brigade",
+          "label": "ORG",
+          "start": 49,
+          "end": 61
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "Special Purpose Police Department \"United Assault Brigade of the National Police of Ukraine 'Liut'\"",
+          "label": "ORG",
+          "start": 96,
+          "end": 195
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        }
+      ],
+      "at_utc": "2026-11-04T07:53:53.219047+00:00"
+    },
+    {
+      "model": "original",
+      "command": "add ORG | Департамент поліції особливого призначення «Об'єднана штурмова бригада Національної поліції України „Лють“» | 1",
+      "before": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "бригади Лють",
+          "label": "ORG",
+          "start": 29,
+          "end": 41
+        },
+        {
+          "entity": "Fury Brigade",
+          "label": "ORG",
+          "start": 49,
+          "end": 61
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "Special Purpose Police Department \"United Assault Brigade of the National Police of Ukraine 'Liut'\"",
+          "label": "ORG",
+          "start": 96,
+          "end": 195
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        }
+      ],
+      "after": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "бригади Лють",
+          "label": "ORG",
+          "start": 29,
+          "end": 41
+        },
+        {
+          "entity": "Fury Brigade",
+          "label": "ORG",
+          "start": 49,
+          "end": 61
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "Special Purpose Police Department \"United Assault Brigade of the National Police of Ukraine 'Liut'\"",
+          "label": "ORG",
+          "start": 96,
+          "end": 195
+        },
+        {
+          "entity": "Департамент поліції особливого призначення «Об'єднана штурмова бригада Національної поліції України „Лють“»",
+          "label": "ORG",
+          "start": 197,
+          "end": 304
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        }
+      ],
+      "at_utc": "2026-11-04T07:54:00.669380+00:00"
+    },
+    {
+      "model": "original",
+      "command": "add ORG | ОШБ НПУ «Лють» | 1",
+      "before": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "бригади Лють",
+          "label": "ORG",
+          "start": 29,
+          "end": 41
+        },
+        {
+          "entity": "Fury Brigade",
+          "label": "ORG",
+          "start": 49,
+          "end": 61
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "Special Purpose Police Department \"United Assault Brigade of the National Police of Ukraine 'Liut'\"",
+          "label": "ORG",
+          "start": 96,
+          "end": 195
+        },
+        {
+          "entity": "Департамент поліції особливого призначення «Об'єднана штурмова бригада Національної поліції України „Лють“»",
+          "label": "ORG",
+          "start": 197,
+          "end": 304
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        }
+      ],
+      "after": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "бригади Лють",
+          "label": "ORG",
+          "start": 29,
+          "end": 41
+        },
+        {
+          "entity": "Fury Brigade",
+          "label": "ORG",
+          "start": 49,
+          "end": 61
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "Special Purpose Police Department \"United Assault Brigade of the National Police of Ukraine 'Liut'\"",
+          "label": "ORG",
+          "start": 96,
+          "end": 195
+        },
+        {
+          "entity": "Департамент поліції особливого призначення «Об'єднана штурмова бригада Національної поліції України „Лють“»",
+          "label": "ORG",
+          "start": 197,
+          "end": 304
+        },
+        {
+          "entity": "ОШБ НПУ «Лють»",
+          "label": "ORG",
+          "start": 312,
+          "end": 326
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        }
+      ],
+      "at_utc": "2026-11-04T07:54:04.787410+00:00"
+    },
+    {
+      "model": "original",
+      "command": "add MISC | War in Donbas | 1",
+      "before": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "бригади Лють",
+          "label": "ORG",
+          "start": 29,
+          "end": 41
+        },
+        {
+          "entity": "Fury Brigade",
+          "label": "ORG",
+          "start": 49,
+          "end": 61
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "Special Purpose Police Department \"United Assault Brigade of the National Police of Ukraine 'Liut'\"",
+          "label": "ORG",
+          "start": 96,
+          "end": 195
+        },
+        {
+          "entity": "Департамент поліції особливого призначення «Об'єднана штурмова бригада Національної поліції України „Лють“»",
+          "label": "ORG",
+          "start": 197,
+          "end": 304
+        },
+        {
+          "entity": "ОШБ НПУ «Лють»",
+          "label": "ORG",
+          "start": 312,
+          "end": 326
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        }
+      ],
+      "after": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "бригади Лють",
+          "label": "ORG",
+          "start": 29,
+          "end": 41
+        },
+        {
+          "entity": "Fury Brigade",
+          "label": "ORG",
+          "start": 49,
+          "end": 61
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "Special Purpose Police Department \"United Assault Brigade of the National Police of Ukraine 'Liut'\"",
+          "label": "ORG",
+          "start": 96,
+          "end": 195
+        },
+        {
+          "entity": "Департамент поліції особливого призначення «Об'єднана штурмова бригада Національної поліції України „Лють“»",
+          "label": "ORG",
+          "start": 197,
+          "end": 304
+        },
+        {
+          "entity": "ОШБ НПУ «Лють»",
+          "label": "ORG",
+          "start": 312,
+          "end": 326
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        },
+        {
+          "entity": "War in Donbas",
+          "label": "MISC",
+          "start": 464,
+          "end": 477
+        }
+      ],
+      "at_utc": "2026-11-04T07:54:11.156273+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "del 3,4,5,6,7,8,9,12",
+      "before": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "Special Purpose Police Department",
+          "label": "ORG",
+          "start": 96,
+          "end": 129
+        },
+        {
+          "entity": "United Assault Brigade of the National Police of Ukraine",
+          "label": "ORG",
+          "start": 131,
+          "end": 187
+        },
+        {
+          "entity": "Liut",
+          "label": "ORG",
+          "start": 189,
+          "end": 193
+        },
+        {
+          "entity": "Об'єднана штурмова бригада Національної поліції України",
+          "label": "ORG",
+          "start": 241,
+          "end": 296
+        },
+        {
+          "entity": "Лють",
+          "label": "ORG",
+          "start": 298,
+          "end": 302
+        },
+        {
+          "entity": ",",
+          "label": "DATE",
+          "start": 304,
+          "end": 305
+        },
+        {
+          "entity": "Лють",
+          "label": "ORG",
+          "start": 321,
+          "end": 325
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        },
+        {
+          "entity": "January 13, 2023",
+          "label": "DATE",
+          "start": 394,
+          "end": 410
+        },
+        {
+          "entity": "War in Donbas",
+          "label": "MISC",
+          "start": 464,
+          "end": 477
+        }
+      ],
+      "after": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        },
+        {
+          "entity": "January 13, 2023",
+          "label": "DATE",
+          "start": 394,
+          "end": 410
+        }
+      ],
+      "at_utc": "2026-11-04T07:54:20.787846+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add MISC | Ukrainian | 1",
+      "before": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        },
+        {
+          "entity": "January 13, 2023",
+          "label": "DATE",
+          "start": 394,
+          "end": 410
+        }
+      ],
+      "after": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        },
+        {
+          "entity": "January 13, 2023",
+          "label": "DATE",
+          "start": 394,
+          "end": 410
+        }
+      ],
+      "at_utc": "2026-11-04T07:54:26.128097+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add ORG | бригади Лють | 1",
+      "before": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        },
+        {
+          "entity": "January 13, 2023",
+          "label": "DATE",
+          "start": 394,
+          "end": 410
+        }
+      ],
+      "after": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "бригади Лють",
+          "label": "ORG",
+          "start": 29,
+          "end": 41
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        },
+        {
+          "entity": "January 13, 2023",
+          "label": "DATE",
+          "start": 394,
+          "end": 410
+        }
+      ],
+      "at_utc": "2026-11-04T07:54:30.748291+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add ORG | Fury Brigade | 1",
+      "before": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "бригади Лють",
+          "label": "ORG",
+          "start": 29,
+          "end": 41
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        },
+        {
+          "entity": "January 13, 2023",
+          "label": "DATE",
+          "start": 394,
+          "end": 410
+        }
+      ],
+      "after": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "бригади Лють",
+          "label": "ORG",
+          "start": 29,
+          "end": 41
+        },
+        {
+          "entity": "Fury Brigade",
+          "label": "ORG",
+          "start": 49,
+          "end": 61
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        },
+        {
+          "entity": "January 13, 2023",
+          "label": "DATE",
+          "start": 394,
+          "end": 410
+        }
+      ],
+      "at_utc": "2026-11-04T07:54:35.900205+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add ORG | Special Purpose Police Department \"United Assault Brigade of the National Police of Ukraine 'Liut'\" | 1",
+      "before": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "бригади Лють",
+          "label": "ORG",
+          "start": 29,
+          "end": 41
+        },
+        {
+          "entity": "Fury Brigade",
+          "label": "ORG",
+          "start": 49,
+          "end": 61
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        },
+        {
+          "entity": "January 13, 2023",
+          "label": "DATE",
+          "start": 394,
+          "end": 410
+        }
+      ],
+      "after": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "бригади Лють",
+          "label": "ORG",
+          "start": 29,
+          "end": 41
+        },
+        {
+          "entity": "Fury Brigade",
+          "label": "ORG",
+          "start": 49,
+          "end": 61
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "Special Purpose Police Department \"United Assault Brigade of the National Police of Ukraine 'Liut'\"",
+          "label": "ORG",
+          "start": 96,
+          "end": 195
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        },
+        {
+          "entity": "January 13, 2023",
+          "label": "DATE",
+          "start": 394,
+          "end": 410
+        }
+      ],
+      "at_utc": "2026-11-04T07:54:42.372344+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add ORG | Департамент поліції особливого призначення «Об'єднана штурмова бригада Національної поліції України „Лють“» | 1",
+      "before": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "бригади Лють",
+          "label": "ORG",
+          "start": 29,
+          "end": 41
+        },
+        {
+          "entity": "Fury Brigade",
+          "label": "ORG",
+          "start": 49,
+          "end": 61
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "Special Purpose Police Department \"United Assault Brigade of the National Police of Ukraine 'Liut'\"",
+          "label": "ORG",
+          "start": 96,
+          "end": 195
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        },
+        {
+          "entity": "January 13, 2023",
+          "label": "DATE",
+          "start": 394,
+          "end": 410
+        }
+      ],
+      "after": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "бригади Лють",
+          "label": "ORG",
+          "start": 29,
+          "end": 41
+        },
+        {
+          "entity": "Fury Brigade",
+          "label": "ORG",
+          "start": 49,
+          "end": 61
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "Special Purpose Police Department \"United Assault Brigade of the National Police of Ukraine 'Liut'\"",
+          "label": "ORG",
+          "start": 96,
+          "end": 195
+        },
+        {
+          "entity": "Департамент поліції особливого призначення «Об'єднана штурмова бригада Національної поліції України „Лють“»",
+          "label": "ORG",
+          "start": 197,
+          "end": 304
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        },
+        {
+          "entity": "January 13, 2023",
+          "label": "DATE",
+          "start": 394,
+          "end": 410
+        }
+      ],
+      "at_utc": "2026-11-04T07:54:49.160571+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add ORG | ОШБ НПУ «Лють» | 1",
+      "before": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "бригади Лють",
+          "label": "ORG",
+          "start": 29,
+          "end": 41
+        },
+        {
+          "entity": "Fury Brigade",
+          "label": "ORG",
+          "start": 49,
+          "end": 61
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "Special Purpose Police Department \"United Assault Brigade of the National Police of Ukraine 'Liut'\"",
+          "label": "ORG",
+          "start": 96,
+          "end": 195
+        },
+        {
+          "entity": "Департамент поліції особливого призначення «Об'єднана штурмова бригада Національної поліції України „Лють“»",
+          "label": "ORG",
+          "start": 197,
+          "end": 304
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        },
+        {
+          "entity": "January 13, 2023",
+          "label": "DATE",
+          "start": 394,
+          "end": 410
+        }
+      ],
+      "after": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "бригади Лють",
+          "label": "ORG",
+          "start": 29,
+          "end": 41
+        },
+        {
+          "entity": "Fury Brigade",
+          "label": "ORG",
+          "start": 49,
+          "end": 61
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "Special Purpose Police Department \"United Assault Brigade of the National Police of Ukraine 'Liut'\"",
+          "label": "ORG",
+          "start": 96,
+          "end": 195
+        },
+        {
+          "entity": "Департамент поліції особливого призначення «Об'єднана штурмова бригада Національної поліції України „Лють“»",
+          "label": "ORG",
+          "start": 197,
+          "end": 304
+        },
+        {
+          "entity": "ОШБ НПУ «Лють»",
+          "label": "ORG",
+          "start": 312,
+          "end": 326
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        },
+        {
+          "entity": "January 13, 2023",
+          "label": "DATE",
+          "start": 394,
+          "end": 410
+        }
+      ],
+      "at_utc": "2026-11-04T07:54:53.177479+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add MISC | War in Donbas | 1",
+      "before": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "бригади Лють",
+          "label": "ORG",
+          "start": 29,
+          "end": 41
+        },
+        {
+          "entity": "Fury Brigade",
+          "label": "ORG",
+          "start": 49,
+          "end": 61
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "Special Purpose Police Department \"United Assault Brigade of the National Police of Ukraine 'Liut'\"",
+          "label": "ORG",
+          "start": 96,
+          "end": 195
+        },
+        {
+          "entity": "Департамент поліції особливого призначення «Об'єднана штурмова бригада Національної поліції України „Лють“»",
+          "label": "ORG",
+          "start": 197,
+          "end": 304
+        },
+        {
+          "entity": "ОШБ НПУ «Лють»",
+          "label": "ORG",
+          "start": 312,
+          "end": 326
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        },
+        {
+          "entity": "January 13, 2023",
+          "label": "DATE",
+          "start": 394,
+          "end": 410
+        }
+      ],
+      "after": [
+        {
+          "entity": "Liut Brigade",
+          "label": "ORG",
+          "start": 4,
+          "end": 16
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 18,
+          "end": 27
+        },
+        {
+          "entity": "бригади Лють",
+          "label": "ORG",
+          "start": 29,
+          "end": 41
+        },
+        {
+          "entity": "Fury Brigade",
+          "label": "ORG",
+          "start": 49,
+          "end": 61
+        },
+        {
+          "entity": "Lyut",
+          "label": "ORG",
+          "start": 77,
+          "end": 81
+        },
+        {
+          "entity": "Special Purpose Police Department \"United Assault Brigade of the National Police of Ukraine 'Liut'\"",
+          "label": "ORG",
+          "start": 96,
+          "end": 195
+        },
+        {
+          "entity": "Департамент поліції особливого призначення «Об'єднана штурмова бригада Національної поліції України „Лють“»",
+          "label": "ORG",
+          "start": 197,
+          "end": 304
+        },
+        {
+          "entity": "ОШБ НПУ «Лють»",
+          "label": "ORG",
+          "start": 312,
+          "end": 326
+        },
+        {
+          "entity": "National Police of Ukraine",
+          "label": "ORG",
+          "start": 357,
+          "end": 383
+        },
+        {
+          "entity": "January 13, 2023",
+          "label": "DATE",
+          "start": 394,
+          "end": 410
+        },
+        {
+          "entity": "War in Donbas",
+          "label": "MISC",
+          "start": 464,
+          "end": 477
+        }
+      ],
+      "at_utc": "2026-11-04T07:54:59.496403+00:00"
+    }
+  ]
+}

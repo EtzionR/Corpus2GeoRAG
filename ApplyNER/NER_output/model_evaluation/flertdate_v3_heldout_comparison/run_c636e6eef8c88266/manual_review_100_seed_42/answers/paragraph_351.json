@@ -1,0 +1,56 @@
+{
+  "comparison_row_id": 351,
+  "Source": "2026 Ukrainian counteroffensive order of battle",
+  "Index": 2,
+  "Text": " Ukrainian Ground Forces",
+  "reviewed_at_utc": "2026-11-04T07:22:37.950484+00:00",
+  "original_predictions": [
+    {
+      "entity": "Ukrainian Ground Forces",
+      "label": "ORG",
+      "start": 1,
+      "end": 24
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Ukrainian Ground Forces",
+      "label": "ORG",
+      "start": 1,
+      "end": 24
+    }
+  ],
+  "corrected_original": [],
+  "corrected_v3": [],
+  "gold": [],
+  "history": [
+    {
+      "model": "original",
+      "command": "del 1",
+      "before": [
+        {
+          "entity": "Ukrainian Ground Forces",
+          "label": "ORG",
+          "start": 1,
+          "end": 24
+        }
+      ],
+      "after": [],
+      "at_utc": "2026-11-04T07:22:29.878151+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "del 1",
+      "before": [
+        {
+          "entity": "Ukrainian Ground Forces",
+          "label": "ORG",
+          "start": 1,
+          "end": 24
+        }
+      ],
+      "after": [],
+      "at_utc": "2026-11-04T07:22:34.710950+00:00"
+    }
+  ]
+}

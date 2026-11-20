@@ -1,0 +1,246 @@
+{
+  "comparison_row_id": 5094,
+  "Source": "Wagner Group rebellion",
+  "Index": 75,
+  "Text": "On 15 July, the State Border Guard Service of Ukraine confirmed the arrival of the Wagner Group in Belarus, with an unconfirmed report saying that a convoy of some 60 Wagner vehicles had entered the country. It estimated that they had been deployed at least 100 kilometers from the Ukrainian border and put the number of mercenaries in the hundreds. Its spokesman said that they did not believe the deployment posed a serious threat to Ukraine but warned that Wagner could be used to destabilize the situation along the border.",
+  "reviewed_at_utc": "2026-11-04T07:58:08.674721+00:00",
+  "original_predictions": [
+    {
+      "entity": "State Border Guard Service of Ukraine",
+      "label": "ORG",
+      "start": 16,
+      "end": 53
+    },
+    {
+      "entity": "Wagner Group",
+      "label": "ORG",
+      "start": 83,
+      "end": 95
+    },
+    {
+      "entity": "Belarus",
+      "label": "LOC",
+      "start": 99,
+      "end": 106
+    },
+    {
+      "entity": "Wagner",
+      "label": "ORG",
+      "start": 167,
+      "end": 173
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 282,
+      "end": 291
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 436,
+      "end": 443
+    },
+    {
+      "entity": "Wagner",
+      "label": "ORG",
+      "start": 460,
+      "end": 466
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "15 July",
+      "label": "DATE",
+      "start": 3,
+      "end": 10
+    },
+    {
+      "entity": "State Border Guard Service of Ukraine",
+      "label": "ORG",
+      "start": 16,
+      "end": 53
+    },
+    {
+      "entity": "Wagner Group",
+      "label": "ORG",
+      "start": 83,
+      "end": 95
+    },
+    {
+      "entity": "Belarus",
+      "label": "LOC",
+      "start": 99,
+      "end": 106
+    },
+    {
+      "entity": "Wagner",
+      "label": "ORG",
+      "start": 167,
+      "end": 173
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 282,
+      "end": 291
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 436,
+      "end": 443
+    },
+    {
+      "entity": "Wagner",
+      "label": "ORG",
+      "start": 460,
+      "end": 466
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "State Border Guard Service of Ukraine",
+      "label": "ORG",
+      "start": 16,
+      "end": 53
+    },
+    {
+      "entity": "Wagner Group",
+      "label": "ORG",
+      "start": 83,
+      "end": 95
+    },
+    {
+      "entity": "Belarus",
+      "label": "LOC",
+      "start": 99,
+      "end": 106
+    },
+    {
+      "entity": "Wagner",
+      "label": "ORG",
+      "start": 167,
+      "end": 173
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 282,
+      "end": 291
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 436,
+      "end": 443
+    },
+    {
+      "entity": "Wagner",
+      "label": "ORG",
+      "start": 460,
+      "end": 466
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "15 July",
+      "label": "DATE",
+      "start": 3,
+      "end": 10
+    },
+    {
+      "entity": "State Border Guard Service of Ukraine",
+      "label": "ORG",
+      "start": 16,
+      "end": 53
+    },
+    {
+      "entity": "Wagner Group",
+      "label": "ORG",
+      "start": 83,
+      "end": 95
+    },
+    {
+      "entity": "Belarus",
+      "label": "LOC",
+      "start": 99,
+      "end": 106
+    },
+    {
+      "entity": "Wagner",
+      "label": "ORG",
+      "start": 167,
+      "end": 173
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 282,
+      "end": 291
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 436,
+      "end": 443
+    },
+    {
+      "entity": "Wagner",
+      "label": "ORG",
+      "start": 460,
+      "end": 466
+    }
+  ],
+  "gold": [
+    {
+      "entity": "15 July",
+      "label": "DATE",
+      "start": 3,
+      "end": 10
+    },
+    {
+      "entity": "State Border Guard Service of Ukraine",
+      "label": "ORG",
+      "start": 16,
+      "end": 53
+    },
+    {
+      "entity": "Wagner Group",
+      "label": "ORG",
+      "start": 83,
+      "end": 95
+    },
+    {
+      "entity": "Belarus",
+      "label": "LOC",
+      "start": 99,
+      "end": 106
+    },
+    {
+      "entity": "Wagner",
+      "label": "ORG",
+      "start": 167,
+      "end": 173
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 282,
+      "end": 291
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 436,
+      "end": 443
+    },
+    {
+      "entity": "Wagner",
+      "label": "ORG",
+      "start": 460,
+      "end": 466
+    }
+  ],
+  "history": []
+}

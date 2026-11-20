@@ -1,0 +1,991 @@
+{
+  "comparison_row_id": 373,
+  "Source": "203rd Training Aviation Brigade",
+  "Index": 1,
+  "Text": "In 1992, following the, Dissolution of the Soviet Union, the 810th Training Aviation Regiment swore allegiance to Ukraine becoming a part of the Ukrainian Air Force. In December 1995, it became the 203rd Training Aviation Base including the training regiment, a communication battalion, radio technical support and an airfield technical support battalion. In August 2004 it became the 203rd Training Aviation Brigade and was subordinated to the Ivan Kozhedub National University of the Air Force in September 2004.",
+  "reviewed_at_utc": "2026-11-04T06:52:57.827495+00:00",
+  "original_predictions": [
+    {
+      "entity": "Soviet Union",
+      "label": "LOC",
+      "start": 43,
+      "end": 55
+    },
+    {
+      "entity": "810th Training Aviation Regiment",
+      "label": "ORG",
+      "start": 61,
+      "end": 93
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 114,
+      "end": 121
+    },
+    {
+      "entity": "Ukrainian Air Force",
+      "label": "ORG",
+      "start": 145,
+      "end": 164
+    },
+    {
+      "entity": "203rd Training Aviation Base",
+      "label": "ORG",
+      "start": 198,
+      "end": 226
+    },
+    {
+      "entity": "203rd Training Aviation Brigade",
+      "label": "ORG",
+      "start": 385,
+      "end": 416
+    },
+    {
+      "entity": "Ivan Kozhedub National University",
+      "label": "ORG",
+      "start": 445,
+      "end": 478
+    },
+    {
+      "entity": "Air Force",
+      "label": "ORG",
+      "start": 486,
+      "end": 495
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "1992",
+      "label": "DATE",
+      "start": 3,
+      "end": 7
+    },
+    {
+      "entity": "Soviet Union",
+      "label": "ORG",
+      "start": 43,
+      "end": 55
+    },
+    {
+      "entity": "810th Training Aviation Regiment",
+      "label": "ORG",
+      "start": 61,
+      "end": 93
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 114,
+      "end": 121
+    },
+    {
+      "entity": "Ukrainian Air Force",
+      "label": "ORG",
+      "start": 145,
+      "end": 164
+    },
+    {
+      "entity": "December 1995",
+      "label": "DATE",
+      "start": 169,
+      "end": 182
+    },
+    {
+      "entity": "203rd Training Aviation Base",
+      "label": "ORG",
+      "start": 198,
+      "end": 226
+    },
+    {
+      "entity": "August 2004",
+      "label": "DATE",
+      "start": 359,
+      "end": 370
+    },
+    {
+      "entity": "203rd Training Aviation Brigade",
+      "label": "ORG",
+      "start": 385,
+      "end": 416
+    },
+    {
+      "entity": "Ivan Kozhedub National University of the Air Force",
+      "label": "ORG",
+      "start": 445,
+      "end": 495
+    },
+    {
+      "entity": "September 2004",
+      "label": "DATE",
+      "start": 499,
+      "end": 513
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Dissolution of the Soviet Union",
+      "label": "MISC",
+      "start": 24,
+      "end": 55
+    },
+    {
+      "entity": "810th Training Aviation Regiment",
+      "label": "ORG",
+      "start": 61,
+      "end": 93
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 114,
+      "end": 121
+    },
+    {
+      "entity": "Ukrainian Air Force",
+      "label": "ORG",
+      "start": 145,
+      "end": 164
+    },
+    {
+      "entity": "203rd Training Aviation Base",
+      "label": "ORG",
+      "start": 198,
+      "end": 226
+    },
+    {
+      "entity": "203rd Training Aviation Brigade",
+      "label": "ORG",
+      "start": 385,
+      "end": 416
+    },
+    {
+      "entity": "Ivan Kozhedub National University of the Air Force",
+      "label": "ORG",
+      "start": 445,
+      "end": 495
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "1992",
+      "label": "DATE",
+      "start": 3,
+      "end": 7
+    },
+    {
+      "entity": "Dissolution of the Soviet Union",
+      "label": "MISC",
+      "start": 24,
+      "end": 55
+    },
+    {
+      "entity": "810th Training Aviation Regiment",
+      "label": "ORG",
+      "start": 61,
+      "end": 93
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 114,
+      "end": 121
+    },
+    {
+      "entity": "Ukrainian Air Force",
+      "label": "ORG",
+      "start": 145,
+      "end": 164
+    },
+    {
+      "entity": "December 1995",
+      "label": "DATE",
+      "start": 169,
+      "end": 182
+    },
+    {
+      "entity": "203rd Training Aviation Base",
+      "label": "ORG",
+      "start": 198,
+      "end": 226
+    },
+    {
+      "entity": "August 2004",
+      "label": "DATE",
+      "start": 359,
+      "end": 370
+    },
+    {
+      "entity": "203rd Training Aviation Brigade",
+      "label": "ORG",
+      "start": 385,
+      "end": 416
+    },
+    {
+      "entity": "Ivan Kozhedub National University of the Air Force",
+      "label": "ORG",
+      "start": 445,
+      "end": 495
+    },
+    {
+      "entity": "September 2004",
+      "label": "DATE",
+      "start": 499,
+      "end": 513
+    }
+  ],
+  "gold": [
+    {
+      "entity": "1992",
+      "label": "DATE",
+      "start": 3,
+      "end": 7
+    },
+    {
+      "entity": "Dissolution of the Soviet Union",
+      "label": "MISC",
+      "start": 24,
+      "end": 55
+    },
+    {
+      "entity": "810th Training Aviation Regiment",
+      "label": "ORG",
+      "start": 61,
+      "end": 93
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 114,
+      "end": 121
+    },
+    {
+      "entity": "Ukrainian Air Force",
+      "label": "ORG",
+      "start": 145,
+      "end": 164
+    },
+    {
+      "entity": "December 1995",
+      "label": "DATE",
+      "start": 169,
+      "end": 182
+    },
+    {
+      "entity": "203rd Training Aviation Base",
+      "label": "ORG",
+      "start": 198,
+      "end": 226
+    },
+    {
+      "entity": "August 2004",
+      "label": "DATE",
+      "start": 359,
+      "end": 370
+    },
+    {
+      "entity": "203rd Training Aviation Brigade",
+      "label": "ORG",
+      "start": 385,
+      "end": 416
+    },
+    {
+      "entity": "Ivan Kozhedub National University of the Air Force",
+      "label": "ORG",
+      "start": 445,
+      "end": 495
+    },
+    {
+      "entity": "September 2004",
+      "label": "DATE",
+      "start": 499,
+      "end": 513
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "span 1 | Dissolution of the Soviet Union | 1",
+      "before": [
+        {
+          "entity": "Soviet Union",
+          "label": "LOC",
+          "start": 43,
+          "end": 55
+        },
+        {
+          "entity": "810th Training Aviation Regiment",
+          "label": "ORG",
+          "start": 61,
+          "end": 93
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 114,
+          "end": 121
+        },
+        {
+          "entity": "Ukrainian Air Force",
+          "label": "ORG",
+          "start": 145,
+          "end": 164
+        },
+        {
+          "entity": "203rd Training Aviation Base",
+          "label": "ORG",
+          "start": 198,
+          "end": 226
+        },
+        {
+          "entity": "203rd Training Aviation Brigade",
+          "label": "ORG",
+          "start": 385,
+          "end": 416
+        },
+        {
+          "entity": "Ivan Kozhedub National University",
+          "label": "ORG",
+          "start": 445,
+          "end": 478
+        },
+        {
+          "entity": "Air Force",
+          "label": "ORG",
+          "start": 486,
+          "end": 495
+        }
+      ],
+      "after": [
+        {
+          "entity": "Dissolution of the Soviet Union",
+          "label": "LOC",
+          "start": 24,
+          "end": 55
+        },
+        {
+          "entity": "810th Training Aviation Regiment",
+          "label": "ORG",
+          "start": 61,
+          "end": 93
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 114,
+          "end": 121
+        },
+        {
+          "entity": "Ukrainian Air Force",
+          "label": "ORG",
+          "start": 145,
+          "end": 164
+        },
+        {
+          "entity": "203rd Training Aviation Base",
+          "label": "ORG",
+          "start": 198,
+          "end": 226
+        },
+        {
+          "entity": "203rd Training Aviation Brigade",
+          "label": "ORG",
+          "start": 385,
+          "end": 416
+        },
+        {
+          "entity": "Ivan Kozhedub National University",
+          "label": "ORG",
+          "start": 445,
+          "end": 478
+        },
+        {
+          "entity": "Air Force",
+          "label": "ORG",
+          "start": 486,
+          "end": 495
+        }
+      ],
+      "at_utc": "2026-11-04T06:52:13.058338+00:00"
+    },
+    {
+      "model": "original",
+      "command": "label 1 MISC",
+      "before": [
+        {
+          "entity": "Dissolution of the Soviet Union",
+          "label": "LOC",
+          "start": 24,
+          "end": 55
+        },
+        {
+          "entity": "810th Training Aviation Regiment",
+          "label": "ORG",
+          "start": 61,
+          "end": 93
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 114,
+          "end": 121
+        },
+        {
+          "entity": "Ukrainian Air Force",
+          "label": "ORG",
+          "start": 145,
+          "end": 164
+        },
+        {
+          "entity": "203rd Training Aviation Base",
+          "label": "ORG",
+          "start": 198,
+          "end": 226
+        },
+        {
+          "entity": "203rd Training Aviation Brigade",
+          "label": "ORG",
+          "start": 385,
+          "end": 416
+        },
+        {
+          "entity": "Ivan Kozhedub National University",
+          "label": "ORG",
+          "start": 445,
+          "end": 478
+        },
+        {
+          "entity": "Air Force",
+          "label": "ORG",
+          "start": 486,
+          "end": 495
+        }
+      ],
+      "after": [
+        {
+          "entity": "Dissolution of the Soviet Union",
+          "label": "MISC",
+          "start": 24,
+          "end": 55
+        },
+        {
+          "entity": "810th Training Aviation Regiment",
+          "label": "ORG",
+          "start": 61,
+          "end": 93
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 114,
+          "end": 121
+        },
+        {
+          "entity": "Ukrainian Air Force",
+          "label": "ORG",
+          "start": 145,
+          "end": 164
+        },
+        {
+          "entity": "203rd Training Aviation Base",
+          "label": "ORG",
+          "start": 198,
+          "end": 226
+        },
+        {
+          "entity": "203rd Training Aviation Brigade",
+          "label": "ORG",
+          "start": 385,
+          "end": 416
+        },
+        {
+          "entity": "Ivan Kozhedub National University",
+          "label": "ORG",
+          "start": 445,
+          "end": 478
+        },
+        {
+          "entity": "Air Force",
+          "label": "ORG",
+          "start": 486,
+          "end": 495
+        }
+      ],
+      "at_utc": "2026-11-04T06:52:19.066358+00:00"
+    },
+    {
+      "model": "original",
+      "command": "del 8",
+      "before": [
+        {
+          "entity": "Dissolution of the Soviet Union",
+          "label": "MISC",
+          "start": 24,
+          "end": 55
+        },
+        {
+          "entity": "810th Training Aviation Regiment",
+          "label": "ORG",
+          "start": 61,
+          "end": 93
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 114,
+          "end": 121
+        },
+        {
+          "entity": "Ukrainian Air Force",
+          "label": "ORG",
+          "start": 145,
+          "end": 164
+        },
+        {
+          "entity": "203rd Training Aviation Base",
+          "label": "ORG",
+          "start": 198,
+          "end": 226
+        },
+        {
+          "entity": "203rd Training Aviation Brigade",
+          "label": "ORG",
+          "start": 385,
+          "end": 416
+        },
+        {
+          "entity": "Ivan Kozhedub National University",
+          "label": "ORG",
+          "start": 445,
+          "end": 478
+        },
+        {
+          "entity": "Air Force",
+          "label": "ORG",
+          "start": 486,
+          "end": 495
+        }
+      ],
+      "after": [
+        {
+          "entity": "Dissolution of the Soviet Union",
+          "label": "MISC",
+          "start": 24,
+          "end": 55
+        },
+        {
+          "entity": "810th Training Aviation Regiment",
+          "label": "ORG",
+          "start": 61,
+          "end": 93
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 114,
+          "end": 121
+        },
+        {
+          "entity": "Ukrainian Air Force",
+          "label": "ORG",
+          "start": 145,
+          "end": 164
+        },
+        {
+          "entity": "203rd Training Aviation Base",
+          "label": "ORG",
+          "start": 198,
+          "end": 226
+        },
+        {
+          "entity": "203rd Training Aviation Brigade",
+          "label": "ORG",
+          "start": 385,
+          "end": 416
+        },
+        {
+          "entity": "Ivan Kozhedub National University",
+          "label": "ORG",
+          "start": 445,
+          "end": 478
+        }
+      ],
+      "at_utc": "2026-11-04T06:52:24.569634+00:00"
+    },
+    {
+      "model": "original",
+      "command": "span 7 | Ivan Kozhedub National University of the Air Force | 1",
+      "before": [
+        {
+          "entity": "Dissolution of the Soviet Union",
+          "label": "MISC",
+          "start": 24,
+          "end": 55
+        },
+        {
+          "entity": "810th Training Aviation Regiment",
+          "label": "ORG",
+          "start": 61,
+          "end": 93
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 114,
+          "end": 121
+        },
+        {
+          "entity": "Ukrainian Air Force",
+          "label": "ORG",
+          "start": 145,
+          "end": 164
+        },
+        {
+          "entity": "203rd Training Aviation Base",
+          "label": "ORG",
+          "start": 198,
+          "end": 226
+        },
+        {
+          "entity": "203rd Training Aviation Brigade",
+          "label": "ORG",
+          "start": 385,
+          "end": 416
+        },
+        {
+          "entity": "Ivan Kozhedub National University",
+          "label": "ORG",
+          "start": 445,
+          "end": 478
+        }
+      ],
+      "after": [
+        {
+          "entity": "Dissolution of the Soviet Union",
+          "label": "MISC",
+          "start": 24,
+          "end": 55
+        },
+        {
+          "entity": "810th Training Aviation Regiment",
+          "label": "ORG",
+          "start": 61,
+          "end": 93
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 114,
+          "end": 121
+        },
+        {
+          "entity": "Ukrainian Air Force",
+          "label": "ORG",
+          "start": 145,
+          "end": 164
+        },
+        {
+          "entity": "203rd Training Aviation Base",
+          "label": "ORG",
+          "start": 198,
+          "end": 226
+        },
+        {
+          "entity": "203rd Training Aviation Brigade",
+          "label": "ORG",
+          "start": 385,
+          "end": 416
+        },
+        {
+          "entity": "Ivan Kozhedub National University of the Air Force",
+          "label": "ORG",
+          "start": 445,
+          "end": 495
+        }
+      ],
+      "at_utc": "2026-11-04T06:52:29.725814+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "span 2 | Dissolution of the Soviet Union | 1",
+      "before": [
+        {
+          "entity": "1992",
+          "label": "DATE",
+          "start": 3,
+          "end": 7
+        },
+        {
+          "entity": "Soviet Union",
+          "label": "ORG",
+          "start": 43,
+          "end": 55
+        },
+        {
+          "entity": "810th Training Aviation Regiment",
+          "label": "ORG",
+          "start": 61,
+          "end": 93
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 114,
+          "end": 121
+        },
+        {
+          "entity": "Ukrainian Air Force",
+          "label": "ORG",
+          "start": 145,
+          "end": 164
+        },
+        {
+          "entity": "December 1995",
+          "label": "DATE",
+          "start": 169,
+          "end": 182
+        },
+        {
+          "entity": "203rd Training Aviation Base",
+          "label": "ORG",
+          "start": 198,
+          "end": 226
+        },
+        {
+          "entity": "August 2004",
+          "label": "DATE",
+          "start": 359,
+          "end": 370
+        },
+        {
+          "entity": "203rd Training Aviation Brigade",
+          "label": "ORG",
+          "start": 385,
+          "end": 416
+        },
+        {
+          "entity": "Ivan Kozhedub National University of the Air Force",
+          "label": "ORG",
+          "start": 445,
+          "end": 495
+        },
+        {
+          "entity": "September 2004",
+          "label": "DATE",
+          "start": 499,
+          "end": 513
+        }
+      ],
+      "after": [
+        {
+          "entity": "1992",
+          "label": "DATE",
+          "start": 3,
+          "end": 7
+        },
+        {
+          "entity": "Dissolution of the Soviet Union",
+          "label": "ORG",
+          "start": 24,
+          "end": 55
+        },
+        {
+          "entity": "810th Training Aviation Regiment",
+          "label": "ORG",
+          "start": 61,
+          "end": 93
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 114,
+          "end": 121
+        },
+        {
+          "entity": "Ukrainian Air Force",
+          "label": "ORG",
+          "start": 145,
+          "end": 164
+        },
+        {
+          "entity": "December 1995",
+          "label": "DATE",
+          "start": 169,
+          "end": 182
+        },
+        {
+          "entity": "203rd Training Aviation Base",
+          "label": "ORG",
+          "start": 198,
+          "end": 226
+        },
+        {
+          "entity": "August 2004",
+          "label": "DATE",
+          "start": 359,
+          "end": 370
+        },
+        {
+          "entity": "203rd Training Aviation Brigade",
+          "label": "ORG",
+          "start": 385,
+          "end": 416
+        },
+        {
+          "entity": "Ivan Kozhedub National University of the Air Force",
+          "label": "ORG",
+          "start": 445,
+          "end": 495
+        },
+        {
+          "entity": "September 2004",
+          "label": "DATE",
+          "start": 499,
+          "end": 513
+        }
+      ],
+      "at_utc": "2026-11-04T06:52:49.213890+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "label 2 MISC",
+      "before": [
+        {
+          "entity": "1992",
+          "label": "DATE",
+          "start": 3,
+          "end": 7
+        },
+        {
+          "entity": "Dissolution of the Soviet Union",
+          "label": "ORG",
+          "start": 24,
+          "end": 55
+        },
+        {
+          "entity": "810th Training Aviation Regiment",
+          "label": "ORG",
+          "start": 61,
+          "end": 93
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 114,
+          "end": 121
+        },
+        {
+          "entity": "Ukrainian Air Force",
+          "label": "ORG",
+          "start": 145,
+          "end": 164
+        },
+        {
+          "entity": "December 1995",
+          "label": "DATE",
+          "start": 169,
+          "end": 182
+        },
+        {
+          "entity": "203rd Training Aviation Base",
+          "label": "ORG",
+          "start": 198,
+          "end": 226
+        },
+        {
+          "entity": "August 2004",
+          "label": "DATE",
+          "start": 359,
+          "end": 370
+        },
+        {
+          "entity": "203rd Training Aviation Brigade",
+          "label": "ORG",
+          "start": 385,
+          "end": 416
+        },
+        {
+          "entity": "Ivan Kozhedub National University of the Air Force",
+          "label": "ORG",
+          "start": 445,
+          "end": 495
+        },
+        {
+          "entity": "September 2004",
+          "label": "DATE",
+          "start": 499,
+          "end": 513
+        }
+      ],
+      "after": [
+        {
+          "entity": "1992",
+          "label": "DATE",
+          "start": 3,
+          "end": 7
+        },
+        {
+          "entity": "Dissolution of the Soviet Union",
+          "label": "MISC",
+          "start": 24,
+          "end": 55
+        },
+        {
+          "entity": "810th Training Aviation Regiment",
+          "label": "ORG",
+          "start": 61,
+          "end": 93
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 114,
+          "end": 121
+        },
+        {
+          "entity": "Ukrainian Air Force",
+          "label": "ORG",
+          "start": 145,
+          "end": 164
+        },
+        {
+          "entity": "December 1995",
+          "label": "DATE",
+          "start": 169,
+          "end": 182
+        },
+        {
+          "entity": "203rd Training Aviation Base",
+          "label": "ORG",
+          "start": 198,
+          "end": 226
+        },
+        {
+          "entity": "August 2004",
+          "label": "DATE",
+          "start": 359,
+          "end": 370
+        },
+        {
+          "entity": "203rd Training Aviation Brigade",
+          "label": "ORG",
+          "start": 385,
+          "end": 416
+        },
+        {
+          "entity": "Ivan Kozhedub National University of the Air Force",
+          "label": "ORG",
+          "start": 445,
+          "end": 495
+        },
+        {
+          "entity": "September 2004",
+          "label": "DATE",
+          "start": 499,
+          "end": 513
+        }
+      ],
+      "at_utc": "2026-11-04T06:52:54.549198+00:00"
+    }
+  ]
+}

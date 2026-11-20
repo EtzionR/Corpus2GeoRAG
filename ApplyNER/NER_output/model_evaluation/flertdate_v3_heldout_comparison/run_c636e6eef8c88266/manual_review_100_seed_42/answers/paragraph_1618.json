@@ -1,0 +1,426 @@
+{
+  "comparison_row_id": 1618,
+  "Source": "HESA Shahed 136",
+  "Index": 25,
+  "Text": "In the months prior to the confirmation of their use, US intelligence sources and Ukrainian officials have claimed that Iran had supplied Russia with several hundred drones including Shahed-136s, although Iran has repeatedly rejected the claims that it had sent drones for use in Ukraine, saying it is neutral in the war. However, on 2 September 2022 the Commander of the IRGC General Hossein Salami said at a Tehran arms show that \"some major world powers\" had purchased Iranian military equipment and his men were \"training them to employ the gear\". Russia stated it uses unmanned aerial vehicles (UAVs) of domestic manufacture. This may reflect domestic production of these drones within Russia.",
+  "reviewed_at_utc": "2026-11-04T06:36:24.665579+00:00",
+  "original_predictions": [
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 54,
+      "end": 56
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 82,
+      "end": 91
+    },
+    {
+      "entity": "Iran",
+      "label": "LOC",
+      "start": 120,
+      "end": 124
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 138,
+      "end": 144
+    },
+    {
+      "entity": "Shahed-136s",
+      "label": "MISC",
+      "start": 183,
+      "end": 194
+    },
+    {
+      "entity": "Iran",
+      "label": "LOC",
+      "start": 205,
+      "end": 209
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 280,
+      "end": 287
+    },
+    {
+      "entity": "IRGC",
+      "label": "ORG",
+      "start": 372,
+      "end": 376
+    },
+    {
+      "entity": "Hossein Salami",
+      "label": "PER",
+      "start": 385,
+      "end": 399
+    },
+    {
+      "entity": "Tehran",
+      "label": "LOC",
+      "start": 410,
+      "end": 416
+    },
+    {
+      "entity": "Iranian",
+      "label": "MISC",
+      "start": 472,
+      "end": 479
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 552,
+      "end": 558
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 691,
+      "end": 697
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 54,
+      "end": 56
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 82,
+      "end": 91
+    },
+    {
+      "entity": "Iran",
+      "label": "LOC",
+      "start": 120,
+      "end": 124
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 138,
+      "end": 144
+    },
+    {
+      "entity": "Shahed-136s",
+      "label": "MISC",
+      "start": 183,
+      "end": 194
+    },
+    {
+      "entity": "Iran",
+      "label": "LOC",
+      "start": 205,
+      "end": 209
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 280,
+      "end": 287
+    },
+    {
+      "entity": "2 September 2022",
+      "label": "DATE",
+      "start": 334,
+      "end": 350
+    },
+    {
+      "entity": "IRGC",
+      "label": "ORG",
+      "start": 372,
+      "end": 376
+    },
+    {
+      "entity": "Hossein Salami",
+      "label": "PER",
+      "start": 385,
+      "end": 399
+    },
+    {
+      "entity": "Tehran",
+      "label": "LOC",
+      "start": 410,
+      "end": 416
+    },
+    {
+      "entity": "Iranian",
+      "label": "MISC",
+      "start": 472,
+      "end": 479
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 552,
+      "end": 558
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 691,
+      "end": 697
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 54,
+      "end": 56
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 82,
+      "end": 91
+    },
+    {
+      "entity": "Iran",
+      "label": "LOC",
+      "start": 120,
+      "end": 124
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 138,
+      "end": 144
+    },
+    {
+      "entity": "Shahed-136s",
+      "label": "MISC",
+      "start": 183,
+      "end": 194
+    },
+    {
+      "entity": "Iran",
+      "label": "LOC",
+      "start": 205,
+      "end": 209
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 280,
+      "end": 287
+    },
+    {
+      "entity": "IRGC",
+      "label": "ORG",
+      "start": 372,
+      "end": 376
+    },
+    {
+      "entity": "Hossein Salami",
+      "label": "PER",
+      "start": 385,
+      "end": 399
+    },
+    {
+      "entity": "Tehran",
+      "label": "LOC",
+      "start": 410,
+      "end": 416
+    },
+    {
+      "entity": "Iranian",
+      "label": "MISC",
+      "start": 472,
+      "end": 479
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 552,
+      "end": 558
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 691,
+      "end": 697
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 54,
+      "end": 56
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 82,
+      "end": 91
+    },
+    {
+      "entity": "Iran",
+      "label": "LOC",
+      "start": 120,
+      "end": 124
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 138,
+      "end": 144
+    },
+    {
+      "entity": "Shahed-136s",
+      "label": "MISC",
+      "start": 183,
+      "end": 194
+    },
+    {
+      "entity": "Iran",
+      "label": "LOC",
+      "start": 205,
+      "end": 209
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 280,
+      "end": 287
+    },
+    {
+      "entity": "2 September 2022",
+      "label": "DATE",
+      "start": 334,
+      "end": 350
+    },
+    {
+      "entity": "IRGC",
+      "label": "ORG",
+      "start": 372,
+      "end": 376
+    },
+    {
+      "entity": "Hossein Salami",
+      "label": "PER",
+      "start": 385,
+      "end": 399
+    },
+    {
+      "entity": "Tehran",
+      "label": "LOC",
+      "start": 410,
+      "end": 416
+    },
+    {
+      "entity": "Iranian",
+      "label": "MISC",
+      "start": 472,
+      "end": 479
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 552,
+      "end": 558
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 691,
+      "end": 697
+    }
+  ],
+  "gold": [
+    {
+      "entity": "US",
+      "label": "LOC",
+      "start": 54,
+      "end": 56
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 82,
+      "end": 91
+    },
+    {
+      "entity": "Iran",
+      "label": "LOC",
+      "start": 120,
+      "end": 124
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 138,
+      "end": 144
+    },
+    {
+      "entity": "Shahed-136s",
+      "label": "MISC",
+      "start": 183,
+      "end": 194
+    },
+    {
+      "entity": "Iran",
+      "label": "LOC",
+      "start": 205,
+      "end": 209
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 280,
+      "end": 287
+    },
+    {
+      "entity": "2 September 2022",
+      "label": "DATE",
+      "start": 334,
+      "end": 350
+    },
+    {
+      "entity": "IRGC",
+      "label": "ORG",
+      "start": 372,
+      "end": 376
+    },
+    {
+      "entity": "Hossein Salami",
+      "label": "PER",
+      "start": 385,
+      "end": 399
+    },
+    {
+      "entity": "Tehran",
+      "label": "LOC",
+      "start": 410,
+      "end": 416
+    },
+    {
+      "entity": "Iranian",
+      "label": "MISC",
+      "start": 472,
+      "end": 479
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 552,
+      "end": 558
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 691,
+      "end": 697
+    }
+  ],
+  "history": []
+}

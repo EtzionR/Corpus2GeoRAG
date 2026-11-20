@@ -1,0 +1,48 @@
+{
+  "comparison_row_id": 3563,
+  "Source": "Sypaq Corvo Precision Payload Delivery System",
+  "Index": 1,
+  "Text": "The airframe is made of waxed foamcore (foamboard) and the drone is supplied as a self-assembly flatpack, complete with a tablet-PC control centre. It has a range of up to 120 km (75 mi). The PPDS can return and land for re-use, but its low cost means that it can also be treated as expendable.",
+  "reviewed_at_utc": "2026-11-04T07:41:40.369841+00:00",
+  "original_predictions": [
+    {
+      "entity": "PPDS",
+      "label": "MISC",
+      "start": 192,
+      "end": 196
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "PPDS",
+      "label": "MISC",
+      "start": 192,
+      "end": 196
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "PPDS",
+      "label": "MISC",
+      "start": 192,
+      "end": 196
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "PPDS",
+      "label": "MISC",
+      "start": 192,
+      "end": 196
+    }
+  ],
+  "gold": [
+    {
+      "entity": "PPDS",
+      "label": "MISC",
+      "start": 192,
+      "end": 196
+    }
+  ],
+  "history": []
+}

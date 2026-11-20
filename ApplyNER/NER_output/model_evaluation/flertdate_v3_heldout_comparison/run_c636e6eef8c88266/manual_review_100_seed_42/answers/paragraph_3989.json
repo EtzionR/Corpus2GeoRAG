@@ -1,0 +1,310 @@
+{
+  "comparison_row_id": 3989,
+  "Source": "Timeline of the Russo-Ukrainian war (1 August – 31 December 2024)",
+  "Index": 409,
+  "Text": "Ukrainian officials claimed that Russia and North Korea have amassed some 50,000 soldiers to recapture Ukrainian-held portions of Kursk Oblast. North Korean soldiers were also deployed in Belgorod Oblast.",
+  "reviewed_at_utc": "2026-11-04T06:38:32.281346+00:00",
+  "original_predictions": [
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 0,
+      "end": 9
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 33,
+      "end": 39
+    },
+    {
+      "entity": "North Korea",
+      "label": "LOC",
+      "start": 44,
+      "end": 55
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 103,
+      "end": 112
+    },
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 130,
+      "end": 142
+    },
+    {
+      "entity": "North Korean",
+      "label": "MISC",
+      "start": 144,
+      "end": 156
+    },
+    {
+      "entity": "Belgorod Oblast",
+      "label": "LOC",
+      "start": 188,
+      "end": 203
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 0,
+      "end": 9
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 33,
+      "end": 39
+    },
+    {
+      "entity": "North Korea",
+      "label": "LOC",
+      "start": 44,
+      "end": 55
+    },
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 130,
+      "end": 142
+    },
+    {
+      "entity": "North Korean",
+      "label": "MISC",
+      "start": 144,
+      "end": 156
+    },
+    {
+      "entity": "Belgorod Oblast",
+      "label": "LOC",
+      "start": 188,
+      "end": 203
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 0,
+      "end": 9
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 33,
+      "end": 39
+    },
+    {
+      "entity": "North Korea",
+      "label": "LOC",
+      "start": 44,
+      "end": 55
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 103,
+      "end": 112
+    },
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 130,
+      "end": 142
+    },
+    {
+      "entity": "North Korean",
+      "label": "MISC",
+      "start": 144,
+      "end": 156
+    },
+    {
+      "entity": "Belgorod Oblast",
+      "label": "LOC",
+      "start": 188,
+      "end": 203
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 0,
+      "end": 9
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 33,
+      "end": 39
+    },
+    {
+      "entity": "North Korea",
+      "label": "LOC",
+      "start": 44,
+      "end": 55
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 103,
+      "end": 112
+    },
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 130,
+      "end": 142
+    },
+    {
+      "entity": "North Korean",
+      "label": "MISC",
+      "start": 144,
+      "end": 156
+    },
+    {
+      "entity": "Belgorod Oblast",
+      "label": "LOC",
+      "start": 188,
+      "end": 203
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 0,
+      "end": 9
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 33,
+      "end": 39
+    },
+    {
+      "entity": "North Korea",
+      "label": "LOC",
+      "start": 44,
+      "end": 55
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 103,
+      "end": 112
+    },
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 130,
+      "end": 142
+    },
+    {
+      "entity": "North Korean",
+      "label": "MISC",
+      "start": 144,
+      "end": 156
+    },
+    {
+      "entity": "Belgorod Oblast",
+      "label": "LOC",
+      "start": 188,
+      "end": 203
+    }
+  ],
+  "history": [
+    {
+      "model": "v3",
+      "command": "add MISC | Ukrainian | 2",
+      "before": [
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 0,
+          "end": 9
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 33,
+          "end": 39
+        },
+        {
+          "entity": "North Korea",
+          "label": "LOC",
+          "start": 44,
+          "end": 55
+        },
+        {
+          "entity": "Kursk Oblast",
+          "label": "LOC",
+          "start": 130,
+          "end": 142
+        },
+        {
+          "entity": "North Korean",
+          "label": "MISC",
+          "start": 144,
+          "end": 156
+        },
+        {
+          "entity": "Belgorod Oblast",
+          "label": "LOC",
+          "start": 188,
+          "end": 203
+        }
+      ],
+      "after": [
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 0,
+          "end": 9
+        },
+        {
+          "entity": "Russia",
+          "label": "LOC",
+          "start": 33,
+          "end": 39
+        },
+        {
+          "entity": "North Korea",
+          "label": "LOC",
+          "start": 44,
+          "end": 55
+        },
+        {
+          "entity": "Ukrainian",
+          "label": "MISC",
+          "start": 103,
+          "end": 112
+        },
+        {
+          "entity": "Kursk Oblast",
+          "label": "LOC",
+          "start": 130,
+          "end": 142
+        },
+        {
+          "entity": "North Korean",
+          "label": "MISC",
+          "start": 144,
+          "end": 156
+        },
+        {
+          "entity": "Belgorod Oblast",
+          "label": "LOC",
+          "start": 188,
+          "end": 203
+        }
+      ],
+      "at_utc": "2026-11-04T06:38:27.895019+00:00"
+    }
+  ]
+}

@@ -1,0 +1,198 @@
+{
+  "comparison_row_id": 3635,
+  "Source": "Timeline of the Russo-Ukrainian war (1 August – 31 December 2024)",
+  "Index": 53,
+  "Text": "The acting governor of Kursk Oblast, Alexei Smirnov, announced the evacuation of some 20,000 people from the Glushkovsky District, some 20 kilometers behind the current front lines. In Belgorod Oblast, four people, including two paramedics, were reportedly injured in Ukrainian drone attacks in Shebekino.",
+  "reviewed_at_utc": "2026-11-04T07:29:56.878905+00:00",
+  "original_predictions": [
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 23,
+      "end": 35
+    },
+    {
+      "entity": "Alexei Smirnov",
+      "label": "PER",
+      "start": 37,
+      "end": 51
+    },
+    {
+      "entity": "Glushkovsky District",
+      "label": "LOC",
+      "start": 109,
+      "end": 129
+    },
+    {
+      "entity": "Belgorod Oblast",
+      "label": "LOC",
+      "start": 185,
+      "end": 200
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 268,
+      "end": 277
+    },
+    {
+      "entity": "Shebekino",
+      "label": "LOC",
+      "start": 295,
+      "end": 304
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 23,
+      "end": 35
+    },
+    {
+      "entity": "Alexei Smirnov",
+      "label": "PER",
+      "start": 37,
+      "end": 51
+    },
+    {
+      "entity": "Glushkovsky District",
+      "label": "LOC",
+      "start": 109,
+      "end": 129
+    },
+    {
+      "entity": "Belgorod Oblast",
+      "label": "LOC",
+      "start": 185,
+      "end": 200
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 268,
+      "end": 277
+    },
+    {
+      "entity": "Shebekino",
+      "label": "LOC",
+      "start": 295,
+      "end": 304
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 23,
+      "end": 35
+    },
+    {
+      "entity": "Alexei Smirnov",
+      "label": "PER",
+      "start": 37,
+      "end": 51
+    },
+    {
+      "entity": "Glushkovsky District",
+      "label": "LOC",
+      "start": 109,
+      "end": 129
+    },
+    {
+      "entity": "Belgorod Oblast",
+      "label": "LOC",
+      "start": 185,
+      "end": 200
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 268,
+      "end": 277
+    },
+    {
+      "entity": "Shebekino",
+      "label": "LOC",
+      "start": 295,
+      "end": 304
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 23,
+      "end": 35
+    },
+    {
+      "entity": "Alexei Smirnov",
+      "label": "PER",
+      "start": 37,
+      "end": 51
+    },
+    {
+      "entity": "Glushkovsky District",
+      "label": "LOC",
+      "start": 109,
+      "end": 129
+    },
+    {
+      "entity": "Belgorod Oblast",
+      "label": "LOC",
+      "start": 185,
+      "end": 200
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 268,
+      "end": 277
+    },
+    {
+      "entity": "Shebekino",
+      "label": "LOC",
+      "start": 295,
+      "end": 304
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Kursk Oblast",
+      "label": "LOC",
+      "start": 23,
+      "end": 35
+    },
+    {
+      "entity": "Alexei Smirnov",
+      "label": "PER",
+      "start": 37,
+      "end": 51
+    },
+    {
+      "entity": "Glushkovsky District",
+      "label": "LOC",
+      "start": 109,
+      "end": 129
+    },
+    {
+      "entity": "Belgorod Oblast",
+      "label": "LOC",
+      "start": 185,
+      "end": 200
+    },
+    {
+      "entity": "Ukrainian",
+      "label": "MISC",
+      "start": 268,
+      "end": 277
+    },
+    {
+      "entity": "Shebekino",
+      "label": "LOC",
+      "start": 295,
+      "end": 304
+    }
+  ],
+  "history": []
+}

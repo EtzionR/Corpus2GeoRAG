@@ -1,0 +1,52 @@
+{
+  "comparison_row_id": 1115,
+  "Source": "Bridge over Saint Volodymyr Descent",
+  "Index": 29,
+  "Text": "In February 2021, two glass panels of the bridge got cracked. They had been replaced in May.",
+  "reviewed_at_utc": "2026-11-04T06:47:08.731075+00:00",
+  "original_predictions": [],
+  "v3_predictions": [
+    {
+      "entity": "February 2021",
+      "label": "DATE",
+      "start": 3,
+      "end": 16
+    },
+    {
+      "entity": "May",
+      "label": "DATE",
+      "start": 88,
+      "end": 91
+    }
+  ],
+  "corrected_original": [],
+  "corrected_v3": [
+    {
+      "entity": "February 2021",
+      "label": "DATE",
+      "start": 3,
+      "end": 16
+    },
+    {
+      "entity": "May",
+      "label": "DATE",
+      "start": 88,
+      "end": 91
+    }
+  ],
+  "gold": [
+    {
+      "entity": "February 2021",
+      "label": "DATE",
+      "start": 3,
+      "end": 16
+    },
+    {
+      "entity": "May",
+      "label": "DATE",
+      "start": 88,
+      "end": 91
+    }
+  ],
+  "history": []
+}

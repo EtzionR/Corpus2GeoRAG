@@ -1,0 +1,463 @@
+{
+  "comparison_row_id": 1652,
+  "Source": "HESA Shahed 136",
+  "Index": 61,
+  "Text": "Just as with Western support for Ukraine, the Iranian drone build-up will have implications that go beyond this specific conflict. Iranian drones are increasing not only in number, but also sophistication and lethality, a development that concerns the United States and Europe. In response, we can expect Western actors to prioritise the production and export of low-cost defence systems able to counter the mass-produced drones directed by Iran, Iranian proxies, and other adversaries.",
+  "reviewed_at_utc": "2026-11-04T07:30:38.855081+00:00",
+  "original_predictions": [
+    {
+      "entity": "Western",
+      "label": "MISC",
+      "start": 13,
+      "end": 20
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 33,
+      "end": 40
+    },
+    {
+      "entity": "Iranian",
+      "label": "MISC",
+      "start": 46,
+      "end": 53
+    },
+    {
+      "entity": "Iranian",
+      "label": "MISC",
+      "start": 131,
+      "end": 138
+    },
+    {
+      "entity": "United States",
+      "label": "LOC",
+      "start": 252,
+      "end": 265
+    },
+    {
+      "entity": "Europe",
+      "label": "LOC",
+      "start": 270,
+      "end": 276
+    },
+    {
+      "entity": "Western",
+      "label": "MISC",
+      "start": 305,
+      "end": 312
+    },
+    {
+      "entity": "Iran",
+      "label": "LOC",
+      "start": 441,
+      "end": 445
+    },
+    {
+      "entity": "Iranian",
+      "label": "MISC",
+      "start": 447,
+      "end": 454
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Western",
+      "label": "MISC",
+      "start": 13,
+      "end": 20
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 33,
+      "end": 40
+    },
+    {
+      "entity": "Iranian",
+      "label": "MISC",
+      "start": 46,
+      "end": 53
+    },
+    {
+      "entity": "Iranian",
+      "label": "MISC",
+      "start": 131,
+      "end": 138
+    },
+    {
+      "entity": "United States",
+      "label": "LOC",
+      "start": 252,
+      "end": 265
+    },
+    {
+      "entity": "Europe",
+      "label": "LOC",
+      "start": 270,
+      "end": 276
+    },
+    {
+      "entity": "Western",
+      "label": "MISC",
+      "start": 305,
+      "end": 312
+    },
+    {
+      "entity": "Iran",
+      "label": "LOC",
+      "start": 441,
+      "end": 445
+    },
+    {
+      "entity": "Iranian",
+      "label": "MISC",
+      "start": 447,
+      "end": 454
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 33,
+      "end": 40
+    },
+    {
+      "entity": "Iranian",
+      "label": "MISC",
+      "start": 46,
+      "end": 53
+    },
+    {
+      "entity": "Iranian",
+      "label": "MISC",
+      "start": 131,
+      "end": 138
+    },
+    {
+      "entity": "United States",
+      "label": "LOC",
+      "start": 252,
+      "end": 265
+    },
+    {
+      "entity": "Europe",
+      "label": "LOC",
+      "start": 270,
+      "end": 276
+    },
+    {
+      "entity": "Iran",
+      "label": "LOC",
+      "start": 441,
+      "end": 445
+    },
+    {
+      "entity": "Iranian",
+      "label": "MISC",
+      "start": 447,
+      "end": 454
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 33,
+      "end": 40
+    },
+    {
+      "entity": "Iranian",
+      "label": "MISC",
+      "start": 46,
+      "end": 53
+    },
+    {
+      "entity": "Iranian",
+      "label": "MISC",
+      "start": 131,
+      "end": 138
+    },
+    {
+      "entity": "United States",
+      "label": "LOC",
+      "start": 252,
+      "end": 265
+    },
+    {
+      "entity": "Europe",
+      "label": "LOC",
+      "start": 270,
+      "end": 276
+    },
+    {
+      "entity": "Iran",
+      "label": "LOC",
+      "start": 441,
+      "end": 445
+    },
+    {
+      "entity": "Iranian",
+      "label": "MISC",
+      "start": 447,
+      "end": 454
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 33,
+      "end": 40
+    },
+    {
+      "entity": "Iranian",
+      "label": "MISC",
+      "start": 46,
+      "end": 53
+    },
+    {
+      "entity": "Iranian",
+      "label": "MISC",
+      "start": 131,
+      "end": 138
+    },
+    {
+      "entity": "United States",
+      "label": "LOC",
+      "start": 252,
+      "end": 265
+    },
+    {
+      "entity": "Europe",
+      "label": "LOC",
+      "start": 270,
+      "end": 276
+    },
+    {
+      "entity": "Iran",
+      "label": "LOC",
+      "start": 441,
+      "end": 445
+    },
+    {
+      "entity": "Iranian",
+      "label": "MISC",
+      "start": 447,
+      "end": 454
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "del 1,7",
+      "before": [
+        {
+          "entity": "Western",
+          "label": "MISC",
+          "start": 13,
+          "end": 20
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 33,
+          "end": 40
+        },
+        {
+          "entity": "Iranian",
+          "label": "MISC",
+          "start": 46,
+          "end": 53
+        },
+        {
+          "entity": "Iranian",
+          "label": "MISC",
+          "start": 131,
+          "end": 138
+        },
+        {
+          "entity": "United States",
+          "label": "LOC",
+          "start": 252,
+          "end": 265
+        },
+        {
+          "entity": "Europe",
+          "label": "LOC",
+          "start": 270,
+          "end": 276
+        },
+        {
+          "entity": "Western",
+          "label": "MISC",
+          "start": 305,
+          "end": 312
+        },
+        {
+          "entity": "Iran",
+          "label": "LOC",
+          "start": 441,
+          "end": 445
+        },
+        {
+          "entity": "Iranian",
+          "label": "MISC",
+          "start": 447,
+          "end": 454
+        }
+      ],
+      "after": [
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 33,
+          "end": 40
+        },
+        {
+          "entity": "Iranian",
+          "label": "MISC",
+          "start": 46,
+          "end": 53
+        },
+        {
+          "entity": "Iranian",
+          "label": "MISC",
+          "start": 131,
+          "end": 138
+        },
+        {
+          "entity": "United States",
+          "label": "LOC",
+          "start": 252,
+          "end": 265
+        },
+        {
+          "entity": "Europe",
+          "label": "LOC",
+          "start": 270,
+          "end": 276
+        },
+        {
+          "entity": "Iran",
+          "label": "LOC",
+          "start": 441,
+          "end": 445
+        },
+        {
+          "entity": "Iranian",
+          "label": "MISC",
+          "start": 447,
+          "end": 454
+        }
+      ],
+      "at_utc": "2026-11-04T07:30:20.424281+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "del 1,7",
+      "before": [
+        {
+          "entity": "Western",
+          "label": "MISC",
+          "start": 13,
+          "end": 20
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 33,
+          "end": 40
+        },
+        {
+          "entity": "Iranian",
+          "label": "MISC",
+          "start": 46,
+          "end": 53
+        },
+        {
+          "entity": "Iranian",
+          "label": "MISC",
+          "start": 131,
+          "end": 138
+        },
+        {
+          "entity": "United States",
+          "label": "LOC",
+          "start": 252,
+          "end": 265
+        },
+        {
+          "entity": "Europe",
+          "label": "LOC",
+          "start": 270,
+          "end": 276
+        },
+        {
+          "entity": "Western",
+          "label": "MISC",
+          "start": 305,
+          "end": 312
+        },
+        {
+          "entity": "Iran",
+          "label": "LOC",
+          "start": 441,
+          "end": 445
+        },
+        {
+          "entity": "Iranian",
+          "label": "MISC",
+          "start": 447,
+          "end": 454
+        }
+      ],
+      "after": [
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 33,
+          "end": 40
+        },
+        {
+          "entity": "Iranian",
+          "label": "MISC",
+          "start": 46,
+          "end": 53
+        },
+        {
+          "entity": "Iranian",
+          "label": "MISC",
+          "start": 131,
+          "end": 138
+        },
+        {
+          "entity": "United States",
+          "label": "LOC",
+          "start": 252,
+          "end": 265
+        },
+        {
+          "entity": "Europe",
+          "label": "LOC",
+          "start": 270,
+          "end": 276
+        },
+        {
+          "entity": "Iran",
+          "label": "LOC",
+          "start": 441,
+          "end": 445
+        },
+        {
+          "entity": "Iranian",
+          "label": "MISC",
+          "start": 447,
+          "end": 454
+        }
+      ],
+      "at_utc": "2026-11-04T07:30:28.151383+00:00"
+    }
+  ]
+}

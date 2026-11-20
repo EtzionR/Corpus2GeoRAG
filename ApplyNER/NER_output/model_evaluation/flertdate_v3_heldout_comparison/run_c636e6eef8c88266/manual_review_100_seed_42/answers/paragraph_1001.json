@@ -1,0 +1,424 @@
+{
+  "comparison_row_id": 1001,
+  "Source": "Battle of Kherson",
+  "Index": 33,
+  "Text": "In October 2022, the Spanish newspaper El País described the fall of Kherson as \"Ukraine's worst defeat in the war\". Kherson was the only oblast capital captured by Russian forces during the invasion. Strategically, Kherson has been described as \"a gateway to Crimea\", and as a key to control of the Dnieper river.",
+  "reviewed_at_utc": "2026-11-04T06:46:42.051184+00:00",
+  "original_predictions": [
+    {
+      "entity": "Spanish",
+      "label": "MISC",
+      "start": 21,
+      "end": 28
+    },
+    {
+      "entity": "El País",
+      "label": "ORG",
+      "start": 39,
+      "end": 46
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 69,
+      "end": 76
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 81,
+      "end": 88
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 117,
+      "end": 124
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 165,
+      "end": 172
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 216,
+      "end": 223
+    },
+    {
+      "entity": "Crimea",
+      "label": "LOC",
+      "start": 260,
+      "end": 266
+    },
+    {
+      "entity": "Dnieper",
+      "label": "LOC",
+      "start": 300,
+      "end": 307
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "October 2022",
+      "label": "DATE",
+      "start": 3,
+      "end": 15
+    },
+    {
+      "entity": "Spanish",
+      "label": "MISC",
+      "start": 21,
+      "end": 28
+    },
+    {
+      "entity": "El País",
+      "label": "ORG",
+      "start": 39,
+      "end": 46
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 69,
+      "end": 76
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 81,
+      "end": 88
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 117,
+      "end": 124
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 165,
+      "end": 172
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 216,
+      "end": 223
+    },
+    {
+      "entity": "Crimea",
+      "label": "LOC",
+      "start": 260,
+      "end": 266
+    },
+    {
+      "entity": "Dnieper river",
+      "label": "LOC",
+      "start": 300,
+      "end": 313
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Spanish",
+      "label": "MISC",
+      "start": 21,
+      "end": 28
+    },
+    {
+      "entity": "El País",
+      "label": "ORG",
+      "start": 39,
+      "end": 46
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 69,
+      "end": 76
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 81,
+      "end": 88
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 117,
+      "end": 124
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 165,
+      "end": 172
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 216,
+      "end": 223
+    },
+    {
+      "entity": "Crimea",
+      "label": "LOC",
+      "start": 260,
+      "end": 266
+    },
+    {
+      "entity": "Dnieper river",
+      "label": "LOC",
+      "start": 300,
+      "end": 313
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "October 2022",
+      "label": "DATE",
+      "start": 3,
+      "end": 15
+    },
+    {
+      "entity": "Spanish",
+      "label": "MISC",
+      "start": 21,
+      "end": 28
+    },
+    {
+      "entity": "El País",
+      "label": "ORG",
+      "start": 39,
+      "end": 46
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 69,
+      "end": 76
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 81,
+      "end": 88
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 117,
+      "end": 124
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 165,
+      "end": 172
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 216,
+      "end": 223
+    },
+    {
+      "entity": "Crimea",
+      "label": "LOC",
+      "start": 260,
+      "end": 266
+    },
+    {
+      "entity": "Dnieper river",
+      "label": "LOC",
+      "start": 300,
+      "end": 313
+    }
+  ],
+  "gold": [
+    {
+      "entity": "October 2022",
+      "label": "DATE",
+      "start": 3,
+      "end": 15
+    },
+    {
+      "entity": "Spanish",
+      "label": "MISC",
+      "start": 21,
+      "end": 28
+    },
+    {
+      "entity": "El País",
+      "label": "ORG",
+      "start": 39,
+      "end": 46
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 69,
+      "end": 76
+    },
+    {
+      "entity": "Ukraine",
+      "label": "LOC",
+      "start": 81,
+      "end": 88
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 117,
+      "end": 124
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 165,
+      "end": 172
+    },
+    {
+      "entity": "Kherson",
+      "label": "LOC",
+      "start": 216,
+      "end": 223
+    },
+    {
+      "entity": "Crimea",
+      "label": "LOC",
+      "start": 260,
+      "end": 266
+    },
+    {
+      "entity": "Dnieper river",
+      "label": "LOC",
+      "start": 300,
+      "end": 313
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "span 9 | Dnieper river | 1",
+      "before": [
+        {
+          "entity": "Spanish",
+          "label": "MISC",
+          "start": 21,
+          "end": 28
+        },
+        {
+          "entity": "El País",
+          "label": "ORG",
+          "start": 39,
+          "end": 46
+        },
+        {
+          "entity": "Kherson",
+          "label": "LOC",
+          "start": 69,
+          "end": 76
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 81,
+          "end": 88
+        },
+        {
+          "entity": "Kherson",
+          "label": "LOC",
+          "start": 117,
+          "end": 124
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 165,
+          "end": 172
+        },
+        {
+          "entity": "Kherson",
+          "label": "LOC",
+          "start": 216,
+          "end": 223
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 260,
+          "end": 266
+        },
+        {
+          "entity": "Dnieper",
+          "label": "LOC",
+          "start": 300,
+          "end": 307
+        }
+      ],
+      "after": [
+        {
+          "entity": "Spanish",
+          "label": "MISC",
+          "start": 21,
+          "end": 28
+        },
+        {
+          "entity": "El País",
+          "label": "ORG",
+          "start": 39,
+          "end": 46
+        },
+        {
+          "entity": "Kherson",
+          "label": "LOC",
+          "start": 69,
+          "end": 76
+        },
+        {
+          "entity": "Ukraine",
+          "label": "LOC",
+          "start": 81,
+          "end": 88
+        },
+        {
+          "entity": "Kherson",
+          "label": "LOC",
+          "start": 117,
+          "end": 124
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 165,
+          "end": 172
+        },
+        {
+          "entity": "Kherson",
+          "label": "LOC",
+          "start": 216,
+          "end": 223
+        },
+        {
+          "entity": "Crimea",
+          "label": "LOC",
+          "start": 260,
+          "end": 266
+        },
+        {
+          "entity": "Dnieper river",
+          "label": "LOC",
+          "start": 300,
+          "end": 313
+        }
+      ],
+      "at_utc": "2026-11-04T06:46:08.105002+00:00"
+    }
+  ]
+}

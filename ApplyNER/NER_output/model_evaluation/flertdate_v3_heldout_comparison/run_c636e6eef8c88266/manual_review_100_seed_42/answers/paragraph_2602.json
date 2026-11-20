@@ -1,0 +1,156 @@
+{
+  "comparison_row_id": 2602,
+  "Source": "Malaysia Airlines Flight 17",
+  "Index": 67,
+  "Text": "On 22 December 2014, the Dutch news service RTL Nieuws published a statement from an unnamed local resident who said he had witnessed the shooting down of MH17, which he said was shot down by a missile from rebel territory. He had taken photographs which he had passed to the SBU.",
+  "reviewed_at_utc": "2026-11-04T07:43:40.631855+00:00",
+  "original_predictions": [
+    {
+      "entity": "Dutch",
+      "label": "MISC",
+      "start": 25,
+      "end": 30
+    },
+    {
+      "entity": "RTL Nieuws",
+      "label": "ORG",
+      "start": 44,
+      "end": 54
+    },
+    {
+      "entity": "MH17",
+      "label": "MISC",
+      "start": 155,
+      "end": 159
+    },
+    {
+      "entity": "SBU",
+      "label": "ORG",
+      "start": 276,
+      "end": 279
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "22 December 2014",
+      "label": "DATE",
+      "start": 3,
+      "end": 19
+    },
+    {
+      "entity": "Dutch",
+      "label": "MISC",
+      "start": 25,
+      "end": 30
+    },
+    {
+      "entity": "RTL Nieuws",
+      "label": "ORG",
+      "start": 44,
+      "end": 54
+    },
+    {
+      "entity": "MH17",
+      "label": "MISC",
+      "start": 155,
+      "end": 159
+    },
+    {
+      "entity": "SBU",
+      "label": "ORG",
+      "start": 276,
+      "end": 279
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Dutch",
+      "label": "MISC",
+      "start": 25,
+      "end": 30
+    },
+    {
+      "entity": "RTL Nieuws",
+      "label": "ORG",
+      "start": 44,
+      "end": 54
+    },
+    {
+      "entity": "MH17",
+      "label": "MISC",
+      "start": 155,
+      "end": 159
+    },
+    {
+      "entity": "SBU",
+      "label": "ORG",
+      "start": 276,
+      "end": 279
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "22 December 2014",
+      "label": "DATE",
+      "start": 3,
+      "end": 19
+    },
+    {
+      "entity": "Dutch",
+      "label": "MISC",
+      "start": 25,
+      "end": 30
+    },
+    {
+      "entity": "RTL Nieuws",
+      "label": "ORG",
+      "start": 44,
+      "end": 54
+    },
+    {
+      "entity": "MH17",
+      "label": "MISC",
+      "start": 155,
+      "end": 159
+    },
+    {
+      "entity": "SBU",
+      "label": "ORG",
+      "start": 276,
+      "end": 279
+    }
+  ],
+  "gold": [
+    {
+      "entity": "22 December 2014",
+      "label": "DATE",
+      "start": 3,
+      "end": 19
+    },
+    {
+      "entity": "Dutch",
+      "label": "MISC",
+      "start": 25,
+      "end": 30
+    },
+    {
+      "entity": "RTL Nieuws",
+      "label": "ORG",
+      "start": 44,
+      "end": 54
+    },
+    {
+      "entity": "MH17",
+      "label": "MISC",
+      "start": 155,
+      "end": 159
+    },
+    {
+      "entity": "SBU",
+      "label": "ORG",
+      "start": 276,
+      "end": 279
+    }
+  ],
+  "history": []
+}

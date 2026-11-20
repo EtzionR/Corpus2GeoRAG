@@ -1,0 +1,78 @@
+{
+  "comparison_row_id": 1888,
+  "Source": "Ivano-Frankivsk Oblast",
+  "Index": 134,
+  "Text": "List of heads of government in Ivano-Frankivsk Oblast and Stanislawow Voivodeship",
+  "reviewed_at_utc": "2026-11-04T07:19:00.630074+00:00",
+  "original_predictions": [
+    {
+      "entity": "Ivano-Frankivsk Oblast",
+      "label": "LOC",
+      "start": 31,
+      "end": 53
+    },
+    {
+      "entity": "Stanislawow Voivodeship",
+      "label": "LOC",
+      "start": 58,
+      "end": 81
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Ivano-Frankivsk Oblast",
+      "label": "LOC",
+      "start": 31,
+      "end": 53
+    },
+    {
+      "entity": "Stanislawow Voivodeship",
+      "label": "LOC",
+      "start": 58,
+      "end": 81
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Ivano-Frankivsk Oblast",
+      "label": "LOC",
+      "start": 31,
+      "end": 53
+    },
+    {
+      "entity": "Stanislawow Voivodeship",
+      "label": "LOC",
+      "start": 58,
+      "end": 81
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Ivano-Frankivsk Oblast",
+      "label": "LOC",
+      "start": 31,
+      "end": 53
+    },
+    {
+      "entity": "Stanislawow Voivodeship",
+      "label": "LOC",
+      "start": 58,
+      "end": 81
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Ivano-Frankivsk Oblast",
+      "label": "LOC",
+      "start": 31,
+      "end": 53
+    },
+    {
+      "entity": "Stanislawow Voivodeship",
+      "label": "LOC",
+      "start": 58,
+      "end": 81
+    }
+  ],
+  "history": []
+}

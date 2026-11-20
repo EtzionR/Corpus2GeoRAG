@@ -1,0 +1,436 @@
+{
+  "comparison_row_id": 1972,
+  "Source": "Kastuś Kalinoŭski Regiment",
+  "Index": 10,
+  "Text": "On 21 May, battalion commander, Dzianis Prokharaŭ (call sign \"Kit\") announced that the battalion would become a regiment comprising two separate battalions. This was presented as \"a move to the next stage of building a [Belarusian] national military unit\" which \"tak[es] into account the scale of the tasks facing the Belarusian soldiers\". The regiment would consist of three battalions, \"Litvin\", \"Volat\", and \"Terror.\" Terror would later split from the Regiment and become an independent unit, the Terror Battalion.",
+  "reviewed_at_utc": "2026-11-04T07:29:29.880759+00:00",
+  "original_predictions": [
+    {
+      "entity": "Dzianis Prokharaŭ",
+      "label": "PER",
+      "start": 32,
+      "end": 49
+    },
+    {
+      "entity": "Kit",
+      "label": "PER",
+      "start": 62,
+      "end": 65
+    },
+    {
+      "entity": "Belarusian",
+      "label": "MISC",
+      "start": 220,
+      "end": 230
+    },
+    {
+      "entity": "Belarusian",
+      "label": "MISC",
+      "start": 318,
+      "end": 328
+    },
+    {
+      "entity": "Litvin",
+      "label": "ORG",
+      "start": 389,
+      "end": 395
+    },
+    {
+      "entity": "Volat",
+      "label": "ORG",
+      "start": 399,
+      "end": 404
+    },
+    {
+      "entity": "Terror",
+      "label": "ORG",
+      "start": 412,
+      "end": 418
+    },
+    {
+      "entity": "Terror",
+      "label": "ORG",
+      "start": 421,
+      "end": 427
+    },
+    {
+      "entity": "Regiment",
+      "label": "ORG",
+      "start": 455,
+      "end": 463
+    },
+    {
+      "entity": "Terror Battalion",
+      "label": "ORG",
+      "start": 500,
+      "end": 516
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "21 May",
+      "label": "DATE",
+      "start": 3,
+      "end": 9
+    },
+    {
+      "entity": "Dzianis Prokharaŭ",
+      "label": "PER",
+      "start": 32,
+      "end": 49
+    },
+    {
+      "entity": "Kit",
+      "label": "PER",
+      "start": 62,
+      "end": 65
+    },
+    {
+      "entity": "Belarusian",
+      "label": "MISC",
+      "start": 220,
+      "end": 230
+    },
+    {
+      "entity": "Belarusian",
+      "label": "MISC",
+      "start": 318,
+      "end": 328
+    },
+    {
+      "entity": "Litvin",
+      "label": "ORG",
+      "start": 389,
+      "end": 395
+    },
+    {
+      "entity": "Volat",
+      "label": "ORG",
+      "start": 399,
+      "end": 404
+    },
+    {
+      "entity": "Terror",
+      "label": "ORG",
+      "start": 412,
+      "end": 418
+    },
+    {
+      "entity": "Terror",
+      "label": "ORG",
+      "start": 421,
+      "end": 427
+    },
+    {
+      "entity": "Terror Battalion",
+      "label": "ORG",
+      "start": 500,
+      "end": 516
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Dzianis Prokharaŭ",
+      "label": "PER",
+      "start": 32,
+      "end": 49
+    },
+    {
+      "entity": "Kit",
+      "label": "PER",
+      "start": 62,
+      "end": 65
+    },
+    {
+      "entity": "Belarusian",
+      "label": "MISC",
+      "start": 220,
+      "end": 230
+    },
+    {
+      "entity": "Belarusian",
+      "label": "MISC",
+      "start": 318,
+      "end": 328
+    },
+    {
+      "entity": "Litvin",
+      "label": "ORG",
+      "start": 389,
+      "end": 395
+    },
+    {
+      "entity": "Volat",
+      "label": "ORG",
+      "start": 399,
+      "end": 404
+    },
+    {
+      "entity": "Terror",
+      "label": "ORG",
+      "start": 412,
+      "end": 418
+    },
+    {
+      "entity": "Terror",
+      "label": "ORG",
+      "start": 421,
+      "end": 427
+    },
+    {
+      "entity": "Terror Battalion",
+      "label": "ORG",
+      "start": 500,
+      "end": 516
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "21 May",
+      "label": "DATE",
+      "start": 3,
+      "end": 9
+    },
+    {
+      "entity": "Dzianis Prokharaŭ",
+      "label": "PER",
+      "start": 32,
+      "end": 49
+    },
+    {
+      "entity": "Kit",
+      "label": "PER",
+      "start": 62,
+      "end": 65
+    },
+    {
+      "entity": "Belarusian",
+      "label": "MISC",
+      "start": 220,
+      "end": 230
+    },
+    {
+      "entity": "Belarusian",
+      "label": "MISC",
+      "start": 318,
+      "end": 328
+    },
+    {
+      "entity": "Litvin",
+      "label": "ORG",
+      "start": 389,
+      "end": 395
+    },
+    {
+      "entity": "Volat",
+      "label": "ORG",
+      "start": 399,
+      "end": 404
+    },
+    {
+      "entity": "Terror",
+      "label": "ORG",
+      "start": 412,
+      "end": 418
+    },
+    {
+      "entity": "Terror",
+      "label": "ORG",
+      "start": 421,
+      "end": 427
+    },
+    {
+      "entity": "Terror Battalion",
+      "label": "ORG",
+      "start": 500,
+      "end": 516
+    }
+  ],
+  "gold": [
+    {
+      "entity": "21 May",
+      "label": "DATE",
+      "start": 3,
+      "end": 9
+    },
+    {
+      "entity": "Dzianis Prokharaŭ",
+      "label": "PER",
+      "start": 32,
+      "end": 49
+    },
+    {
+      "entity": "Kit",
+      "label": "PER",
+      "start": 62,
+      "end": 65
+    },
+    {
+      "entity": "Belarusian",
+      "label": "MISC",
+      "start": 220,
+      "end": 230
+    },
+    {
+      "entity": "Belarusian",
+      "label": "MISC",
+      "start": 318,
+      "end": 328
+    },
+    {
+      "entity": "Litvin",
+      "label": "ORG",
+      "start": 389,
+      "end": 395
+    },
+    {
+      "entity": "Volat",
+      "label": "ORG",
+      "start": 399,
+      "end": 404
+    },
+    {
+      "entity": "Terror",
+      "label": "ORG",
+      "start": 412,
+      "end": 418
+    },
+    {
+      "entity": "Terror",
+      "label": "ORG",
+      "start": 421,
+      "end": 427
+    },
+    {
+      "entity": "Terror Battalion",
+      "label": "ORG",
+      "start": 500,
+      "end": 516
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "del 9",
+      "before": [
+        {
+          "entity": "Dzianis Prokharaŭ",
+          "label": "PER",
+          "start": 32,
+          "end": 49
+        },
+        {
+          "entity": "Kit",
+          "label": "PER",
+          "start": 62,
+          "end": 65
+        },
+        {
+          "entity": "Belarusian",
+          "label": "MISC",
+          "start": 220,
+          "end": 230
+        },
+        {
+          "entity": "Belarusian",
+          "label": "MISC",
+          "start": 318,
+          "end": 328
+        },
+        {
+          "entity": "Litvin",
+          "label": "ORG",
+          "start": 389,
+          "end": 395
+        },
+        {
+          "entity": "Volat",
+          "label": "ORG",
+          "start": 399,
+          "end": 404
+        },
+        {
+          "entity": "Terror",
+          "label": "ORG",
+          "start": 412,
+          "end": 418
+        },
+        {
+          "entity": "Terror",
+          "label": "ORG",
+          "start": 421,
+          "end": 427
+        },
+        {
+          "entity": "Regiment",
+          "label": "ORG",
+          "start": 455,
+          "end": 463
+        },
+        {
+          "entity": "Terror Battalion",
+          "label": "ORG",
+          "start": 500,
+          "end": 516
+        }
+      ],
+      "after": [
+        {
+          "entity": "Dzianis Prokharaŭ",
+          "label": "PER",
+          "start": 32,
+          "end": 49
+        },
+        {
+          "entity": "Kit",
+          "label": "PER",
+          "start": 62,
+          "end": 65
+        },
+        {
+          "entity": "Belarusian",
+          "label": "MISC",
+          "start": 220,
+          "end": 230
+        },
+        {
+          "entity": "Belarusian",
+          "label": "MISC",
+          "start": 318,
+          "end": 328
+        },
+        {
+          "entity": "Litvin",
+          "label": "ORG",
+          "start": 389,
+          "end": 395
+        },
+        {
+          "entity": "Volat",
+          "label": "ORG",
+          "start": 399,
+          "end": 404
+        },
+        {
+          "entity": "Terror",
+          "label": "ORG",
+          "start": 412,
+          "end": 418
+        },
+        {
+          "entity": "Terror",
+          "label": "ORG",
+          "start": 421,
+          "end": 427
+        },
+        {
+          "entity": "Terror Battalion",
+          "label": "ORG",
+          "start": 500,
+          "end": 516
+        }
+      ],
+      "at_utc": "2026-11-04T07:29:25.798048+00:00"
+    }
+  ]
+}

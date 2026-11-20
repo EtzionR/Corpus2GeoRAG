@@ -1,0 +1,168 @@
+{
+  "comparison_row_id": 3951,
+  "Source": "Timeline of the Russo-Ukrainian war (1 August – 31 December 2024)",
+  "Index": 371,
+  "Text": "A 72-year-old mechanical engineer was arrested in Odessa by the SBU on suspicion of collaborating with Russian intelligence and helping Russia \"enhance\" its Shahed drones.",
+  "reviewed_at_utc": "2026-11-04T06:49:38.081320+00:00",
+  "original_predictions": [
+    {
+      "entity": "Odessa",
+      "label": "LOC",
+      "start": 50,
+      "end": 56
+    },
+    {
+      "entity": "SBU",
+      "label": "ORG",
+      "start": 64,
+      "end": 67
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 103,
+      "end": 110
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 136,
+      "end": 142
+    },
+    {
+      "entity": "Shahed",
+      "label": "MISC",
+      "start": 157,
+      "end": 163
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Odessa",
+      "label": "LOC",
+      "start": 50,
+      "end": 56
+    },
+    {
+      "entity": "SBU",
+      "label": "ORG",
+      "start": 64,
+      "end": 67
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 103,
+      "end": 110
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 136,
+      "end": 142
+    },
+    {
+      "entity": "Shahed",
+      "label": "MISC",
+      "start": 157,
+      "end": 163
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Odessa",
+      "label": "LOC",
+      "start": 50,
+      "end": 56
+    },
+    {
+      "entity": "SBU",
+      "label": "ORG",
+      "start": 64,
+      "end": 67
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 103,
+      "end": 110
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 136,
+      "end": 142
+    },
+    {
+      "entity": "Shahed",
+      "label": "MISC",
+      "start": 157,
+      "end": 163
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Odessa",
+      "label": "LOC",
+      "start": 50,
+      "end": 56
+    },
+    {
+      "entity": "SBU",
+      "label": "ORG",
+      "start": 64,
+      "end": 67
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 103,
+      "end": 110
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 136,
+      "end": 142
+    },
+    {
+      "entity": "Shahed",
+      "label": "MISC",
+      "start": 157,
+      "end": 163
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Odessa",
+      "label": "LOC",
+      "start": 50,
+      "end": 56
+    },
+    {
+      "entity": "SBU",
+      "label": "ORG",
+      "start": 64,
+      "end": 67
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 103,
+      "end": 110
+    },
+    {
+      "entity": "Russia",
+      "label": "LOC",
+      "start": 136,
+      "end": 142
+    },
+    {
+      "entity": "Shahed",
+      "label": "MISC",
+      "start": 157,
+      "end": 163
+    }
+  ],
+  "history": []
+}

@@ -1,0 +1,670 @@
+{
+  "comparison_row_id": 2922,
+  "Source": "Moldovan protests (2022–2023)",
+  "Index": 40,
+  "Text": "On 19 June, the Șor Party was outlawed by the Constitutional Court of Moldova. Șor declared that the party will continue its activity and that it will contest in the next elections despite such an action being illegal and any votes for Șor being invalid. Maria Zakharova, the spokeswoman of the Russian foreign ministry, declared that Maia Sandu wants to become the \"Romanian Queen of Moldova\".",
+  "reviewed_at_utc": "2026-11-04T06:43:45.078981+00:00",
+  "original_predictions": [
+    {
+      "entity": "Șor Party",
+      "label": "ORG",
+      "start": 16,
+      "end": 25
+    },
+    {
+      "entity": "Constitutional Court of Moldova",
+      "label": "ORG",
+      "start": 46,
+      "end": 77
+    },
+    {
+      "entity": "Șor",
+      "label": "PER",
+      "start": 79,
+      "end": 82
+    },
+    {
+      "entity": "Șor",
+      "label": "PER",
+      "start": 236,
+      "end": 239
+    },
+    {
+      "entity": "Maria Zakharova",
+      "label": "PER",
+      "start": 255,
+      "end": 270
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 295,
+      "end": 302
+    },
+    {
+      "entity": "Maia Sandu",
+      "label": "PER",
+      "start": 335,
+      "end": 345
+    },
+    {
+      "entity": "Romanian",
+      "label": "MISC",
+      "start": 367,
+      "end": 375
+    },
+    {
+      "entity": "Moldova",
+      "label": "LOC",
+      "start": 385,
+      "end": 392
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "19 June",
+      "label": "DATE",
+      "start": 3,
+      "end": 10
+    },
+    {
+      "entity": "Șor Party",
+      "label": "ORG",
+      "start": 16,
+      "end": 25
+    },
+    {
+      "entity": "Constitutional Court of Moldova",
+      "label": "ORG",
+      "start": 46,
+      "end": 77
+    },
+    {
+      "entity": "Șor",
+      "label": "ORG",
+      "start": 79,
+      "end": 82
+    },
+    {
+      "entity": "Șor",
+      "label": "ORG",
+      "start": 236,
+      "end": 239
+    },
+    {
+      "entity": "Maria Zakharova",
+      "label": "PER",
+      "start": 255,
+      "end": 270
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 295,
+      "end": 302
+    },
+    {
+      "entity": "Maia Sandu",
+      "label": "PER",
+      "start": 335,
+      "end": 345
+    },
+    {
+      "entity": "Romanian",
+      "label": "MISC",
+      "start": 367,
+      "end": 375
+    },
+    {
+      "entity": "Moldova",
+      "label": "MISC",
+      "start": 385,
+      "end": 392
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Șor Party",
+      "label": "ORG",
+      "start": 16,
+      "end": 25
+    },
+    {
+      "entity": "Constitutional Court of Moldova",
+      "label": "ORG",
+      "start": 46,
+      "end": 77
+    },
+    {
+      "entity": "Șor",
+      "label": "ORG",
+      "start": 79,
+      "end": 82
+    },
+    {
+      "entity": "Șor",
+      "label": "ORG",
+      "start": 236,
+      "end": 239
+    },
+    {
+      "entity": "Maria Zakharova",
+      "label": "PER",
+      "start": 255,
+      "end": 270
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 295,
+      "end": 302
+    },
+    {
+      "entity": "Maia Sandu",
+      "label": "PER",
+      "start": 335,
+      "end": 345
+    },
+    {
+      "entity": "Romanian",
+      "label": "MISC",
+      "start": 367,
+      "end": 375
+    },
+    {
+      "entity": "Moldova",
+      "label": "LOC",
+      "start": 385,
+      "end": 392
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "19 June",
+      "label": "DATE",
+      "start": 3,
+      "end": 10
+    },
+    {
+      "entity": "Șor Party",
+      "label": "ORG",
+      "start": 16,
+      "end": 25
+    },
+    {
+      "entity": "Constitutional Court of Moldova",
+      "label": "ORG",
+      "start": 46,
+      "end": 77
+    },
+    {
+      "entity": "Șor",
+      "label": "ORG",
+      "start": 79,
+      "end": 82
+    },
+    {
+      "entity": "Șor",
+      "label": "ORG",
+      "start": 236,
+      "end": 239
+    },
+    {
+      "entity": "Maria Zakharova",
+      "label": "PER",
+      "start": 255,
+      "end": 270
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 295,
+      "end": 302
+    },
+    {
+      "entity": "Maia Sandu",
+      "label": "PER",
+      "start": 335,
+      "end": 345
+    },
+    {
+      "entity": "Romanian",
+      "label": "MISC",
+      "start": 367,
+      "end": 375
+    },
+    {
+      "entity": "Moldova",
+      "label": "LOC",
+      "start": 385,
+      "end": 392
+    }
+  ],
+  "gold": [
+    {
+      "entity": "19 June",
+      "label": "DATE",
+      "start": 3,
+      "end": 10
+    },
+    {
+      "entity": "Șor Party",
+      "label": "ORG",
+      "start": 16,
+      "end": 25
+    },
+    {
+      "entity": "Constitutional Court of Moldova",
+      "label": "ORG",
+      "start": 46,
+      "end": 77
+    },
+    {
+      "entity": "Șor",
+      "label": "ORG",
+      "start": 79,
+      "end": 82
+    },
+    {
+      "entity": "Șor",
+      "label": "ORG",
+      "start": 236,
+      "end": 239
+    },
+    {
+      "entity": "Maria Zakharova",
+      "label": "PER",
+      "start": 255,
+      "end": 270
+    },
+    {
+      "entity": "Russian",
+      "label": "MISC",
+      "start": 295,
+      "end": 302
+    },
+    {
+      "entity": "Maia Sandu",
+      "label": "PER",
+      "start": 335,
+      "end": 345
+    },
+    {
+      "entity": "Romanian",
+      "label": "MISC",
+      "start": 367,
+      "end": 375
+    },
+    {
+      "entity": "Moldova",
+      "label": "LOC",
+      "start": 385,
+      "end": 392
+    }
+  ],
+  "history": [
+    {
+      "model": "original",
+      "command": "label 3 ORG",
+      "before": [
+        {
+          "entity": "Șor Party",
+          "label": "ORG",
+          "start": 16,
+          "end": 25
+        },
+        {
+          "entity": "Constitutional Court of Moldova",
+          "label": "ORG",
+          "start": 46,
+          "end": 77
+        },
+        {
+          "entity": "Șor",
+          "label": "PER",
+          "start": 79,
+          "end": 82
+        },
+        {
+          "entity": "Șor",
+          "label": "PER",
+          "start": 236,
+          "end": 239
+        },
+        {
+          "entity": "Maria Zakharova",
+          "label": "PER",
+          "start": 255,
+          "end": 270
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 295,
+          "end": 302
+        },
+        {
+          "entity": "Maia Sandu",
+          "label": "PER",
+          "start": 335,
+          "end": 345
+        },
+        {
+          "entity": "Romanian",
+          "label": "MISC",
+          "start": 367,
+          "end": 375
+        },
+        {
+          "entity": "Moldova",
+          "label": "LOC",
+          "start": 385,
+          "end": 392
+        }
+      ],
+      "after": [
+        {
+          "entity": "Șor Party",
+          "label": "ORG",
+          "start": 16,
+          "end": 25
+        },
+        {
+          "entity": "Constitutional Court of Moldova",
+          "label": "ORG",
+          "start": 46,
+          "end": 77
+        },
+        {
+          "entity": "Șor",
+          "label": "ORG",
+          "start": 79,
+          "end": 82
+        },
+        {
+          "entity": "Șor",
+          "label": "PER",
+          "start": 236,
+          "end": 239
+        },
+        {
+          "entity": "Maria Zakharova",
+          "label": "PER",
+          "start": 255,
+          "end": 270
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 295,
+          "end": 302
+        },
+        {
+          "entity": "Maia Sandu",
+          "label": "PER",
+          "start": 335,
+          "end": 345
+        },
+        {
+          "entity": "Romanian",
+          "label": "MISC",
+          "start": 367,
+          "end": 375
+        },
+        {
+          "entity": "Moldova",
+          "label": "LOC",
+          "start": 385,
+          "end": 392
+        }
+      ],
+      "at_utc": "2026-11-04T06:43:26.079219+00:00"
+    },
+    {
+      "model": "original",
+      "command": "label 4 ORG",
+      "before": [
+        {
+          "entity": "Șor Party",
+          "label": "ORG",
+          "start": 16,
+          "end": 25
+        },
+        {
+          "entity": "Constitutional Court of Moldova",
+          "label": "ORG",
+          "start": 46,
+          "end": 77
+        },
+        {
+          "entity": "Șor",
+          "label": "ORG",
+          "start": 79,
+          "end": 82
+        },
+        {
+          "entity": "Șor",
+          "label": "PER",
+          "start": 236,
+          "end": 239
+        },
+        {
+          "entity": "Maria Zakharova",
+          "label": "PER",
+          "start": 255,
+          "end": 270
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 295,
+          "end": 302
+        },
+        {
+          "entity": "Maia Sandu",
+          "label": "PER",
+          "start": 335,
+          "end": 345
+        },
+        {
+          "entity": "Romanian",
+          "label": "MISC",
+          "start": 367,
+          "end": 375
+        },
+        {
+          "entity": "Moldova",
+          "label": "LOC",
+          "start": 385,
+          "end": 392
+        }
+      ],
+      "after": [
+        {
+          "entity": "Șor Party",
+          "label": "ORG",
+          "start": 16,
+          "end": 25
+        },
+        {
+          "entity": "Constitutional Court of Moldova",
+          "label": "ORG",
+          "start": 46,
+          "end": 77
+        },
+        {
+          "entity": "Șor",
+          "label": "ORG",
+          "start": 79,
+          "end": 82
+        },
+        {
+          "entity": "Șor",
+          "label": "ORG",
+          "start": 236,
+          "end": 239
+        },
+        {
+          "entity": "Maria Zakharova",
+          "label": "PER",
+          "start": 255,
+          "end": 270
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 295,
+          "end": 302
+        },
+        {
+          "entity": "Maia Sandu",
+          "label": "PER",
+          "start": 335,
+          "end": 345
+        },
+        {
+          "entity": "Romanian",
+          "label": "MISC",
+          "start": 367,
+          "end": 375
+        },
+        {
+          "entity": "Moldova",
+          "label": "LOC",
+          "start": 385,
+          "end": 392
+        }
+      ],
+      "at_utc": "2026-11-04T06:43:31.676340+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "label 10 LOC",
+      "before": [
+        {
+          "entity": "19 June",
+          "label": "DATE",
+          "start": 3,
+          "end": 10
+        },
+        {
+          "entity": "Șor Party",
+          "label": "ORG",
+          "start": 16,
+          "end": 25
+        },
+        {
+          "entity": "Constitutional Court of Moldova",
+          "label": "ORG",
+          "start": 46,
+          "end": 77
+        },
+        {
+          "entity": "Șor",
+          "label": "ORG",
+          "start": 79,
+          "end": 82
+        },
+        {
+          "entity": "Șor",
+          "label": "ORG",
+          "start": 236,
+          "end": 239
+        },
+        {
+          "entity": "Maria Zakharova",
+          "label": "PER",
+          "start": 255,
+          "end": 270
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 295,
+          "end": 302
+        },
+        {
+          "entity": "Maia Sandu",
+          "label": "PER",
+          "start": 335,
+          "end": 345
+        },
+        {
+          "entity": "Romanian",
+          "label": "MISC",
+          "start": 367,
+          "end": 375
+        },
+        {
+          "entity": "Moldova",
+          "label": "MISC",
+          "start": 385,
+          "end": 392
+        }
+      ],
+      "after": [
+        {
+          "entity": "19 June",
+          "label": "DATE",
+          "start": 3,
+          "end": 10
+        },
+        {
+          "entity": "Șor Party",
+          "label": "ORG",
+          "start": 16,
+          "end": 25
+        },
+        {
+          "entity": "Constitutional Court of Moldova",
+          "label": "ORG",
+          "start": 46,
+          "end": 77
+        },
+        {
+          "entity": "Șor",
+          "label": "ORG",
+          "start": 79,
+          "end": 82
+        },
+        {
+          "entity": "Șor",
+          "label": "ORG",
+          "start": 236,
+          "end": 239
+        },
+        {
+          "entity": "Maria Zakharova",
+          "label": "PER",
+          "start": 255,
+          "end": 270
+        },
+        {
+          "entity": "Russian",
+          "label": "MISC",
+          "start": 295,
+          "end": 302
+        },
+        {
+          "entity": "Maia Sandu",
+          "label": "PER",
+          "start": 335,
+          "end": 345
+        },
+        {
+          "entity": "Romanian",
+          "label": "MISC",
+          "start": 367,
+          "end": 375
+        },
+        {
+          "entity": "Moldova",
+          "label": "LOC",
+          "start": 385,
+          "end": 392
+        }
+      ],
+      "at_utc": "2026-11-04T06:43:39.063947+00:00"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "comparison_row_id": 132,
+  "Source": "150th Guards Motor Rifle Division",
+  "Index": 44,
+  "Text": "Major-general Pyotr Bolgarev (2016–2018)",
+  "reviewed_at_utc": "2026-11-04T07:28:57.908922+00:00",
+  "original_predictions": [
+    {
+      "entity": "Pyotr Bolgarev",
+      "label": "PER",
+      "start": 14,
+      "end": 28
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Pyotr Bolgarev",
+      "label": "PER",
+      "start": 14,
+      "end": 28
+    },
+    {
+      "entity": "2016–2018",
+      "label": "DATE",
+      "start": 30,
+      "end": 39
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Pyotr Bolgarev",
+      "label": "PER",
+      "start": 14,
+      "end": 28
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Pyotr Bolgarev",
+      "label": "PER",
+      "start": 14,
+      "end": 28
+    },
+    {
+      "entity": "2016–2018",
+      "label": "DATE",
+      "start": 30,
+      "end": 39
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Pyotr Bolgarev",
+      "label": "PER",
+      "start": 14,
+      "end": 28
+    },
+    {
+      "entity": "2016–2018",
+      "label": "DATE",
+      "start": 30,
+      "end": 39
+    }
+  ],
+  "history": []
+}

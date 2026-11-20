@@ -1,0 +1,241 @@
+{
+  "comparison_row_id": 505,
+  "Source": "412th Unmanned Systems Brigade",
+  "Index": 6,
+  "Text": "On November 28, 2024, the FPV drone unit ASGARD, including airplane-type strike drones, became part of the Unmanned Systems Forces and integrated into the 412th Battalion NEMESIS. ",
+  "reviewed_at_utc": "2026-11-04T07:00:24.771446+00:00",
+  "original_predictions": [
+    {
+      "entity": "ASGARD",
+      "label": "ORG",
+      "start": 41,
+      "end": 47
+    },
+    {
+      "entity": "Unmanned Systems Forces",
+      "label": "ORG",
+      "start": 107,
+      "end": 130
+    },
+    {
+      "entity": "412th Battalion NEMESIS",
+      "label": "ORG",
+      "start": 155,
+      "end": 178
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "November 28",
+      "label": "DATE",
+      "start": 3,
+      "end": 14
+    },
+    {
+      "entity": "2024",
+      "label": "DATE",
+      "start": 16,
+      "end": 20
+    },
+    {
+      "entity": "ASGARD",
+      "label": "ORG",
+      "start": 41,
+      "end": 47
+    },
+    {
+      "entity": "Unmanned Systems Forces",
+      "label": "ORG",
+      "start": 107,
+      "end": 130
+    },
+    {
+      "entity": "412th Battalion NEMESIS",
+      "label": "ORG",
+      "start": 155,
+      "end": 178
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "ASGARD",
+      "label": "ORG",
+      "start": 41,
+      "end": 47
+    },
+    {
+      "entity": "Unmanned Systems Forces",
+      "label": "ORG",
+      "start": 107,
+      "end": 130
+    },
+    {
+      "entity": "412th Battalion NEMESIS",
+      "label": "ORG",
+      "start": 155,
+      "end": 178
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "November 28, 2024",
+      "label": "DATE",
+      "start": 3,
+      "end": 20
+    },
+    {
+      "entity": "ASGARD",
+      "label": "ORG",
+      "start": 41,
+      "end": 47
+    },
+    {
+      "entity": "Unmanned Systems Forces",
+      "label": "ORG",
+      "start": 107,
+      "end": 130
+    },
+    {
+      "entity": "412th Battalion NEMESIS",
+      "label": "ORG",
+      "start": 155,
+      "end": 178
+    }
+  ],
+  "gold": [
+    {
+      "entity": "November 28, 2024",
+      "label": "DATE",
+      "start": 3,
+      "end": 20
+    },
+    {
+      "entity": "ASGARD",
+      "label": "ORG",
+      "start": 41,
+      "end": 47
+    },
+    {
+      "entity": "Unmanned Systems Forces",
+      "label": "ORG",
+      "start": 107,
+      "end": 130
+    },
+    {
+      "entity": "412th Battalion NEMESIS",
+      "label": "ORG",
+      "start": 155,
+      "end": 178
+    }
+  ],
+  "history": [
+    {
+      "model": "v3",
+      "command": "del 1,2",
+      "before": [
+        {
+          "entity": "November 28",
+          "label": "DATE",
+          "start": 3,
+          "end": 14
+        },
+        {
+          "entity": "2024",
+          "label": "DATE",
+          "start": 16,
+          "end": 20
+        },
+        {
+          "entity": "ASGARD",
+          "label": "ORG",
+          "start": 41,
+          "end": 47
+        },
+        {
+          "entity": "Unmanned Systems Forces",
+          "label": "ORG",
+          "start": 107,
+          "end": 130
+        },
+        {
+          "entity": "412th Battalion NEMESIS",
+          "label": "ORG",
+          "start": 155,
+          "end": 178
+        }
+      ],
+      "after": [
+        {
+          "entity": "ASGARD",
+          "label": "ORG",
+          "start": 41,
+          "end": 47
+        },
+        {
+          "entity": "Unmanned Systems Forces",
+          "label": "ORG",
+          "start": 107,
+          "end": 130
+        },
+        {
+          "entity": "412th Battalion NEMESIS",
+          "label": "ORG",
+          "start": 155,
+          "end": 178
+        }
+      ],
+      "at_utc": "2026-11-04T07:00:16.588320+00:00"
+    },
+    {
+      "model": "v3",
+      "command": "add DATE | November 28, 2024 | 1",
+      "before": [
+        {
+          "entity": "ASGARD",
+          "label": "ORG",
+          "start": 41,
+          "end": 47
+        },
+        {
+          "entity": "Unmanned Systems Forces",
+          "label": "ORG",
+          "start": 107,
+          "end": 130
+        },
+        {
+          "entity": "412th Battalion NEMESIS",
+          "label": "ORG",
+          "start": 155,
+          "end": 178
+        }
+      ],
+      "after": [
+        {
+          "entity": "November 28, 2024",
+          "label": "DATE",
+          "start": 3,
+          "end": 20
+        },
+        {
+          "entity": "ASGARD",
+          "label": "ORG",
+          "start": 41,
+          "end": 47
+        },
+        {
+          "entity": "Unmanned Systems Forces",
+          "label": "ORG",
+          "start": 107,
+          "end": 130
+        },
+        {
+          "entity": "412th Battalion NEMESIS",
+          "label": "ORG",
+          "start": 155,
+          "end": 178
+        }
+      ],
+      "at_utc": "2026-11-04T07:00:21.860888+00:00"
+    }
+  ]
+}

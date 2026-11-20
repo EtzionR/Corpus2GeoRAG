@@ -67,17 +67,21 @@ To activate the live agent, provide your key (format `sk-or-v1-...` from [openro
 
 ```
 ui/
-├── app.py              # Main Streamlit frontend (Chat, Folium map, Leaflet HUD, layer management)
-├── geo_agent.py        # Backend adapter routing between Live AgentRag and Mock Engine
-├── test_app.py         # 55 automated pytest unit tests validating contracts, Vr6, and performance
-├── AGENTS.md           # Mandatory frontend & Streamlit performance rules (zero-latency guidelines)
-├── PULL_REQUEST.md     # Full Pull Request specification detailing connection to AgentRag
-├── requirements.txt    # Frontend dependencies specification
-├── run_app.bat         # Automated one-click Windows launcher
-├── run_tests.bat       # Automated one-click Windows test runner
-├── run_app.sh          # Automated Unix/macOS launcher
-├── .gitignore          # Git exclusion rules for Python, virtual environments, and caches
-└── README.md           # This document
+├── app.py                   # Main Streamlit frontend (Chat, Folium map, Leaflet HUD, layer management)
+├── geo_agent.py             # Backend adapter routing between Live AgentRag and Mock Engine
+├── test_app.py              # 140 automated unit, AST invariant, state-loop & latency benchmark tests
+├── conftest.py              # Pytest fixtures for micro-benchmarks, high-load RAG payloads & state simulation
+├── verify_quality_gate.py   # Automated DoD enforcer (file-to-test pairing, AST audit & pytest runner)
+├── .githooks/pre-commit     # Git pre-commit hook blocking untested code or latency regressions
+├── AGENTS.md                # Mandatory frontend & Streamlit performance rules + Definition of Done
+├── PULL_REQUEST.md          # Full Pull Request specification detailing connection to AgentRag
+├── requirements.txt         # Frontend dependencies specification
+├── run_app.bat              # Automated one-click Windows launcher
+├── run_tests.bat            # Automated Windows unit & performance quality gate runner
+├── run_tests.sh             # Automated POSIX unit & performance quality gate runner
+├── run_app.sh               # Automated Unix/macOS launcher
+├── .gitignore               # Git exclusion rules for Python, virtual environments, and caches
+└── README.md                # This document
 ```
 
 ---
@@ -87,7 +91,7 @@ ui/
 ### 1. Zero-Latency Client-Side Map (Leaflet & Folium)
 - **0ms Client-Side Pan & Zoom**: Panning, zooming, and opening marker popups execute 100% on the client side without triggering Python script reruns or dimming the screen (`returned_objects` constraint).
 - **Background Pin Clustering (`MarkerCluster`)**: When queries return dense context lists (50–500 places), context places (`role == "context"`) are clustered to prevent browser DOM choke, while primary places (`role == "primary"`) remain standalone prominent pins.
-- **Client-Side Pin Filter Controls**: A bottom-right Leaflet control allows operators to toggle visibility of Context pins and Uncertain pins with 0ms delay.
+- **Client-Side Pin Filter Controls**: A bottom-right Leaflet control allows operators to toggle visibility of Primary, Context, and Uncertain pins and switch pin shapes (Diamond vs. Teardrop) with 0ms delay.
 - **Auto-Zoom to Operational Area (`map_bbox`)**: The map automatically calculates and applies `m.fit_bounds()` to frame the operational scope returned by the agent.
 - **GeoJSON Boundary Outlines**: When places include boundary polygons (`place["shape"]`), the frontend renders semi-transparent tactical sector outlines (`folium.GeoJson`).
 - **Basemap HUD Switcher**: CartoDB Voyager Dark (tactical dark navigation), CartoDB Dark Matter, Esri Dark Gray Canvas, High-Resolution Satellite Imagery, Topographic, and OSM.
@@ -95,13 +99,14 @@ ui/
 ### 2. Multi-Modal Spatial Targeting
 - **Map Click Target Selection**: Clicking the map selects coordinate targets without triggering immediate backend queries.
 - **Area-of-Interest (AOI) Bounding Box Suite**: Draw tactical rectangles using the map toolbar to define spatial envelopes `(lower-left, upper-right)` in GeoJSON `[lon, lat]` order.
-- **Reconnaissance Scans**: Click the **🔍 Recon Scan** button (in sidebar or docked chat pill) to run instant multi-modal reconnaissance over points or bounding boxes without typing a question.
+- **Reconnaissance Scans**: Click the **🔍 Recon Scan** button (in sidebar, map HUD, or docked chat pill) to run instant multi-modal reconnaissance over points or bounding boxes without typing a question.
 - **One-Click Deletion**: Integrated trash bin controls on both the map toolbar and chat docked pill to clear selections instantly.
 
 ### 3. Operator Intel Console & Grounded Sources
-- **Show Citations Toggle**: Toggle between verified grounding marks (`result["answer"]` with `[1]`, `[S2]`) and clean conversational prose (`result["answer_plain"]`).
+- **Show Citations Toggle & Interactive Badges**: Toggle between verified grounding marks (`result["answer"]` with clickable `[1]`, `[S2]`, `[L1]`, `[P1-S1]` badges) and clean conversational prose (`result["answer_plain"]`).
 - **Verified Source Drawer**: Resolves `TEXT_XXXXX` paragraph pointers into human-readable document titles and section names from the knowledge graph.
 - **Character Span Highlighting**: Inspected source passages highlight verbatim entity and concept mentions in styled `<mark>` tags using `citation["spans"]`.
+- **Interactive Answer Subgraph Modal**: Inspect the induced entity and provenance knowledge subgraph (`LOC`, `ORG`, `PER`, `TEXT`) for any assistant response.
 - **Interactive Follow-Up Buttons**: Up to 3 suggested questions (`result["follow_ups"]`) are rendered as clickable buttons (`🔍 {q}`) below assistant answers.
 - **Regional Distribution Expander**: Displays region-by-region counts (`result["regions"]`) for broad queries spanning multiple oblasts.
 - **Did-You-Mean Notices**: Displays alternative suggestions (`result["did_you_mean"]`) when queries involve ambiguous place names.
@@ -112,34 +117,35 @@ ui/
 ## ⚡ Streamlit Performance Guidelines (`AGENTS.md`)
 
 To keep the application fast, responsive, and free from visual jumping, all agents and developers must adhere to the rules in [`AGENTS.md`](AGENTS.md):
-1. **Never allow map pan/zoom to trigger Python reruns**: Always constrain `returned_objects=["last_clicked", "last_active_drawing", "all_drawings"]` in `st_folium()`.
-2. **No unconditional module reloads or dependency scans**: Wrap bootstrap checks with `_BOOTSTRAP_DONE` once per process; do not call `importlib.reload(geo_agent)`.
+1. **Never allow map pan/zoom to trigger Python reruns**: Always constrain `returned_objects=["last_clicked", "last_active_drawing", "all_drawings"]` and `return_on_hover=False` in `st_folium()`.
+2. **No unconditional module reloads or dependency scans**: Wrap bootstrap checks with `_BOOTSTRAP_DONE` once per process; do not place unguarded `importlib.reload(geo_agent)` calls in global scope.
 3. **In-memory LRU caching for knowledge graph text**: Wrap `get_source_text()` with `@functools.lru_cache(maxsize=4096)`.
 4. **Stable layout container heights**: Keep `chat_container_height = 465` constant to prevent the chat scroll area and input box from bouncing vertically.
 5. **Cluster background context pins**: Primary places remain individual pins; context places use `folium.plugins.MarkerCluster`.
 
 ---
 
-## 🧪 Automated Testing (`pytest`)
+## 🧪 Automated Testing, Benchmarks & Definition of Done (`pytest`)
 
-To run the full suite of **55 automated unit tests**:
+### Definition of Done (DoD)
+Every code addition or modification in `ui/` must satisfy the strict **Definition of Done** codified in [`AGENTS.md`](AGENTS.md):
+1. **Unit Test Pairing**: Every new feature, route, helper function, or UI element must include accompanying unit tests in `test_app.py`.
+2. **Performance & Latency Benchmarks**: Every state mutation, adapter routine, or map interaction must include a micro-benchmark or latency ceiling assertion using the fixtures in `conftest.py` (`latency_ceiling`, `micro_benchmark`, `high_volume_rag_payload_factory`, `bbox_input_factory`, `streamlit_state_simulator`).
+3. **Zero Regressions**: No commit or PR may reduce existing test coverage or violate established millisecond latency ceilings.
 
+### Running the Full Test & Quality Gate Suite (140 Tests)
 ```bash
-# From ui/ directory:
+# Run the complete Quality Gate (File-pairing audit + Static AST checks + 140 pytest tests):
+python verify_quality_gate.py
+
+# Or run pytest directly:
 python -m pytest test_app.py -v
 
-# Or double-click (Windows):
-run_tests.bat
-```
+# Platform test runners:
+run_tests.bat          # Windows interactive
+run_tests.bat --ci     # Windows CI / non-interactive
+./run_tests.sh         # Linux / macOS
 
-### Test Suite Coverage (55 Tests Passing)
-- **Data Contracts**: Validates `MapLayer` and `AgentResponse` typing, defaults, and serialization.
-- **Multimodal Routing Scenarios**: Scenario A (text + point), Scenario B (point-only reconnaissance), Scenario C (general text), and Bounding Box AOI scenarios.
-- **Vr6 Data Ingestion**: Numbered pin ordering, citation passthrough, document title resolution, and paragraph metadata.
-- **Upgrades 1–6 Verification**:
-  - `test_highlight_text_spans_basic_and_overlapping`: Character offset interval merging and `<mark>` generation.
-  - `test_highlight_text_spans_dict_format`: Handles `{'start': s, 'end': e}` span dictionaries.
-  - `test_build_assistant_message_vr6_fields`: Preserves `follow_ups`, `regions`, `did_you_mean`, and `map_bbox`.
-  - `test_geojson_boundary_layer_generation`: Verifies hydration of GeoJSON polygons from backend `shape`.
-  - `test_auto_zoom_map_bbox_extracted_and_fit`: Validates `map_bbox` extraction and `m.fit_bounds()` integration.
-- **Performance Rule Enforcement**: Static codebase verification ensuring all rules in `AGENTS.md` are actively enforced.
+# Enable the Git pre-commit enforcement hook:
+git config core.hooksPath .githooks
+```

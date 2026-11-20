@@ -1,0 +1,48 @@
+{
+  "comparison_row_id": 2346,
+  "Source": "List of military aid to Ukraine during the Russo-Ukrainian war",
+  "Index": 150,
+  "Text": "List of Russo-Ukrainian War military equipment",
+  "reviewed_at_utc": "2026-11-04T07:05:05.670349+00:00",
+  "original_predictions": [
+    {
+      "entity": "Russo-Ukrainian War",
+      "label": "MISC",
+      "start": 8,
+      "end": 27
+    }
+  ],
+  "v3_predictions": [
+    {
+      "entity": "Russo-Ukrainian War",
+      "label": "MISC",
+      "start": 8,
+      "end": 27
+    }
+  ],
+  "corrected_original": [
+    {
+      "entity": "Russo-Ukrainian War",
+      "label": "MISC",
+      "start": 8,
+      "end": 27
+    }
+  ],
+  "corrected_v3": [
+    {
+      "entity": "Russo-Ukrainian War",
+      "label": "MISC",
+      "start": 8,
+      "end": 27
+    }
+  ],
+  "gold": [
+    {
+      "entity": "Russo-Ukrainian War",
+      "label": "MISC",
+      "start": 8,
+      "end": 27
+    }
+  ],
+  "history": []
+}
