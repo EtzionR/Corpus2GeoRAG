@@ -21,6 +21,7 @@ from __future__ import annotations
 import os
 import sys
 import re
+import html
 import logging
 import functools
 import concurrent.futures
@@ -44,6 +45,7 @@ __all__ = [
     "get_source_text",
     "extract_answer_subgraph",
     "get_agent_env_path",
+    "get_active_graph_label",
     "persist_openrouter_api_key",
     "format_evidence_popup_html",
     "query_geo_agent",
@@ -83,8 +85,8 @@ for _p in _potential_agent_dirs:
             sys.path.insert(0, str(_p))
         break
 
-# Note: AgentRag automatically locates Graph_n_Geocoding/knowledge_graph.json.gz (Vr6)
-# relative to its own directory unless GRAPH_PATH is explicitly set in the environment.
+# Note: AgentRag defaults to Graph_n_Geocoding/with_dates/knowledge_graph.json.gz (dated graph),
+# falling back to Graph_n_Geocoding/knowledge_graph.json.gz when configured via GRAPH_PATH.
 # Clear any stale GRAPH_PATH from older sessions pointing to the deleted uncompressed .json file.
 if os.environ.get("GRAPH_PATH", "").endswith("knowledge_graph.json"):
     os.environ.pop("GRAPH_PATH", None)
@@ -179,7 +181,7 @@ class AgentResponse:
         raw_response (Optional[Dict[str, Any]]): Original response dictionary from the backend.
         is_live_backend (bool): Whether the response was produced by the live GeoRAG agent.
         answer_plain (str): Clean version of the answer with citation marks stripped.
-        citations (List[Dict[str, Any]]): Structured citation metadata ({id, pointer, article, section, spans}).
+        citations (List[Dict[str, Any]]): Structured citation metadata ({id, pointer, article, section, spans, date}).
         grounded (bool): True when backed by graph evidence; False if LLM-only fallback.
         status (str): Backend status ('answered', 'no_data', 'out_of_scope', 'llm_failed').
     """
@@ -200,6 +202,7 @@ class AgentResponse:
     regions: Any = field(default_factory=list)
     did_you_mean: Any = field(default_factory=list)
     subgraph: Dict[str, Any] = field(default_factory=dict)
+    question_type: Optional[str] = None
 
     def __post_init__(self):
         if not self.answer_plain:
@@ -229,6 +232,40 @@ def get_agent_env_path() -> Optional[Path]:
         except Exception:
             continue
     return None
+
+
+def get_active_graph_label() -> str:
+    """
+    Return a human-readable label for the configured AgentRag knowledge graph
+    without loading or parsing the graph into memory.
+    """
+    raw_path = (os.environ.get("GRAPH_PATH") or "").strip().strip("'\"")
+    if not raw_path:
+        env_file = get_agent_env_path()
+        if env_file is not None and env_file.is_file():
+            try:
+                for line in env_file.read_text(encoding="utf-8-sig").splitlines():
+                    stripped = line.strip()
+                    if not stripped or stripped.startswith("#"):
+                        continue
+                    key, sep, val = stripped.partition("=")
+                    if sep and key.strip() == "GRAPH_PATH":
+                        cand = val.strip().strip("'\"")
+                        if cand:
+                            raw_path = cand
+                        break
+            except Exception:
+                pass
+
+    if not raw_path:
+        raw_path = "Graph_n_Geocoding/with_dates/knowledge_graph.json.gz"
+
+    norm = raw_path.replace("\\", "/").lower()
+    if "with_dates" in norm:
+        return "with_dates (dated knowledge graph)"
+    if norm.endswith("knowledge_graph.json.gz"):
+        return "fallback (without dates)"
+    return Path(raw_path).name or raw_path
 
 
 def persist_openrouter_api_key(
@@ -379,6 +416,7 @@ def extract_answer_subgraph(
         summary: str = "",
         evidence: str = "",
         pin_number: Optional[int] = None,
+        date: str = "",
     ) -> None:
         nid = str(node_id).strip()
         if not nid:
@@ -396,6 +434,8 @@ def extract_answer_subgraph(
                 existing["summary"] = summary
             if evidence and not existing.get("evidence"):
                 existing["evidence"] = evidence
+            if date and not existing.get("date"):
+                existing["date"] = str(date)
             return
         nodes_by_id[nid] = {
             "id": nid,
@@ -406,6 +446,7 @@ def extract_answer_subgraph(
             "summary": str(summary or ""),
             "evidence": str(evidence or ""),
             "pin_number": pin_number,
+            "date": str(date or ""),
         }
 
     def _add_edge(u: str, v: str, label: str, kind: str = "relation") -> None:
@@ -672,7 +713,7 @@ def extract_answer_subgraph(
                 for nbr in G.neighbors(loc_id):
                     nbr_data = G.nodes[nbr]
                     nbr_type = nbr_data.get("type")
-                    if nbr_type == "TEXT":
+                    if nbr_type in ("TEXT", "DATE"):
                         continue
                     edge_data = G[loc_id][nbr]
                     rels = edge_data.get("relations") or {}
@@ -713,6 +754,13 @@ def extract_answer_subgraph(
                                 sample_rec = matched_recs[0] if matched_recs else (recs[0] if recs else {})
                                 ev_tid = sample_rec.get("text_id")
                                 ev_ptr = f"TEXT_{ev_tid}" if ev_tid is not None else ""
+                                rec_date = sample_rec.get("date") if isinstance(sample_rec, dict) else None
+                                rec_date_txt = str(rec_date.get("text") or "").strip() if isinstance(rec_date, dict) else ""
+                                ev_text = (
+                                    f"Relation: {sample_rec.get('subject', nbr)} —[{rel_name}]→ {sample_rec.get('object', loc_id)}"
+                                    + (f" ({ev_ptr})" if ev_ptr else "")
+                                    + (f" [📅 {rec_date_txt}]" if rec_date_txt else "")
+                                )
                                 _add_node(
                                     node_id=nbr,
                                     label=nbr,
@@ -720,8 +768,7 @@ def extract_answer_subgraph(
                                     role="entity",
                                     subtitle=f"{nbr_type or 'ENTITY'} Node",
                                     summary=f"Connected to {loc_id} via '{rel_name}' relation in the knowledge graph.",
-                                    evidence=f"Relation: {sample_rec.get('subject', nbr)} —[{rel_name}]→ {sample_rec.get('object', loc_id)}"
-                                    + (f" ({ev_ptr})" if ev_ptr else ""),
+                                    evidence=ev_text,
                                 )
                             if nbr in nodes_by_id:
                                 sample_rec = matched_recs[0] if matched_recs else (recs[0] if recs else {})
@@ -774,23 +821,34 @@ def extract_answer_subgraph(
     for s_idx, ptr in enumerate(active_text_ptrs):
         tag = tag_by_ptr.get(ptr) or f"S{s_idx + 1}"
         cit = cit_by_ptr.get(ptr, {})
+        cit_date = str(cit.get("date") or "").strip()
         passage = get_source_text(ptr) or {}
         doc_title = str(passage.get("document") or cit.get("article") or ptr).replace("\ufffd", " - ").strip()
         sec_title = str(passage.get("section") or cit.get("section") or "").replace("\ufffd", " - ").strip()
-        raw_txt = str(passage.get("text") or "").strip()
+        raw_txt = str(passage.get("text") or cit.get("text") or "").strip()
         snippet = (raw_txt[:240] + "...") if len(raw_txt) > 240 else (
             raw_txt or f"Verbatim corpus source passage {ptr} from '{doc_title}'."
         )
         short_doc = (doc_title[:20] + "…") if len(doc_title) > 21 else doc_title
+        subtitle_bits = [ptr]
+        if cit_date:
+            subtitle_bits.append(f"📅 {cit_date}")
+        if sec_title:
+            subtitle_bits.append(f"§ {sec_title}")
 
         _add_node(
             node_id=ptr,
             label=f"[{tag}] {short_doc}",
             ntype="TEXT",
             role="source",
-            subtitle=f"{ptr}" + (f" • § {sec_title}" if sec_title else ""),
-            summary=f"Source passage [{tag}] from article '{doc_title}'" + (f" ({sec_title})" if sec_title else ""),
+            subtitle=" • ".join(subtitle_bits),
+            summary=(
+                f"Source passage [{tag}] from article '{doc_title}'"
+                + (f" ({sec_title})" if sec_title else "")
+                + (f" dated {cit_date}" if cit_date else "")
+            ),
             evidence=snippet,
+            date=cit_date,
         )
 
         # Link from citation place_number / place_label if specified
@@ -1053,9 +1111,13 @@ def query_geo_agent(
         # 5. Build source and citation mappings with structured place tags (e.g. [P1-S1], [S1])
         raw_citations = list(raw_result.get("citations", []))
         tag_by_pointer: Dict[str, str] = {}
+        date_by_pointer: Dict[str, str] = {}
         for c in raw_citations:
-            if isinstance(c, dict) and c.get("pointer") and c.get("id"):
-                tag_by_pointer[c["pointer"]] = c["id"]
+            if isinstance(c, dict) and c.get("pointer"):
+                if c.get("id"):
+                    tag_by_pointer[c["pointer"]] = c["id"]
+                if c.get("date"):
+                    date_by_pointer[c["pointer"]] = str(c["date"]).strip()
 
         def _select_diverse_place_sources(ptrs: List[str], limit: int = 3) -> List[Tuple[int, str]]:
             """Select up to `limit` (original_index, pointer) pairs prioritizing distinct article titles first."""
@@ -1197,7 +1259,13 @@ def query_geo_agent(
                     else:
                         doc_clean = s_ptr
                     tag_badge = f"<a href='#geoai-src-{tag}' class='tactical-cit tactical-cit-ps' data-cit-target='{tag}' style='cursor:pointer;' title='Click to inspect source'>[{tag}]</a>"
-                    src_lines.append(f"<div style='margin-bottom:2px;'>• <b style='color:#00e5ff;'>{tag_badge}</b> {doc_clean}</div>")
+                    s_date = date_by_pointer.get(s_ptr)
+                    date_badge = (
+                        f" <span style='color:#fbbf24; font-size:0.84em; margin-left:4px;'>({html.escape(s_date)})</span>"
+                        if s_date
+                        else ""
+                    )
+                    src_lines.append(f"<div style='margin-bottom:2px;'>• <b style='color:#00e5ff;'>{tag_badge}</b> {doc_clean}{date_badge}</div>")
                 more_count = len(sources_list) - len(diverse_sources)
                 more_html = f"<div style='color:#94a3b8; font-size:0.85em; margin-top:2px;'><i>(+{more_count} more sources)</i></div>" if more_count > 0 else ""
                 src_html = (
@@ -1302,6 +1370,8 @@ def query_geo_agent(
             answer_text=ans_plain_text,
         )
 
+        raw_meta = raw_result.get("meta") if isinstance(raw_result.get("meta"), dict) else {}
+
         return AgentResponse(
             answer=ans_text,
             layers=layers,
@@ -1320,6 +1390,7 @@ def query_geo_agent(
             regions=parsed_regions,
             did_you_mean=raw_result.get("did_you_mean") or None,
             subgraph=subgraph_data,
+            question_type=raw_meta.get("question_type"),
         )
 
     # Fallback to deterministic mock routing
@@ -1353,6 +1424,21 @@ def query_geo_agent(
     if not mock_resp.subgraph:
         mock_resp.subgraph = extract_answer_subgraph(mock_resp)
     return mock_resp
+
+
+_MOCK_FULL_DATE_RE = re.compile(
+    r"\b\d{1,2}\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+20\d{2}\b"
+    r"|\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},?\s+20\d{2}\b",
+    re.IGNORECASE,
+)
+_MOCK_MONTH_YEAR_RE = re.compile(
+    r"\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+20\d{2}\b",
+    re.IGNORECASE,
+)
+_MOCK_YEAR_QUERY_RE = re.compile(
+    r"\b(?:happened|fighting|attacks?|strikes?|offensive|events?|in|on|during)\b.{0,40}\b(?P<year>201[4-9]|202[0-6])\b",
+    re.IGNORECASE,
+)
 
 
 def _query_mock_agent(
@@ -1662,6 +1748,170 @@ def _query_mock_agent(
     # --------------------------------------------------------------------------
     if has_text and not has_point:
         query_clean = text_prompt.strip()
+        date_match = _MOCK_FULL_DATE_RE.search(query_clean) or _MOCK_MONTH_YEAR_RE.search(query_clean)
+        if date_match:
+            date_label = date_match.group(0).strip()
+        else:
+            yr_match = _MOCK_YEAR_QUERY_RE.search(query_clean)
+            date_label = yr_match.group("year").strip() if yr_match else ""
+        if date_label:
+            q_low = query_clean.lower()
+            if "mariupol" in q_low:
+                loc1_name, loc1_lat, loc1_lng, loc1_art = "Mariupol", 47.0971, 37.5434, "Siege of Mariupol"
+                loc2_name, loc2_lat, loc2_lng, loc2_art = "Donetsk", 48.0159, 37.8028, "Battle of Donbas (2022)"
+            elif "bakhmut" in q_low:
+                loc1_name, loc1_lat, loc1_lng, loc1_art = "Bakhmut", 48.5953, 37.9999, "Battle of Bakhmut"
+                loc2_name, loc2_lat, loc2_lng, loc2_art = "Soledar", 48.6956, 38.0686, "Battle of Soledar"
+            elif "kharkiv" in q_low:
+                loc1_name, loc1_lat, loc1_lng, loc1_art = "Kharkiv", 49.9935, 36.2304, "Battle of Kharkiv (2022)"
+                loc2_name, loc2_lat, loc2_lng, loc2_art = "Izium", 49.2128, 37.2569, "Battle of Izium"
+            else:
+                loc1_name, loc1_lat, loc1_lng, loc1_art = "Kyiv", 50.4501, 30.5234, "Battle of Kyiv (2022)"
+                loc2_name, loc2_lat, loc2_lng, loc2_art = "Kharkiv", 49.9935, 36.2304, "Battle of Kharkiv (2022)"
+
+            txt_1 = f"On {date_label}, military engagements and air-defense operations were recorded around {loc1_name} and nearby approaches."
+            txt_2 = f"During {date_label}, heavy clashes and artillery exchanges continued along the {loc2_name} sector."
+            spans_1 = [
+                [txt_1.index(date_label), txt_1.index(date_label) + len(date_label)],
+                [txt_1.index(loc1_name), txt_1.index(loc1_name) + len(loc1_name)],
+            ]
+            spans_2 = [
+                [txt_2.index(date_label), txt_2.index(date_label) + len(date_label)],
+                [txt_2.index(loc2_name), txt_2.index(loc2_name) + len(loc2_name)],
+            ]
+            mock_sources = ["TEXT_MOCK_DATE_1", "TEXT_MOCK_DATE_2"]
+            mock_citations = [
+                {
+                    "id": "S1",
+                    "pointer": "TEXT_MOCK_DATE_1",
+                    "article": loc1_art,
+                    "section": "Timeline & Operations",
+                    "date": date_label,
+                    "spans": spans_1,
+                    "text": txt_1,
+                    "place_number": 1,
+                    "place_label": loc1_name,
+                },
+                {
+                    "id": "S2",
+                    "pointer": "TEXT_MOCK_DATE_2",
+                    "article": loc2_art,
+                    "section": "Timeline & Operations",
+                    "date": date_label,
+                    "spans": spans_2,
+                    "text": txt_2,
+                    "place_number": 2,
+                    "place_label": loc2_name,
+                },
+            ]
+            mock_geo_locs = [
+                {
+                    "number": 1,
+                    "id": loc1_name,
+                    "label": loc1_name,
+                    "kind": "city",
+                    "role": "primary",
+                    "geometry": {"type": "Point", "coordinates": [loc1_lng, loc1_lat]},
+                    "why": f"1 dated passage ({date_label})",
+                    "sources": ["TEXT_MOCK_DATE_1"],
+                },
+                {
+                    "number": 2,
+                    "id": loc2_name,
+                    "label": loc2_name,
+                    "kind": "city",
+                    "role": "primary",
+                    "geometry": {"type": "Point", "coordinates": [loc2_lng, loc2_lat]},
+                    "why": f"1 dated passage ({date_label})",
+                    "sources": ["TEXT_MOCK_DATE_2"],
+                },
+            ]
+            answer_text = (
+                f"### 📅 Temporal Spatial Synthesis ({date_label})\n\n"
+                f"**Inquiry:** \"{query_clean}\"\n\n"
+                f"During **{date_label}**, reported military activity centered around **{loc1_name}** [1, S1] "
+                f"and **{loc2_name}** [2, S2], with defensive engagements and tactical movements logged across both sectors."
+            )
+            answer_plain = (
+                f"### 📅 Temporal Spatial Synthesis ({date_label})\n\n"
+                f"**Inquiry:** \"{query_clean}\"\n\n"
+                f"During **{date_label}**, reported military activity centered around **{loc1_name}** "
+                f"and **{loc2_name}**, with defensive engagements and tactical movements logged across both sectors."
+            )
+            mock_date_layers = [
+                MapLayer(
+                    name=f"1. [CITY] {loc1_name}",
+                    layer_type="marker",
+                    data={
+                        "lat": loc1_lat,
+                        "lng": loc1_lng,
+                        "id": loc1_name,
+                        "kind": "city",
+                        "number": 1,
+                        "role": "primary",
+                        "why": f"1 dated passage ({date_label})",
+                    },
+                    color="blue",
+                    tooltip=f"1. {loc1_name} [CITY]",
+                    popup=(
+                        f'<div class="geoai-popup-wrap" style="font-family:{FONT_BODY}; padding:6px;">'
+                        f"<b>★ #1 {loc1_name}</b><br>"
+                        f"ID: <code>{loc1_name}</code><br>"
+                        f"DATE: <code>{html.escape(date_label)}</code><br>"
+                        f"LAT: <code>{loc1_lat:.5f}°</code><br>"
+                        f"LNG: <code>{loc1_lng:.5f}°</code>"
+                        f"</div>"
+                    ),
+                ),
+                MapLayer(
+                    name=f"2. [CITY] {loc2_name}",
+                    layer_type="marker",
+                    data={
+                        "lat": loc2_lat,
+                        "lng": loc2_lng,
+                        "id": loc2_name,
+                        "kind": "city",
+                        "number": 2,
+                        "role": "primary",
+                        "why": f"1 dated passage ({date_label})",
+                    },
+                    color="blue",
+                    tooltip=f"2. {loc2_name} [CITY]",
+                    popup=(
+                        f'<div class="geoai-popup-wrap" style="font-family:{FONT_BODY}; padding:6px;">'
+                        f"<b>★ #2 {loc2_name}</b><br>"
+                        f"ID: <code>{loc2_name}</code><br>"
+                        f"DATE: <code>{html.escape(date_label)}</code><br>"
+                        f"LAT: <code>{loc2_lat:.5f}°</code><br>"
+                        f"LNG: <code>{loc2_lng:.5f}°</code>"
+                        f"</div>"
+                    ),
+                ),
+            ]
+            raw_mock_res = {
+                "answer": answer_text,
+                "answer_plain": answer_plain,
+                "status": "answered",
+                "grounded": True,
+                "shape": "fact",
+                "geo_locations": mock_geo_locs,
+                "citations": mock_citations,
+                "sources": mock_sources,
+                "meta": {"question_type": "date"},
+            }
+            return AgentResponse(
+                answer=answer_text,
+                layers=mock_date_layers,
+                sources=mock_sources,
+                raw_response=raw_mock_res,
+                is_live_backend=False,
+                answer_plain=answer_plain,
+                citations=mock_citations,
+                grounded=True,
+                status="answered",
+                shape="fact",
+                question_type="date",
+            )
 
         # Generate dummy strategic points of interest in Ukraine
         mock_poi_layers = [

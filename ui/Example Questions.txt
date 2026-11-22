@@ -1,0 +1,34 @@
+where in Ukraine were many citizens killed in the Ukraine-Russia war?
+
+Show me all locations connected to Volodymyr Zelenskyy.
+
+Show me the locations associated with Vladimir Putin.
+
+Show me all locations mentioned in connection with the Battle of Bakhmut.
+
+Show me the locations of major battles in the Russia–Ukraine war.
+
+Show me Ukrainian cities connected to Russian military operations.
+
+Show me all locations connected to the Wagner Group.
+
+Show me the locations connected to the Siege of Mariupol.
+
+Show me all locations associated with NATO in the context of the Russia–Ukraine war.
+
+Show me Ukrainian locations connected to Russian military commanders.
+
+Show me locations where Russia and Ukraine are both mentioned in connection with the same
+
+Tell me about me specific attacks on Zaporizhzhia nuclear power plant.
+
+# Temporal / Date Queries (Graph with Dates)
+What happened on 24 February 2022?
+
+What happened in February 2022?
+
+Show me where fighting happened in March 2022.
+
+Who attacked Mariupol in May 2022?
+
+What happened in Kyiv on 24 February 2022?

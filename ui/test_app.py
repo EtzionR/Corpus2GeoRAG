@@ -5623,3 +5623,387 @@ class TestAgentGeorgoryBetaIntegration:
                     msg = app._build_assistant_message(resp)
                     assert msg["avatar"] is not None
 
+
+class TestGraphWithDatesAndUITeamNotes:
+    """Validate Graph with Dates (P2-79 / P2-80), citations[].date, span highlighting, and UI_TEAM_NOTES."""
+
+    def test_format_tactical_citations_includes_passage_date_in_tooltip(self):
+        import app
+
+        citations = [
+            {
+                "id": "S1",
+                "article": "Battle of Kyiv (2022)",
+                "section": "Prelude",
+                "pointer": "TEXT_50333",
+                "date": "24 February 2022",
+            },
+            {
+                "id": "L1",
+                "article": "Siege of Mariupol",
+                "section": "",
+                "pointer": "TEXT_50400",
+                "date": None,
+            },
+        ]
+        geo_locs = [
+            {"number": 1, "label": "Kyiv", "geometry": {"type": "Point", "coordinates": [30.5234, 50.4501]}},
+        ]
+        raw_text = "Fighting began around Kyiv [1, S1] and later reached Mariupol [L1]."
+        formatted = app.format_tactical_citations(raw_text, citations=citations, geo_locations=geo_locs)
+
+        assert "Source Passage S1: Battle of Kyiv (2022) — Prelude (24 February 2022) (Click to inspect source)" in formatted
+        assert "Article Summary L1: Siege of Mariupol (Click to inspect summary)" in formatted
+        assert "()" not in formatted
+
+    def test_render_verified_source_card_html_date_badge_and_backend_spans(self):
+        import app
+
+        passage = {
+            "pointer": "TEXT_9001",
+            "document": "Battle of Kyiv <2022>",
+            "section": "Initial strikes",
+            "paragraph_index": 2,
+            "text": "On 24 February 2022, missiles struck Hostomel near Kyiv.",
+        }
+        cit_meta = {
+            "id": "S1",
+            "pointer": "TEXT_9001",
+            "article": "Battle of Kyiv <2022>",
+            "section": "Initial strikes",
+            "date": "24 February 2022",
+            "spans": [[3, 19], [51, 55]],
+            "place_number": 1,
+            "place_label": "Kyiv",
+        }
+        card_html = app.render_verified_source_card_html(0, "TEXT_9001", cit_meta=cit_meta, passage=passage)
+        assert "geoai-source-date" in card_html
+        assert "📅 24 February 2022" in card_html
+        assert "Battle of Kyiv &lt;2022&gt;" in card_html
+        assert "<mark " in card_html
+        assert "24 February 2022</mark>" in card_html
+        assert "Kyiv</mark>" in card_html
+        assert "Paragraph #3" in card_html
+
+        # Legacy text_spans fallback + safe escaping when spans are absent
+        legacy_card = app.render_verified_source_card_html(
+            1,
+            "TEXT_9002",
+            cit_meta={"id": "S2", "article": "Donbas", "text_spans": [[0, 6]], "text": "Donbas <sector> report."},
+            passage=None,
+        )
+        assert "Donbas</mark>" in legacy_card
+        assert "&lt;sector&gt;" in legacy_card
+
+        no_span_card = app.render_verified_source_card_html(
+            2,
+            "TEXT_9003",
+            cit_meta={"id": "S3", "article": "Archive", "text": "Raw <script>alert(1)</script> snippet."},
+            passage=None,
+        )
+        assert "<script>" not in no_span_card
+        assert "&lt;script&gt;alert(1)&lt;/script&gt;" in no_span_card
+
+    def test_extract_answer_subgraph_excludes_date_nodes_and_enriches_dates(self, monkeypatch):
+        import networkx as nx
+        import geo_agent
+
+        G = nx.Graph()
+        G.add_node("Bakhmut", type="LOC", place_type="city")
+        G.add_node("DATE_2022-02-24", type="DATE", value="2022-02-24")
+        G.add_node("93rd Mechanized Brigade", type="ORG")
+        G.add_node(
+            "TEXT_50333",
+            type="TEXT",
+            text_id=50333,
+            text="On 24 February 2022, 93rd Mechanized Brigade defended Bakhmut.",
+            source="Battle of Bakhmut",
+            title="Overview",
+            index=0,
+        )
+
+        # Attach DATE node to both Bakhmut and TEXT_50333 to verify DATE nodes never leak as ORG entities
+        G.add_edge("Bakhmut", "DATE_2022-02-24", relations={"MENTIONED_ON": [{"text_id": 50333}]})
+        G.add_edge("TEXT_50333", "DATE_2022-02-24", relations={"IN_THE_TEXT": [{"start": 3, "end": 19}]})
+        G.add_edge(
+            "93rd Mechanized Brigade",
+            "Bakhmut",
+            relations={
+                "DEFENDED": [
+                    {
+                        "subject": "93rd Mechanized Brigade",
+                        "object": "Bakhmut",
+                        "text_id": 50333,
+                        "date": {"from": "2022-02-24", "to": "2022-02-24", "text": "24 February 2022", "scope": "sentence"},
+                    }
+                ]
+            },
+        )
+        G.add_edge("93rd Mechanized Brigade", "TEXT_50333", relations={})
+
+        monkeypatch.setattr(
+            geo_agent,
+            "_backend_get_source_text",
+            lambda ptr: {
+                "pointer": ptr,
+                "document": "Battle of Bakhmut",
+                "section": "Overview",
+                "paragraph_index": 0,
+                "text": "On 24 February 2022, 93rd Mechanized Brigade defended Bakhmut.",
+            },
+        )
+        if hasattr(geo_agent.get_source_text, "cache_clear"):
+            geo_agent.get_source_text.cache_clear()
+
+        raw_result = {
+            "answer": "Bakhmut [1] was defended on 24 February 2022 [S1].",
+            "answer_plain": "Bakhmut was defended on 24 February 2022.",
+            "geo_locations": [
+                {
+                    "number": 1,
+                    "id": "Bakhmut",
+                    "label": "Bakhmut",
+                    "kind": "city",
+                    "role": "primary",
+                    "geometry": {"type": "Point", "coordinates": [37.9999, 48.5953]},
+                    "why": "DEFENDED in 1 record",
+                    "sources": ["TEXT_50333"],
+                }
+            ],
+            "citations": [
+                {
+                    "id": "S1",
+                    "pointer": "TEXT_50333",
+                    "article": "Battle of Bakhmut",
+                    "section": "Overview",
+                    "date": "24 February 2022",
+                    "spans": [[3, 19]],
+                }
+            ],
+            "sources": ["TEXT_50333"],
+        }
+
+        sg = geo_agent.extract_answer_subgraph(
+            raw_response=raw_result,
+            sources=["TEXT_50333"],
+            citations=raw_result["citations"],
+            answer_text=raw_result["answer_plain"],
+            nx_graph=G,
+        )
+
+        nodes_by_id = {n["id"]: n for n in sg["nodes"]}
+        assert "DATE_2022-02-24" not in nodes_by_id
+        assert "93rd Mechanized Brigade" in nodes_by_id
+        assert "24 February 2022" in nodes_by_id["93rd Mechanized Brigade"]["evidence"]
+        assert nodes_by_id["TEXT_50333"]["date"] == "24 February 2022"
+        assert "📅 24 February 2022" in nodes_by_id["TEXT_50333"]["subtitle"]
+        assert "dated 24 February 2022" in nodes_by_id["TEXT_50333"]["summary"]
+
+    def test_live_query_hydrates_question_type_date_popup_and_multipolygon_shape(self, monkeypatch):
+        import geo_agent
+
+        fake_raw = {
+            "answer": "Fighting broke out in Kyiv [1, S1] and Donbas [2] on 24 February 2022.",
+            "answer_plain": "Fighting broke out in Kyiv and Donbas on 24 February 2022.",
+            "status": "answered",
+            "grounded": True,
+            "shape": "fact",
+            "geo_locations": [
+                {
+                    "number": 1,
+                    "id": "Kyiv",
+                    "label": "Kyiv",
+                    "kind": "city",
+                    "role": "primary",
+                    "geometry": {"type": "Point", "coordinates": [30.5234, 50.4501]},
+                    "why": "1 dated passage",
+                    "sources": ["TEXT_101"],
+                },
+                {
+                    "number": 2,
+                    "id": "Donbas",
+                    "label": "Donbas",
+                    "kind": "region",
+                    "role": "primary",
+                    "geometry": {"type": "Point", "coordinates": [37.9, 48.2]},
+                    "shape": {
+                        "type": "MultiPolygon",
+                        "coordinates": [
+                            [[[37.0, 47.5], [38.5, 47.5], [38.5, 48.5], [37.0, 48.5], [37.0, 47.5]]],
+                            [[[38.5, 48.2], [39.5, 48.2], [39.5, 49.0], [38.5, 49.0], [38.5, 48.2]]],
+                        ],
+                    },
+                    "why": "2 dated passages",
+                    "sources": ["TEXT_101"],
+                },
+            ],
+            "citations": [
+                {
+                    "id": "S1",
+                    "pointer": "TEXT_101",
+                    "article": "2022 Russian invasion of Ukraine",
+                    "section": "Timeline",
+                    "spans": [[0, 16]],
+                    "date": "24 February 2022",
+                }
+            ],
+            "sources": ["TEXT_101"],
+            "meta": {"question_type": "date"},
+        }
+        monkeypatch.setattr(geo_agent, "_BACKEND_AVAILABLE", True)
+        monkeypatch.setattr(geo_agent, "_backend_query", lambda **kw: fake_raw)
+        monkeypatch.setattr(
+            geo_agent,
+            "_backend_get_source_text",
+            lambda ptr: {
+                "pointer": ptr,
+                "document": "2022 Russian invasion of Ukraine",
+                "section": "Timeline",
+                "paragraph_index": 0,
+                "text": "24 February 2022 marked the start of the full-scale invasion.",
+            },
+        )
+        if hasattr(geo_agent.get_source_text, "cache_clear"):
+            geo_agent.get_source_text.cache_clear()
+
+        resp = geo_agent.query_geo_agent(text_prompt="What happened on 24 February 2022?", api_key="sk-or-test")
+        assert resp.question_type == "date"
+        marker_layers = [l for l in resp.layers if l.layer_type == "marker"]
+        assert [l.data["number"] for l in marker_layers] == [1, 2]
+        assert "(24 February 2022)" in marker_layers[0].popup
+        geojson_layers = [l for l in resp.layers if l.layer_type == "geojson"]
+        assert len(geojson_layers) == 1
+        assert geojson_layers[0].data["type"] == "MultiPolygon"
+
+    def test_mock_agent_date_query_returns_temporal_response_without_breaking_general_mock(self):
+        import app
+        import geo_agent
+
+        date_resp = geo_agent.query_geo_agent(text_prompt="What happened on 24 February 2022?", force_mock=True)
+        assert date_resp.is_live_backend is False
+        assert date_resp.question_type == "date"
+        assert date_resp.sources == ["TEXT_MOCK_DATE_1", "TEXT_MOCK_DATE_2"]
+        assert len(date_resp.citations) == 2
+        assert date_resp.citations[0]["date"] == "24 February 2022"
+        assert date_resp.citations[0]["spans"]
+        assert date_resp.citations[0]["text"]
+        assert any(l.data.get("number") == 1 for l in date_resp.layers if isinstance(l.data, dict))
+
+        msg = app._build_assistant_message(date_resp)
+        assert msg["question_type"] == "date"
+
+        # Standard non-date general prompt must keep original mock synthesis behavior
+        gen_resp = geo_agent.query_geo_agent(
+            text_prompt="Show major logistics corridors in central Ukraine",
+            force_mock=True,
+        )
+        assert gen_resp.question_type is None
+        assert "General Spatial Intelligence Synthesis" in gen_resp.answer
+
+    def test_ui_team_notes_item2_responsive_viewport_and_welcome_date_hint(self):
+        from pathlib import Path
+
+        root = Path(__file__).resolve().parent
+        app_code = (root / "app.py").read_text(encoding="utf-8")
+        assert "overflow-x: hidden !important;\n        overflow-y: auto !important;" in app_code.replace("\r\n", "\n")
+        assert "min(480px, max(300px, calc(100vh - 90px)))" in app_code
+        assert "min(260px, max(140px, calc(100vh - 200px)))" in app_code
+        assert "@media (max-height: 580px)" in app_code
+        assert "@media (max-height: 420px)" in app_code
+        assert "calc(100vh - 90px)" in app_code
+        assert "calc(100vh - 150px)" in app_code
+        assert 'cit.get("spans")' in app_code
+        assert "What happened on 24 February 2022?" in app_code
+        assert "flex-wrap: wrap;" in app_code
+        assert "cw !== window" in app_code
+        assert "_geoaiForwardingResize" in app_code
+
+        eq_text = (root / "Example Questions.txt").read_text(encoding="utf-8")
+        assert "What happened on 24 February 2022?" in eq_text
+        assert "Who attacked Mariupol in May 2022?" in eq_text
+
+    def test_get_active_graph_label_respects_env_without_loading_graph(self, tmp_path, monkeypatch):
+        import geo_agent
+
+        monkeypatch.setenv("GRAPH_PATH", "Graph_n_Geocoding/with_dates/knowledge_graph.json.gz")
+        assert geo_agent.get_active_graph_label() == "with_dates (dated knowledge graph)"
+
+        monkeypatch.setenv("GRAPH_PATH", "Graph_n_Geocoding/knowledge_graph.json.gz")
+        assert geo_agent.get_active_graph_label() == "fallback (without dates)"
+
+        monkeypatch.setenv("GRAPH_PATH", str(tmp_path / "custom_kg.json.gz"))
+        assert geo_agent.get_active_graph_label() == "custom_kg.json.gz"
+
+        # When GRAPH_PATH is unset in env, read from AgentRag/.env if present
+        monkeypatch.delenv("GRAPH_PATH", raising=False)
+        fake_env = tmp_path / ".env"
+        fake_env.write_text("# comment\nGRAPH_PATH=../Graph_n_Geocoding/knowledge_graph.json.gz\n", encoding="utf-8")
+        monkeypatch.setattr(geo_agent, "get_agent_env_path", lambda: fake_env)
+        assert geo_agent.get_active_graph_label() == "fallback (without dates)"
+
+    def test_benchmark_verified_source_card_and_dated_citations_latency(
+        self, monkeypatch, micro_benchmark, latency_ceiling
+    ):
+        import networkx as nx
+        import app
+        import geo_agent
+
+        passage = {
+            "pointer": "TEXT_50333",
+            "document": "Battle of Kyiv (2022)",
+            "section": "Opening phase",
+            "paragraph_index": 1,
+            "text": "On 24 February 2022, airborne forces assaulted Hostomel Airport north-west of Kyiv.",
+        }
+        cit_meta = {
+            "id": "S1",
+            "pointer": "TEXT_50333",
+            "article": "Battle of Kyiv (2022)",
+            "section": "Opening phase",
+            "date": "24 February 2022",
+            "spans": [[3, 19], [45, 61], [76, 80]],
+            "place_number": 1,
+            "place_label": "Kyiv",
+        }
+        micro_benchmark(
+            app.render_verified_source_card_html,
+            0,
+            "TEXT_50333",
+            cit_meta,
+            passage,
+            iterations=100,
+            max_mean_ms=1.0,
+            label="render_verified_source_card_html",
+        )
+
+        micro_benchmark(
+            app.format_tactical_citations,
+            "Airborne assault near Kyiv [1, S1] on 24 February 2022.",
+            citations=[cit_meta],
+            geo_locations=[{"number": 1, "label": "Kyiv", "geometry": {"type": "Point", "coordinates": [30.5234, 50.4501]}}],
+            iterations=100,
+            max_mean_ms=5.0,
+            label="format_tactical_citations (dated)",
+        )
+
+        G = nx.Graph()
+        G.add_node("Kyiv", type="LOC", place_type="city")
+        G.add_node("DATE_2022-02-24", type="DATE")
+        G.add_node("TEXT_50333", type="TEXT", text_id=50333, text=passage["text"], source="Battle of Kyiv (2022)", title="Opening phase", index=1)
+        G.add_edge("Kyiv", "DATE_2022-02-24", relations={"MENTIONED_ON": [{"text_id": 50333}]})
+        G.add_edge("TEXT_50333", "DATE_2022-02-24", relations={"IN_THE_TEXT": [{"start": 3, "end": 19}]})
+        monkeypatch.setattr(geo_agent, "_backend_get_source_text", lambda ptr: passage)
+        if hasattr(geo_agent.get_source_text, "cache_clear"):
+            geo_agent.get_source_text.cache_clear()
+
+        raw_res = {
+            "answer_plain": "Assault near Kyiv.",
+            "geo_locations": [{"number": 1, "id": "Kyiv", "label": "Kyiv", "kind": "city", "role": "primary", "geometry": {"type": "Point", "coordinates": [30.5234, 50.4501]}, "sources": ["TEXT_50333"]}],
+            "citations": [cit_meta],
+            "sources": ["TEXT_50333"],
+        }
+        with latency_ceiling(25.0, label="extract_answer_subgraph (with DATE nodes)"):
+            sg = geo_agent.extract_answer_subgraph(raw_response=raw_res, nx_graph=G)
+            assert all(n["id"] != "DATE_2022-02-24" for n in sg["nodes"])
+
+
