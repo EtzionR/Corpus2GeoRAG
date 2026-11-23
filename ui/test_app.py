@@ -5367,7 +5367,8 @@ class TestOfflineTypographyAndBundledFonts:
         assert "<b>Uncertain</b> &mdash; inferred coordinates" in legend_html
 
         app_src = (Path(__file__).resolve().parent / "app.py").read_text(encoding="utf-8")
-        assert "<div class='sidebar-title'>GEO-AI COMMAND</div>" in app_src
+        assert "st.markdown(render_sidebar_logo_html(), unsafe_allow_html=True)" in app_src
+        assert "<div class='sidebar-title'>GEO-AI COMMAND</div>" not in app_src
         assert 'st.subheader("Agent Connection")' in app_src
         assert 'st.subheader("Operations")' in app_src
         assert 'st.subheader("Session Telemetry")' in app_src
@@ -5376,6 +5377,47 @@ class TestOfflineTypographyAndBundledFonts:
 
         micro_benchmark(app.render_session_telemetry_html, 2, 5, iterations=200, max_mean_ms=0.05, label="render_session_telemetry_html")
         micro_benchmark(app.render_layer_legend_html, iterations=200, max_mean_ms=0.05, label="render_layer_legend_html")
+
+    def test_sidebar_logo_svg_html_fallback_and_latency(self, tmp_path, micro_benchmark):
+        """Verify sidebar SVG logo rendering, XML validity, graceful fallback, CSS, and LRU cache speed."""
+        import base64
+        from pathlib import Path
+        import re
+        import xml.etree.ElementTree as ET
+        import app
+
+        html = app.render_sidebar_logo_html()
+        assert "<div class='sidebar-logo'>" in html
+        assert "src='data:image/svg+xml;base64," in html
+
+        match = re.search(r"src='data:image/svg\+xml;base64,([^']+)'", html)
+        assert match is not None
+        decoded_svg = base64.b64decode(match.group(1)).decode("utf-8")
+        root = ET.fromstring(decoded_svg)
+        assert root.tag.endswith("svg")
+        assert "ARGUS" in root.attrib.get("aria-label", "")
+
+        assert app.render_sidebar_logo_html(tmp_path / "does_not_exist.svg") == "<div class='sidebar-title'>ARGUS</div>"
+        empty_svg = tmp_path / "empty.svg"
+        empty_svg.write_text("   ", encoding="utf-8")
+        assert app.render_sidebar_logo_html(empty_svg) == "<div class='sidebar-title'>ARGUS</div>"
+
+        app_src = (Path(__file__).resolve().parent / "app.py").read_text(encoding="utf-8")
+        assert ".sidebar-logo {{" in app_src
+        assert ".sidebar-logo img {{" in app_src
+        assert "stSidebarHeader" in app_src
+        assert "Multimodal Geocoded RAG Intelligence" not in app_src
+        logo_idx = app_src.index("st.markdown(render_sidebar_logo_html(), unsafe_allow_html=True)")
+        conn_idx = app_src.index('st.subheader("Agent Connection")')
+        assert logo_idx < conn_idx
+        assert 'st.markdown("---")' not in app_src[logo_idx:conn_idx]
+
+        micro_benchmark(
+            app.render_sidebar_logo_html,
+            iterations=500,
+            max_mean_ms=0.05,
+            label="render_sidebar_logo_html (warm LRU cache)",
+        )
 
     def test_count_chat_messages_excludes_welcome_message(self, micro_benchmark):
         import app
@@ -5652,7 +5694,7 @@ class TestGraphWithDatesAndUITeamNotes:
         raw_text = "Fighting began around Kyiv [1, S1] and later reached Mariupol [L1]."
         formatted = app.format_tactical_citations(raw_text, citations=citations, geo_locations=geo_locs)
 
-        assert "Source Passage S1: Battle of Kyiv (2022) — Prelude (24 February 2022) (Click to inspect source)" in formatted
+        assert "Source Passage S1: Battle of Kyiv (2022) — Prelude (24 Feb. 2022) (Click to inspect source)" in formatted
         assert "Article Summary L1: Siege of Mariupol (Click to inspect summary)" in formatted
         assert "()" not in formatted
 
@@ -5678,7 +5720,8 @@ class TestGraphWithDatesAndUITeamNotes:
         }
         card_html = app.render_verified_source_card_html(0, "TEXT_9001", cit_meta=cit_meta, passage=passage)
         assert "geoai-source-date" in card_html
-        assert "📅 24 February 2022" in card_html
+        assert "24 Feb. 2022" in card_html
+        assert "📅" not in card_html
         assert "Battle of Kyiv &lt;2022&gt;" in card_html
         assert "<mark " in card_html
         assert "24 February 2022</mark>" in card_html
@@ -5870,7 +5913,7 @@ class TestGraphWithDatesAndUITeamNotes:
         assert resp.question_type == "date"
         marker_layers = [l for l in resp.layers if l.layer_type == "marker"]
         assert [l.data["number"] for l in marker_layers] == [1, 2]
-        assert "(24 February 2022)" in marker_layers[0].popup
+        assert "(24 Feb. 2022)" in marker_layers[0].popup
         geojson_layers = [l for l in resp.layers if l.layer_type == "geojson"]
         assert len(geojson_layers) == 1
         assert geojson_layers[0].data["type"] == "MultiPolygon"
@@ -6005,5 +6048,54 @@ class TestGraphWithDatesAndUITeamNotes:
         with latency_ceiling(25.0, label="extract_answer_subgraph (with DATE nodes)"):
             sg = geo_agent.extract_answer_subgraph(raw_response=raw_res, nx_graph=G)
             assert all(n["id"] != "DATE_2022-02-24" for n in sg["nodes"])
+
+    def test_format_short_date_all_months_and_formats(self):
+        import geo_agent
+
+        # 1. Full month names
+        months_expected = [
+            ("January 2022", "Jan. 2022"),
+            ("24 February 2022", "24 Feb. 2022"),
+            ("15 March 2023", "15 Mar. 2023"),
+            ("April 2020", "Apr. 2020"),
+            ("May 2021", "May. 2021"),
+            ("June 2024", "Jun. 2024"),
+            ("4 July 2022", "4 Jul. 2022"),
+            ("August 2023", "Aug. 2023"),
+            ("September 2022", "Sep. 2022"),
+            ("October 2021", "Oct. 2021"),
+            ("November 2022", "Nov. 2022"),
+            ("31 December 2025", "31 Dec. 2025"),
+        ]
+        for inp, exp in months_expected:
+            assert geo_agent.format_short_date(inp) == exp
+
+        # 2. Existing abbreviations (without dot or with dot)
+        assert geo_agent.format_short_date("24 Feb 2022") == "24 Feb. 2022"
+        assert geo_agent.format_short_date("24 Feb. 2022") == "24 Feb. 2022"
+        assert geo_agent.format_short_date("Sep 2022") == "Sep. 2022"
+        assert geo_agent.format_short_date("Sept. 2022") == "Sep. 2022"
+
+        # 3. ISO and Slash formats
+        assert geo_agent.format_short_date("2022-02-24") == "24 Feb. 2022"
+        assert geo_agent.format_short_date("2022-02") == "Feb. 2022"
+        assert geo_agent.format_short_date("24/02/2022") == "24 Feb. 2022"
+
+        # 4. Standalone year, empty, None, invalid
+        assert geo_agent.format_short_date("2022") == "2022"
+        assert geo_agent.format_short_date("") == ""
+        assert geo_agent.format_short_date(None) == ""
+        assert geo_agent.format_short_date(123) == ""
+
+    def test_format_short_date_performance_latency(self):
+        import time
+        import geo_agent
+
+        start = time.perf_counter()
+        for _ in range(1000):
+            geo_agent.format_short_date("24 February 2022")
+        elapsed_ms = (time.perf_counter() - start) * 1000.0
+        assert elapsed_ms <= 10.0, f"format_short_date exceeded latency ceiling: {elapsed_ms:.2f}ms"
+
 
 

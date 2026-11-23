@@ -46,6 +46,7 @@ __all__ = [
     "extract_answer_subgraph",
     "get_agent_env_path",
     "get_active_graph_label",
+    "format_short_date",
     "persist_openrouter_api_key",
     "format_evidence_popup_html",
     "query_geo_agent",
@@ -266,6 +267,69 @@ def get_active_graph_label() -> str:
     if norm.endswith("knowledge_graph.json.gz"):
         return "fallback (without dates)"
     return Path(raw_path).name or raw_path
+
+
+_MONTH_ABBR_MAP: Dict[str, str] = {
+    "january": "Jan.", "february": "Feb.", "march": "Mar.", "april": "Apr.",
+    "may": "May.", "june": "Jun.", "july": "Jul.", "august": "Aug.",
+    "september": "Sep.", "october": "Oct.", "november": "Nov.", "december": "Dec.",
+    "jan": "Jan.", "feb": "Feb.", "mar": "Mar.", "apr": "Apr.",
+    "jun": "Jun.", "jul": "Jul.", "aug": "Aug.", "sep": "Sep.",
+    "sept": "Sep.", "oct": "Oct.", "nov": "Nov.", "dec": "Dec.",
+}
+_MONTH_NAME_RE = re.compile(
+    r"\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)\b\.?",
+    re.IGNORECASE,
+)
+_ISO_DATE_RE = re.compile(r"^(\d{4})-(\d{1,2})-(\d{1,2})$")
+_ISO_YEAR_MONTH_RE = re.compile(r"^(\d{4})-(\d{1,2})$")
+_SLASH_DATE_RE = re.compile(r"^(\d{1,2})/(\d{1,2})/(\d{4})$")
+_STANDARD_MONTH_ABBRS = [
+    "Jan.", "Feb.", "Mar.", "Apr.", "May.", "Jun.",
+    "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."
+]
+
+
+def format_short_date(raw_date: Optional[str]) -> str:
+    """
+    Format a date string so that month names are presented with a 3-letter abbreviation
+    followed by a period (e.g. 'Jan.', 'Feb.', 'Mar.', etc.).
+    Preserves days, years, and handles ISO/slash formats. Returns empty string for empty/invalid inputs.
+    """
+    if not raw_date or not isinstance(raw_date, str):
+        return ""
+    s = raw_date.strip()
+    if not s:
+        return ""
+
+    # ISO YYYY-MM-DD
+    m_iso = _ISO_DATE_RE.match(s)
+    if m_iso:
+        y, m, d = int(m_iso.group(1)), int(m_iso.group(2)), int(m_iso.group(3))
+        if 1 <= m <= 12:
+            return f"{d} {_STANDARD_MONTH_ABBRS[m - 1]} {y}"
+
+    # ISO YYYY-MM
+    m_ym = _ISO_YEAR_MONTH_RE.match(s)
+    if m_ym:
+        y, m = int(m_ym.group(1)), int(m_ym.group(2))
+        if 1 <= m <= 12:
+            return f"{_STANDARD_MONTH_ABBRS[m - 1]} {y}"
+
+    # Slash DD/MM/YYYY
+    m_dmy = _SLASH_DATE_RE.match(s)
+    if m_dmy:
+        d, m, y = int(m_dmy.group(1)), int(m_dmy.group(2)), int(m_dmy.group(3))
+        if 1 <= m <= 12:
+            return f"{d} {_STANDARD_MONTH_ABBRS[m - 1]} {y}"
+
+    def _replace_month(match: re.Match) -> str:
+        w = match.group(0).rstrip(".").lower()
+        return _MONTH_ABBR_MAP.get(w, match.group(0))
+
+    res = _MONTH_NAME_RE.sub(_replace_month, s)
+    res = re.sub(r"\.{2,}", ".", res)
+    return res
 
 
 def persist_openrouter_api_key(
@@ -1260,9 +1324,10 @@ def query_geo_agent(
                         doc_clean = s_ptr
                     tag_badge = f"<a href='#geoai-src-{tag}' class='tactical-cit tactical-cit-ps' data-cit-target='{tag}' style='cursor:pointer;' title='Click to inspect source'>[{tag}]</a>"
                     s_date = date_by_pointer.get(s_ptr)
+                    s_date_display = format_short_date(s_date) if s_date else ""
                     date_badge = (
-                        f" <span style='color:#fbbf24; font-size:0.84em; margin-left:4px;'>({html.escape(s_date)})</span>"
-                        if s_date
+                        f" <span style='color:#fbbf24; font-size:0.84em; margin-left:4px;'>({html.escape(s_date_display)})</span>"
+                        if s_date_display
                         else ""
                     )
                     src_lines.append(f"<div style='margin-bottom:2px;'>• <b style='color:#00e5ff;'>{tag_badge}</b> {doc_clean}{date_badge}</div>")

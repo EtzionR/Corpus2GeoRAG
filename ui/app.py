@@ -30,11 +30,13 @@ import sys
 import re
 import time
 import json
+import base64
 import functools
+from pathlib import Path
 from datetime import datetime
 import subprocess
 import importlib.util
-from typing import Optional, Tuple, List, Dict, Any
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 # ==============================================================================
 # 0. In-Code Environment & Dependency Bootstrap
@@ -103,6 +105,7 @@ from geo_agent import (
     MapLayer,
     AgentResponse,
     get_active_graph_label,
+    format_short_date,
     query_geo_agent,
     to_bounding_box,
 )
@@ -557,7 +560,7 @@ def format_tactical_citations(
                 c_id = str(c["id"])
                 art = c.get("article") or c.get("pointer") or ""
                 sec = c.get("section")
-                c_date = str(c.get("date") or "").strip()
+                c_date = format_short_date(str(c.get("date") or "").strip())
                 full_desc = f"{art} — {sec}" if sec and art else (art or sec or "")
                 if c_date:
                     full_desc = f"{full_desc} ({c_date})" if full_desc else c_date
@@ -649,9 +652,10 @@ def render_verified_source_card_html(
 
     escaped_title = _html.escape(title_str)
     sec_str = f" — <i>{_html.escape(disp_section)}</i>" if disp_section else ""
+    formatted_date = format_short_date(cit_date)
     date_pill_html = (
-        f"<span class='geoai-source-date' title='Passage date'>📅 {_html.escape(cit_date)}</span>"
-        if cit_date
+        f"<span class='geoai-source-date' title='Passage date'>{_html.escape(formatted_date)}</span>"
+        if formatted_date
         else ""
     )
 
@@ -663,8 +667,8 @@ def render_verified_source_card_html(
         header_parts = [f"<b>{_html.escape(doc_name)}</b>"]
         if sec_name:
             header_parts.append(f"Section: <i>{_html.escape(sec_name)}</i>")
-        if cit_date:
-            header_parts.append(f"Date: <i>📅 {_html.escape(cit_date)}</i>")
+        if formatted_date:
+            header_parts.append(f"Date: <i>{_html.escape(formatted_date)}</i>")
         if para_num is not None:
             try:
                 header_parts.append(f"Paragraph #{int(para_num) + 1}")
@@ -1148,7 +1152,8 @@ def show_rag_log_dialog():
                 if sec_title:
                     header_label += f" — *{sec_title}*"
                 if cit_date:
-                    header_label += f" · 📅 {cit_date}"
+                    short_date = format_short_date(cit_date)
+                    header_label += f" · {short_date}"
 
                 with st.expander(header_label):
                     raw_passage_text = (text_data.get("text") if isinstance(text_data, dict) else None) or cit_meta.get("text")
@@ -1157,7 +1162,7 @@ def show_rag_log_dialog():
                         if sec_title:
                             meta_parts.append(f"**Section:** `{sec_title}`")
                         if cit_date:
-                            meta_parts.append(f"**Date:** `{cit_date}`")
+                            meta_parts.append(f"**Date:** `{format_short_date(cit_date)}`")
                         if para_idx is not None:
                             meta_parts.append(f"**Paragraph:** `#{para_idx + 1}`")
                         if cit_meta.get("place_label"):
@@ -4997,6 +5002,29 @@ def render_layer_legend_html() -> str:
     )
     return f"<div class='geoai-legend-list'>{rows}</div>"
 
+
+SIDEBAR_LOGO_PATH: Path = Path(__file__).resolve().parent / "Logo_argus.svg"
+
+
+@functools.lru_cache(maxsize=4)
+def render_sidebar_logo_html(logo_path: Optional[Union[str, Path]] = None) -> str:
+    """Render the cached ARGUS SVG logo as a self-contained base64 <img> container for the sidebar."""
+    resolved = Path(logo_path) if logo_path is not None else SIDEBAR_LOGO_PATH
+    try:
+        raw_bytes = resolved.read_bytes() if resolved.is_file() else b""
+    except OSError:
+        raw_bytes = b""
+    if not raw_bytes or not raw_bytes.strip():
+        return "<div class='sidebar-title'>ARGUS</div>"
+    encoded = base64.b64encode(raw_bytes).decode("ascii")
+    return (
+        "<div class='sidebar-logo'>"
+        f"<img src='data:image/svg+xml;base64,{encoded}' "
+        "alt='ARGUS — Corpus 2 Geo-RAG' />"
+        "</div>"
+    )
+
+
 # Configure Streamlit page properties to use a responsive wide layout
 st.set_page_config(
     page_title=f"GeoAI Intelligence Hub [{t_cfg['name']}]",
@@ -5923,6 +5951,34 @@ st.markdown(f"""{get_font_style_block()}
         opacity: 0.75 !important;
     }}
 
+    /* Sidebar Header Spacing & Brand Logo */
+    section[data-testid="stSidebar"] div[data-testid="stSidebarHeader"] {{
+        padding-bottom: 0.25rem !important;
+        margin-bottom: 0 !important;
+        min-height: 0 !important;
+    }}
+    section[data-testid="stSidebar"] div[data-testid="stSidebarUserContent"] {{
+        padding-top: 0 !important;
+    }}
+    .sidebar-logo {{
+        width: 100%;
+        margin: -4px 0 6px 0;
+        padding: 0;
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid rgba(0, 229, 255, 0.24);
+        box-shadow: 0 0 14px rgba(0, 229, 255, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+        background: #0b131f;
+        line-height: 0;
+    }}
+    .sidebar-logo img {{
+        display: block;
+        width: 100%;
+        height: auto;
+        user-select: none;
+        -webkit-user-drag: none;
+    }}
+
     /* Sidebar Title */
     .sidebar-title {{
         font-family: {FONT_DISPLAY};
@@ -6096,13 +6152,14 @@ st.markdown(f"""{get_font_style_block()}
     }}
     .geoai-source-date {{
         font-family: {FONT_MONO};
-        font-size: 0.70rem;
+        font-size: 0.62rem;
         font-weight: 600;
         color: #fbbf24;
         background: rgba(245, 158, 11, 0.12);
         border: 1px solid rgba(245, 158, 11, 0.35);
         border-radius: 3px;
-        padding: 2px 6px;
+        padding: 1px 5px;
+        line-height: 1.25;
         white-space: nowrap;
     }}
     .geoai-source-badge {{
@@ -6877,9 +6934,7 @@ if (
 # 3. Sidebar Utility Controls & Intelligence Dashboard
 # ==============================================================================
 with st.sidebar:
-    st.markdown("<div class='sidebar-title'>GEO-AI COMMAND</div>", unsafe_allow_html=True)
-    st.caption("Multimodal Geocoded RAG Intelligence")
-    st.markdown("---")
+    st.markdown(render_sidebar_logo_html(), unsafe_allow_html=True)
 
     # Agent Connection Credentials & Mode HUD Indicator
     st.subheader("Agent Connection")

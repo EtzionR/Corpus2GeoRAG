@@ -55,6 +55,7 @@ REQUIRED_SYMBOL_COVERAGE: Dict[str, List[str]] = {
         "is_georgory_beta_enabled",
         "deactivate_georgory_beta_state",
         "render_georgory_beta_sidebar",
+        "render_sidebar_logo_html",
     ],
     "geo_agent.py": [
         "MapLayer",
@@ -63,6 +64,7 @@ REQUIRED_SYMBOL_COVERAGE: Dict[str, List[str]] = {
         "to_bounding_box",
         "get_source_text",
         "get_active_graph_label",
+        "format_short_date",
         "extract_answer_subgraph",
         "format_evidence_popup_html",
     ],
