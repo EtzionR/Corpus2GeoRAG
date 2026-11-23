@@ -641,7 +641,7 @@ def render_verified_source_card_html(
     if cit.get("place_label"):
         p_num = cit.get("place_number")
         p_num_str = f"#{p_num} " if p_num is not None else ""
-        place_suffix = f" · 📍 Pin {p_num_str}{cit['place_label']}"
+        place_suffix = f" · Pin {p_num_str}{cit['place_label']}"
 
     if cit_id and disp_article:
         title_str = f"[{cit_id}] {disp_article}{place_suffix}"
@@ -714,7 +714,7 @@ def render_verified_source_card_html(
     return (
         f"<details class='geoai-source-detail'{cit_id_attr}{ptr_attr}>"
         f"<summary class='geoai-source-summary'>"
-        f"<span class='geoai-source-title'>📄 <b>{escaped_title}</b>{sec_str}</span>"
+        f"<span class='geoai-source-title'><b>{escaped_title}</b>{sec_str}</span>"
         f"<span class='geoai-source-meta'>{date_pill_html}<span class='geoai-source-badge'>Inspect ▾</span></span>"
         f"</summary>"
         f"{body_html}"
@@ -1144,11 +1144,11 @@ def show_rag_log_dialog():
                     place_suffix = f" (Pin {p_num_str}{cit_meta['place_label']})"
 
                 if cit_id and doc_title:
-                    header_label = f"📄 [{cit_id}] {doc_title}{place_suffix}"
+                    header_label = f"[{cit_id}] {doc_title}{place_suffix}"
                 elif doc_title:
-                    header_label = f"📄 {doc_title}{place_suffix}"
+                    header_label = f"{doc_title}{place_suffix}"
                 else:
-                    header_label = f"📄 Source #{s_idx + 1}{place_suffix}"
+                    header_label = f"Source #{s_idx + 1}{place_suffix}"
                 if sec_title:
                     header_label += f" — *{sec_title}*"
                 if cit_date:

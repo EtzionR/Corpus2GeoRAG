@@ -5722,6 +5722,9 @@ class TestGraphWithDatesAndUITeamNotes:
         assert "geoai-source-date" in card_html
         assert "24 Feb. 2022" in card_html
         assert "📅" not in card_html
+        assert "📄" not in card_html
+        assert "📍" not in card_html
+        assert "<span class='geoai-source-title'><b>[S1] Battle of Kyiv &lt;2022&gt; · Pin #1 Kyiv</b>" in card_html
         assert "Battle of Kyiv &lt;2022&gt;" in card_html
         assert "<mark " in card_html
         assert "24 February 2022</mark>" in card_html
