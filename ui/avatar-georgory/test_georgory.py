@@ -198,6 +198,15 @@ class TestRender:
         assert "stChatInputSubmitButton" in _ASK_SCRIPT and "send.click()" in _ASK_SCRIPT
         assert ".st-key-georgory_toggle button" in _ASK_SCRIPT and ".st-key-georgory_pip" in _ASK_SCRIPT
 
+    def test_the_chat_button_hides_inner_label_and_centers_icon(self):
+        from agent_avatar.georgory import _button_css
+        css = _button_css(showing=False, busy=False)
+        assert "button > * { display: none !important; }" in css
+        assert "position: relative !important;" in css
+        assert "position: absolute;" in css
+        assert "inset: 0;" in css
+        assert "margin: auto;" in css
+
 
 class TestAppIntegration:
     @needs_hooks

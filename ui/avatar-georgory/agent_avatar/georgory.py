@@ -136,13 +136,14 @@ _BUTTON_CSS = """<style>
     .st-key-TOGGLE > div, .st-key-TOGGLE span { width: 32px !important; }
     div[data-testid="stColumn"]:has(.st-key-TOGGLE) [data-testid="stChatInputSubmitButton"] { margin-right: 40px; }
     div[data-testid="stColumn"] .st-key-TOGGLE button {
+        position: relative !important;
         width: 32px !important;
         height: 32px !important;
         min-height: 0 !important;
         padding: 0 !important;
         display: flex !important;
-        align-items: center;
-        justify-content: center;
+        align-items: center !important;
+        justify-content: center !important;
         border-radius: 8px !important;
         background: BG !important;
         border: 1px solid BORDER !important;
@@ -155,9 +156,11 @@ _BUTTON_CSS = """<style>
         border-color: #00e5ff !important;
         box-shadow: 0 0 10px rgba(0, 229, 255, .40) !important;
     }
-    div[data-testid="stColumn"] .st-key-TOGGLE button p { display: none; }
+    div[data-testid="stColumn"] .st-key-TOGGLE button > * { display: none !important; }
     div[data-testid="stColumn"] .st-key-TOGGLE button::before {
-        flex: none;
+        position: absolute;
+        inset: 0;
+        margin: auto;
         content: "";
         width: 24px;
         height: 24px;
