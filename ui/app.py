@@ -30,11 +30,13 @@ import sys
 import re
 import time
 import json
+import base64
 import functools
+from pathlib import Path
 from datetime import datetime
 import subprocess
 import importlib.util
-from typing import Optional, Tuple, List, Dict, Any
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 # ==============================================================================
 # 0. In-Code Environment & Dependency Bootstrap
@@ -102,6 +104,8 @@ import geo_agent
 from geo_agent import (
     MapLayer,
     AgentResponse,
+    get_active_graph_label,
+    format_short_date,
     query_geo_agent,
     to_bounding_box,
 )
@@ -358,15 +362,20 @@ def dispatch_geo_query(
                 if len(st.session_state.agent_turns) > 5:
                     st.session_state.agent_turns = st.session_state.agent_turns[-5:]
 
+            raw_resp_dict = getattr(agent_resp, "raw_response", None) or {}
+            raw_meta_dict = raw_resp_dict.get("meta") if isinstance(raw_resp_dict.get("meta"), dict) else {}
+            resolved_qtype = getattr(agent_resp, "question_type", None) or raw_meta_dict.get("question_type")
             log_entry = {
                 "id": len(st.session_state.get("rag_logs", [])) + 1,
                 "timestamp": timestamp_str,
                 "latency_ms": latency_ms,
                 "status": "SUCCESS",
                 "is_live_backend": bool(getattr(agent_resp, "is_live_backend", False)),
+                "question_type": resolved_qtype,
+                "graph_label": get_active_graph_label(),
                 "query_summary": text_prompt or ("BBox Recon" if bounding_box else ("Point Recon" if selected_point else "Recon Scan")),
                 "raw_request": raw_request_payload,
-                "raw_response": getattr(agent_resp, "raw_response", None) or {
+                "raw_response": raw_resp_dict or {
                     "answer": getattr(agent_resp, "answer", ""),
                     "geo_locations": [],
                     "sources": getattr(agent_resp, "sources", [])
@@ -551,7 +560,10 @@ def format_tactical_citations(
                 c_id = str(c["id"])
                 art = c.get("article") or c.get("pointer") or ""
                 sec = c.get("section")
+                c_date = format_short_date(str(c.get("date") or "").strip())
                 full_desc = f"{art} — {sec}" if sec and art else (art or sec or "")
+                if c_date:
+                    full_desc = f"{full_desc} ({c_date})" if full_desc else c_date
                 cit_labels[c_id] = full_desc
 
     def _replace_cit_group(m: re.Match) -> str:
@@ -599,6 +611,115 @@ def format_tactical_citations(
         return " ".join(rendered)
 
     return _CITATION_PATTERN.sub(_replace_cit_group, content)
+
+
+def render_verified_source_card_html(
+    s_idx: int,
+    src_doc: str,
+    cit_meta: Optional[Dict[str, Any]] = None,
+    passage: Optional[Dict[str, Any]] = None,
+) -> str:
+    """
+    Build the foldable HTML card (<details class='geoai-source-detail'>) for a Verified Source entry.
+    Supports `citations[].date`, highlights `citations[].spans` (as well as legacy `text_spans`/`char_offsets`),
+    and escapes all dynamic fields cleanly for safe HTML rendering.
+    """
+    import html as _html
+
+    cit = cit_meta if isinstance(cit_meta, dict) else {}
+    psg = passage if isinstance(passage, dict) else {}
+
+    cit_id = cit.get("id")
+    cit_article = cit.get("article")
+    cit_section = cit.get("section")
+    cit_date = str(cit.get("date") or "").strip()
+
+    disp_article = _clean_doc_title(cit_article or psg.get("document"))
+    disp_section = _clean_doc_title(cit_section or psg.get("section"))
+
+    place_suffix = ""
+    if cit.get("place_label"):
+        p_num = cit.get("place_number")
+        p_num_str = f"#{p_num} " if p_num is not None else ""
+        place_suffix = f" · Pin {p_num_str}{cit['place_label']}"
+
+    if cit_id and disp_article:
+        title_str = f"[{cit_id}] {disp_article}{place_suffix}"
+    elif disp_article and disp_article != src_doc:
+        title_str = f"{disp_article}{place_suffix}"
+    else:
+        title_str = f"Source Document #{s_idx + 1}{place_suffix}"
+
+    escaped_title = _html.escape(title_str)
+    sec_str = f" — <i>{_html.escape(disp_section)}</i>" if disp_section else ""
+    formatted_date = format_short_date(cit_date)
+    date_pill_html = (
+        f"<span class='geoai-source-date' title='Passage date'>{_html.escape(formatted_date)}</span>"
+        if formatted_date
+        else ""
+    )
+
+    raw_text = str(psg.get("text") or cit.get("text") or "")
+    if raw_text:
+        doc_name = _clean_doc_title(psg.get("document") or cit_article or f"Document #{s_idx + 1}")
+        sec_name = _clean_doc_title(psg.get("section") or cit_section)
+        para_num = psg.get("paragraph_index")
+        header_parts = [f"<b>{_html.escape(doc_name)}</b>"]
+        if sec_name:
+            header_parts.append(f"Section: <i>{_html.escape(sec_name)}</i>")
+        if formatted_date:
+            header_parts.append(f"Date: <i>{_html.escape(formatted_date)}</i>")
+        if para_num is not None:
+            try:
+                header_parts.append(f"Paragraph #{int(para_num) + 1}")
+            except (TypeError, ValueError):
+                pass
+        if cit.get("place_label"):
+            p_num = cit.get("place_number")
+            p_num_str = f"#{p_num} " if p_num is not None else ""
+            header_parts.append(f"Associated Pin: <i>{_html.escape(p_num_str + str(cit['place_label']))}</i>")
+        header_str = " &nbsp;·&nbsp; ".join(header_parts)
+
+        spans = (
+            cit.get("spans")
+            or cit.get("text_spans")
+            or cit.get("char_offsets")
+            or psg.get("spans")
+            or psg.get("text_spans")
+            or []
+        )
+        if spans:
+            highlighted = _highlight_text_spans(raw_text, spans)
+            highlighted_text = highlighted if "<mark " in highlighted else _html.escape(raw_text)
+        else:
+            highlighted_text = _html.escape(raw_text)
+
+        body_html = (
+            f"<div style='background: rgba(14, 22, 32, 0.7); border-left: 3px solid #00e5ff; padding: 10px 14px; border-radius: 4px; font-size: 0.9em; margin-top: 8px; margin-bottom: 4px; line-height: 1.5;'>"
+            f"<div style='font-weight: 600; margin-bottom: 6px; color: #38bdf8;'>{header_str}</div>"
+            f"<div style='color: #cbd5e1;'>{highlighted_text}</div>"
+            f"</div>"
+        )
+    else:
+        body_html = (
+            f"<div style='background: rgba(14, 22, 32, 0.7); border-left: 3px solid #64748b; padding: 10px 14px; border-radius: 4px; font-size: 0.88em; margin-top: 8px; margin-bottom: 4px; color: #94a3b8;'>"
+            f"<div style='font-weight: 600; margin-bottom: 4px; color: #cbd5e1;'>Notice</div>"
+            f"<div>(No inline corpus text available for this reference)</div>"
+            f"</div>"
+        )
+
+    cit_id_val = _html.escape(str(cit_id) if cit_id else f"S{s_idx + 1}", quote=True)
+    cit_id_attr = f" data-cit-id='{cit_id_val}'"
+    ptr_attr = f" data-source-ptr='{_html.escape(str(src_doc), quote=True)}'" if src_doc else ""
+    return (
+        f"<details class='geoai-source-detail'{cit_id_attr}{ptr_attr}>"
+        f"<summary class='geoai-source-summary'>"
+        f"<span class='geoai-source-title'><b>{escaped_title}</b>{sec_str}</span>"
+        f"<span class='geoai-source-meta'>{date_pill_html}<span class='geoai-source-badge'>Inspect ▾</span></span>"
+        f"</summary>"
+        f"{body_html}"
+        f"</details>"
+    )
 
 
 def compute_sector_bounding_box(
@@ -843,6 +964,9 @@ def _build_assistant_message(resp: AgentResponse) -> Dict[str, Any]:
     raw_subgraph = getattr(resp, "subgraph", None)
     if not isinstance(raw_subgraph, dict) or not raw_subgraph.get("nodes"):
         raw_subgraph = extract_answer_subgraph(resp)
+    raw_resp_dict = getattr(resp, "raw_response", None) or {}
+    raw_meta = raw_resp_dict.get("meta") if isinstance(raw_resp_dict.get("meta"), dict) else {}
+    q_type = getattr(resp, "question_type", None) or raw_meta.get("question_type")
     return {
         "role": "assistant",
         "content": resp.answer,
@@ -851,6 +975,7 @@ def _build_assistant_message(resp: AgentResponse) -> Dict[str, Any]:
         "citations": list(getattr(resp, "citations", [])),
         "grounded": getattr(resp, "grounded", True),
         "status": getattr(resp, "status", "answered"),
+        "question_type": q_type,
         "is_live": bool(getattr(resp, "is_live_backend", False)),
         "follow_ups": list(getattr(resp, "follow_ups", []) or []),
         "regions": regions_val,
@@ -860,7 +985,7 @@ def _build_assistant_message(resp: AgentResponse) -> Dict[str, Any]:
         "map_not_shown": int(getattr(resp, "map_not_shown", 0) or 0),
         "subgraph": raw_subgraph,
         "raw_response": getattr(resp, "raw_response", None),
-        "geo_locations": (getattr(resp, "raw_response", {}) or {}).get("geo_locations", []),
+        "geo_locations": raw_resp_dict.get("geo_locations", []),
         "layers": getattr(resp, "layers", []),
         "avatar": (georgory.avatar_payload(resp) if georgory else None) if is_georgory_beta_enabled() else None,
     }
@@ -876,6 +1001,7 @@ def _build_error_assistant_message(err_message: str) -> Dict[str, Any]:
         "citations": [],
         "grounded": False,
         "status": "error",
+        "question_type": None,
         "is_live": False,
         "is_error": True,
         "follow_ups": [],
@@ -980,6 +1106,8 @@ def show_rag_log_dialog():
             st.markdown(f"- **Status Code:** `{selected_entry['status']}`")
         with col_t2:
             st.markdown(f"- **Spatial Input Type:** `{selected_entry.get('spatial_input', {}).get('type', 'none')}`")
+            st.markdown(f"- **Question Type:** `{selected_entry.get('question_type') or 'general'}`")
+            st.markdown(f"- **Active Graph:** `{selected_entry.get('graph_label') or get_active_graph_label()}`")
             st.markdown(f"- **Extracted Map Layers:** `{selected_entry.get('layers_count', 0)}`")
             st.markdown(f"- **Cited Sources Count:** `{len(selected_entry.get('sources', []))}`")
             if selected_entry.get("error_details"):
@@ -1003,6 +1131,7 @@ def show_rag_log_dialog():
                 cit_id = cit_meta.get("id")
                 cit_article = cit_meta.get("article")
                 cit_section = cit_meta.get("section")
+                cit_date = str(cit_meta.get("date") or "").strip()
                 text_data = get_source_text(s_ptr)
                 doc_title = _clean_doc_title((text_data.get("document") if text_data else None) or cit_article)
                 sec_title = _clean_doc_title((text_data.get("section") if text_data else None) or cit_section)
@@ -1015,19 +1144,25 @@ def show_rag_log_dialog():
                     place_suffix = f" (Pin {p_num_str}{cit_meta['place_label']})"
 
                 if cit_id and doc_title:
-                    header_label = f"📄 [{cit_id}] {doc_title}{place_suffix}"
+                    header_label = f"[{cit_id}] {doc_title}{place_suffix}"
                 elif doc_title:
-                    header_label = f"📄 {doc_title}{place_suffix}"
+                    header_label = f"{doc_title}{place_suffix}"
                 else:
-                    header_label = f"📄 Source #{s_idx + 1}{place_suffix}"
+                    header_label = f"Source #{s_idx + 1}{place_suffix}"
                 if sec_title:
                     header_label += f" — *{sec_title}*"
+                if cit_date:
+                    short_date = format_short_date(cit_date)
+                    header_label += f" · {short_date}"
 
                 with st.expander(header_label):
-                    if text_data:
+                    raw_passage_text = (text_data.get("text") if isinstance(text_data, dict) else None) or cit_meta.get("text")
+                    if raw_passage_text:
                         meta_parts = [f"**Document:** `{doc_title}`"]
                         if sec_title:
                             meta_parts.append(f"**Section:** `{sec_title}`")
+                        if cit_date:
+                            meta_parts.append(f"**Date:** `{format_short_date(cit_date)}`")
                         if para_idx is not None:
                             meta_parts.append(f"**Paragraph:** `#{para_idx + 1}`")
                         if cit_meta.get("place_label"):
@@ -1036,10 +1171,12 @@ def show_rag_log_dialog():
                             meta_parts.append(f"**Associated Pin:** `Pin {p_num_str}{cit_meta['place_label']}`")
                         st.markdown("  |  ".join(meta_parts))
                         st.markdown("**Verbatim Grounding Passage:**")
-                        st.info(text_data.get("text", "No text passage available."))
+                        st.info(raw_passage_text)
                     else:
                         if doc_title:
                             st.markdown(f"**Document:** `{doc_title}`" + (f"  |  **Section:** `{sec_title}`" if sec_title else ""))
+                        if cit_date:
+                            st.markdown(f"**Date:** `{cit_date}`")
                         if cit_meta.get("place_label"):
                             p_num = cit_meta.get("place_number")
                             p_num_str = f"#{p_num} " if p_num is not None else ""
@@ -4865,6 +5002,29 @@ def render_layer_legend_html() -> str:
     )
     return f"<div class='geoai-legend-list'>{rows}</div>"
 
+
+SIDEBAR_LOGO_PATH: Path = Path(__file__).resolve().parent / "Logo_argus.svg"
+
+
+@functools.lru_cache(maxsize=4)
+def render_sidebar_logo_html(logo_path: Optional[Union[str, Path]] = None) -> str:
+    """Render the cached ARGUS SVG logo as a self-contained base64 <img> container for the sidebar."""
+    resolved = Path(logo_path) if logo_path is not None else SIDEBAR_LOGO_PATH
+    try:
+        raw_bytes = resolved.read_bytes() if resolved.is_file() else b""
+    except OSError:
+        raw_bytes = b""
+    if not raw_bytes or not raw_bytes.strip():
+        return "<div class='sidebar-title'>ARGUS</div>"
+    encoded = base64.b64encode(raw_bytes).decode("ascii")
+    return (
+        "<div class='sidebar-logo'>"
+        f"<img src='data:image/svg+xml;base64,{encoded}' "
+        "alt='ARGUS — Corpus 2 Geo-RAG' />"
+        "</div>"
+    )
+
+
 # Configure Streamlit page properties to use a responsive wide layout
 st.set_page_config(
     page_title=f"GeoAI Intelligence Hub [{t_cfg['name']}]",
@@ -5153,17 +5313,18 @@ st.markdown(f"""{get_font_style_block()}
         font-family: {FONT_MONO} !important;
     }}
 
-    /* Lock Viewport to Chrome Window - Zero Main Window Scrollbar */
+    /* Responsive Viewport Fit - Allows graceful scrolling on short screens (UI_TEAM_NOTES 2) */
     html, body {{
         height: 100vh !important;
         max-height: 100vh !important;
-        overflow: hidden !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
         margin: 0 !important;
         padding: 0 !important;
     }}
 
-    /* Suppress outer window scrollbars in Chrome/Edge/Firefox */
-    html::-webkit-scrollbar, body::-webkit-scrollbar, [data-testid="stAppViewContainer"]::-webkit-scrollbar {{
+    /* Suppress outer window scrollbars on desktop while letting app view scroll on small windows */
+    html::-webkit-scrollbar, body::-webkit-scrollbar {{
         display: none !important;
         width: 0 !important;
         height: 0 !important;
@@ -5301,7 +5462,7 @@ st.markdown(f"""{get_font_style_block()}
     div[data-testid="column"]:last-child iframe,
     div[data-testid="stMainBlockContainer"] div[data-testid="stColumn"]:last-child iframe {{
         height: calc(100vh - 90px) !important;
-        min-height: 480px !important;
+        min-height: min(480px, max(300px, calc(100vh - 90px))) !important;
         max-height: calc(100vh - 90px) !important;
         width: 100% !important;
         border: none !important;
@@ -5312,7 +5473,7 @@ st.markdown(f"""{get_font_style_block()}
     /* Chat Column (col1): Flex column matching exact Map height so Chat + Input align flush at bottom */
     div[data-testid="stMainBlockContainer"] div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:first-child > div[data-testid="stVerticalBlock"] {{
         height: calc(100vh - 90px) !important;
-        min-height: 480px !important;
+        min-height: min(480px, max(300px, calc(100vh - 90px))) !important;
         max-height: calc(100vh - 90px) !important;
         display: flex !important;
         flex-direction: column !important;
@@ -5324,7 +5485,7 @@ st.markdown(f"""{get_font_style_block()}
 
     div[data-testid="column"]:first-child div[data-testid="stVerticalBlockBorderWrapper"] {{
         height: calc(100vh - 150px) !important;
-        min-height: 260px !important;
+        min-height: min(260px, max(140px, calc(100vh - 200px))) !important;
     }}
 
     div[data-testid="column"]:first-child:has(.geo-docked-pill) div[data-testid="stVerticalBlockBorderWrapper"] {{
@@ -5343,7 +5504,7 @@ st.markdown(f"""{get_font_style_block()}
     div[data-testid="stMainBlockContainer"] div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:first-child > div[data-testid="stVerticalBlock"] > div[data-testid="stLayoutWrapper"]:has(> div[data-testid="stVerticalBlock"][height]) {{
         flex: 1 1 0px !important;
         height: 100% !important;
-        min-height: 260px !important;
+        min-height: min(260px, max(140px, calc(100vh - 200px))) !important;
         max-height: 100% !important;
         display: flex !important;
         flex-direction: column !important;
@@ -5354,11 +5515,24 @@ st.markdown(f"""{get_font_style_block()}
     div[data-testid="stMainBlockContainer"] div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:first-child div[data-testid="stVerticalBlockBorderWrapper"] > div[data-testid="stVerticalBlock"][height] {{
         flex: 1 1 0px !important;
         height: 100% !important;
-        min-height: 260px !important;
+        min-height: min(260px, max(140px, calc(100vh - 200px))) !important;
         max-height: 100% !important;
         overflow-y: auto !important;
         overflow-x: hidden !important;
         padding-right: 6px !important;
+    }}
+
+    @media (max-height: 580px) {{
+        div[data-testid="stMainBlockContainer"] div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:first-child > div[data-testid="stVerticalBlock"] {{
+            padding-bottom: 58px !important;
+        }}
+    }}
+
+    @media (max-height: 420px) {{
+        [data-testid="stAppViewContainer"],
+        section[data-testid="stMain"] {{
+            max-height: none !important;
+        }}
     }}
 
     /* Prevent inner chat messages, expanders, and follow-up grids from inheriting container-level min-height */
@@ -5777,6 +5951,34 @@ st.markdown(f"""{get_font_style_block()}
         opacity: 0.75 !important;
     }}
 
+    /* Sidebar Header Spacing & Brand Logo */
+    section[data-testid="stSidebar"] div[data-testid="stSidebarHeader"] {{
+        padding-bottom: 0.25rem !important;
+        margin-bottom: 0 !important;
+        min-height: 0 !important;
+    }}
+    section[data-testid="stSidebar"] div[data-testid="stSidebarUserContent"] {{
+        padding-top: 0 !important;
+    }}
+    .sidebar-logo {{
+        width: 100%;
+        margin: -4px 0 6px 0;
+        padding: 0;
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid rgba(0, 229, 255, 0.24);
+        box-shadow: 0 0 14px rgba(0, 229, 255, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+        background: #0b131f;
+        line-height: 0;
+    }}
+    .sidebar-logo img {{
+        display: block;
+        width: 100%;
+        height: auto;
+        user-select: none;
+        -webkit-user-drag: none;
+    }}
+
     /* Sidebar Title */
     .sidebar-title {{
         font-family: {FONT_DISPLAY};
@@ -5917,22 +6119,48 @@ st.markdown(f"""{get_font_style_block()}
     .geoai-source-summary {{
         cursor: pointer;
         display: flex;
+        flex-wrap: wrap;
         justify-content: space-between;
         align-items: center;
+        row-gap: 5px;
+        column-gap: 8px;
         font-size: 0.85rem;
         color: #cbd5e1;
         list-style: none;
         outline: none;
         user-select: none;
+        max-width: 100%;
     }}
     .geoai-source-summary::-webkit-details-marker {{
         display: none;
     }}
     .geoai-source-title {{
-        overflow: hidden;
-        text-overflow: ellipsis;
+        flex: 1 1 150px;
+        min-width: 0;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        line-height: 1.32;
+    }}
+    .geoai-source-meta {{
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-left: auto;
+        max-width: 100%;
+    }}
+    .geoai-source-date {{
+        font-family: {FONT_MONO};
+        font-size: 0.62rem;
+        font-weight: 600;
+        color: #fbbf24;
+        background: rgba(245, 158, 11, 0.12);
+        border: 1px solid rgba(245, 158, 11, 0.35);
+        border-radius: 3px;
+        padding: 1px 5px;
+        line-height: 1.25;
         white-space: nowrap;
-        padding-right: 8px;
     }}
     .geoai-source-badge {{
         font-family: {FONT_MONO};
@@ -6333,15 +6561,21 @@ components.html(
         });
 
         // Forward window resize to map iframes to keep Leaflet tiles synchronized
+        var _geoaiForwardingResize = false;
         function forwardResizeToIframes() {
+            if (_geoaiForwardingResize) return;
+            _geoaiForwardingResize = true;
             try {
                 var mapIframes = pDoc.querySelectorAll('iframe');
                 for (var i = 0; i < mapIframes.length; i++) {
-                    if (mapIframes[i].contentWindow) {
-                        mapIframes[i].contentWindow.dispatchEvent(new Event('resize'));
+                    var cw = mapIframes[i].contentWindow;
+                    if (cw && cw !== window) {
+                        cw.dispatchEvent(new Event('resize'));
                     }
                 }
-            } catch(e) {}
+            } catch(e) {} finally {
+                _geoaiForwardingResize = false;
+            }
         }
         window.addEventListener('resize', forwardResizeToIframes);
     pWin.addEventListener('resize', forwardResizeToIframes);
@@ -6365,9 +6599,10 @@ if "messages" not in st.session_state:
             "is_welcome": True,
             "content": (
                 "👋 **Welcome to the GeoAI Spatial Intelligence Hub.**\n\n"
-                "• **Click map** to select locations of interest (manage in sidebar).\n"
-                "• **Query selected points** (e.g., *\"What units are stationed here?\"*).\n"
-                "• **Ask general questions** to explore regions (e.g., *\"Show key logistics nodes\"*)."
+                "- **Click map** to select locations of interest (manage in sidebar).\n"
+                "- **Query selected points** (e.g., *\"What units are stationed here?\"*).\n"
+                "- **Ask general questions** to explore regions (e.g., *\"Show key logistics nodes\"*).\n"
+                "- **Ask about dates & periods** (e.g., *\"What happened on 24 February 2022?\"* or *\"Who attacked Mariupol in May 2022?\"*)."
             )
         }
     ]
@@ -6699,9 +6934,7 @@ if (
 # 3. Sidebar Utility Controls & Intelligence Dashboard
 # ==============================================================================
 with st.sidebar:
-    st.markdown("<div class='sidebar-title'>GEO-AI COMMAND</div>", unsafe_allow_html=True)
-    st.caption("Multimodal Geocoded RAG Intelligence")
-    st.markdown("---")
+    st.markdown(render_sidebar_logo_html(), unsafe_allow_html=True)
 
     # Agent Connection Credentials & Mode HUD Indicator
     st.subheader("Agent Connection")
@@ -8541,6 +8774,8 @@ with col1:
                     role_tag += " • [OUT OF SCOPE]"
                 elif msg_status == "llm_failed":
                     role_tag += " • [LLM FAILED]"
+                if msg.get("question_type") == "date":
+                    role_tag += " • [📅 DATE QUERY]"
 
             role_class = "chat-role-operator" if is_user else "chat-role-geoai"
             marker_class = "bubble-marker-operator" if is_user else "bubble-marker-geoai"
@@ -8611,83 +8846,25 @@ with col1:
                         source_items_html = []
                         for s_idx, src_doc in enumerate(msg_sources):
                             cit_meta = msg_citations.get(src_doc, {})
-                            cit_id = cit_meta.get("id")
-                            cit_article = cit_meta.get("article")
-                            cit_section = cit_meta.get("section")
                             if "source_metadata_cache" not in st.session_state:
                                 st.session_state.source_metadata_cache = {}
                             meta_cache = st.session_state.source_metadata_cache
                             cached_meta = meta_cache.get(src_doc) or st.session_state.get(f"src_meta_{m_idx}_{s_idx}", {})
-                            disp_article = _clean_doc_title(cit_article or cached_meta.get("document"))
-                            disp_section = _clean_doc_title(cit_section or cached_meta.get("section"))
 
                             # Resolve document title and text from local graph if available
                             passage = cached_meta or get_source_text(src_doc)
                             if passage and isinstance(passage, dict):
                                 meta_cache[src_doc] = passage
-                                if not disp_article:
-                                    disp_article = _clean_doc_title(passage.get("document"))
-                                if not disp_section:
-                                    disp_section = _clean_doc_title(passage.get("section"))
                             else:
                                 meta_cache[src_doc] = {"document": "", "section": ""}
 
-                            place_suffix = ""
-                            if cit_meta.get("place_label"):
-                                p_num = cit_meta.get("place_number")
-                                p_num_str = f"#{p_num} " if p_num is not None else ""
-                                place_suffix = f" · 📍 Pin {p_num_str}{cit_meta['place_label']}"
-
-                            if cit_id and disp_article:
-                                title_str = f"[{cit_id}] {disp_article}{place_suffix}"
-                            elif disp_article and disp_article != src_doc:
-                                title_str = f"{disp_article}{place_suffix}"
-                            else:
-                                title_str = f"Source Document #{s_idx + 1}{place_suffix}"
-
-                            sec_str = f" — <i>{disp_section}</i>" if disp_section else ""
-
-                            if passage and passage.get("text"):
-                                doc_name = _clean_doc_title(passage.get("document") or cit_article or f"Document #{s_idx + 1}")
-                                sec_name = _clean_doc_title(passage.get("section") or cit_section)
-                                para_num = passage.get("paragraph_index")
-                                header_parts = [f"<b>{doc_name}</b>"]
-                                if sec_name:
-                                    header_parts.append(f"Section: <i>{sec_name}</i>")
-                                if para_num is not None:
-                                    header_parts.append(f"Paragraph #{para_num + 1}")
-                                if cit_meta.get("place_label"):
-                                    p_num = cit_meta.get("place_number")
-                                    p_num_str = f"#{p_num} " if p_num is not None else ""
-                                    header_parts.append(f"Associated Pin: <i>{p_num_str}{cit_meta['place_label']}</i>")
-                                header_str = " | ".join(header_parts)
-                                raw_text = passage["text"]
-                                spans = cit_meta.get("text_spans") or cit_meta.get("char_offsets") or passage.get("text_spans") or []
-                                highlighted_text = _highlight_text_spans(raw_text, spans)
-                                body_html = (
-                                    f"<div style='background: rgba(14, 22, 32, 0.7); border-left: 3px solid #00e5ff; padding: 10px 14px; border-radius: 4px; font-size: 0.9em; margin-top: 8px; margin-bottom: 4px; line-height: 1.5;'>"
-                                    f"<div style='font-weight: 600; margin-bottom: 6px; color: #38bdf8;'>{header_str}</div>"
-                                    f"<div style='color: #cbd5e1;'>{highlighted_text}</div>"
-                                    f"</div>"
-                                )
-                            else:
-                                body_html = (
-                                    f"<div style='background: rgba(14, 22, 32, 0.7); border-left: 3px solid #64748b; padding: 10px 14px; border-radius: 4px; font-size: 0.88em; margin-top: 8px; margin-bottom: 4px; color: #94a3b8;'>"
-                                    f"<div style='font-weight: 600; margin-bottom: 4px; color: #cbd5e1;'>Notice</div>"
-                                    f"<div>(No inline corpus text available for this reference)</div>"
-                                    f"</div>"
-                                )
-
-                            cit_id_attr = f" data-cit-id='{cit_id}'" if cit_id else f" data-cit-id='S{s_idx + 1}'"
-                            ptr_attr = f" data-source-ptr='{src_doc}'" if src_doc else ""
                             source_items_html.append(
-                                f"<details class='geoai-source-detail'{cit_id_attr}{ptr_attr}>"
-                                f"<summary class='geoai-source-summary'>"
-                                f"<span class='geoai-source-title'>📄 <b>{title_str}</b>{sec_str}</span>"
-                                f"<span class='geoai-source-badge'>Inspect ▾</span>"
-                                f"</summary>"
-                                f"{body_html}"
-                                f"</details>"
+                                render_verified_source_card_html(
+                                    s_idx=s_idx,
+                                    src_doc=src_doc,
+                                    cit_meta=cit_meta,
+                                    passage=passage,
+                                )
                             )
 
                         st.markdown("".join(source_items_html), unsafe_allow_html=True)
